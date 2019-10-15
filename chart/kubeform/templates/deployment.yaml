@@ -25,8 +25,14 @@ spec:
       - name: operator
         image: {{ .Values.operator.registry }}/{{ .Values.operator.repository }}:{{ .Values.operator.tag }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
+        env:
+        - name: TF_STATE_ENC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "kubeform.serviceAccountName" . }}
+              key: TF_STATE_ENC_KEY
         args:
-          - --secret-key={{ .Values.secretKey }}
+          - --secret-key=$(TF_STATE_ENC_KEY)
 {{- if or .Values.tolerations (and .Values.criticalAddon (eq .Release.Namespace "kube-system")) }}
       tolerations:
 {{- if .Values.tolerations }}
