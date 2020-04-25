@@ -38,14 +38,15 @@ spec:
         image: {{ .Values.operator.registry }}/{{ .Values.operator.repository }}:{{ .Values.operator.tag }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         env:
-        - name: TF_STATE_ENC_KEY
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "kubeform.serviceAccountName" . }}
-              key: TF_STATE_ENC_KEY
+          - name: TF_STATE_ENC_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "kubeform.serviceAccountName" . }}
+                key: TF_STATE_ENC_KEY
         args:
           - run
           - --secret-key=$(TF_STATE_ENC_KEY)
+          - --enable-analytics={{ .Values.enableAnalytics }}
         resources:
           {{- toYaml .Values.operator.resources | nindent 10 }}
       securityContext:
