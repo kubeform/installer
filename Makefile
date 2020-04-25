@@ -15,9 +15,15 @@
 
 SHELL=/bin/bash -o pipefail
 
-GO_PKG   := stash.appscode.dev
+GO_PKG   := kubeform.dev
 REPO     := $(notdir $(shell pwd))
 BIN      := installer
+
+# Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
+CRD_OPTIONS          ?= "crd:trivialVersions=true,preserveUnknownFields=false"
+# https://github.com/appscodelabs/gengo-builder
+CODE_GENERATOR_IMAGE ?= appscode/gengo:release-1.16
+API_GROUPS           ?= installer:v1alpha1
 
 # This version-strategy uses git tags to set the version string
 git_branch       := $(shell git rev-parse --abbrev-ref HEAD)
@@ -43,10 +49,10 @@ endif
 ### These variables should not need tweaking.
 ###
 
-SRC_DIRS := # directories which hold app source (not vendored)
+SRC_DIRS := api apis hack/gencrd # directories which hold app source (not vendored)
 
 DOCKER_PLATFORMS := linux/amd64 linux/arm linux/arm64
-BIN_PLATFORMS    := $(DOCKER_PLATFORMS) windows/amd64 darwin/amd64
+BIN_PLATFORMS    := $(DOCKER_PLATFORMS)
 
 # Used internally.  Users should pass GOOS and/or GOARCH.
 OS   := $(if $(GOOS),$(GOOS),$(shell go env GOOS))
@@ -73,6 +79,8 @@ BUILD_DIRS  := bin/$(OS)_$(ARCH)     \
                $(HOME)/.kube         \
                $(HOME)/.minikube
 
+DOCKER_REPO_ROOT := /go/src/$(GO_PKG)/$(REPO)
+
 # If you want to build all binaries, see the 'all-build' rule.
 # If you want to build all containers, see the 'all-container' rule.
 # If you want to build AND push all containers, see the 'all-push' rule.
@@ -97,11 +105,134 @@ version:
 	@echo commit_hash=$(commit_hash)
 	@echo commit_timestamp=$(commit_timestamp)
 
-DOCKER_REPO_ROOT := /go/src/$(GO_PKG)/$(REPO)
+.PHONY: clientset
+clientset:
+	@docker run --rm 	                                          \
+		-u $$(id -u):$$(id -g)                                    \
+		-v /tmp:/.cache                                           \
+		-v $$(pwd):$(DOCKER_REPO_ROOT)                            \
+		-w $(DOCKER_REPO_ROOT)                                    \
+		--env HTTP_PROXY=$(HTTP_PROXY)                            \
+		--env HTTPS_PROXY=$(HTTPS_PROXY)                          \
+		$(CODE_GENERATOR_IMAGE)                                   \
+		/go/src/k8s.io/code-generator/generate-groups.sh          \
+			"deepcopy"                                            \
+			$(GO_PKG)/$(REPO)/client                              \
+			$(GO_PKG)/$(REPO)/apis                                \
+			"$(API_GROUPS)"                                       \
+			--go-header-file "./hack/license/go.txt"
+
+# Generate openapi schema
+.PHONY: openapi
+openapi: $(addprefix openapi-, $(subst :,_, $(API_GROUPS)))
+	@echo "Generating api/openapi-spec/swagger.json"
+	@docker run --rm	                                 \
+		-u $$(id -u):$$(id -g)                           \
+		-v /tmp:/.cache                                  \
+		-v $$(pwd):$(DOCKER_REPO_ROOT)                   \
+		-w $(DOCKER_REPO_ROOT)                           \
+		--env HTTP_PROXY=$(HTTP_PROXY)                   \
+		--env HTTPS_PROXY=$(HTTPS_PROXY)                 \
+		--env GO111MODULE=on                             \
+		--env GOFLAGS="-mod=vendor"                      \
+		$(BUILD_IMAGE)                                   \
+		go run hack/gencrd/main.go
+
+openapi-%:
+	@echo "Generating openapi schema for $(subst _,/,$*)"
+	@docker run --rm	                                 \
+		-u $$(id -u):$$(id -g)                           \
+		-v /tmp:/.cache                                  \
+		-v $$(pwd):$(DOCKER_REPO_ROOT)                   \
+		-w $(DOCKER_REPO_ROOT)                           \
+		--env HTTP_PROXY=$(HTTP_PROXY)                   \
+		--env HTTPS_PROXY=$(HTTPS_PROXY)                 \
+		$(CODE_GENERATOR_IMAGE)                          \
+		openapi-gen                                      \
+			--v 1 --logtostderr                          \
+			--go-header-file "./hack/license/go.txt" \
+			--input-dirs "$(GO_PKG)/$(REPO)/apis/$(subst _,/,$*),k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/api/resource,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/util/intstr,k8s.io/apimachinery/pkg/version,k8s.io/api/core/v1,k8s.io/api/apps/v1,k8s.io/api/rbac/v1" \
+			--output-package "$(GO_PKG)/$(REPO)/apis/$(subst _,/,$*)" \
+			--report-filename /tmp/violation_exceptions.list
+
+# Generate CRD manifests
+.PHONY: gen-crds
+gen-crds:
+	@echo "Generating CRD manifests"
+	@docker run --rm	                    \
+		-u $$(id -u):$$(id -g)              \
+		-v /tmp:/.cache                     \
+		-v $$(pwd):$(DOCKER_REPO_ROOT)      \
+		-w $(DOCKER_REPO_ROOT)              \
+	    --env HTTP_PROXY=$(HTTP_PROXY)      \
+	    --env HTTPS_PROXY=$(HTTPS_PROXY)    \
+		$(CODE_GENERATOR_IMAGE)             \
+		controller-gen                      \
+			$(CRD_OPTIONS)                  \
+			paths="./apis/..."              \
+			output:crd:artifacts:config=api/crds
+
+crds_to_patch := installer.kubeform.com_kubeformoperators.yaml
+
+.PHONY: patch-crds
+patch-crds: $(addprefix patch-crd-, $(crds_to_patch))
+patch-crd-%: $(BUILD_DIRS)
+	@echo "patching $*"
+	@kubectl patch -f api/crds/$* -p "$$(cat hack/crd-patch.json)" --type=json --local=true -o yaml > bin/$*
+	@mv bin/$* api/crds/$*
+
+.PHONY: label-crds
+label-crds: $(BUILD_DIRS)
+	@for f in api/crds/*.yaml; do \
+		echo "applying app=vault label to $$f"; \
+		kubectl label --overwrite -f $$f --local=true -o yaml app=vault > bin/crd.yaml; \
+		mv bin/crd.yaml $$f; \
+	done
+
+.PHONY: gen-crd-protos
+gen-crd-protos: $(addprefix gen-crd-protos-, $(subst :,_, $(API_GROUPS)))
+
+gen-crd-protos-%:
+	@echo "Generating protobuf for $(subst _,/,$*)"
+	@docker run --rm                                     \
+		-u $$(id -u):$$(id -g)                           \
+		-v /tmp:/.cache                                  \
+		-v $$(pwd):$(DOCKER_REPO_ROOT)                   \
+		-w $(DOCKER_REPO_ROOT)                           \
+		--env HTTP_PROXY=$(HTTP_PROXY)                   \
+		--env HTTPS_PROXY=$(HTTPS_PROXY)                 \
+		$(CODE_GENERATOR_IMAGE)                          \
+		go-to-protobuf                                   \
+			--go-header-file "./hack/license/go.txt"     \
+			--proto-import=$(DOCKER_REPO_ROOT)/vendor    \
+			--proto-import=$(DOCKER_REPO_ROOT)/third_party/protobuf \
+			--apimachinery-packages=-k8s.io/apimachinery/pkg/api/resource,-k8s.io/apimachinery/pkg/apis/meta/v1,-k8s.io/apimachinery/pkg/apis/meta/v1beta1,-k8s.io/apimachinery/pkg/runtime,-k8s.io/apimachinery/pkg/runtime/schema,-k8s.io/apimachinery/pkg/util/intstr \
+			--packages=-k8s.io/api/core/v1,kubeform.dev/installer/apis/$(subst _,/,$*)
+
+.PHONY: gen-bindata
+gen-bindata:
+	@docker run                                                 \
+	    -i                                                      \
+	    --rm                                                    \
+	    -u $$(id -u):$$(id -g)                                  \
+	    -v $$(pwd):/src                                         \
+	    -w /src/api/crds                                        \
+		-v /tmp:/.cache                                         \
+	    --env HTTP_PROXY=$(HTTP_PROXY)                          \
+	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
+	    $(BUILD_IMAGE)                                          \
+	    go-bindata -ignore=\\.go -ignore=\\.DS_Store -mode=0644 -modtime=1573722179 -o bindata.go -pkg crds ./...
+
+.PHONY: gen-values-schema
+gen-values-schema:
+	@yq r api/crds/installer.kubeform.com_kubeformoperators.yaml spec.validation.openAPIV3Schema.properties.spec > /tmp/kubeform-values.openapiv3_schema.yaml
+	@yq d /tmp/kubeform-values.openapiv3_schema.yaml description > charts/kubeform/values.openapiv3_schema.yaml
+
+.PHONY: manifests
+manifests: gen-crds patch-crds label-crds gen-bindata gen-values-schema
 
 .PHONY: gen
-gen:
-	@true
+gen: clientset gen-crd-protos manifests openapi
 
 fmt: $(BUILD_DIRS)
 	@docker run                                                 \
@@ -121,9 +252,69 @@ fmt: $(BUILD_DIRS)
 	        ./hack/fmt.sh $(SRC_DIRS)                           \
 	    "
 
+build: $(OUTBIN)
+
+.PHONY: .go/$(OUTBIN)
+$(OUTBIN): $(BUILD_DIRS)
+	@echo "making $(OUTBIN)"
+	@docker run                                                 \
+	    -i                                                      \
+	    --rm                                                    \
+	    -u $$(id -u):$$(id -g)                                  \
+	    -v $$(pwd):/src                                         \
+	    -w /src                                                 \
+	    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin                \
+	    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin/$(OS)_$(ARCH)  \
+	    -v $$(pwd)/.go/cache:/.cache                            \
+	    --env HTTP_PROXY=$(HTTP_PROXY)                          \
+	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
+	    $(BUILD_IMAGE)                                          \
+	    /bin/bash -c "                                          \
+	        ARCH=$(ARCH)                                        \
+	        OS=$(OS)                                            \
+	        VERSION=$(VERSION)                                  \
+	        version_strategy=$(version_strategy)                \
+	        git_branch=$(git_branch)                            \
+	        git_tag=$(git_tag)                                  \
+	        commit_hash=$(commit_hash)                          \
+	        commit_timestamp=$(commit_timestamp)                \
+	        ./hack/build.sh                                     \
+	    "
+	@echo
+
+.PHONY: test
+test: unit-tests
+
+unit-tests: $(BUILD_DIRS)
+	@docker run                                                 \
+	    -i                                                      \
+	    --rm                                                    \
+	    -u $$(id -u):$$(id -g)                                  \
+	    -v $$(pwd):/src                                         \
+	    -w /src                                                 \
+	    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin                \
+	    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin/$(OS)_$(ARCH)  \
+	    -v $$(pwd)/.go/cache:/.cache                            \
+	    --env HTTP_PROXY=$(HTTP_PROXY)                          \
+	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
+	    $(BUILD_IMAGE)                                          \
+	    /bin/bash -c "                                          \
+	        ARCH=$(ARCH)                                        \
+	        OS=$(OS)                                            \
+	        VERSION=$(VERSION)                                  \
+	        ./hack/test.sh $(SRC_DIRS)                          \
+	    "
+
+TEST_CHARTS ?=
+
+ifeq ($(strip $(TEST_CHARTS)),)
+	CT_ARGS = --all
+else
+	CT_ARGS = --charts=$(TEST_CHARTS)
+endif
+
 .PHONY: ct
 ct: $(BUILD_DIRS)
-	@echo $(XYZ)
 	@docker run                                                 \
 	    -i                                                      \
 	    --rm                                                    \
@@ -140,13 +331,28 @@ ct: $(BUILD_DIRS)
 	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
 	    --env KUBECONFIG=$(subst $(HOME),,$(KUBECONFIG))        \
 	    $(CHART_TEST_IMAGE)                                     \
-	    /bin/sh -c "                                            \
-		    kubectl -n kube-system create sa tiller;            \
-			kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller;   \
-			helm init --service-account tiller;                 \
-			kubectl wait --for=condition=Ready pods -n kube-system --all --timeout=5m;  \
-			ct lint-and-install --all;                          \
-	    "
+	    ct lint-and-install --debug $(CT_ARGS)
+
+ADDTL_LINTERS   := goconst,gofmt,goimports,unparam
+
+.PHONY: lint
+lint: $(BUILD_DIRS)
+	@echo "running linter"
+	@docker run                                                 \
+	    -i                                                      \
+	    --rm                                                    \
+	    -u $$(id -u):$$(id -g)                                  \
+	    -v $$(pwd):/src                                         \
+	    -w /src                                                 \
+	    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin                \
+	    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin/$(OS)_$(ARCH)  \
+	    -v $$(pwd)/.go/cache:/.cache                            \
+	    --env HTTP_PROXY=$(HTTP_PROXY)                          \
+	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
+	    --env GO111MODULE=on                                    \
+	    --env GOFLAGS="-mod=vendor"                             \
+	    $(BUILD_IMAGE)                                          \
+	    golangci-lint run --enable $(ADDTL_LINTERS) --timeout=10m --skip-files="generated.*\.go$\" --skip-dirs-use-default --skip-dirs=client,vendor
 
 $(BUILD_DIRS):
 	@mkdir -p $@
@@ -155,7 +361,15 @@ $(BUILD_DIRS):
 dev: gen fmt
 
 .PHONY: verify
-verify: verify-gen
+verify: verify-modules verify-gen
+
+.PHONY: verify-modules
+verify-modules:
+	GO111MODULE=on go mod tidy
+	GO111MODULE=on go mod vendor
+	@if !(git diff --exit-code HEAD); then \
+		echo "go module files are out of date"; exit 1; \
+	fi
 
 .PHONY: verify-gen
 verify-gen: gen fmt
@@ -190,7 +404,7 @@ check-license:
 		ltag -t "./hack/license" --excludes "vendor contrib libbuild" --check -v
 
 .PHONY: ci
-ci: verify check-license
+ci: verify check-license lint build unit-tests #cover
 
 .PHONY: clean
 clean:

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright The Kubeform Authors.
+# Copyright The Searchlight Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,6 +25,6 @@ TEST_ARGS=${TEST_ARGS:-}
 DOCKER_REGISTRY=${DOCKER_REGISTRY:-}
 
 echo "Running e2e tests:"
-cmd="ginkgo -r --v --stream --progress --trace ${GINKGO_ARGS} test -- --v=5 ${TEST_ARGS}"
+cmd="ginkgo -r --v --progress --trace ${GINKGO_ARGS} test -- --docker-registry=${DOCKER_REGISTRY} ${TEST_ARGS}"
 echo "$cmd"
 $cmd
