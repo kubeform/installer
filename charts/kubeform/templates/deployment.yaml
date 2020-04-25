@@ -1,32 +1,40 @@
+{{- $major := default "0" .Capabilities.KubeVersion.Major | trimSuffix "+" | int64 }}
+{{- $minor := default "0" .Capabilities.KubeVersion.Minor | trimSuffix "+" | int64 }}
+{{- $criticalAddon := and .Values.criticalAddon (or (eq .Release.Namespace "kube-system") (and (ge $major 1) (ge $minor 17))) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "kubeform.fullname" . }}
+  name: {{ include "kubeform.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "kubeform.labels" . | nindent 4 }}
-{{- if .Values.annotations }}
+  {{- with .Values.annotations }}
   annotations:
-{{ toYaml .Values.annotations | indent 4 }}
-{{- end }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: "{{ template "kubeform.name" . }}"
-      release: "{{ .Release.Name }}"
+      {{- include "kubeform.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "kubeform.labels" . | nindent 8 }}
-{{- with .Values.annotations }}
+        {{- include "kubeform.selectorLabels" . | nindent 8 }}
+    {{- with .Values.podAnnotations }}
       annotations:
-{{ toYaml . | indent 8 }}
-{{- end }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
     spec:
-      serviceAccountName: {{ template "kubeform.serviceAccountName" . }}
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "kubeform.serviceAccountName" . }}
       containers:
       - name: operator
+        securityContext:
+          {{- toYaml .Values.operator.securityContext | nindent 10 }}
         image: {{ .Values.operator.registry }}/{{ .Values.operator.repository }}:{{ .Values.operator.tag }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         env:
@@ -38,24 +46,28 @@ spec:
         args:
           - run
           - --secret-key=$(TF_STATE_ENC_KEY)
-{{- if or .Values.tolerations (and .Values.criticalAddon (eq .Release.Namespace "kube-system")) }}
+        resources:
+          {{- toYaml .Values.operator.resources | nindent 10 }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+    {{- if or .Values.tolerations $criticalAddon }}
       tolerations:
-{{- if .Values.tolerations }}
-{{ toYaml .Values.tolerations | indent 8 }}
-{{- end -}}
-{{- if and .Values.criticalAddon (eq .Release.Namespace "kube-system") }}
-      - key: CriticalAddonsOnly
-        operator: Exists
-{{- end -}}
-{{- end -}}
-{{- if .Values.affinity }}
+      {{- with .Values.tolerations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $criticalAddon }}
+        - key: CriticalAddonsOnly
+          operator: Exists
+      {{- end -}}
+    {{- end -}}
+    {{- with .Values.affinity }}
       affinity:
-{{ toYaml .Values.affinity | indent 8 }}
-{{- end -}}
-{{- if .Values.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.nodeSelector | indent 8 }}
-{{- end -}}
-{{- if and .Values.criticalAddon (eq .Release.Namespace "kube-system") }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if $criticalAddon }}
       priorityClassName: system-cluster-critical
-{{- end -}}
+    {{- end -}}
