@@ -43,6 +43,14 @@ spec:
               secretKeyRef:
                 name: {{ template "kubeform.serviceAccountName" . }}
                 key: TF_STATE_ENC_KEY
+        {{ if .Values.proxy }}
+          - name: no_proxy
+            value: 10.43.0.1 # exclude kubeapi internal IP
+          - name: http_proxy
+            value: {{ .Values.proxy }}
+          - name: https_proxy
+            value: {{ .Values.proxy }}
+        {{ end }}
         args:
           - run
           - --secret-key=$(TF_STATE_ENC_KEY)
