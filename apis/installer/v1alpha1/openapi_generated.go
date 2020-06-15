@@ -335,6 +335,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"kubeform.dev/installer/apis/installer/v1alpha1.KubeformOperator":     schema_installer_apis_installer_v1alpha1_KubeformOperator(ref),
 		"kubeform.dev/installer/apis/installer/v1alpha1.KubeformOperatorList": schema_installer_apis_installer_v1alpha1_KubeformOperatorList(ref),
 		"kubeform.dev/installer/apis/installer/v1alpha1.KubeformOperatorSpec": schema_installer_apis_installer_v1alpha1_KubeformOperatorSpec(ref),
+		"kubeform.dev/installer/apis/installer/v1alpha1.ProxySpec":            schema_installer_apis_installer_v1alpha1_ProxySpec(ref),
 		"kubeform.dev/installer/apis/installer/v1alpha1.ServiceAccountSpec":   schema_installer_apis_installer_v1alpha1_ServiceAccountSpec(ref),
 	}
 }
@@ -15772,12 +15773,47 @@ func schema_installer_apis_installer_v1alpha1_KubeformOperatorSpec(ref common.Re
 							Format: "",
 						},
 					},
+					"proxy": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("kubeform.dev/installer/apis/installer/v1alpha1.ProxySpec"),
+						},
+					},
 				},
-				Required: []string{"replicaCount", "operator", "imagePullPolicy", "serviceAccount"},
+				Required: []string{"replicaCount", "operator", "imagePullPolicy", "serviceAccount", "proxy"},
 			},
 		},
 		Dependencies: []string{
-			"k8s.io/api/core/v1.Affinity", "k8s.io/api/core/v1.PodSecurityContext", "k8s.io/api/core/v1.Toleration", "kubeform.dev/installer/apis/installer/v1alpha1.ContianerRef", "kubeform.dev/installer/apis/installer/v1alpha1.ServiceAccountSpec"},
+			"k8s.io/api/core/v1.Affinity", "k8s.io/api/core/v1.PodSecurityContext", "k8s.io/api/core/v1.Toleration", "kubeform.dev/installer/apis/installer/v1alpha1.ContianerRef", "kubeform.dev/installer/apis/installer/v1alpha1.ProxySpec", "kubeform.dev/installer/apis/installer/v1alpha1.ServiceAccountSpec"},
+	}
+}
+
+func schema_installer_apis_installer_v1alpha1_ProxySpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"https": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"http": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"no": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
