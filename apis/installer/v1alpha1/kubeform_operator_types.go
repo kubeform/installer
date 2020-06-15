@@ -77,7 +77,8 @@ type KubeformOperatorSpec struct {
 	//+optional
 	SecretKey *string `json:"secretKey" protobuf:"bytes,16,opt,name=secretKey"`
 	//+optional
-	EnableAnalytics bool `json:"enableAnalytics" protobuf:"varint,17,opt,name=enableAnalytics"`
+	EnableAnalytics bool      `json:"enableAnalytics" protobuf:"varint,17,opt,name=enableAnalytics"`
+	Proxy           ProxySpec `json:"proxy" protobuf:"bytes,18,opt,name=proxy"`
 }
 
 type ImageRef struct {
@@ -102,6 +103,15 @@ type ServiceAccountSpec struct {
 	Name *string `json:"name" protobuf:"bytes,2,opt,name=name"`
 	//+optional
 	Annotations map[string]string `json:"annotations" protobuf:"bytes,3,rep,name=annotations"`
+}
+
+type ProxySpec struct {
+	//+optional
+	HTTPS string `json:"https" protobuf:"bytes,1,opt,name=https"`
+	//+optional
+	HTTP string `json:"http" protobuf:"bytes,2,opt,name=http"`
+	//+optional
+	No string `json:"no" protobuf:"bytes,3,opt,name=no"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
