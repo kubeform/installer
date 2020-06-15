@@ -49,7 +49,8 @@ endif
 ### These variables should not need tweaking.
 ###
 
-SRC_DIRS := api apis hack/gencrd # directories which hold app source (not vendored)
+SRC_PKGS := api apis # directories which hold app source (not vendored)
+SRC_DIRS := $(SRC_PKGS) hack/gencrd
 
 DOCKER_PLATFORMS := linux/amd64 linux/arm linux/arm64
 BIN_PLATFORMS    := $(DOCKER_PLATFORMS)
@@ -61,7 +62,7 @@ ARCH := $(if $(GOARCH),$(GOARCH),$(shell go env GOARCH))
 BASEIMAGE_PROD   ?= gcr.io/distroless/static
 BASEIMAGE_DBG    ?= debian:stretch
 
-GO_VERSION       ?= 1.14.2
+GO_VERSION       ?= 1.14
 BUILD_IMAGE      ?= appscode/golang-dev:$(GO_VERSION)
 CHART_TEST_IMAGE ?= quay.io/helmpack/chart-testing:v3.0.0-rc.1
 
@@ -335,15 +336,16 @@ unit-tests: $(BUILD_DIRS)
 	        ARCH=$(ARCH)                                        \
 	        OS=$(OS)                                            \
 	        VERSION=$(VERSION)                                  \
-	        ./hack/test.sh $(SRC_DIRS)                          \
+	        ./hack/test.sh $(SRC_PKGS)                          \
 	    "
 
-TEST_CHARTS ?=
+TEST_CHARTS    ?=
+KUBE_NAMESPACE ?=
 
 ifeq ($(strip $(TEST_CHARTS)),)
-	CT_ARGS = --all
+	CT_ARGS = --all --namespace=$(KUBE_NAMESPACE)
 else
-	CT_ARGS = --charts=$(TEST_CHARTS)
+	CT_ARGS = --charts=$(TEST_CHARTS) --namespace=$(KUBE_NAMESPACE)
 endif
 
 .PHONY: ct
