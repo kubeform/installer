@@ -69,6 +69,9 @@ The following table lists the configurable parameters of the `kubeform` chart an
 | serviceAccount.name        | The name of the service account to use. If not set and create is true, a name is generated using the fullname template                                                                                                                | ``             |
 | secretKey                  | Specifies a base64-encoded key, of length 32 bytes when decoded. It is used to encrypt the state file.                                                                                                                                | ``             |
 | enableAnalytics            | If true, sends usage analytics                                                                                                                                                                                                        | `true`         |
+| proxy.https                | To configure HTTPS_PROXY environment variable specify <ip_address>:<port>                                                                                                                                                             | `''`           |
+| proxy.http                 | To configure HTTP_PROXY environment variable specify <ip_address>:<port>                                                                                                                                                              | `''`           |
+| proxy.no                   | To configure NO_PROXY environment variable specify <ip_address>:<port> By default exclude Kubernetes apiserver internal IP.                                                                                                           | `'10.43.0.1'`  |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
