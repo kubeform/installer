@@ -15710,6 +15710,12 @@ func schema_installer_apis_installer_v1alpha1_KubeformOperatorSpec(ref common.Re
 							Format: "int32",
 						},
 					},
+					"license": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
 					"operator": {
 						SchemaProps: spec.SchemaProps{
 							Ref: ref("kubeform.dev/installer/apis/installer/v1alpha1.ContianerRef"),
