@@ -60,8 +60,23 @@ spec:
           - run
           - --secret-key=$(TF_STATE_ENC_KEY)
           - --enable-analytics={{ .Values.enableAnalytics }}
+        {{- if .Values.license }}
+          - --license-file=/var/run/secrets/appscode/license/key.txt
+        {{- end }}
         resources:
           {{- toYaml .Values.operator.resources | nindent 10 }}
+        volumeMounts:
+        {{- if .Values.license }}
+          - mountPath: /var/run/secrets/appscode/license
+            name: license
+        {{- end }}
+      volumes:
+      {{- if .Values.license }}
+        - name: license
+          secret:
+            defaultMode: 420
+            secretName: {{ include "kubeform.fullname" . }}-license
+      {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
     {{- if or .Values.tolerations $criticalAddon }}
