@@ -3,7 +3,6 @@ module kubeform.dev/installer
 go 1.12
 
 require (
-	github.com/go-openapi/spec v0.0.0-20160808142527-6aced65f8501
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/google/go-cmp v0.4.0 // indirect
@@ -13,7 +12,6 @@ require (
 	github.com/stretchr/testify v1.5.1 // indirect
 	k8s.io/api v0.18.9
 	k8s.io/apimachinery v0.18.9
-	k8s.io/kube-openapi v0.0.0-20200410145947-61e04a5be9a6
 	kmodules.xyz/schema-checker v0.1.0
 )
 
