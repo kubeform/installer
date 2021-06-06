@@ -27,7 +27,7 @@ const (
 	ResourceKubeforms    = "kubeforms"
 )
 
-// Kubeform defines the schama for KubeVault Operator Installer.
+// Kubeform defines the schama for Kubeform provider controller Installer.
 
 // +genclient
 // +genclient:skipVerbs=updateStatus
@@ -52,6 +52,7 @@ type KubeformSpec struct {
 	// +optional
 	License         string       `json:"license"`
 	Operator        ContianerRef `json:"operator"`
+	Cleaner         CleanerRef   `json:"cleaner"`
 	ImagePullPolicy string       `json:"imagePullPolicy"`
 	//+optional
 	ImagePullSecrets []string `json:"imagePullSecrets"`
@@ -79,24 +80,27 @@ type KubeformSpec struct {
 	//+optional
 	SecretKey *string `json:"secretKey"`
 	//+optional
-	EnableAnalytics bool      `json:"enableAnalytics"`
-	Proxy           ProxySpec `json:"proxy"`
-}
-
-type ImageRef struct {
-	Registry   string `json:"registry"`
-	Repository string `json:"repository"`
-	Tag        string `json:"tag"`
+	EnableAnalytics bool         `json:"enableAnalytics"`
+	Proxy           ProxySpec    `json:"proxy"`
+	Provider        ProviderSpec `json:"provider"`
 }
 
 type ContianerRef struct {
-	ImageRef `json:",inline"`
+	Registry string `json:"registry"`
+	Tag      string `json:"tag"`
 	// Compute Resources required by the sidecar container.
 	// +optional
 	Resources core.ResourceRequirements `json:"resources"`
 	// Security options the pod should run with.
 	// +optional
 	SecurityContext *core.SecurityContext `json:"securityContext"`
+}
+
+type CleanerRef struct {
+	Registry   string `json:"registry"`
+	Repository string `json:"repository"`
+	Tag        string `json:"tag"`
+	Skip       bool   `json:"skip"`
 }
 
 type ServiceAccountSpec struct {
@@ -114,6 +118,10 @@ type ProxySpec struct {
 	HTTP string `json:"http"`
 	//+optional
 	No string `json:"no"`
+}
+
+type ProviderSpec struct {
+	Name string `json:"name"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

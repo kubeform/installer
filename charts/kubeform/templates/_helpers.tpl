@@ -61,3 +61,10 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Returns the appscode license
+*/}}
+{{- define "appscode.license" -}}
+{{- .Values.license }}
+{{- end }}
