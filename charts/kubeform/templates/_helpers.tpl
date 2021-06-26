@@ -68,3 +68,10 @@ Returns the appscode license
 {{- define "appscode.license" -}}
 {{- .Values.license }}
 {{- end }}
+
+{{/*
+Returns the webhook service name
+*/}}
+{{- define "webhook.serviceName" -}}
+{{- include "kubeform.fullname" . }}-webhook-service
+{{- end }}

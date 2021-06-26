@@ -52,14 +52,16 @@ spec:
             value: {{ . }}
         {{- end }}
         args:
-          - --enable-validating-webhook={{ .Values.operator.enableValidatingWebhook }}
+          - --enable-validating-webhook={{ .Values.webhook.enableValidatingWebhook }}
           - --enable-analytics={{ .Values.enableAnalytics }}
+          - --webhook-name={{ include "webhook.serviceName" . }}
+          - --webhook-namespace={{ .Release.Namespace }}
         {{- if .Values.license }}
           - --license-file=/var/run/secrets/appscode/license/key.txt
         {{- end }}
         resources:
           {{- toYaml .Values.operator.resources | nindent 10 }}
-        {{- if .Values.operator.enableValidatingWebhook }}
+        {{- if .Values.webhook.enableValidatingWebhook }}
         ports:
           - containerPort: 9443
             name: webhook-server
@@ -70,7 +72,7 @@ spec:
           - mountPath: /var/run/secrets/appscode/license
             name: license
         {{- end }}
-        {{- if .Values.operator.enableValidatingWebhook }}
+        {{- if .Values.webhook.enableValidatingWebhook }}
           - mountPath: /tmp/k8s-webhook-server/serving-certs
             name: cert
             readOnly: true
@@ -82,7 +84,7 @@ spec:
             defaultMode: 420
             secretName: {{ include "kubeform.fullname" . }}-license
       {{- end }}
-      {{- if .Values.operator.enableValidatingWebhook }}
+      {{- if .Values.webhook.enableValidatingWebhook }}
         - name: cert
           secret:
             defaultMode: 420
