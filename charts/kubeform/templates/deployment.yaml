@@ -38,11 +38,6 @@ spec:
         image: {{ .Values.operator.registry }}/provider-{{ .Values.provider.name }}-controller:{{ .Values.operator.tag }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         env:
-          - name: TF_STATE_ENC_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "kubeform.serviceAccountName" . }}
-                key: TF_STATE_ENC_KEY
         {{- with .Values.proxy.http }}
           - name: HTTP_PROXY
             value: {{ . }}
@@ -57,18 +52,28 @@ spec:
             value: {{ . }}
         {{- end }}
         args:
-          - run
-          - --secret-key=$(TF_STATE_ENC_KEY)
+          - --enable-validating-webhook={{ .Values.operator.enableValidatingWebhook }}
           - --enable-analytics={{ .Values.enableAnalytics }}
         {{- if .Values.license }}
           - --license-file=/var/run/secrets/appscode/license/key.txt
         {{- end }}
         resources:
           {{- toYaml .Values.operator.resources | nindent 10 }}
+        {{- if .Values.operator.enableValidatingWebhook }}
+        ports:
+          - containerPort: 9443
+            name: webhook-server
+            protocol: TCP
+        {{- end }}
         volumeMounts:
         {{- if .Values.license }}
           - mountPath: /var/run/secrets/appscode/license
             name: license
+        {{- end }}
+        {{- if .Values.operator.enableValidatingWebhook }}
+          - mountPath: /tmp/k8s-webhook-server/serving-certs
+            name: cert
+            readOnly: true
         {{- end }}
       volumes:
       {{- if .Values.license }}
@@ -76,6 +81,12 @@ spec:
           secret:
             defaultMode: 420
             secretName: {{ include "kubeform.fullname" . }}-license
+      {{- end }}
+      {{- if .Values.operator.enableValidatingWebhook }}
+        - name: cert
+          secret:
+            defaultMode: 420
+            secretName: webhook-server-cert
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}

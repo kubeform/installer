@@ -11,7 +11,7 @@ rules:
   - customresourcedefinitions
   verbs: ["*"]
 - apiGroups:
-  - {{ .Values.provider.name }}.kubeform.com
+  - {{ .Values.provider.name }}.kubeform.com # TODO: how to handle multiple groups? i.e. XYZ.provider.kubeform.com
   resources:
   - "*"
   verbs: ["*"]
@@ -48,3 +48,11 @@ rules:
   - roles
   - rolebindings
   verbs: ["get", "create", "delete", "patch"]
+{{- if .Values.operator.enableValidatingWebhook }}
+- apiGroups:
+    - admissionregistration.k8s.io
+  resources:
+    - mutatingwebhookconfigurations
+    - validatingwebhookconfigurations
+  verbs: ["create", "delete", "update", "get", "list", "watch", "patch"]
+{{- end }}
