@@ -1,0 +1,28 @@
+{{- if eq "true" ( include "cleaner.generate" . ) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "kubeform-provider.fullname" . }}-cleaner
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kubeform-provider.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 120
+  template:
+    spec:
+      serviceAccountName: {{ include "kubeform-provider.serviceAccountName" . }}
+      containers:
+      - name: busybox
+        image: {{ include "cleaner.registry" . }}/{{ .Values.cleaner.repository }}:{{ .Values.cleaner.tag }}
+        command:
+          - sh
+          - -c
+          - "sleep 2; \
+          kubectl delete validatingwebhookconfigurations -l app.kubernetes.io/instance=kubeform.com/{{ .Values.provider.name }} || true;"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+      restartPolicy: Never
+{{ end }}

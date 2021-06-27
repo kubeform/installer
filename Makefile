@@ -1,11 +1,10 @@
-# Copyright 2019 AppsCode Inc.
-# Copyright 2016 The Kubernetes Authors.
+# Copyright AppsCode Inc. and Contributors
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the AppsCode Community License 1.0.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#     https://github.com/appscode/licenses/raw/1.0.0/AppsCode-Community-1.0.0.md
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -229,8 +228,11 @@ gen-values-schema: $(BUILD_DIRS)
 	@for dir in charts/*/; do \
 		dir=$${dir%*/}; \
 		dir=$${dir##*/}; \
-		crd=$$(echo $$dir | tr -d '-'); \
-		yq r crds/installer.kubeform.com_$${crd}s.yaml spec.versions[0].schema.openAPIV3Schema.properties.spec > bin/values.openapiv3_schema.yaml; \
+		crd_file=crds/installer.kubedb.com_$$(echo $$dir | tr -d '-')s.yaml; \
+		if [ ! -f $${crd_file} ]; then \
+			continue; \
+		fi; \
+		yq r $${crd_file} spec.versions[0].schema.openAPIV3Schema.properties.spec > bin/values.openapiv3_schema.yaml; \
 		yq d bin/values.openapiv3_schema.yaml description > charts/$${dir}/values.openapiv3_schema.yaml; \
 		rm -rf bin/values.openapiv3_schema.yaml; \
 	done
@@ -376,7 +378,11 @@ ct: $(BUILD_DIRS)
 	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
 	    --env KUBECONFIG=$(subst $(HOME),,$(KUBECONFIG))        \
 	    $(CHART_TEST_IMAGE)                                     \
-	    ct lint-and-install --debug $(CT_ARGS)
+	    /bin/sh -c "                                            \
+	        kubectl delete crds --selector=app.kubernetes.io/name=kubeform; \
+	        ./hack/scripts/update-chart-dependencies.sh;                    \
+	        ct $(CT_COMMAND) --debug $(CT_ARGS)                             \
+	    "
 
 ADDTL_LINTERS   := goconst,gofmt,goimports,unparam
 
