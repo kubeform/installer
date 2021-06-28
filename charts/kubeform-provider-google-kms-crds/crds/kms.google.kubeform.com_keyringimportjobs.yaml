@@ -1,0 +1,336 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: keyringimportjobs.kms.google.kubeform.com
+spec:
+  group: kms.google.kubeform.com
+  names:
+    kind: KeyRingImportJob
+    listKind: KeyRingImportJobList
+    plural: keyringimportjobs
+    singular: keyringimportjob
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              attestation:
+                description: Statement that was generated and signed by the key creator
+                  (for example, an HSM) at key creation time. Use this statement to
+                  verify attributes of the key as stored on the HSM, independently
+                  of Google. Only present if the chosen ImportMethod is one with a
+                  protection level of HSM.
+                items:
+                  properties:
+                    content:
+                      description: The attestation data provided by the HSM when the
+                        key operation was performed. A base64-encoded string.
+                      type: string
+                    format:
+                      description: The format of the attestation data.
+                      type: string
+                  type: object
+                type: array
+              expireTime:
+                description: The time at which this resource is scheduled for expiration
+                  and can no longer be used. This is in RFC3339 text format.
+                type: string
+              id:
+                type: string
+              importJobID:
+                description: It must be unique within a KeyRing and match the regular
+                  expression [a-zA-Z0-9_-]{1,63}
+                type: string
+              importMethod:
+                description: 'The wrapping method to be used for incoming key material.
+                  Possible values: ["RSA_OAEP_3072_SHA1_AES_256", "RSA_OAEP_4096_SHA1_AES_256"]'
+                type: string
+              keyRing:
+                description: 'The KeyRing that this import job belongs to. Format:
+                  ''''projects/{{project}}/locations/{{location}}/keyRings/{{keyRing}}''''.'
+                type: string
+              kubeformOutput:
+                properties:
+                  attestation:
+                    description: Statement that was generated and signed by the key
+                      creator (for example, an HSM) at key creation time. Use this
+                      statement to verify attributes of the key as stored on the HSM,
+                      independently of Google. Only present if the chosen ImportMethod
+                      is one with a protection level of HSM.
+                    items:
+                      properties:
+                        content:
+                          description: The attestation data provided by the HSM when
+                            the key operation was performed. A base64-encoded string.
+                          type: string
+                        format:
+                          description: The format of the attestation data.
+                          type: string
+                      type: object
+                    type: array
+                  expireTime:
+                    description: The time at which this resource is scheduled for
+                      expiration and can no longer be used. This is in RFC3339 text
+                      format.
+                    type: string
+                  id:
+                    type: string
+                  importJobID:
+                    description: It must be unique within a KeyRing and match the
+                      regular expression [a-zA-Z0-9_-]{1,63}
+                    type: string
+                  importMethod:
+                    description: 'The wrapping method to be used for incoming key
+                      material. Possible values: ["RSA_OAEP_3072_SHA1_AES_256", "RSA_OAEP_4096_SHA1_AES_256"]'
+                    type: string
+                  keyRing:
+                    description: 'The KeyRing that this import job belongs to. Format:
+                      ''''projects/{{project}}/locations/{{location}}/keyRings/{{keyRing}}''''.'
+                    type: string
+                  name:
+                    description: The resource name for this ImportJob in the format
+                      projects/*/locations/*/keyRings/*/importJobs/*.
+                    type: string
+                  protectionLevel:
+                    description: 'The protection level of the ImportJob. This must
+                      match the protectionLevel of the versionTemplate on the CryptoKey
+                      you attempt to import into. Possible values: ["SOFTWARE", "HSM",
+                      "EXTERNAL"]'
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  publicKey:
+                    description: The public key with which to wrap key material prior
+                      to import. Only returned if state is 'ACTIVE'.
+                    items:
+                      properties:
+                        pem:
+                          description: The public key, encoded in PEM format. For
+                            more information, see the RFC 7468 sections for General
+                            Considerations and Textual Encoding of Subject Public
+                            Key Info.
+                          type: string
+                      type: object
+                    type: array
+                  state:
+                    description: The current state of the ImportJob, indicating if
+                      it can be used.
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - importJobID
+                - importMethod
+                - keyRing
+                - protectionLevel
+                - providerRef
+                type: object
+              name:
+                description: The resource name for this ImportJob in the format projects/*/locations/*/keyRings/*/importJobs/*.
+                type: string
+              protectionLevel:
+                description: 'The protection level of the ImportJob. This must match
+                  the protectionLevel of the versionTemplate on the CryptoKey you
+                  attempt to import into. Possible values: ["SOFTWARE", "HSM", "EXTERNAL"]'
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              publicKey:
+                description: The public key with which to wrap key material prior
+                  to import. Only returned if state is 'ACTIVE'.
+                items:
+                  properties:
+                    pem:
+                      description: The public key, encoded in PEM format. For more
+                        information, see the RFC 7468 sections for General Considerations
+                        and Textual Encoding of Subject Public Key Info.
+                      type: string
+                  type: object
+                type: array
+              state:
+                description: The current state of the ImportJob, indicating if it
+                  can be used.
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - importJobID
+            - importMethod
+            - keyRing
+            - protectionLevel
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

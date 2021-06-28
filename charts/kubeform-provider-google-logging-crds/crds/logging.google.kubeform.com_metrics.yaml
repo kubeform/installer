@@ -1,0 +1,527 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: metrics.logging.google.kubeform.com
+spec:
+  group: logging.google.kubeform.com
+  names:
+    kind: Metric
+    listKind: MetricList
+    plural: metrics
+    singular: metric
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              bucketOptions:
+                description: The bucketOptions are required when the logs-based metric
+                  is using a DISTRIBUTION value type and it describes the bucket boundaries
+                  used to create a histogram of the extracted values.
+                properties:
+                  explicitBuckets:
+                    description: Specifies a set of buckets with arbitrary widths.
+                    properties:
+                      bounds:
+                        description: The values must be monotonically increasing.
+                        items:
+                          format: double
+                          type: number
+                        type: array
+                    required:
+                    - bounds
+                    type: object
+                  exponentialBuckets:
+                    description: Specifies an exponential sequence of buckets that
+                      have a width that is proportional to the value of the lower
+                      bound. Each bucket represents a constant relative uncertainty
+                      on a specific value in the bucket.
+                    properties:
+                      growthFactor:
+                        description: Must be greater than 1.
+                        format: double
+                        type: number
+                      numFiniteBuckets:
+                        description: Must be greater than 0.
+                        format: int64
+                        type: integer
+                      scale:
+                        description: Must be greater than 0.
+                        format: double
+                        type: number
+                    type: object
+                  linearBuckets:
+                    description: Specifies a linear sequence of buckets that all have
+                      the same width (except overflow and underflow). Each bucket
+                      represents a constant absolute uncertainty on the specific value
+                      in the bucket.
+                    properties:
+                      numFiniteBuckets:
+                        description: Must be greater than 0.
+                        format: int64
+                        type: integer
+                      offset:
+                        description: Lower bound of the first bucket.
+                        format: double
+                        type: number
+                      width:
+                        description: Must be greater than 0.
+                        format: int64
+                        type: integer
+                    type: object
+                type: object
+              description:
+                description: A description of this metric, which is used in documentation.
+                  The maximum length of the description is 8000 characters.
+                type: string
+              filter:
+                description: An advanced logs filter (https://cloud.google.com/logging/docs/view/advanced-filters)
+                  which is used to match log entries.
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  bucketOptions:
+                    description: The bucketOptions are required when the logs-based
+                      metric is using a DISTRIBUTION value type and it describes the
+                      bucket boundaries used to create a histogram of the extracted
+                      values.
+                    properties:
+                      explicitBuckets:
+                        description: Specifies a set of buckets with arbitrary widths.
+                        properties:
+                          bounds:
+                            description: The values must be monotonically increasing.
+                            items:
+                              format: double
+                              type: number
+                            type: array
+                        required:
+                        - bounds
+                        type: object
+                      exponentialBuckets:
+                        description: Specifies an exponential sequence of buckets
+                          that have a width that is proportional to the value of the
+                          lower bound. Each bucket represents a constant relative
+                          uncertainty on a specific value in the bucket.
+                        properties:
+                          growthFactor:
+                            description: Must be greater than 1.
+                            format: double
+                            type: number
+                          numFiniteBuckets:
+                            description: Must be greater than 0.
+                            format: int64
+                            type: integer
+                          scale:
+                            description: Must be greater than 0.
+                            format: double
+                            type: number
+                        type: object
+                      linearBuckets:
+                        description: Specifies a linear sequence of buckets that all
+                          have the same width (except overflow and underflow). Each
+                          bucket represents a constant absolute uncertainty on the
+                          specific value in the bucket.
+                        properties:
+                          numFiniteBuckets:
+                            description: Must be greater than 0.
+                            format: int64
+                            type: integer
+                          offset:
+                            description: Lower bound of the first bucket.
+                            format: double
+                            type: number
+                          width:
+                            description: Must be greater than 0.
+                            format: int64
+                            type: integer
+                        type: object
+                    type: object
+                  description:
+                    description: A description of this metric, which is used in documentation.
+                      The maximum length of the description is 8000 characters.
+                    type: string
+                  filter:
+                    description: An advanced logs filter (https://cloud.google.com/logging/docs/view/advanced-filters)
+                      which is used to match log entries.
+                    type: string
+                  id:
+                    type: string
+                  labelExtractors:
+                    additionalProperties:
+                      type: string
+                    description: A map from a label key string to an extractor expression
+                      which is used to extract data from a log entry field and assign
+                      as the label value. Each label key specified in the LabelDescriptor
+                      must have an associated extractor expression in this map. The
+                      syntax of the extractor expression is the same as for the valueExtractor
+                      field.
+                    type: object
+                  metricDescriptor:
+                    description: The metric descriptor associated with the logs-based
+                      metric.
+                    properties:
+                      displayName:
+                        description: A concise name for the metric, which can be displayed
+                          in user interfaces. Use sentence case without an ending
+                          period, for example "Request count". This field is optional
+                          but it is recommended to be set for any metrics associated
+                          with user-visible concepts, such as Quota.
+                        type: string
+                      labels:
+                        description: The set of labels that can be used to describe
+                          a specific instance of this metric type. For example, the
+                          appengine.googleapis.com/http/server/response_latencies
+                          metric type has a label for the HTTP response code, response_code,
+                          so you can look at latencies for successful responses or
+                          just for responses that failed.
+                        items:
+                          properties:
+                            description:
+                              description: A human-readable description for the label.
+                              type: string
+                            key:
+                              description: The label key.
+                              type: string
+                            valueType:
+                              description: 'The type of data that can be assigned
+                                to the label. Default value: "STRING" Possible values:
+                                ["BOOL", "INT64", "STRING"]'
+                              type: string
+                          required:
+                          - key
+                          type: object
+                        type: array
+                      metricKind:
+                        description: 'Whether the metric records instantaneous values,
+                          changes to a value, etc. Some combinations of metricKind
+                          and valueType might not be supported. For counter metrics,
+                          set this to DELTA. Possible values: ["DELTA", "GAUGE", "CUMULATIVE"]'
+                        type: string
+                      unit:
+                        description: The unit in which the metric value is reported.
+                          It is only applicable if the valueType is 'INT64', 'DOUBLE',
+                          or 'DISTRIBUTION'. The supported units are a subset of [The
+                          Unified Code for Units of Measure](http://unitsofmeasure.org/ucum.html)
+                          standard
+                        type: string
+                      valueType:
+                        description: 'Whether the measurement is an integer, a floating-point
+                          number, etc. Some combinations of metricKind and valueType
+                          might not be supported. For counter metrics, set this to
+                          INT64. Possible values: ["BOOL", "INT64", "DOUBLE", "STRING",
+                          "DISTRIBUTION", "MONEY"]'
+                        type: string
+                    required:
+                    - metricKind
+                    - valueType
+                    type: object
+                  name:
+                    description: The client-assigned metric identifier. Examples -
+                      "error_count", "nginx/requests". Metric identifiers are limited
+                      to 100 characters and can include only the following characters
+                      A-Z, a-z, 0-9, and the special characters _-.,+!*',()%/. The
+                      forward-slash character (/) denotes a hierarchy of name pieces,
+                      and it cannot be the first character of the name.
+                    type: string
+                  project:
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                  valueExtractor:
+                    description: A valueExtractor is required when using a distribution
+                      logs-based metric to extract the values to record from a log
+                      entry. Two functions are supported for value extraction - EXTRACT(field)
+                      or REGEXP_EXTRACT(field, regex). The argument are 1. field -
+                      The name of the log entry field from which the value is to be
+                      extracted. 2. regex - A regular expression using the Google
+                      RE2 syntax (https://github.com/google/re2/wiki/Syntax) with
+                      a single capture group to extract data from the specified log
+                      entry field. The value of the field is converted to a string
+                      before applying the regex. It is an error to specify a regex
+                      that does not include exactly one capture group.
+                    type: string
+                required:
+                - filter
+                - metricDescriptor
+                - name
+                - providerRef
+                type: object
+              labelExtractors:
+                additionalProperties:
+                  type: string
+                description: A map from a label key string to an extractor expression
+                  which is used to extract data from a log entry field and assign
+                  as the label value. Each label key specified in the LabelDescriptor
+                  must have an associated extractor expression in this map. The syntax
+                  of the extractor expression is the same as for the valueExtractor
+                  field.
+                type: object
+              metricDescriptor:
+                description: The metric descriptor associated with the logs-based
+                  metric.
+                properties:
+                  displayName:
+                    description: A concise name for the metric, which can be displayed
+                      in user interfaces. Use sentence case without an ending period,
+                      for example "Request count". This field is optional but it is
+                      recommended to be set for any metrics associated with user-visible
+                      concepts, such as Quota.
+                    type: string
+                  labels:
+                    description: The set of labels that can be used to describe a
+                      specific instance of this metric type. For example, the appengine.googleapis.com/http/server/response_latencies
+                      metric type has a label for the HTTP response code, response_code,
+                      so you can look at latencies for successful responses or just
+                      for responses that failed.
+                    items:
+                      properties:
+                        description:
+                          description: A human-readable description for the label.
+                          type: string
+                        key:
+                          description: The label key.
+                          type: string
+                        valueType:
+                          description: 'The type of data that can be assigned to the
+                            label. Default value: "STRING" Possible values: ["BOOL",
+                            "INT64", "STRING"]'
+                          type: string
+                      required:
+                      - key
+                      type: object
+                    type: array
+                  metricKind:
+                    description: 'Whether the metric records instantaneous values,
+                      changes to a value, etc. Some combinations of metricKind and
+                      valueType might not be supported. For counter metrics, set this
+                      to DELTA. Possible values: ["DELTA", "GAUGE", "CUMULATIVE"]'
+                    type: string
+                  unit:
+                    description: The unit in which the metric value is reported. It
+                      is only applicable if the valueType is 'INT64', 'DOUBLE', or
+                      'DISTRIBUTION'. The supported units are a subset of [The Unified
+                      Code for Units of Measure](http://unitsofmeasure.org/ucum.html)
+                      standard
+                    type: string
+                  valueType:
+                    description: 'Whether the measurement is an integer, a floating-point
+                      number, etc. Some combinations of metricKind and valueType might
+                      not be supported. For counter metrics, set this to INT64. Possible
+                      values: ["BOOL", "INT64", "DOUBLE", "STRING", "DISTRIBUTION",
+                      "MONEY"]'
+                    type: string
+                required:
+                - metricKind
+                - valueType
+                type: object
+              name:
+                description: The client-assigned metric identifier. Examples - "error_count",
+                  "nginx/requests". Metric identifiers are limited to 100 characters
+                  and can include only the following characters A-Z, a-z, 0-9, and
+                  the special characters _-.,+!*',()%/. The forward-slash character
+                  (/) denotes a hierarchy of name pieces, and it cannot be the first
+                  character of the name.
+                type: string
+              project:
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+              valueExtractor:
+                description: A valueExtractor is required when using a distribution
+                  logs-based metric to extract the values to record from a log entry.
+                  Two functions are supported for value extraction - EXTRACT(field)
+                  or REGEXP_EXTRACT(field, regex). The argument are 1. field - The
+                  name of the log entry field from which the value is to be extracted.
+                  2. regex - A regular expression using the Google RE2 syntax (https://github.com/google/re2/wiki/Syntax)
+                  with a single capture group to extract data from the specified log
+                  entry field. The value of the field is converted to a string before
+                  applying the regex. It is an error to specify a regex that does
+                  not include exactly one capture group.
+                type: string
+            required:
+            - filter
+            - metricDescriptor
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

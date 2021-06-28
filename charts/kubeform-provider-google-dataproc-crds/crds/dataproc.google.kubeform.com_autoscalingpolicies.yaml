@@ -1,0 +1,523 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: autoscalingpolicies.dataproc.google.kubeform.com
+spec:
+  group: dataproc.google.kubeform.com
+  names:
+    kind: AutoscalingPolicy
+    listKind: AutoscalingPolicyList
+    plural: autoscalingpolicies
+    singular: autoscalingpolicy
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              basicAlgorithm:
+                description: Basic algorithm for autoscaling.
+                properties:
+                  cooldownPeriod:
+                    description: "Duration between scaling events. A scaling period
+                      starts after the update operation from the previous event has
+                      completed. \n Bounds: [2m, 1d]. Default: 2m."
+                    type: string
+                  yarnConfig:
+                    description: YARN autoscaling configuration.
+                    properties:
+                      gracefulDecommissionTimeout:
+                        description: "Timeout for YARN graceful decommissioning of
+                          Node Managers. Specifies the duration to wait for jobs to
+                          complete before forcefully removing workers (and potentially
+                          interrupting jobs). Only applicable to downscaling operations.
+                          \n Bounds: [0s, 1d]."
+                        type: string
+                      scaleDownFactor:
+                        description: "Fraction of average pending memory in the last
+                          cooldown period for which to remove workers. A scale-down
+                          factor of 1 will result in scaling down so that there is
+                          no available memory remaining after the update (more aggressive
+                          scaling). A scale-down factor of 0 disables removing workers,
+                          which can be beneficial for autoscaling a single job. \n
+                          Bounds: [0.0, 1.0]."
+                        format: double
+                        type: number
+                      scaleDownMinWorkerFraction:
+                        description: "Minimum scale-down threshold as a fraction of
+                          total cluster size before scaling occurs. For example, in
+                          a 20-worker cluster, a threshold of 0.1 means the autoscaler
+                          must recommend at least a 2 worker scale-down for the cluster
+                          to scale. A threshold of 0 means the autoscaler will scale
+                          down on any recommended change. \n Bounds: [0.0, 1.0]. Default:
+                          0.0."
+                        format: double
+                        type: number
+                      scaleUpFactor:
+                        description: "Fraction of average pending memory in the last
+                          cooldown period for which to add workers. A scale-up factor
+                          of 1.0 will result in scaling up so that there is no pending
+                          memory remaining after the update (more aggressive scaling).
+                          A scale-up factor closer to 0 will result in a smaller magnitude
+                          of scaling up (less aggressive scaling). \n Bounds: [0.0,
+                          1.0]."
+                        format: double
+                        type: number
+                      scaleUpMinWorkerFraction:
+                        description: "Minimum scale-up threshold as a fraction of
+                          total cluster size before scaling occurs. For example, in
+                          a 20-worker cluster, a threshold of 0.1 means the autoscaler
+                          must recommend at least a 2-worker scale-up for the cluster
+                          to scale. A threshold of 0 means the autoscaler will scale
+                          up on any recommended change. \n Bounds: [0.0, 1.0]. Default:
+                          0.0."
+                        format: double
+                        type: number
+                    required:
+                    - gracefulDecommissionTimeout
+                    - scaleDownFactor
+                    - scaleUpFactor
+                    type: object
+                required:
+                - yarnConfig
+                type: object
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  basicAlgorithm:
+                    description: Basic algorithm for autoscaling.
+                    properties:
+                      cooldownPeriod:
+                        description: "Duration between scaling events. A scaling period
+                          starts after the update operation from the previous event
+                          has completed. \n Bounds: [2m, 1d]. Default: 2m."
+                        type: string
+                      yarnConfig:
+                        description: YARN autoscaling configuration.
+                        properties:
+                          gracefulDecommissionTimeout:
+                            description: "Timeout for YARN graceful decommissioning
+                              of Node Managers. Specifies the duration to wait for
+                              jobs to complete before forcefully removing workers
+                              (and potentially interrupting jobs). Only applicable
+                              to downscaling operations. \n Bounds: [0s, 1d]."
+                            type: string
+                          scaleDownFactor:
+                            description: "Fraction of average pending memory in the
+                              last cooldown period for which to remove workers. A
+                              scale-down factor of 1 will result in scaling down so
+                              that there is no available memory remaining after the
+                              update (more aggressive scaling). A scale-down factor
+                              of 0 disables removing workers, which can be beneficial
+                              for autoscaling a single job. \n Bounds: [0.0, 1.0]."
+                            format: double
+                            type: number
+                          scaleDownMinWorkerFraction:
+                            description: "Minimum scale-down threshold as a fraction
+                              of total cluster size before scaling occurs. For example,
+                              in a 20-worker cluster, a threshold of 0.1 means the
+                              autoscaler must recommend at least a 2 worker scale-down
+                              for the cluster to scale. A threshold of 0 means the
+                              autoscaler will scale down on any recommended change.
+                              \n Bounds: [0.0, 1.0]. Default: 0.0."
+                            format: double
+                            type: number
+                          scaleUpFactor:
+                            description: "Fraction of average pending memory in the
+                              last cooldown period for which to add workers. A scale-up
+                              factor of 1.0 will result in scaling up so that there
+                              is no pending memory remaining after the update (more
+                              aggressive scaling). A scale-up factor closer to 0 will
+                              result in a smaller magnitude of scaling up (less aggressive
+                              scaling). \n Bounds: [0.0, 1.0]."
+                            format: double
+                            type: number
+                          scaleUpMinWorkerFraction:
+                            description: "Minimum scale-up threshold as a fraction
+                              of total cluster size before scaling occurs. For example,
+                              in a 20-worker cluster, a threshold of 0.1 means the
+                              autoscaler must recommend at least a 2-worker scale-up
+                              for the cluster to scale. A threshold of 0 means the
+                              autoscaler will scale up on any recommended change.
+                              \n Bounds: [0.0, 1.0]. Default: 0.0."
+                            format: double
+                            type: number
+                        required:
+                        - gracefulDecommissionTimeout
+                        - scaleDownFactor
+                        - scaleUpFactor
+                        type: object
+                    required:
+                    - yarnConfig
+                    type: object
+                  id:
+                    type: string
+                  location:
+                    description: The  location where the autoscaling policy should
+                      reside. The default value is 'global'.
+                    type: string
+                  name:
+                    description: The "resource name" of the autoscaling policy.
+                    type: string
+                  policyID:
+                    description: The policy id. The id must contain only letters (a-z,
+                      A-Z), numbers (0-9), underscores (_), and hyphens (-). Cannot
+                      begin or end with underscore or hyphen. Must consist of between
+                      3 and 50 characters.
+                    type: string
+                  project:
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  secondaryWorkerConfig:
+                    description: Describes how the autoscaler will operate for secondary
+                      workers.
+                    properties:
+                      maxInstances:
+                        description: 'Maximum number of instances for this group.
+                          Note that by default, clusters will not use secondary workers.
+                          Required for secondary workers if the minimum secondary
+                          instances is set. Bounds: [minInstances, ). Defaults to
+                          0.'
+                        format: int64
+                        type: integer
+                      minInstances:
+                        description: 'Minimum number of instances for this group.
+                          Bounds: [0, maxInstances]. Defaults to 0.'
+                        format: int64
+                        type: integer
+                      weight:
+                        description: "Weight for the instance group, which is used
+                          to determine the fraction of total workers in the cluster
+                          from this instance group. For example, if primary workers
+                          have weight 2, and secondary workers have weight 1, the
+                          cluster will have approximately 2 primary workers for each
+                          secondary worker. \n The cluster may not reach the specified
+                          balance if constrained by min/max bounds or other autoscaling
+                          settings. For example, if maxInstances for secondary workers
+                          is 0, then only primary workers will be added. The cluster
+                          can also be out of balance when created. \n If weight is
+                          not set on any instance group, the cluster will default
+                          to equal weight for all groups: the cluster will attempt
+                          to maintain an equal number of workers in each group within
+                          the configured size bounds for each group. If weight is
+                          set for one group only, the cluster will default to zero
+                          weight on the unset group. For example if weight is set
+                          only on primary workers, the cluster will use primary workers
+                          only and no secondary workers."
+                        format: int64
+                        type: integer
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                  workerConfig:
+                    description: Describes how the autoscaler will operate for primary
+                      workers.
+                    properties:
+                      maxInstances:
+                        description: Maximum number of instances for this group.
+                        format: int64
+                        type: integer
+                      minInstances:
+                        description: 'Minimum number of instances for this group.
+                          Bounds: [2, maxInstances]. Defaults to 2.'
+                        format: int64
+                        type: integer
+                      weight:
+                        description: "Weight for the instance group, which is used
+                          to determine the fraction of total workers in the cluster
+                          from this instance group. For example, if primary workers
+                          have weight 2, and secondary workers have weight 1, the
+                          cluster will have approximately 2 primary workers for each
+                          secondary worker. \n The cluster may not reach the specified
+                          balance if constrained by min/max bounds or other autoscaling
+                          settings. For example, if maxInstances for secondary workers
+                          is 0, then only primary workers will be added. The cluster
+                          can also be out of balance when created. \n If weight is
+                          not set on any instance group, the cluster will default
+                          to equal weight for all groups: the cluster will attempt
+                          to maintain an equal number of workers in each group within
+                          the configured size bounds for each group. If weight is
+                          set for one group only, the cluster will default to zero
+                          weight on the unset group. For example if weight is set
+                          only on primary workers, the cluster will use primary workers
+                          only and no secondary workers."
+                        format: int64
+                        type: integer
+                    required:
+                    - maxInstances
+                    type: object
+                required:
+                - policyID
+                - providerRef
+                type: object
+              location:
+                description: The  location where the autoscaling policy should reside.
+                  The default value is 'global'.
+                type: string
+              name:
+                description: The "resource name" of the autoscaling policy.
+                type: string
+              policyID:
+                description: The policy id. The id must contain only letters (a-z,
+                  A-Z), numbers (0-9), underscores (_), and hyphens (-). Cannot begin
+                  or end with underscore or hyphen. Must consist of between 3 and
+                  50 characters.
+                type: string
+              project:
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              secondaryWorkerConfig:
+                description: Describes how the autoscaler will operate for secondary
+                  workers.
+                properties:
+                  maxInstances:
+                    description: 'Maximum number of instances for this group. Note
+                      that by default, clusters will not use secondary workers. Required
+                      for secondary workers if the minimum secondary instances is
+                      set. Bounds: [minInstances, ). Defaults to 0.'
+                    format: int64
+                    type: integer
+                  minInstances:
+                    description: 'Minimum number of instances for this group. Bounds:
+                      [0, maxInstances]. Defaults to 0.'
+                    format: int64
+                    type: integer
+                  weight:
+                    description: "Weight for the instance group, which is used to
+                      determine the fraction of total workers in the cluster from
+                      this instance group. For example, if primary workers have weight
+                      2, and secondary workers have weight 1, the cluster will have
+                      approximately 2 primary workers for each secondary worker. \n
+                      The cluster may not reach the specified balance if constrained
+                      by min/max bounds or other autoscaling settings. For example,
+                      if maxInstances for secondary workers is 0, then only primary
+                      workers will be added. The cluster can also be out of balance
+                      when created. \n If weight is not set on any instance group,
+                      the cluster will default to equal weight for all groups: the
+                      cluster will attempt to maintain an equal number of workers
+                      in each group within the configured size bounds for each group.
+                      If weight is set for one group only, the cluster will default
+                      to zero weight on the unset group. For example if weight is
+                      set only on primary workers, the cluster will use primary workers
+                      only and no secondary workers."
+                    format: int64
+                    type: integer
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+              workerConfig:
+                description: Describes how the autoscaler will operate for primary
+                  workers.
+                properties:
+                  maxInstances:
+                    description: Maximum number of instances for this group.
+                    format: int64
+                    type: integer
+                  minInstances:
+                    description: 'Minimum number of instances for this group. Bounds:
+                      [2, maxInstances]. Defaults to 2.'
+                    format: int64
+                    type: integer
+                  weight:
+                    description: "Weight for the instance group, which is used to
+                      determine the fraction of total workers in the cluster from
+                      this instance group. For example, if primary workers have weight
+                      2, and secondary workers have weight 1, the cluster will have
+                      approximately 2 primary workers for each secondary worker. \n
+                      The cluster may not reach the specified balance if constrained
+                      by min/max bounds or other autoscaling settings. For example,
+                      if maxInstances for secondary workers is 0, then only primary
+                      workers will be added. The cluster can also be out of balance
+                      when created. \n If weight is not set on any instance group,
+                      the cluster will default to equal weight for all groups: the
+                      cluster will attempt to maintain an equal number of workers
+                      in each group within the configured size bounds for each group.
+                      If weight is set for one group only, the cluster will default
+                      to zero weight on the unset group. For example if weight is
+                      set only on primary workers, the cluster will use primary workers
+                      only and no secondary workers."
+                    format: int64
+                    type: integer
+                required:
+                - maxInstances
+                type: object
+            required:
+            - policyID
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

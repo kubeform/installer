@@ -1,11 +1,10 @@
-# Copyright 2019 AppsCode Inc.
-# Copyright 2016 The Kubernetes Authors.
+# Copyright AppsCode Inc. and Contributors
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the AppsCode Community License 1.0.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#     https://github.com/appscode/licenses/raw/1.0.0/AppsCode-Community-1.0.0.md
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,7 +49,7 @@ endif
 ###
 
 SRC_PKGS := apis # directories which hold app source (not vendored)
-SRC_DIRS := $(SRC_PKGS)
+SRC_DIRS := $(SRC_PKGS) hack/generate
 
 DOCKER_PLATFORMS := linux/amd64 linux/arm linux/arm64
 BIN_PLATFORMS    := $(DOCKER_PLATFORMS)
@@ -64,7 +63,7 @@ BASEIMAGE_DBG    ?= debian:buster
 
 GO_VERSION       ?= 1.16
 BUILD_IMAGE      ?= appscode/golang-dev:$(GO_VERSION)
-CHART_TEST_IMAGE ?= quay.io/helmpack/chart-testing:v3.0.0
+CHART_TEST_IMAGE ?= quay.io/helmpack/chart-testing:v3.4.0
 
 OUTBIN = bin/$(OS)_$(ARCH)/$(BIN)
 ifeq ($(OS),windows)
@@ -229,8 +228,11 @@ gen-values-schema: $(BUILD_DIRS)
 	@for dir in charts/*/; do \
 		dir=$${dir%*/}; \
 		dir=$${dir##*/}; \
-		crd=$$(echo $$dir | tr -d '-'); \
-		yq r crds/installer.kubeform.com_$${crd}s.yaml spec.versions[0].schema.openAPIV3Schema.properties.spec > bin/values.openapiv3_schema.yaml; \
+		crd_file=crds/installer.kubedb.com_$$(echo $$dir | tr -d '-')s.yaml; \
+		if [ ! -f $${crd_file} ]; then \
+			continue; \
+		fi; \
+		yq r $${crd_file} spec.versions[0].schema.openAPIV3Schema.properties.spec > bin/values.openapiv3_schema.yaml; \
 		yq d bin/values.openapiv3_schema.yaml description > charts/$${dir}/values.openapiv3_schema.yaml; \
 		rm -rf bin/values.openapiv3_schema.yaml; \
 	done
@@ -349,13 +351,18 @@ unit-tests: $(BUILD_DIRS)
 	        ./hack/test.sh $(SRC_PKGS)                          \
 	    "
 
+CT_COMMAND     ?= lint-and-install
 TEST_CHARTS    ?=
 KUBE_NAMESPACE ?=
 
+ifeq ($(CT_COMMAND),lint-and-install)
+	ct_namespace = --namespace=$(KUBE_NAMESPACE)
+endif
+
 ifeq ($(strip $(TEST_CHARTS)),)
-	CT_ARGS = --all --namespace=$(KUBE_NAMESPACE)
+	CT_ARGS = --all $(ct_namespace)
 else
-	CT_ARGS = --charts=$(TEST_CHARTS) --namespace=$(KUBE_NAMESPACE)
+	CT_ARGS = --charts=$(TEST_CHARTS) $(ct_namespace)
 endif
 
 .PHONY: ct
@@ -363,6 +370,7 @@ ct: $(BUILD_DIRS)
 	@docker run                                                 \
 	    -i                                                      \
 	    --rm                                                    \
+	    -u $$(id -u):$$(id -g)                                  \
 	    -v $$(pwd):/src                                         \
 	    -w /src                                                 \
 	    --net=host                                              \
@@ -376,7 +384,11 @@ ct: $(BUILD_DIRS)
 	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
 	    --env KUBECONFIG=$(subst $(HOME),,$(KUBECONFIG))        \
 	    $(CHART_TEST_IMAGE)                                     \
-	    ct lint-and-install --debug $(CT_ARGS)
+	    /bin/sh -c "                                            \
+	        kubectl delete crds --selector=app.kubernetes.io/name=kubeform;  \
+	        ./hack/scripts/update-chart-dependencies.sh;                     \
+	        ct $(CT_COMMAND) --debug --validate-maintainers=false $(CT_ARGS) \
+	    "
 
 ADDTL_LINTERS   := goconst,gofmt,goimports,unparam
 

@@ -1,0 +1,1062 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: sloes.monitoring.google.kubeform.com
+spec:
+  group: monitoring.google.kubeform.com
+  names:
+    kind: Slo
+    listKind: SloList
+    plural: sloes
+    singular: slo
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              basicSli:
+                description: "Basic Service-Level Indicator (SLI) on a well-known
+                  service type. Performance will be computed on the basis of pre-defined
+                  metrics. \n SLIs are used to measure and calculate the quality of
+                  the Service's performance with respect to a single aspect of service
+                  quality. \n Exactly one of the following must be set: 'basic_sli',
+                  'request_based_sli', 'windows_based_sli'"
+                properties:
+                  availability:
+                    description: Availability based SLI, dervied from count of requests
+                      made to this service that return successfully.
+                    properties:
+                      enabled:
+                        description: Whether an availability SLI is enabled or not.
+                          Must be set to true. Defaults to 'true'.
+                        type: boolean
+                    type: object
+                  latency:
+                    description: Parameters for a latency threshold SLI.
+                    properties:
+                      threshold:
+                        description: A duration string, e.g. 10s. Good service is
+                          defined to be the count of requests made to this service
+                          that return in no more than threshold.
+                        type: string
+                    required:
+                    - threshold
+                    type: object
+                  location:
+                    description: An optional set of locations to which this SLI is
+                      relevant. Telemetry from other locations will not be used to
+                      calculate performance for this SLI. If omitted, this SLI applies
+                      to all locations in which the Service has activity. For service
+                      types that don't support breaking down by location, setting
+                      this field will result in an error.
+                    items:
+                      type: string
+                    type: array
+                  method:
+                    description: An optional set of RPCs to which this SLI is relevant.
+                      Telemetry from other methods will not be used to calculate performance
+                      for this SLI. If omitted, this SLI applies to all the Service's
+                      methods. For service types that don't support breaking down
+                      by method, setting this field will result in an error.
+                    items:
+                      type: string
+                    type: array
+                  version:
+                    description: The set of API versions to which this SLI is relevant.
+                      Telemetry from other API versions will not be used to calculate
+                      performance for this SLI. If omitted, this SLI applies to all
+                      API versions. For service types that don't support breaking
+                      down by version, setting this field will result in an error.
+                    items:
+                      type: string
+                    type: array
+                type: object
+              calendarPeriod:
+                description: 'A calendar period, semantically "since the start of
+                  the current <calendarPeriod>". Possible values: ["DAY", "WEEK",
+                  "FORTNIGHT", "MONTH"]'
+                type: string
+              displayName:
+                description: Name used for UI elements listing this SLO.
+                type: string
+              goal:
+                description: The fraction of service that must be good in order for
+                  this objective to be met. 0 < goal <= 0.999
+                format: double
+                type: number
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  basicSli:
+                    description: "Basic Service-Level Indicator (SLI) on a well-known
+                      service type. Performance will be computed on the basis of pre-defined
+                      metrics. \n SLIs are used to measure and calculate the quality
+                      of the Service's performance with respect to a single aspect
+                      of service quality. \n Exactly one of the following must be
+                      set: 'basic_sli', 'request_based_sli', 'windows_based_sli'"
+                    properties:
+                      availability:
+                        description: Availability based SLI, dervied from count of
+                          requests made to this service that return successfully.
+                        properties:
+                          enabled:
+                            description: Whether an availability SLI is enabled or
+                              not. Must be set to true. Defaults to 'true'.
+                            type: boolean
+                        type: object
+                      latency:
+                        description: Parameters for a latency threshold SLI.
+                        properties:
+                          threshold:
+                            description: A duration string, e.g. 10s. Good service
+                              is defined to be the count of requests made to this
+                              service that return in no more than threshold.
+                            type: string
+                        required:
+                        - threshold
+                        type: object
+                      location:
+                        description: An optional set of locations to which this SLI
+                          is relevant. Telemetry from other locations will not be
+                          used to calculate performance for this SLI. If omitted,
+                          this SLI applies to all locations in which the Service has
+                          activity. For service types that don't support breaking
+                          down by location, setting this field will result in an error.
+                        items:
+                          type: string
+                        type: array
+                      method:
+                        description: An optional set of RPCs to which this SLI is
+                          relevant. Telemetry from other methods will not be used
+                          to calculate performance for this SLI. If omitted, this
+                          SLI applies to all the Service's methods. For service types
+                          that don't support breaking down by method, setting this
+                          field will result in an error.
+                        items:
+                          type: string
+                        type: array
+                      version:
+                        description: The set of API versions to which this SLI is
+                          relevant. Telemetry from other API versions will not be
+                          used to calculate performance for this SLI. If omitted,
+                          this SLI applies to all API versions. For service types
+                          that don't support breaking down by version, setting this
+                          field will result in an error.
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  calendarPeriod:
+                    description: 'A calendar period, semantically "since the start
+                      of the current <calendarPeriod>". Possible values: ["DAY", "WEEK",
+                      "FORTNIGHT", "MONTH"]'
+                    type: string
+                  displayName:
+                    description: Name used for UI elements listing this SLO.
+                    type: string
+                  goal:
+                    description: The fraction of service that must be good in order
+                      for this objective to be met. 0 < goal <= 0.999
+                    format: double
+                    type: number
+                  id:
+                    type: string
+                  name:
+                    description: 'The full resource name for this service. The syntax
+                      is: projects/[PROJECT_ID_OR_NUMBER]/services/[SERVICE_ID]/serviceLevelObjectives/[SLO_NAME]'
+                    type: string
+                  project:
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  requestBasedSli:
+                    description: "A request-based SLI defines a SLI for which atomic
+                      units of service are counted directly. \n A SLI describes a
+                      good service. It is used to measure and calculate the quality
+                      of the Service's performance with respect to a single aspect
+                      of service quality. Exactly one of the following must be set:
+                      'basic_sli', 'request_based_sli', 'windows_based_sli'"
+                    properties:
+                      distributionCut:
+                        description: "Used when good_service is defined by a count
+                          of values aggregated in a Distribution that fall into a
+                          good range. The total_service is the total count of all
+                          values aggregated in the Distribution. Defines a distribution
+                          TimeSeries filter and thresholds used for measuring good
+                          service and total service. \n Exactly one of 'distribution_cut'
+                          or 'good_total_ratio' can be set."
+                        properties:
+                          distributionFilter:
+                            description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                              aggregating values to quantify the good service provided.
+                              \n Must have ValueType = DISTRIBUTION and MetricKind
+                              = DELTA or MetricKind = CUMULATIVE."
+                            type: string
+                          range:
+                            description: Range of numerical values. The computed good_service
+                              will be the count of values x in the Distribution such
+                              that range.min <= x < range.max. inclusive of min and
+                              exclusive of max. Open ranges can be defined by setting
+                              just one of min or max.
+                            properties:
+                              max:
+                                description: max value for the range (inclusive).
+                                  If not given, will be set to "infinity", defining
+                                  an open range ">= range.min"
+                                format: double
+                                type: number
+                              min:
+                                description: Min value for the range (inclusive).
+                                  If not given, will be set to "-infinity", defining
+                                  an open range "< range.max"
+                                format: double
+                                type: number
+                            type: object
+                        required:
+                        - distributionFilter
+                        - range
+                        type: object
+                      goodTotalRatio:
+                        description: "A means to compute a ratio of 'good_service'
+                          to 'total_service'. Defines computing this ratio with two
+                          TimeSeries [monitoring filters](https://cloud.google.com/monitoring/api/v3/filters)
+                          Must specify exactly two of good, bad, and total service
+                          filters. The relationship good_service + bad_service = total_service
+                          will be assumed. \n Exactly one of 'distribution_cut' or
+                          'good_total_ratio' can be set."
+                        properties:
+                          badServiceFilter:
+                            description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                              quantifying bad service provided, either demanded service
+                              that was not provided or demanded service that was of
+                              inadequate quality. \n Must have ValueType = DOUBLE
+                              or ValueType = INT64 and must have MetricKind = DELTA
+                              or MetricKind = CUMULATIVE. \n Exactly two of 'good_service_filter','bad_service_filter','total_service_filter'
+                              must be set (good + bad = total is assumed)."
+                            type: string
+                          goodServiceFilter:
+                            description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                              quantifying good service provided. Must have ValueType
+                              = DOUBLE or ValueType = INT64 and must have MetricKind
+                              = DELTA or MetricKind = CUMULATIVE. \n Exactly two of
+                              'good_service_filter','bad_service_filter','total_service_filter'
+                              must be set (good + bad = total is assumed)."
+                            type: string
+                          totalServiceFilter:
+                            description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                              quantifying total demanded service. \n Must have ValueType
+                              = DOUBLE or ValueType = INT64 and must have MetricKind
+                              = DELTA or MetricKind = CUMULATIVE. \n Exactly two of
+                              'good_service_filter','bad_service_filter','total_service_filter'
+                              must be set (good + bad = total is assumed)."
+                            type: string
+                        type: object
+                    type: object
+                  rollingPeriodDays:
+                    description: A rolling time period, semantically "in the past
+                      X days". Must be between 1 to 30 days, inclusive.
+                    format: int64
+                    type: integer
+                  service:
+                    description: ID of the service to which this SLO belongs.
+                    type: string
+                  sloID:
+                    description: The id to use for this ServiceLevelObjective. If
+                      omitted, an id will be generated instead.
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                  windowsBasedSli:
+                    description: "A windows-based SLI defines the criteria for time
+                      windows. good_service is defined based off the count of these
+                      time windows for which the provided service was of good quality.
+                      \n A SLI describes a good service. It is used to measure and
+                      calculate the quality of the Service's performance with respect
+                      to a single aspect of service quality. \n Exactly one of the
+                      following must be set: 'basic_sli', 'request_based_sli', 'windows_based_sli'"
+                    properties:
+                      goodBadMetricFilter:
+                        description: A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                          with ValueType = BOOL. The window is good if any true values
+                          appear in the window. One of 'good_bad_metric_filter', 'good_total_ratio_threshold',
+                          'metric_mean_in_range', 'metric_sum_in_range' must be set
+                          for 'windows_based_sli'.
+                        type: string
+                      goodTotalRatioThreshold:
+                        description: Criterion that describes a window as good if
+                          its performance is high enough. One of 'good_bad_metric_filter',
+                          'good_total_ratio_threshold', 'metric_mean_in_range', 'metric_sum_in_range'
+                          must be set for 'windows_based_sli'.
+                        properties:
+                          basicSliPerformance:
+                            description: Basic SLI to evaluate to judge window quality.
+                            properties:
+                              availability:
+                                description: Availability based SLI, dervied from
+                                  count of requests made to this service that return
+                                  successfully.
+                                properties:
+                                  enabled:
+                                    description: Whether an availability SLI is enabled
+                                      or not. Must be set to 'true. Defaults to 'true'.
+                                    type: boolean
+                                type: object
+                              latency:
+                                description: Parameters for a latency threshold SLI.
+                                properties:
+                                  threshold:
+                                    description: A duration string, e.g. 10s. Good
+                                      service is defined to be the count of requests
+                                      made to this service that return in no more
+                                      than threshold.
+                                    type: string
+                                required:
+                                - threshold
+                                type: object
+                              location:
+                                description: An optional set of locations to which
+                                  this SLI is relevant. Telemetry from other locations
+                                  will not be used to calculate performance for this
+                                  SLI. If omitted, this SLI applies to all locations
+                                  in which the Service has activity. For service types
+                                  that don't support breaking down by location, setting
+                                  this field will result in an error.
+                                items:
+                                  type: string
+                                type: array
+                              method:
+                                description: An optional set of RPCs to which this
+                                  SLI is relevant. Telemetry from other methods will
+                                  not be used to calculate performance for this SLI.
+                                  If omitted, this SLI applies to all the Service's
+                                  methods. For service types that don't support breaking
+                                  down by method, setting this field will result in
+                                  an error.
+                                items:
+                                  type: string
+                                type: array
+                              version:
+                                description: The set of API versions to which this
+                                  SLI is relevant. Telemetry from other API versions
+                                  will not be used to calculate performance for this
+                                  SLI. If omitted, this SLI applies to all API versions.
+                                  For service types that don't support breaking down
+                                  by version, setting this field will result in an
+                                  error.
+                                items:
+                                  type: string
+                                type: array
+                            type: object
+                          performance:
+                            description: Request-based SLI to evaluate to judge window
+                              quality.
+                            properties:
+                              distributionCut:
+                                description: Used when good_service is defined by
+                                  a count of values aggregated in a Distribution that
+                                  fall into a good range. The total_service is the
+                                  total count of all values aggregated in the Distribution.
+                                  Defines a distribution TimeSeries filter and thresholds
+                                  used for measuring good service and total service.
+                                properties:
+                                  distributionFilter:
+                                    description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                                      aggregating values to quantify the good service
+                                      provided. \n Must have ValueType = DISTRIBUTION
+                                      and MetricKind = DELTA or MetricKind = CUMULATIVE."
+                                    type: string
+                                  range:
+                                    description: Range of numerical values. The computed
+                                      good_service will be the count of values x in
+                                      the Distribution such that range.min <= x <
+                                      range.max. inclusive of min and exclusive of
+                                      max. Open ranges can be defined by setting just
+                                      one of min or max.
+                                    properties:
+                                      max:
+                                        description: max value for the range (inclusive).
+                                          If not given, will be set to "infinity",
+                                          defining an open range ">= range.min"
+                                        format: double
+                                        type: number
+                                      min:
+                                        description: Min value for the range (inclusive).
+                                          If not given, will be set to "-infinity",
+                                          defining an open range "< range.max"
+                                        format: double
+                                        type: number
+                                    type: object
+                                required:
+                                - distributionFilter
+                                - range
+                                type: object
+                              goodTotalRatio:
+                                description: A means to compute a ratio of 'good_service'
+                                  to 'total_service'. Defines computing this ratio
+                                  with two TimeSeries [monitoring filters](https://cloud.google.com/monitoring/api/v3/filters)
+                                  Must specify exactly two of good, bad, and total
+                                  service filters. The relationship good_service +
+                                  bad_service = total_service will be assumed.
+                                properties:
+                                  badServiceFilter:
+                                    description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                                      quantifying bad service provided, either demanded
+                                      service that was not provided or demanded service
+                                      that was of inadequate quality. Exactly two
+                                      of good, bad, or total service filter must be
+                                      defined (where good + bad = total is assumed)
+                                      \n Must have ValueType = DOUBLE or ValueType
+                                      = INT64 and must have MetricKind = DELTA or
+                                      MetricKind = CUMULATIVE."
+                                    type: string
+                                  goodServiceFilter:
+                                    description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                                      quantifying good service provided. Exactly two
+                                      of good, bad, or total service filter must be
+                                      defined (where good + bad = total is assumed)
+                                      \n Must have ValueType = DOUBLE or ValueType
+                                      = INT64 and must have MetricKind = DELTA or
+                                      MetricKind = CUMULATIVE."
+                                    type: string
+                                  totalServiceFilter:
+                                    description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                                      quantifying total demanded service. Exactly
+                                      two of good, bad, or total service filter must
+                                      be defined (where good + bad = total is assumed)
+                                      \n Must have ValueType = DOUBLE or ValueType
+                                      = INT64 and must have MetricKind = DELTA or
+                                      MetricKind = CUMULATIVE."
+                                    type: string
+                                type: object
+                            type: object
+                          threshold:
+                            description: If window performance >= threshold, the window
+                              is counted as good.
+                            format: double
+                            type: number
+                        type: object
+                      metricMeanInRange:
+                        description: "Criterion that describes a window as good if
+                          the metric's value is in a good range, *averaged* across
+                          returned streams. One of 'good_bad_metric_filter', \n 'good_total_ratio_threshold',
+                          'metric_mean_in_range', 'metric_sum_in_range' must be set
+                          for 'windows_based_sli'. Average value X of 'time_series'
+                          should satisfy 'range.min <= X < range.max' for a good window."
+                        properties:
+                          range:
+                            description: Range of numerical values. The computed good_service
+                              will be the count of values x in the Distribution such
+                              that range.min <= x < range.max. inclusive of min and
+                              exclusive of max. Open ranges can be defined by setting
+                              just one of min or max. Mean value 'X' of 'time_series'
+                              values should satisfy 'range.min <= X < range.max' for
+                              a good service.
+                            properties:
+                              max:
+                                description: max value for the range (inclusive).
+                                  If not given, will be set to "infinity", defining
+                                  an open range ">= range.min"
+                                format: double
+                                type: number
+                              min:
+                                description: Min value for the range (inclusive).
+                                  If not given, will be set to "-infinity", defining
+                                  an open range "< range.max"
+                                format: double
+                                type: number
+                            type: object
+                          timeSeries:
+                            description: A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                              specifying the TimeSeries to use for evaluating window
+                              The provided TimeSeries must have ValueType = INT64
+                              or ValueType = DOUBLE and MetricKind = GAUGE. Mean value
+                              'X' should satisfy 'range.min <= X < range.max' under
+                              good service.
+                            type: string
+                        required:
+                        - range
+                        - timeSeries
+                        type: object
+                      metricSumInRange:
+                        description: "Criterion that describes a window as good if
+                          the metric's value is in a good range, *summed* across returned
+                          streams. Summed value 'X' of 'time_series' should satisfy
+                          'range.min <= X < range.max' for a good window. \n One of
+                          'good_bad_metric_filter', 'good_total_ratio_threshold',
+                          'metric_mean_in_range', 'metric_sum_in_range' must be set
+                          for 'windows_based_sli'."
+                        properties:
+                          range:
+                            description: Range of numerical values. The computed good_service
+                              will be the count of values x in the Distribution such
+                              that range.min <= x < range.max. inclusive of min and
+                              exclusive of max. Open ranges can be defined by setting
+                              just one of min or max. Summed value 'X' should satisfy
+                              'range.min <= X < range.max' for a good window.
+                            properties:
+                              max:
+                                description: max value for the range (inclusive).
+                                  If not given, will be set to "infinity", defining
+                                  an open range ">= range.min"
+                                format: double
+                                type: number
+                              min:
+                                description: Min value for the range (inclusive).
+                                  If not given, will be set to "-infinity", defining
+                                  an open range "< range.max"
+                                format: double
+                                type: number
+                            type: object
+                          timeSeries:
+                            description: "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                              specifying the TimeSeries to use for evaluating window
+                              quality. The provided TimeSeries must have ValueType
+                              = INT64 or ValueType = DOUBLE and MetricKind = GAUGE.
+                              \n Summed value 'X' should satisfy 'range.min <= X <
+                              range.max' for a good window."
+                            type: string
+                        required:
+                        - range
+                        - timeSeries
+                        type: object
+                      windowPeriod:
+                        description: Duration over which window quality is evaluated,
+                          given as a duration string "{X}s" representing X seconds.
+                          Must be an integer fraction of a day and at least 60s.
+                        type: string
+                    type: object
+                required:
+                - goal
+                - providerRef
+                - service
+                type: object
+              name:
+                description: 'The full resource name for this service. The syntax
+                  is: projects/[PROJECT_ID_OR_NUMBER]/services/[SERVICE_ID]/serviceLevelObjectives/[SLO_NAME]'
+                type: string
+              project:
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              requestBasedSli:
+                description: "A request-based SLI defines a SLI for which atomic units
+                  of service are counted directly. \n A SLI describes a good service.
+                  It is used to measure and calculate the quality of the Service's
+                  performance with respect to a single aspect of service quality.
+                  Exactly one of the following must be set: 'basic_sli', 'request_based_sli',
+                  'windows_based_sli'"
+                properties:
+                  distributionCut:
+                    description: "Used when good_service is defined by a count of
+                      values aggregated in a Distribution that fall into a good range.
+                      The total_service is the total count of all values aggregated
+                      in the Distribution. Defines a distribution TimeSeries filter
+                      and thresholds used for measuring good service and total service.
+                      \n Exactly one of 'distribution_cut' or 'good_total_ratio' can
+                      be set."
+                    properties:
+                      distributionFilter:
+                        description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                          aggregating values to quantify the good service provided.
+                          \n Must have ValueType = DISTRIBUTION and MetricKind = DELTA
+                          or MetricKind = CUMULATIVE."
+                        type: string
+                      range:
+                        description: Range of numerical values. The computed good_service
+                          will be the count of values x in the Distribution such that
+                          range.min <= x < range.max. inclusive of min and exclusive
+                          of max. Open ranges can be defined by setting just one of
+                          min or max.
+                        properties:
+                          max:
+                            description: max value for the range (inclusive). If not
+                              given, will be set to "infinity", defining an open range
+                              ">= range.min"
+                            format: double
+                            type: number
+                          min:
+                            description: Min value for the range (inclusive). If not
+                              given, will be set to "-infinity", defining an open
+                              range "< range.max"
+                            format: double
+                            type: number
+                        type: object
+                    required:
+                    - distributionFilter
+                    - range
+                    type: object
+                  goodTotalRatio:
+                    description: "A means to compute a ratio of 'good_service' to
+                      'total_service'. Defines computing this ratio with two TimeSeries
+                      [monitoring filters](https://cloud.google.com/monitoring/api/v3/filters)
+                      Must specify exactly two of good, bad, and total service filters.
+                      The relationship good_service + bad_service = total_service
+                      will be assumed. \n Exactly one of 'distribution_cut' or 'good_total_ratio'
+                      can be set."
+                    properties:
+                      badServiceFilter:
+                        description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                          quantifying bad service provided, either demanded service
+                          that was not provided or demanded service that was of inadequate
+                          quality. \n Must have ValueType = DOUBLE or ValueType =
+                          INT64 and must have MetricKind = DELTA or MetricKind = CUMULATIVE.
+                          \n Exactly two of 'good_service_filter','bad_service_filter','total_service_filter'
+                          must be set (good + bad = total is assumed)."
+                        type: string
+                      goodServiceFilter:
+                        description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                          quantifying good service provided. Must have ValueType =
+                          DOUBLE or ValueType = INT64 and must have MetricKind = DELTA
+                          or MetricKind = CUMULATIVE. \n Exactly two of 'good_service_filter','bad_service_filter','total_service_filter'
+                          must be set (good + bad = total is assumed)."
+                        type: string
+                      totalServiceFilter:
+                        description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                          quantifying total demanded service. \n Must have ValueType
+                          = DOUBLE or ValueType = INT64 and must have MetricKind =
+                          DELTA or MetricKind = CUMULATIVE. \n Exactly two of 'good_service_filter','bad_service_filter','total_service_filter'
+                          must be set (good + bad = total is assumed)."
+                        type: string
+                    type: object
+                type: object
+              rollingPeriodDays:
+                description: A rolling time period, semantically "in the past X days".
+                  Must be between 1 to 30 days, inclusive.
+                format: int64
+                type: integer
+              service:
+                description: ID of the service to which this SLO belongs.
+                type: string
+              sloID:
+                description: The id to use for this ServiceLevelObjective. If omitted,
+                  an id will be generated instead.
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+              windowsBasedSli:
+                description: "A windows-based SLI defines the criteria for time windows.
+                  good_service is defined based off the count of these time windows
+                  for which the provided service was of good quality. \n A SLI describes
+                  a good service. It is used to measure and calculate the quality
+                  of the Service's performance with respect to a single aspect of
+                  service quality. \n Exactly one of the following must be set: 'basic_sli',
+                  'request_based_sli', 'windows_based_sli'"
+                properties:
+                  goodBadMetricFilter:
+                    description: A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                      with ValueType = BOOL. The window is good if any true values
+                      appear in the window. One of 'good_bad_metric_filter', 'good_total_ratio_threshold',
+                      'metric_mean_in_range', 'metric_sum_in_range' must be set for
+                      'windows_based_sli'.
+                    type: string
+                  goodTotalRatioThreshold:
+                    description: Criterion that describes a window as good if its
+                      performance is high enough. One of 'good_bad_metric_filter',
+                      'good_total_ratio_threshold', 'metric_mean_in_range', 'metric_sum_in_range'
+                      must be set for 'windows_based_sli'.
+                    properties:
+                      basicSliPerformance:
+                        description: Basic SLI to evaluate to judge window quality.
+                        properties:
+                          availability:
+                            description: Availability based SLI, dervied from count
+                              of requests made to this service that return successfully.
+                            properties:
+                              enabled:
+                                description: Whether an availability SLI is enabled
+                                  or not. Must be set to 'true. Defaults to 'true'.
+                                type: boolean
+                            type: object
+                          latency:
+                            description: Parameters for a latency threshold SLI.
+                            properties:
+                              threshold:
+                                description: A duration string, e.g. 10s. Good service
+                                  is defined to be the count of requests made to this
+                                  service that return in no more than threshold.
+                                type: string
+                            required:
+                            - threshold
+                            type: object
+                          location:
+                            description: An optional set of locations to which this
+                              SLI is relevant. Telemetry from other locations will
+                              not be used to calculate performance for this SLI. If
+                              omitted, this SLI applies to all locations in which
+                              the Service has activity. For service types that don't
+                              support breaking down by location, setting this field
+                              will result in an error.
+                            items:
+                              type: string
+                            type: array
+                          method:
+                            description: An optional set of RPCs to which this SLI
+                              is relevant. Telemetry from other methods will not be
+                              used to calculate performance for this SLI. If omitted,
+                              this SLI applies to all the Service's methods. For service
+                              types that don't support breaking down by method, setting
+                              this field will result in an error.
+                            items:
+                              type: string
+                            type: array
+                          version:
+                            description: The set of API versions to which this SLI
+                              is relevant. Telemetry from other API versions will
+                              not be used to calculate performance for this SLI. If
+                              omitted, this SLI applies to all API versions. For service
+                              types that don't support breaking down by version, setting
+                              this field will result in an error.
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      performance:
+                        description: Request-based SLI to evaluate to judge window
+                          quality.
+                        properties:
+                          distributionCut:
+                            description: Used when good_service is defined by a count
+                              of values aggregated in a Distribution that fall into
+                              a good range. The total_service is the total count of
+                              all values aggregated in the Distribution. Defines a
+                              distribution TimeSeries filter and thresholds used for
+                              measuring good service and total service.
+                            properties:
+                              distributionFilter:
+                                description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                                  aggregating values to quantify the good service
+                                  provided. \n Must have ValueType = DISTRIBUTION
+                                  and MetricKind = DELTA or MetricKind = CUMULATIVE."
+                                type: string
+                              range:
+                                description: Range of numerical values. The computed
+                                  good_service will be the count of values x in the
+                                  Distribution such that range.min <= x < range.max.
+                                  inclusive of min and exclusive of max. Open ranges
+                                  can be defined by setting just one of min or max.
+                                properties:
+                                  max:
+                                    description: max value for the range (inclusive).
+                                      If not given, will be set to "infinity", defining
+                                      an open range ">= range.min"
+                                    format: double
+                                    type: number
+                                  min:
+                                    description: Min value for the range (inclusive).
+                                      If not given, will be set to "-infinity", defining
+                                      an open range "< range.max"
+                                    format: double
+                                    type: number
+                                type: object
+                            required:
+                            - distributionFilter
+                            - range
+                            type: object
+                          goodTotalRatio:
+                            description: A means to compute a ratio of 'good_service'
+                              to 'total_service'. Defines computing this ratio with
+                              two TimeSeries [monitoring filters](https://cloud.google.com/monitoring/api/v3/filters)
+                              Must specify exactly two of good, bad, and total service
+                              filters. The relationship good_service + bad_service
+                              = total_service will be assumed.
+                            properties:
+                              badServiceFilter:
+                                description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                                  quantifying bad service provided, either demanded
+                                  service that was not provided or demanded service
+                                  that was of inadequate quality. Exactly two of good,
+                                  bad, or total service filter must be defined (where
+                                  good + bad = total is assumed) \n Must have ValueType
+                                  = DOUBLE or ValueType = INT64 and must have MetricKind
+                                  = DELTA or MetricKind = CUMULATIVE."
+                                type: string
+                              goodServiceFilter:
+                                description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                                  quantifying good service provided. Exactly two of
+                                  good, bad, or total service filter must be defined
+                                  (where good + bad = total is assumed) \n Must have
+                                  ValueType = DOUBLE or ValueType = INT64 and must
+                                  have MetricKind = DELTA or MetricKind = CUMULATIVE."
+                                type: string
+                              totalServiceFilter:
+                                description: "A TimeSeries [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                                  quantifying total demanded service. Exactly two
+                                  of good, bad, or total service filter must be defined
+                                  (where good + bad = total is assumed) \n Must have
+                                  ValueType = DOUBLE or ValueType = INT64 and must
+                                  have MetricKind = DELTA or MetricKind = CUMULATIVE."
+                                type: string
+                            type: object
+                        type: object
+                      threshold:
+                        description: If window performance >= threshold, the window
+                          is counted as good.
+                        format: double
+                        type: number
+                    type: object
+                  metricMeanInRange:
+                    description: "Criterion that describes a window as good if the
+                      metric's value is in a good range, *averaged* across returned
+                      streams. One of 'good_bad_metric_filter', \n 'good_total_ratio_threshold',
+                      'metric_mean_in_range', 'metric_sum_in_range' must be set for
+                      'windows_based_sli'. Average value X of 'time_series' should
+                      satisfy 'range.min <= X < range.max' for a good window."
+                    properties:
+                      range:
+                        description: Range of numerical values. The computed good_service
+                          will be the count of values x in the Distribution such that
+                          range.min <= x < range.max. inclusive of min and exclusive
+                          of max. Open ranges can be defined by setting just one of
+                          min or max. Mean value 'X' of 'time_series' values should
+                          satisfy 'range.min <= X < range.max' for a good service.
+                        properties:
+                          max:
+                            description: max value for the range (inclusive). If not
+                              given, will be set to "infinity", defining an open range
+                              ">= range.min"
+                            format: double
+                            type: number
+                          min:
+                            description: Min value for the range (inclusive). If not
+                              given, will be set to "-infinity", defining an open
+                              range "< range.max"
+                            format: double
+                            type: number
+                        type: object
+                      timeSeries:
+                        description: A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                          specifying the TimeSeries to use for evaluating window The
+                          provided TimeSeries must have ValueType = INT64 or ValueType
+                          = DOUBLE and MetricKind = GAUGE. Mean value 'X' should satisfy
+                          'range.min <= X < range.max' under good service.
+                        type: string
+                    required:
+                    - range
+                    - timeSeries
+                    type: object
+                  metricSumInRange:
+                    description: "Criterion that describes a window as good if the
+                      metric's value is in a good range, *summed* across returned
+                      streams. Summed value 'X' of 'time_series' should satisfy 'range.min
+                      <= X < range.max' for a good window. \n One of 'good_bad_metric_filter',
+                      'good_total_ratio_threshold', 'metric_mean_in_range', 'metric_sum_in_range'
+                      must be set for 'windows_based_sli'."
+                    properties:
+                      range:
+                        description: Range of numerical values. The computed good_service
+                          will be the count of values x in the Distribution such that
+                          range.min <= x < range.max. inclusive of min and exclusive
+                          of max. Open ranges can be defined by setting just one of
+                          min or max. Summed value 'X' should satisfy 'range.min <=
+                          X < range.max' for a good window.
+                        properties:
+                          max:
+                            description: max value for the range (inclusive). If not
+                              given, will be set to "infinity", defining an open range
+                              ">= range.min"
+                            format: double
+                            type: number
+                          min:
+                            description: Min value for the range (inclusive). If not
+                              given, will be set to "-infinity", defining an open
+                              range "< range.max"
+                            format: double
+                            type: number
+                        type: object
+                      timeSeries:
+                        description: "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters)
+                          specifying the TimeSeries to use for evaluating window quality.
+                          The provided TimeSeries must have ValueType = INT64 or ValueType
+                          = DOUBLE and MetricKind = GAUGE. \n Summed value 'X' should
+                          satisfy 'range.min <= X < range.max' for a good window."
+                        type: string
+                    required:
+                    - range
+                    - timeSeries
+                    type: object
+                  windowPeriod:
+                    description: Duration over which window quality is evaluated,
+                      given as a duration string "{X}s" representing X seconds. Must
+                      be an integer fraction of a day and at least 60s.
+                    type: string
+                type: object
+            required:
+            - goal
+            - providerRef
+            - service
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

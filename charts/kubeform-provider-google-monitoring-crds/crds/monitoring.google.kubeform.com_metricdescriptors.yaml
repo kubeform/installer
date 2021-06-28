@@ -1,0 +1,451 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: metricdescriptors.monitoring.google.kubeform.com
+spec:
+  group: monitoring.google.kubeform.com
+  names:
+    kind: MetricDescriptor
+    listKind: MetricDescriptorList
+    plural: metricdescriptors
+    singular: metricdescriptor
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              description:
+                description: A detailed description of the metric, which can be used
+                  in documentation.
+                type: string
+              displayName:
+                description: A concise name for the metric, which can be displayed
+                  in user interfaces. Use sentence case without an ending period,
+                  for example "Request count".
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  description:
+                    description: A detailed description of the metric, which can be
+                      used in documentation.
+                    type: string
+                  displayName:
+                    description: A concise name for the metric, which can be displayed
+                      in user interfaces. Use sentence case without an ending period,
+                      for example "Request count".
+                    type: string
+                  id:
+                    type: string
+                  labels:
+                    description: The set of labels that can be used to describe a
+                      specific instance of this metric type. In order to delete a
+                      label, the entire resource must be deleted, then created with
+                      the desired labels.
+                    items:
+                      properties:
+                        description:
+                          description: A human-readable description for the label.
+                          type: string
+                        key:
+                          description: The key for this label. The key must not exceed
+                            100 characters. The first character of the key must be
+                            an upper- or lower-case letter, the remaining characters
+                            must be letters, digits or underscores, and the key must
+                            match the regular expression [a-zA-Z][a-zA-Z0-9_]*
+                          type: string
+                        valueType:
+                          description: 'The type of data that can be assigned to the
+                            label. Default value: "STRING" Possible values: ["STRING",
+                            "BOOL", "INT64"]'
+                          type: string
+                      required:
+                      - key
+                      type: object
+                    type: array
+                  launchStage:
+                    description: 'The launch stage of the metric definition. Possible
+                      values: ["LAUNCH_STAGE_UNSPECIFIED", "UNIMPLEMENTED", "PRELAUNCH",
+                      "EARLY_ACCESS", "ALPHA", "BETA", "GA", "DEPRECATED"]'
+                    type: string
+                  metadata:
+                    description: Metadata which can be used to guide usage of the
+                      metric.
+                    properties:
+                      ingestDelay:
+                        description: The delay of data points caused by ingestion.
+                          Data points older than this age are guaranteed to be ingested
+                          and available to be read, excluding data loss due to errors.
+                          In '[duration format](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf?&_ga=2.264881487.1507873253.1593446723-935052455.1591817775#google.protobuf.Duration)'.
+                        type: string
+                      samplePeriod:
+                        description: The sampling period of metric data points. For
+                          metrics which are written periodically, consecutive data
+                          points are stored at this time interval, excluding data
+                          loss due to errors. Metrics with a higher granularity have
+                          a smaller sampling period. In '[duration format](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf?&_ga=2.264881487.1507873253.1593446723-935052455.1591817775#google.protobuf.Duration)'.
+                        type: string
+                    type: object
+                  metricKind:
+                    description: 'Whether the metric records instantaneous values,
+                      changes to a value, etc. Some combinations of metricKind and
+                      valueType might not be supported. Possible values: ["METRIC_KIND_UNSPECIFIED",
+                      "GAUGE", "DELTA", "CUMULATIVE"]'
+                    type: string
+                  monitoredResourceTypes:
+                    description: If present, then a time series, which is identified
+                      partially by a metric type and a MonitoredResourceDescriptor,
+                      that is associated with this metric type can only be associated
+                      with one of the monitored resource types listed here. This field
+                      allows time series to be associated with the intersection of
+                      this metric type and the monitored resource types in this list.
+                    items:
+                      type: string
+                    type: array
+                  name:
+                    description: The resource name of the metric descriptor.
+                    type: string
+                  project:
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    description: The metric type, including its DNS name prefix. The
+                      type is not URL-encoded. All service defined metrics must be
+                      prefixed with the service name, in the format of {service name}/{relative
+                      metric name}, such as cloudsql.googleapis.com/database/cpu/utilization.
+                      The relative metric name must have only upper and lower-case
+                      letters, digits, '/' and underscores '_' are allowed. Additionally,
+                      the maximum number of characters allowed for the relative_metric_name
+                      is 100. All user-defined metric types have the DNS name custom.googleapis.com,
+                      external.googleapis.com, or logging.googleapis.com/user/.
+                    type: string
+                  unit:
+                    description: "The units in which the metric value is reported.
+                      It is only applicable if the valueType is INT64, DOUBLE, or
+                      DISTRIBUTION. The unit defines the representation of the stored
+                      metric values. \n Different systems may scale the values to
+                      be more easily displayed (so a value of 0.02KBy might be displayed
+                      as 20By, and a value of 3523KBy might be displayed as 3.5MBy).
+                      However, if the unit is KBy, then the value of the metric is
+                      always in thousands of bytes, no matter how it may be displayed.
+                      \n If you want a custom metric to record the exact number of
+                      CPU-seconds used by a job, you can create an INT64 CUMULATIVE
+                      metric whose unit is s{CPU} (or equivalently 1s{CPU} or just
+                      s). If the job uses 12,005 CPU-seconds, then the value is written
+                      as 12005. \n Alternatively, if you want a custom metric to record
+                      data in a more granular way, you can create a DOUBLE CUMULATIVE
+                      metric whose unit is ks{CPU}, and then write the value 12.005
+                      (which is 12005/1000), or use Kis{CPU} and write 11.723 (which
+                      is 12005/1024). The supported units are a subset of The Unified
+                      Code for Units of Measure standard. More info can be found in
+                      the API documentation (https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors)."
+                    type: string
+                  valueType:
+                    description: 'Whether the measurement is an integer, a floating-point
+                      number, etc. Some combinations of metricKind and valueType might
+                      not be supported. Possible values: ["BOOL", "INT64", "DOUBLE",
+                      "STRING", "DISTRIBUTION"]'
+                    type: string
+                required:
+                - description
+                - displayName
+                - metricKind
+                - providerRef
+                - type
+                - valueType
+                type: object
+              labels:
+                description: The set of labels that can be used to describe a specific
+                  instance of this metric type. In order to delete a label, the entire
+                  resource must be deleted, then created with the desired labels.
+                items:
+                  properties:
+                    description:
+                      description: A human-readable description for the label.
+                      type: string
+                    key:
+                      description: The key for this label. The key must not exceed
+                        100 characters. The first character of the key must be an
+                        upper- or lower-case letter, the remaining characters must
+                        be letters, digits or underscores, and the key must match
+                        the regular expression [a-zA-Z][a-zA-Z0-9_]*
+                      type: string
+                    valueType:
+                      description: 'The type of data that can be assigned to the label.
+                        Default value: "STRING" Possible values: ["STRING", "BOOL",
+                        "INT64"]'
+                      type: string
+                  required:
+                  - key
+                  type: object
+                type: array
+              launchStage:
+                description: 'The launch stage of the metric definition. Possible
+                  values: ["LAUNCH_STAGE_UNSPECIFIED", "UNIMPLEMENTED", "PRELAUNCH",
+                  "EARLY_ACCESS", "ALPHA", "BETA", "GA", "DEPRECATED"]'
+                type: string
+              metadata:
+                description: Metadata which can be used to guide usage of the metric.
+                properties:
+                  ingestDelay:
+                    description: The delay of data points caused by ingestion. Data
+                      points older than this age are guaranteed to be ingested and
+                      available to be read, excluding data loss due to errors. In
+                      '[duration format](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf?&_ga=2.264881487.1507873253.1593446723-935052455.1591817775#google.protobuf.Duration)'.
+                    type: string
+                  samplePeriod:
+                    description: The sampling period of metric data points. For metrics
+                      which are written periodically, consecutive data points are
+                      stored at this time interval, excluding data loss due to errors.
+                      Metrics with a higher granularity have a smaller sampling period.
+                      In '[duration format](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf?&_ga=2.264881487.1507873253.1593446723-935052455.1591817775#google.protobuf.Duration)'.
+                    type: string
+                type: object
+              metricKind:
+                description: 'Whether the metric records instantaneous values, changes
+                  to a value, etc. Some combinations of metricKind and valueType might
+                  not be supported. Possible values: ["METRIC_KIND_UNSPECIFIED", "GAUGE",
+                  "DELTA", "CUMULATIVE"]'
+                type: string
+              monitoredResourceTypes:
+                description: If present, then a time series, which is identified partially
+                  by a metric type and a MonitoredResourceDescriptor, that is associated
+                  with this metric type can only be associated with one of the monitored
+                  resource types listed here. This field allows time series to be
+                  associated with the intersection of this metric type and the monitored
+                  resource types in this list.
+                items:
+                  type: string
+                type: array
+              name:
+                description: The resource name of the metric descriptor.
+                type: string
+              project:
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+              type:
+                description: The metric type, including its DNS name prefix. The type
+                  is not URL-encoded. All service defined metrics must be prefixed
+                  with the service name, in the format of {service name}/{relative
+                  metric name}, such as cloudsql.googleapis.com/database/cpu/utilization.
+                  The relative metric name must have only upper and lower-case letters,
+                  digits, '/' and underscores '_' are allowed. Additionally, the maximum
+                  number of characters allowed for the relative_metric_name is 100.
+                  All user-defined metric types have the DNS name custom.googleapis.com,
+                  external.googleapis.com, or logging.googleapis.com/user/.
+                type: string
+              unit:
+                description: "The units in which the metric value is reported. It
+                  is only applicable if the valueType is INT64, DOUBLE, or DISTRIBUTION.
+                  The unit defines the representation of the stored metric values.
+                  \n Different systems may scale the values to be more easily displayed
+                  (so a value of 0.02KBy might be displayed as 20By, and a value of
+                  3523KBy might be displayed as 3.5MBy). However, if the unit is KBy,
+                  then the value of the metric is always in thousands of bytes, no
+                  matter how it may be displayed. \n If you want a custom metric to
+                  record the exact number of CPU-seconds used by a job, you can create
+                  an INT64 CUMULATIVE metric whose unit is s{CPU} (or equivalently
+                  1s{CPU} or just s). If the job uses 12,005 CPU-seconds, then the
+                  value is written as 12005. \n Alternatively, if you want a custom
+                  metric to record data in a more granular way, you can create a DOUBLE
+                  CUMULATIVE metric whose unit is ks{CPU}, and then write the value
+                  12.005 (which is 12005/1000), or use Kis{CPU} and write 11.723 (which
+                  is 12005/1024). The supported units are a subset of The Unified
+                  Code for Units of Measure standard. More info can be found in the
+                  API documentation (https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors)."
+                type: string
+              valueType:
+                description: 'Whether the measurement is an integer, a floating-point
+                  number, etc. Some combinations of metricKind and valueType might
+                  not be supported. Possible values: ["BOOL", "INT64", "DOUBLE", "STRING",
+                  "DISTRIBUTION"]'
+                type: string
+            required:
+            - description
+            - displayName
+            - metricKind
+            - providerRef
+            - type
+            - valueType
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
