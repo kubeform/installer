@@ -63,7 +63,7 @@ BASEIMAGE_DBG    ?= debian:buster
 
 GO_VERSION       ?= 1.16
 BUILD_IMAGE      ?= appscode/golang-dev:$(GO_VERSION)
-CHART_TEST_IMAGE ?= quay.io/helmpack/chart-testing:v3.0.0
+CHART_TEST_IMAGE ?= quay.io/helmpack/chart-testing:v3.4.0
 
 OUTBIN = bin/$(OS)_$(ARCH)/$(BIN)
 ifeq ($(OS),windows)
@@ -351,13 +351,18 @@ unit-tests: $(BUILD_DIRS)
 	        ./hack/test.sh $(SRC_PKGS)                          \
 	    "
 
+CT_COMMAND     ?= lint-and-install
 TEST_CHARTS    ?=
 KUBE_NAMESPACE ?=
 
+ifeq ($(CT_COMMAND),lint-and-install)
+	ct_namespace = --namespace=$(KUBE_NAMESPACE)
+endif
+
 ifeq ($(strip $(TEST_CHARTS)),)
-	CT_ARGS = --all --namespace=$(KUBE_NAMESPACE)
+	CT_ARGS = --all $(ct_namespace)
 else
-	CT_ARGS = --charts=$(TEST_CHARTS) --namespace=$(KUBE_NAMESPACE)
+	CT_ARGS = --charts=$(TEST_CHARTS) $(ct_namespace)
 endif
 
 .PHONY: ct
@@ -365,6 +370,7 @@ ct: $(BUILD_DIRS)
 	@docker run                                                 \
 	    -i                                                      \
 	    --rm                                                    \
+	    -u $$(id -u):$$(id -g)                                  \
 	    -v $$(pwd):/src                                         \
 	    -w /src                                                 \
 	    --net=host                                              \
@@ -379,9 +385,9 @@ ct: $(BUILD_DIRS)
 	    --env KUBECONFIG=$(subst $(HOME),,$(KUBECONFIG))        \
 	    $(CHART_TEST_IMAGE)                                     \
 	    /bin/sh -c "                                            \
-	        kubectl delete crds --selector=app.kubernetes.io/name=kubeform; \
-	        ./hack/scripts/update-chart-dependencies.sh;                    \
-	        ct $(CT_COMMAND) --debug $(CT_ARGS)                             \
+	        kubectl delete crds --selector=app.kubernetes.io/name=kubeform;  \
+	        ./hack/scripts/update-chart-dependencies.sh;                     \
+	        ct $(CT_COMMAND) --debug --validate-maintainers=false $(CT_ARGS) \
 	    "
 
 ADDTL_LINTERS   := goconst,gofmt,goimports,unparam
