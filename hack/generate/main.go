@@ -31,9 +31,6 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
-	meta_util "kmodules.xyz/client-go/meta"
-	"kmodules.xyz/client-go/tools/parser"
-
 	flag "github.com/spf13/pflag"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 	crdv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -41,13 +38,14 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/sets"
+	meta_util "kmodules.xyz/client-go/meta"
+	"kmodules.xyz/client-go/tools/parser"
 	"sigs.k8s.io/yaml"
 )
 
 var (
 	crdstore   = map[schema.GroupKind]map[string]*unstructured.Unstructured{}
 	extrastore = map[schema.GroupKind]map[string]*unstructured.Unstructured{}
-	empty      = struct{}{}
 )
 
 type Definition struct {
@@ -238,7 +236,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			values.yaml
 		*/
 
-		target:= filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s", p), rel)
+		target := filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s", p), rel)
 
 		if info.IsDir() {
 			return os.MkdirAll(target, 0755)

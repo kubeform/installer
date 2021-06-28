@@ -56,8 +56,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&KubeformProvider{},
 		&KubeformProviderList{},
-		KubeformProviderLinode{},
-		KubeformProviderLinodeList{},
+		&KubeformProviderLinode{},
+		&KubeformProviderLinodeList{},
 	)
 
 	scheme.AddKnownTypes(SchemeGroupVersion,

@@ -29,9 +29,6 @@ const (
 
 // KubeformProvider defines the schama for Kubeform controller installer.
 
-// +genclient
-// +genclient:skipVerbs=updateStatus
-// +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // +kubebuilder:object:root=true

@@ -57,8 +57,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&KubeformProvider{},
 		&KubeformProviderList{},
 		{{- range .Providers }}
-		KubeformProvider{{ . | camelcase }}{},
-		KubeformProvider{{ . | camelcase }}List{},
+		&KubeformProvider{{ . | camelcase }}{},
+		&KubeformProvider{{ . | camelcase }}List{},
 		{{- end }}
 	)
 
