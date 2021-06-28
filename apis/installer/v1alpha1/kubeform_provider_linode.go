@@ -59,21 +59,20 @@ type GlobalValues struct {
 }
 
 type CRDs struct {
-	Domain bool `json:"domain"`
-	Firewall bool `json:"firewall"`
-	Image bool `json:"image"`
-	Instance bool `json:"instance"`
-	Lke bool `json:"lke"`
+	Domain       bool `json:"domain"`
+	Firewall     bool `json:"firewall"`
+	Image        bool `json:"image"`
+	Instance     bool `json:"instance"`
+	Lke          bool `json:"lke"`
 	Nodebalancer bool `json:"nodebalancer"`
-	Object bool `json:"object"`
-	Rdns bool `json:"rdns"`
-	Sshkey bool `json:"sshkey"`
-	Stackscript bool `json:"stackscript"`
-	Token bool `json:"token"`
-	User bool `json:"user"`
-	Vlan bool `json:"vlan"`
-	Volume bool `json:"volume"`
-	
+	Object       bool `json:"object"`
+	Rdns         bool `json:"rdns"`
+	Sshkey       bool `json:"sshkey"`
+	Stackscript  bool `json:"stackscript"`
+	Token        bool `json:"token"`
+	User         bool `json:"user"`
+	Vlan         bool `json:"vlan"`
+	Volume       bool `json:"volume"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
