@@ -1,0 +1,1059 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: environments.composer.google.kubeform.com
+spec:
+  group: composer.google.kubeform.com
+  names:
+    kind: Environment
+    listKind: EnvironmentList
+    plural: environments
+    singular: environment
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              config:
+                description: Configuration parameters for this environment.
+                properties:
+                  airflowURI:
+                    description: The URI of the Apache Airflow Web UI hosted within
+                      this environment.
+                    type: string
+                  dagGcsPrefix:
+                    description: The Cloud Storage prefix of the DAGs for this environment.
+                      Although Cloud Storage objects reside in a flat namespace, a
+                      hierarchical file tree can be simulated using '/'-delimited
+                      object name prefixes. DAG objects for this environment reside
+                      in a simulated directory with this prefix.
+                    type: string
+                  gkeCluster:
+                    description: The Kubernetes Engine cluster used to run this environment.
+                    type: string
+                  nodeConfig:
+                    description: The configuration used for the Kubernetes Engine
+                      cluster.
+                    properties:
+                      diskSizeGb:
+                        description: The disk size in GB used for node VMs. Minimum
+                          size is 20GB. If unspecified, defaults to 100GB. Cannot
+                          be updated.
+                        format: int64
+                        type: integer
+                      ipAllocationPolicy:
+                        description: Configuration for controlling how IPs are allocated
+                          in the GKE cluster. Cannot be updated.
+                        properties:
+                          clusterIpv4CIDRBlock:
+                            description: The IP address range used to allocate IP
+                              addresses to pods in the cluster. Set to blank to have
+                              GKE choose a range with the default size. Set to /netmask
+                              (e.g. /14) to have GKE choose a range with a specific
+                              netmask. Set to a CIDR notation (e.g. 10.96.0.0/14)
+                              from the RFC-1918 private networks (e.g. 10.0.0.0/8,
+                              172.16.0.0/12, 192.168.0.0/16) to pick a specific range
+                              to use. Specify either cluster_secondary_range_name
+                              or cluster_ipv4_cidr_block but not both.
+                            type: string
+                          clusterSecondaryRangeName:
+                            description: The name of the cluster's secondary range
+                              used to allocate IP addresses to pods. Specify either
+                              cluster_secondary_range_name or cluster_ipv4_cidr_block
+                              but not both. This field is applicable only when use_ip_aliases
+                              is true.
+                            type: string
+                          servicesIpv4CIDRBlock:
+                            description: The IP address range used to allocate IP
+                              addresses in this cluster. Set to blank to have GKE
+                              choose a range with the default size. Set to /netmask
+                              (e.g. /14) to have GKE choose a range with a specific
+                              netmask. Set to a CIDR notation (e.g. 10.96.0.0/14)
+                              from the RFC-1918 private networks (e.g. 10.0.0.0/8,
+                              172.16.0.0/12, 192.168.0.0/16) to pick a specific range
+                              to use. Specify either services_secondary_range_name
+                              or services_ipv4_cidr_block but not both.
+                            type: string
+                          servicesSecondaryRangeName:
+                            description: The name of the services' secondary range
+                              used to allocate IP addresses to the cluster. Specify
+                              either services_secondary_range_name or services_ipv4_cidr_block
+                              but not both. This field is applicable only when use_ip_aliases
+                              is true.
+                            type: string
+                          useIPAliases:
+                            description: Whether or not to enable Alias IPs in the
+                              GKE cluster. If true, a VPC-native cluster is created.
+                              Defaults to true if the ip_allocation_policy block is
+                              present in config.
+                            type: boolean
+                        required:
+                        - useIPAliases
+                        type: object
+                      machineType:
+                        description: 'The Compute Engine machine type used for cluster
+                          instances, specified as a name or relative resource name.
+                          For example: "projects/{project}/zones/{zone}/machineTypes/{machineType}".
+                          Must belong to the enclosing environment''s project and
+                          region/zone.'
+                        type: string
+                      network:
+                        description: 'The Compute Engine machine type used for cluster
+                          instances, specified as a name or relative resource name.
+                          For example: "projects/{project}/zones/{zone}/machineTypes/{machineType}".
+                          Must belong to the enclosing environment''s project and
+                          region/zone. The network must belong to the environment''s
+                          project. If unspecified, the "default" network ID in the
+                          environment''s project is used. If a Custom Subnet Network
+                          is provided, subnetwork must also be provided.'
+                        type: string
+                      oauthScopes:
+                        description: The set of Google API scopes to be made available
+                          on all node VMs. Cannot be updated. If empty, defaults to
+                          ["https://www.googleapis.com/auth/cloud-platform"].
+                        items:
+                          type: string
+                        type: array
+                      serviceAccount:
+                        description: The Google Cloud Platform Service Account to
+                          be used by the node VMs. If a service account is not specified,
+                          the "default" Compute Engine service account is used. Cannot
+                          be updated. If given, note that the service account must
+                          have roles/composer.worker for any GCP resources created
+                          under the Cloud Composer Environment.
+                        type: string
+                      subnetwork:
+                        description: The Compute Engine subnetwork to be used for
+                          machine communications, , specified as a self-link, relative
+                          resource name (e.g. "projects/{project}/regions/{region}/subnetworks/{subnetwork}"),
+                          or by name. If subnetwork is provided, network must also
+                          be provided and the subnetwork must belong to the enclosing
+                          environment's project and region.
+                        type: string
+                      tags:
+                        description: The list of instance tags applied to all node
+                          VMs. Tags are used to identify valid sources or targets
+                          for network firewalls. Each tag within the list must comply
+                          with RFC1035. Cannot be updated.
+                        items:
+                          type: string
+                        type: array
+                      zone:
+                        description: The Compute Engine zone in which to deploy the
+                          VMs running the Apache Airflow software, specified as the
+                          zone name or relative resource name (e.g. "projects/{project}/zones/{zone}").
+                          Must belong to the enclosing environment's project and region.
+                        type: string
+                    required:
+                    - zone
+                    type: object
+                  nodeCount:
+                    description: The number of nodes in the Kubernetes Engine cluster
+                      that will be used to run this environment.
+                    format: int64
+                    type: integer
+                  privateEnvironmentConfig:
+                    description: The configuration used for the Private IP Cloud Composer
+                      environment.
+                    properties:
+                      cloudSQLIpv4CIDRBlock:
+                        description: The CIDR block from which IP range in tenant
+                          project will be reserved for Cloud SQL. Needs to be disjoint
+                          from web_server_ipv4_cidr_block.
+                        type: string
+                      enablePrivateEndpoint:
+                        description: If true, access to the public endpoint of the
+                          GKE cluster is denied.
+                        type: boolean
+                      masterIpv4CIDRBlock:
+                        description: The IP range in CIDR notation to use for the
+                          hosted master network. This range is used for assigning
+                          internal IP addresses to the cluster master or set of masters
+                          and to the internal load balancer virtual IP. This range
+                          must not overlap with any other ranges in use within the
+                          cluster's network. If left blank, the default value of '172.16.0.0/28'
+                          is used.
+                        type: string
+                      webServerIpv4CIDRBlock:
+                        description: The CIDR block from which IP range for web server
+                          will be reserved. Needs to be disjoint from master_ipv4_cidr_block
+                          and cloud_sql_ipv4_cidr_block.
+                        type: string
+                    type: object
+                  softwareConfig:
+                    description: The configuration settings for software inside the
+                      environment.
+                    properties:
+                      airflowConfigOverrides:
+                        additionalProperties:
+                          type: string
+                        description: 'Apache Airflow configuration properties to override.
+                          Property keys contain the section and property names, separated
+                          by a hyphen, for example "core-dags_are_paused_at_creation".
+                          Section names must not contain hyphens ("-"), opening square
+                          brackets ("["), or closing square brackets ("]"). The property
+                          name must not be empty and cannot contain "=" or ";". Section
+                          and property names cannot contain characters: "." Apache
+                          Airflow configuration property names must be written in
+                          snake_case. Property values can contain any character, and
+                          can be written in any lower/upper case format. Certain Apache
+                          Airflow configuration property values are blacklisted, and
+                          cannot be overridden.'
+                        type: object
+                      envVariables:
+                        additionalProperties:
+                          type: string
+                        description: 'Additional environment variables to provide
+                          to the Apache Airflow scheduler, worker, and webserver processes.
+                          Environment variable names must match the regular expression
+                          [a-zA-Z_][a-zA-Z0-9_]*. They cannot specify Apache Airflow
+                          software configuration overrides (they cannot match the
+                          regular expression AIRFLOW__[A-Z0-9_]+__[A-Z0-9_]+), and
+                          they cannot match any of the following reserved names: AIRFLOW_HOME
+                          C_FORCE_ROOT CONTAINER_NAME DAGS_FOLDER GCP_PROJECT GCS_BUCKET
+                          GKE_CLUSTER_NAME SQL_DATABASE SQL_INSTANCE SQL_PASSWORD
+                          SQL_PROJECT SQL_REGION SQL_USER.'
+                        type: object
+                      imageVersion:
+                        description: The version of the software running in the environment.
+                          This encapsulates both the version of Cloud Composer functionality
+                          and the version of Apache Airflow. It must match the regular
+                          expression composer-[0-9]+\\.[0-9]+(\\.[0-9]+)?-airflow-[0-9]+\\.[0-9]+(\\.[0-9]+.*)?.
+                          The Cloud Composer portion of the version is a semantic
+                          version. The portion of the image version following 'airflow-'
+                          is an official Apache Airflow repository release name. See
+                          documentation for allowed release names.
+                        type: string
+                      pypiPackages:
+                        additionalProperties:
+                          type: string
+                        description: Custom Python Package Index (PyPI) packages to
+                          be installed in the environment. Keys refer to the lowercase
+                          package name (e.g. "numpy"). Values are the lowercase extras
+                          and version specifier (e.g. "==1.12.0", "[devel,gcp_api]",
+                          "[devel]>=1.8.2, <1.9.2"). To specify a package without
+                          pinning it to a version specifier, use the empty string
+                          as the value.
+                        type: object
+                      pythonVersion:
+                        description: The major version of Python used to run the Apache
+                          Airflow scheduler, worker, and webserver processes. Can
+                          be set to '2' or '3'. If not specified, the default is '2'.
+                          Cannot be updated.
+                        type: string
+                    type: object
+                type: object
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  config:
+                    description: Configuration parameters for this environment.
+                    properties:
+                      airflowURI:
+                        description: The URI of the Apache Airflow Web UI hosted within
+                          this environment.
+                        type: string
+                      dagGcsPrefix:
+                        description: The Cloud Storage prefix of the DAGs for this
+                          environment. Although Cloud Storage objects reside in a
+                          flat namespace, a hierarchical file tree can be simulated
+                          using '/'-delimited object name prefixes. DAG objects for
+                          this environment reside in a simulated directory with this
+                          prefix.
+                        type: string
+                      gkeCluster:
+                        description: The Kubernetes Engine cluster used to run this
+                          environment.
+                        type: string
+                      nodeConfig:
+                        description: The configuration used for the Kubernetes Engine
+                          cluster.
+                        properties:
+                          diskSizeGb:
+                            description: The disk size in GB used for node VMs. Minimum
+                              size is 20GB. If unspecified, defaults to 100GB. Cannot
+                              be updated.
+                            format: int64
+                            type: integer
+                          ipAllocationPolicy:
+                            description: Configuration for controlling how IPs are
+                              allocated in the GKE cluster. Cannot be updated.
+                            properties:
+                              clusterIpv4CIDRBlock:
+                                description: The IP address range used to allocate
+                                  IP addresses to pods in the cluster. Set to blank
+                                  to have GKE choose a range with the default size.
+                                  Set to /netmask (e.g. /14) to have GKE choose a
+                                  range with a specific netmask. Set to a CIDR notation
+                                  (e.g. 10.96.0.0/14) from the RFC-1918 private networks
+                                  (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
+                                  to pick a specific range to use. Specify either
+                                  cluster_secondary_range_name or cluster_ipv4_cidr_block
+                                  but not both.
+                                type: string
+                              clusterSecondaryRangeName:
+                                description: The name of the cluster's secondary range
+                                  used to allocate IP addresses to pods. Specify either
+                                  cluster_secondary_range_name or cluster_ipv4_cidr_block
+                                  but not both. This field is applicable only when
+                                  use_ip_aliases is true.
+                                type: string
+                              servicesIpv4CIDRBlock:
+                                description: The IP address range used to allocate
+                                  IP addresses in this cluster. Set to blank to have
+                                  GKE choose a range with the default size. Set to
+                                  /netmask (e.g. /14) to have GKE choose a range with
+                                  a specific netmask. Set to a CIDR notation (e.g.
+                                  10.96.0.0/14) from the RFC-1918 private networks
+                                  (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
+                                  to pick a specific range to use. Specify either
+                                  services_secondary_range_name or services_ipv4_cidr_block
+                                  but not both.
+                                type: string
+                              servicesSecondaryRangeName:
+                                description: The name of the services' secondary range
+                                  used to allocate IP addresses to the cluster. Specify
+                                  either services_secondary_range_name or services_ipv4_cidr_block
+                                  but not both. This field is applicable only when
+                                  use_ip_aliases is true.
+                                type: string
+                              useIPAliases:
+                                description: Whether or not to enable Alias IPs in
+                                  the GKE cluster. If true, a VPC-native cluster is
+                                  created. Defaults to true if the ip_allocation_policy
+                                  block is present in config.
+                                type: boolean
+                            required:
+                            - useIPAliases
+                            type: object
+                          machineType:
+                            description: 'The Compute Engine machine type used for
+                              cluster instances, specified as a name or relative resource
+                              name. For example: "projects/{project}/zones/{zone}/machineTypes/{machineType}".
+                              Must belong to the enclosing environment''s project
+                              and region/zone.'
+                            type: string
+                          network:
+                            description: 'The Compute Engine machine type used for
+                              cluster instances, specified as a name or relative resource
+                              name. For example: "projects/{project}/zones/{zone}/machineTypes/{machineType}".
+                              Must belong to the enclosing environment''s project
+                              and region/zone. The network must belong to the environment''s
+                              project. If unspecified, the "default" network ID in
+                              the environment''s project is used. If a Custom Subnet
+                              Network is provided, subnetwork must also be provided.'
+                            type: string
+                          oauthScopes:
+                            description: The set of Google API scopes to be made available
+                              on all node VMs. Cannot be updated. If empty, defaults
+                              to ["https://www.googleapis.com/auth/cloud-platform"].
+                            items:
+                              type: string
+                            type: array
+                          serviceAccount:
+                            description: The Google Cloud Platform Service Account
+                              to be used by the node VMs. If a service account is
+                              not specified, the "default" Compute Engine service
+                              account is used. Cannot be updated. If given, note that
+                              the service account must have roles/composer.worker
+                              for any GCP resources created under the Cloud Composer
+                              Environment.
+                            type: string
+                          subnetwork:
+                            description: The Compute Engine subnetwork to be used
+                              for machine communications, , specified as a self-link,
+                              relative resource name (e.g. "projects/{project}/regions/{region}/subnetworks/{subnetwork}"),
+                              or by name. If subnetwork is provided, network must
+                              also be provided and the subnetwork must belong to the
+                              enclosing environment's project and region.
+                            type: string
+                          tags:
+                            description: The list of instance tags applied to all
+                              node VMs. Tags are used to identify valid sources or
+                              targets for network firewalls. Each tag within the list
+                              must comply with RFC1035. Cannot be updated.
+                            items:
+                              type: string
+                            type: array
+                          zone:
+                            description: The Compute Engine zone in which to deploy
+                              the VMs running the Apache Airflow software, specified
+                              as the zone name or relative resource name (e.g. "projects/{project}/zones/{zone}").
+                              Must belong to the enclosing environment's project and
+                              region.
+                            type: string
+                        required:
+                        - zone
+                        type: object
+                      nodeCount:
+                        description: The number of nodes in the Kubernetes Engine
+                          cluster that will be used to run this environment.
+                        format: int64
+                        type: integer
+                      privateEnvironmentConfig:
+                        description: The configuration used for the Private IP Cloud
+                          Composer environment.
+                        properties:
+                          cloudSQLIpv4CIDRBlock:
+                            description: The CIDR block from which IP range in tenant
+                              project will be reserved for Cloud SQL. Needs to be
+                              disjoint from web_server_ipv4_cidr_block.
+                            type: string
+                          enablePrivateEndpoint:
+                            description: If true, access to the public endpoint of
+                              the GKE cluster is denied.
+                            type: boolean
+                          masterIpv4CIDRBlock:
+                            description: The IP range in CIDR notation to use for
+                              the hosted master network. This range is used for assigning
+                              internal IP addresses to the cluster master or set of
+                              masters and to the internal load balancer virtual IP.
+                              This range must not overlap with any other ranges in
+                              use within the cluster's network. If left blank, the
+                              default value of '172.16.0.0/28' is used.
+                            type: string
+                          webServerIpv4CIDRBlock:
+                            description: The CIDR block from which IP range for web
+                              server will be reserved. Needs to be disjoint from master_ipv4_cidr_block
+                              and cloud_sql_ipv4_cidr_block.
+                            type: string
+                        type: object
+                      softwareConfig:
+                        description: The configuration settings for software inside
+                          the environment.
+                        properties:
+                          airflowConfigOverrides:
+                            additionalProperties:
+                              type: string
+                            description: 'Apache Airflow configuration properties
+                              to override. Property keys contain the section and property
+                              names, separated by a hyphen, for example "core-dags_are_paused_at_creation".
+                              Section names must not contain hyphens ("-"), opening
+                              square brackets ("["), or closing square brackets ("]").
+                              The property name must not be empty and cannot contain
+                              "=" or ";". Section and property names cannot contain
+                              characters: "." Apache Airflow configuration property
+                              names must be written in snake_case. Property values
+                              can contain any character, and can be written in any
+                              lower/upper case format. Certain Apache Airflow configuration
+                              property values are blacklisted, and cannot be overridden.'
+                            type: object
+                          envVariables:
+                            additionalProperties:
+                              type: string
+                            description: 'Additional environment variables to provide
+                              to the Apache Airflow scheduler, worker, and webserver
+                              processes. Environment variable names must match the
+                              regular expression [a-zA-Z_][a-zA-Z0-9_]*. They cannot
+                              specify Apache Airflow software configuration overrides
+                              (they cannot match the regular expression AIRFLOW__[A-Z0-9_]+__[A-Z0-9_]+),
+                              and they cannot match any of the following reserved
+                              names: AIRFLOW_HOME C_FORCE_ROOT CONTAINER_NAME DAGS_FOLDER
+                              GCP_PROJECT GCS_BUCKET GKE_CLUSTER_NAME SQL_DATABASE
+                              SQL_INSTANCE SQL_PASSWORD SQL_PROJECT SQL_REGION SQL_USER.'
+                            type: object
+                          imageVersion:
+                            description: The version of the software running in the
+                              environment. This encapsulates both the version of Cloud
+                              Composer functionality and the version of Apache Airflow.
+                              It must match the regular expression composer-[0-9]+\\.[0-9]+(\\.[0-9]+)?-airflow-[0-9]+\\.[0-9]+(\\.[0-9]+.*)?.
+                              The Cloud Composer portion of the version is a semantic
+                              version. The portion of the image version following
+                              'airflow-' is an official Apache Airflow repository
+                              release name. See documentation for allowed release
+                              names.
+                            type: string
+                          pypiPackages:
+                            additionalProperties:
+                              type: string
+                            description: Custom Python Package Index (PyPI) packages
+                              to be installed in the environment. Keys refer to the
+                              lowercase package name (e.g. "numpy"). Values are the
+                              lowercase extras and version specifier (e.g. "==1.12.0",
+                              "[devel,gcp_api]", "[devel]>=1.8.2, <1.9.2"). To specify
+                              a package without pinning it to a version specifier,
+                              use the empty string as the value.
+                            type: object
+                          pythonVersion:
+                            description: The major version of Python used to run the
+                              Apache Airflow scheduler, worker, and webserver processes.
+                              Can be set to '2' or '3'. If not specified, the default
+                              is '2'. Cannot be updated.
+                            type: string
+                        type: object
+                    type: object
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    description: 'User-defined labels for this environment. The labels
+                      map can contain no more than 64 entries. Entries of the labels
+                      map are UTF8 strings that comply with the following restrictions:
+                      Label keys must be between 1 and 63 characters long and must
+                      conform to the following regular expression: [a-z]([-a-z0-9]*[a-z0-9])?.
+                      Label values must be between 0 and 63 characters long and must
+                      conform to the regular expression ([a-z]([-a-z0-9]*[a-z0-9])?)?.
+                      No more than 64 labels can be associated with a given environment.
+                      Both keys and values must be <= 128 bytes in size.'
+                    type: object
+                  name:
+                    description: Name of the environment.
+                    type: string
+                  project:
+                    description: The ID of the project in which the resource belongs.
+                      If it is not provided, the provider project is used.
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  region:
+                    description: The location or Compute Engine region for the environment.
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - providerRef
+                type: object
+              labels:
+                additionalProperties:
+                  type: string
+                description: 'User-defined labels for this environment. The labels
+                  map can contain no more than 64 entries. Entries of the labels map
+                  are UTF8 strings that comply with the following restrictions: Label
+                  keys must be between 1 and 63 characters long and must conform to
+                  the following regular expression: [a-z]([-a-z0-9]*[a-z0-9])?. Label
+                  values must be between 0 and 63 characters long and must conform
+                  to the regular expression ([a-z]([-a-z0-9]*[a-z0-9])?)?. No more
+                  than 64 labels can be associated with a given environment. Both
+                  keys and values must be <= 128 bytes in size.'
+                type: object
+              name:
+                description: Name of the environment.
+                type: string
+              project:
+                description: The ID of the project in which the resource belongs.
+                  If it is not provided, the provider project is used.
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              region:
+                description: The location or Compute Engine region for the environment.
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
+spec:
+  group: metrics.appscode.com
+  names:
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
+      type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: MetricsConfigurationSpec is the spec of MetricsConfiguration
+              object.
+            properties:
+              metrics:
+                description: List of Metrics configuration for the resource object
+                  defined in TargetRef
+                items:
+                  description: Metrics contains the configuration of a metric in prometheus
+                    style.
+                  properties:
+                    field:
+                      description: Field defines the metric value path of the manifest
+                        file and the type of that value
+                      properties:
+                        path:
+                          description: 'Path defines the json path of the object.
+                            Example: For deployment spec replica count, the path will
+                            be .spec.replicas'
+                          type: string
+                        type:
+                          description: Type defines the type of the value in the given
+                            Path Type can be "Integer" for integer value like .spec.replicas,
+                            "DateTime" for time stamp value like .metadata.creationTimestamp
+                            "Array" for array field like .spec.containers "String"
+                            for string field like .statue.phase (for pod status)
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
+                          type: string
+                      required:
+                      - path
+                      - type
+                      type: object
+                    help:
+                      description: 'Help is used to describe the metrics. Example:
+                        For kube_deployment_spec_replicas, help string can be "Number
+                        of desired pods for a deployment."'
+                      type: string
+                    labels:
+                      description: Labels defines the metric labels as a key-value
+                        pair
+                      items:
+                        description: "Label contains the information of a metric label.
+                          Given labels are always added in the metrics along with
+                          resource name and namespace. Resource's name and namespace
+                          are always added in the labels by default. No configuration
+                          is needed for name and namespace labels. \n Example: kube_pod_info{pod=\"<pod_name>\",
+                          namespace=\"<pod_namespace>\", host_ip=\"172.18.0.2\", pod_ip=\"10.244.0.14\",
+                          node=\"kind-control-plane\"}  1 In the example pod, namespace,
+                          host_ip, pod_ip, node are labels. pod(resource name) and
+                          namespace are default labels. No configurations is needed
+                          for those. \n To generate others labels, config should be
+                          given in the following way \n labels:   - key: host_ip     valuePath:
+                          .status.hostIP   - key: pod_ip     valuePath: .status.podIP
+                          \  - key: node     valuePath: .spec.nodeName \n Either Value
+                          or ValuePath must be specified for a Label. If both is specified,
+                          ValuePath is ignored. Note that if a valuePath doesn't exist
+                          for a label key, the label will be ignored."
+                        properties:
+                          key:
+                            description: Key defines the label key
+                            type: string
+                          value:
+                            description: 'Value defines the hard coded label value.
+                              Example: labels:   - key: unit     value: byte   - key:
+                              environment     value: production'
+                            type: string
+                          valuePath:
+                            description: 'ValuePath defines the label value path.
+                              Example: To add deployment''s resource version as labels,
+                              labels:   - key: version     valuePath: .metadata.resourceVersion'
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
+                      description: "MetricValue defines the configuration to obtain
+                        metric value. \n Metrics must contain either States or MetricValue.
+                        If both are specified, MetricValue will be ignored."
+                      properties:
+                        value:
+                          description: "Value contains the metric value. It is always
+                            equal to 1. It is defined when some information of the
+                            object is collected as labels but there is no specific
+                            metric value. \n Example: For metrics \"kube_pod_info\",
+                            there are some information like host_ip, pod_ip, node
+                            name is collected as labels. As there must be a metric
+                            value, metric value is kept as 1. The metric will look
+                            like `kube_pod_info{host_ip=\"172.18.0.2\", pod_ip=\"10.244.0.14\",
+                            node=\"kind-control-plane\" .....}  1`"
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          description: "ValueFromExpression contains an expression
+                            for the metric value expression can be a function as well.
+                            Parameters is used in the expression string \n Available
+                            expression evaluation functions are: \n toInt() returns
+                            1 if the expression is true otherwise 0, example: toInt(phase
+                            == 'Running') \n evaluatePercentage(a, b) returns the
+                            value of (a * b%) example: evaluatePercentage(replicas,
+                            maxUnavailable) \n calculateCPU() returns the cpu in unit
+                            core example: calculateCPU(cpu), for cpu value 150m, it
+                            will return 0.15 \n calculateMemory() returns the memory
+                            size in byte example: calculateMemory(memory), for memory
+                            value 1 ki, it will return 1024 \n toUnix() returns the
+                            DateTime string into unix format. example: toUnix(dateTime)
+                            will return the corresponding unix value for the given
+                            dateTime \n in above examples phase, replicas, maxUnavailable,
+                            cpu, memory, dateTime are Parameter's key those values
+                            will come from corresponding Parameter's value"
+                          type: string
+                        valueFromPath:
+                          description: "ValueFromPath contains the field path of the
+                            manifest file of a object. ValueFromPath is used when
+                            the metric value is coming from any specific json path
+                            of the object. \n Example: For metrics \"kube_deployment_spec_replicas\",
+                            the metricValue is coming from a specific path .spec.replicas
+                            In this case, valueFromPath: .spec.replicas Some example
+                            of json path: .metadata.observedGeneration, .spec.restartPolicy,
+                            .status.startTime \n Some example of json path which is
+                            coming from an element of an array: .spec.containers[*].image,
+                            .status.containerStatuses[*].restartCount"
+                          type: string
+                      type: object
+                    name:
+                      description: 'Name defines the metrics name. Name should be
+                        in snake case. Example: kube_deployment_spec_replicas'
+                      type: string
+                    params:
+                      description: Params is list of parameters configuration used
+                        in expression evaluation
+                      items:
+                        description: Parameter contains the information of a parameter
+                          used in expression evaluation Parameter should contain an
+                          user defined key and corresponding Value or ValuePath. Either
+                          Value or ValuePath must be specified. If both are specified,
+                          ValuePath is ignored.
+                        properties:
+                          key:
+                            description: Key defines the parameter's key
+                            type: string
+                          value:
+                            description: Value defines user defined parameter's value.
+                            type: string
+                          valuePath:
+                            description: 'ValuePath defines the manifest field path
+                              for the parameter''s value. Example: To add deployment''s
+                              spec replica count as parameter, params:   - key: replica     valuePath:
+                              .spec.replicas'
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
+                      description: "States handle metrics with label cardinality.
+                        States specify the possible states for a label and their corresponding
+                        MetricValue configuration. \n Metrics must contain either
+                        States or MetricValue. If both are specified, MetricValue
+                        will be ignored."
+                      properties:
+                        labelKey:
+                          description: 'LabelKey defines an user defined label key
+                            of the label which label cardinality is greater than one.
+                            Example: For metric "kube_pod_status_phase", the LabelKey
+                            can be "phase"'
+                          type: string
+                        values:
+                          description: 'Values contains the list of state values.
+                            The size of the list is always equal to the cardinality
+                            of that label. Example: "kube_pod_statue_phase" metric
+                            has a label "phase" which cardinality is equal to 5. So
+                            Values should have StateValues config for all of them.'
+                          items:
+                            description: StateValues contains the information of a
+                              state value. StateValues is used to define state with
+                              all possible label values and corresponding MetricValue.
+                            properties:
+                              labelValue:
+                                description: 'LabelValue defines the value of the
+                                  label. Example: For labelKey "phase" (metric: kube_pod_status_phase
+                                  path: .status.phase ) label value can be "Running",
+                                  "Succeeded", "Failed", "Unknown" and "Pending"'
+                                type: string
+                              metricValue:
+                                description: MetricValue defines the configuration
+                                  of the metric value for the corresponding LabelValue
+                                properties:
+                                  value:
+                                    description: "Value contains the metric value.
+                                      It is always equal to 1. It is defined when
+                                      some information of the object is collected
+                                      as labels but there is no specific metric value.
+                                      \n Example: For metrics \"kube_pod_info\", there
+                                      are some information like host_ip, pod_ip, node
+                                      name is collected as labels. As there must be
+                                      a metric value, metric value is kept as 1. The
+                                      metric will look like `kube_pod_info{host_ip=\"172.18.0.2\",
+                                      pod_ip=\"10.244.0.14\", node=\"kind-control-plane\"
+                                      .....}  1`"
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    description: "ValueFromExpression contains an
+                                      expression for the metric value expression can
+                                      be a function as well. Parameters is used in
+                                      the expression string \n Available expression
+                                      evaluation functions are: \n toInt() returns
+                                      1 if the expression is true otherwise 0, example:
+                                      toInt(phase == 'Running') \n evaluatePercentage(a,
+                                      b) returns the value of (a * b%) example: evaluatePercentage(replicas,
+                                      maxUnavailable) \n calculateCPU() returns the
+                                      cpu in unit core example: calculateCPU(cpu),
+                                      for cpu value 150m, it will return 0.15 \n calculateMemory()
+                                      returns the memory size in byte example: calculateMemory(memory),
+                                      for memory value 1 ki, it will return 1024 \n
+                                      toUnix() returns the DateTime string into unix
+                                      format. example: toUnix(dateTime) will return
+                                      the corresponding unix value for the given dateTime
+                                      \n in above examples phase, replicas, maxUnavailable,
+                                      cpu, memory, dateTime are Parameter's key those
+                                      values will come from corresponding Parameter's
+                                      value"
+                                    type: string
+                                  valueFromPath:
+                                    description: "ValueFromPath contains the field
+                                      path of the manifest file of a object. ValueFromPath
+                                      is used when the metric value is coming from
+                                      any specific json path of the object. \n Example:
+                                      For metrics \"kube_deployment_spec_replicas\",
+                                      the metricValue is coming from a specific path
+                                      .spec.replicas In this case, valueFromPath:
+                                      .spec.replicas Some example of json path: .metadata.observedGeneration,
+                                      .spec.restartPolicy, .status.startTime \n Some
+                                      example of json path which is coming from an
+                                      element of an array: .spec.containers[*].image,
+                                      .status.containerStatuses[*].restartCount"
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
+                      required:
+                      - labelKey
+                      - values
+                      type: object
+                    type:
+                      description: Type defines the metrics type. For kubernetes based
+                        object, types can only be "gauge"
+                      enum:
+                      - gauge
+                      type: string
+                  required:
+                  - help
+                  - name
+                  - type
+                  type: object
+                type: array
+              targetRef:
+                description: TargetRef defines the object for which metrics will be
+                  collected
+                properties:
+                  apiVersion:
+                    description: APIVersion defines the versioned schema of this representation
+                      of an object.
+                    type: string
+                  kind:
+                    description: Kind is a string value representing the REST resource
+                      this object represents. In CamelCase.
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources: {}

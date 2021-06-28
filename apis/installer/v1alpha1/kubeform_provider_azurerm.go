@@ -17,7 +17,6 @@ limitations under the License.
 package v1alpha1
 
 import (
-	core "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -41,24 +40,13 @@ type KubeformProviderAzurerm struct {
 
 // KubeformProviderAzurermSpec is the schema for kubeform-provider-azurerm chart values file
 type KubeformProviderAzurermSpec struct {
-	Global GlobalValues `json:"global"`
-
-	CRDs CRDs `json:"crds"`
+	CRDs AzurermCRDs `json:"crds"`
 
 	//+optional
 	Controller KubeformProviderSpec `json:"kubeform-provider"`
 }
 
-type GlobalValues struct {
-	License      string `json:"license"`
-	Registry     string `json:"registry"`
-	RegistryFQDN string `json:"registryFQDN"`
-	//+optional
-	ImagePullSecrets []core.LocalObjectReference `json:"imagePullSecrets"`
-	SkipCleaner      bool                        `json:"skipCleaner"`
-}
-
-type CRDs struct {
+type AzurermCRDs struct {
 	Advanced          bool `json:"advanced"`
 	Analysis          bool `json:"analysis"`
 	Apimanagement     bool `json:"apimanagement"`

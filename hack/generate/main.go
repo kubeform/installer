@@ -27,6 +27,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -353,6 +354,9 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		//	return err
 		//}
 
+		outputGKs := make([]schema.GroupKind, 0, len(crdstore)+len(extrastore))
+		outputCRDs := make([][]byte, 0, len(crdstore)+len(extrastore))
+
 		root = filepath.Join(inputDir, "installer", ".generator", "charts", "kubeform-provider-p-g-crds")
 		err = filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 			if err != nil {
@@ -398,6 +402,9 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 						if err != nil {
 							panic(err)
 						}
+
+						outputGKs = append(outputGKs, gk)
+						outputCRDs = append(outputCRDs, data)
 					}
 					for gk := range extrastore {
 						data, filename, err := WriteCRD(extrastore, target, gk, crdVersion)
@@ -408,6 +415,9 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 						if err != nil {
 							panic(err)
 						}
+
+						outputGKs = append(outputGKs, gk)
+						outputCRDs = append(outputCRDs, data)
 					}
 				}
 				return nil
@@ -437,6 +447,26 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 				return ioutil.WriteFile(target, buf.Bytes(), 0644)
 			}
 		})
+		if err != nil {
+			return err
+		}
+
+		// write kubeform-provider-p-g-crds.yaml file
+		sort.Slice(outputCRDs, func(i, j int) bool {
+			if outputGKs[i].Group == outputGKs[j].Group {
+				return outputGKs[i].Kind < outputGKs[j].Kind
+			}
+			return outputGKs[i].Group < outputGKs[j].Group
+		})
+
+		target := filepath.Join(inputDir, "installer", "crds", fmt.Sprintf("kubeform-provider-%s", p), fmt.Sprintf("%s-crds.yaml", g))
+		err = os.MkdirAll(filepath.Dir(target), 0755)
+		if err != nil {
+			return err
+		}
+
+		data := bytes.Join(outputCRDs, []byte("\n---\n"))
+		err = ioutil.WriteFile(target, data, 0644)
 		if err != nil {
 			return err
 		}

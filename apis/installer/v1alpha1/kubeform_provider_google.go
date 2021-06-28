@@ -17,7 +17,6 @@ limitations under the License.
 package v1alpha1
 
 import (
-	core "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -41,24 +40,13 @@ type KubeformProviderGoogle struct {
 
 // KubeformProviderGoogleSpec is the schema for kubeform-provider-google chart values file
 type KubeformProviderGoogleSpec struct {
-	Global GlobalValues `json:"global"`
-
-	CRDs CRDs `json:"crds"`
+	CRDs GoogleCRDs `json:"crds"`
 
 	//+optional
 	Controller KubeformProviderSpec `json:"kubeform-provider"`
 }
 
-type GlobalValues struct {
-	License      string `json:"license"`
-	Registry     string `json:"registry"`
-	RegistryFQDN string `json:"registryFQDN"`
-	//+optional
-	ImagePullSecrets []core.LocalObjectReference `json:"imagePullSecrets"`
-	SkipCleaner      bool                        `json:"skipCleaner"`
-}
-
-type CRDs struct {
+type GoogleCRDs struct {
 	Accesscontext          bool `json:"accesscontext"`
 	Active                 bool `json:"active"`
 	Apigee                 bool `json:"apigee"`

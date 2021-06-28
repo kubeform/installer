@@ -41,24 +41,13 @@ type KubeformProvider{{ .Provider | camelcase }} struct {
 
 // KubeformProvider{{ .Provider | camelcase }}Spec is the schema for kubeform-provider-{{ .Provider }} chart values file
 type KubeformProvider{{ .Provider | camelcase }}Spec struct {
-	Global GlobalValues `json:"global"`
-
-	CRDs CRDs `json:"crds"`
+	CRDs {{ .Provider | camelcase }}CRDs `json:"crds"`
 
 	//+optional
 	Controller KubeformProviderSpec `json:"kubeform-provider"`
 }
 
-type GlobalValues struct {
-	License      string `json:"license"`
-	Registry     string `json:"registry"`
-	RegistryFQDN string `json:"registryFQDN"`
-	//+optional
-	ImagePullSecrets []core.LocalObjectReference `json:"imagePullSecrets"`
-	SkipCleaner      bool                        `json:"skipCleaner"`
-}
-
-type CRDs struct {
+type {{ .Provider | camelcase }}CRDs struct {
 	{{ range .GIDs }}
 	{{- . | camelcase }} bool `json:"{{.}}"`
 	{{ end }}
