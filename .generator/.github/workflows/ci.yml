@@ -61,13 +61,13 @@ jobs:
           rnd=$(head /dev/urandom | tr -dc a-z0-9 | head -c 10 ; echo '')
           echo ::set-output name=namespace::kubeform-$rnd
 
-      - name: Create Kubernetes ${{ matrix.k8s }} cluster
+      - name: Create Kubernetes {{ "${{ matrix.k8s }}" }} cluster
         id: kind
         uses: engineerd/setup-kind@v0.5.0
         with:
           version: v0.11.1
           config: hack/kubernetes/kind.yaml
-          image: kindest/node:${{ matrix.k8s }}
+          image: kindest/node:{{ "${{ matrix.k8s }}" }}
 
       - name: Prepare cluster for testing
         id: local-path
@@ -83,18 +83,20 @@ jobs:
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
           echo
           echo "create docker-registry secret"
-          kubectl create ns ${{ steps.params.outputs.namespace }} || true
+          kubectl create ns {{ "${{ steps.params.outputs.namespace }}" }} || true
 
       - name: Issue License
         env:
-          BYTEBUILDERS_LICENSE_TOKEN: ${{ secrets.BYTEBUILDERS_LICENSE_TOKEN }}
+          BYTEBUILDERS_LICENSE_TOKEN: {{ "${{ secrets.BYTEBUILDERS_LICENSE_TOKEN }}" }}
         run: |
           export KUBECONFIG="${HOME}/.kube/config"
           CLUSTER_UID=$(kubectl get ns kube-system -o=jsonpath='{.metadata.uid}')
           LICENSE_KEY=$(curl -X POST -d "name=1gtm&email=1gtm@appscode.com&product=kubeform-enterprise&cluster=${CLUSTER_UID}&tos=true&token=${BYTEBUILDERS_LICENSE_TOKEN}" https://license-issuer.appscode.com/issue-license)
           # ref: https://github.com/mikefarah/yq/issues/230#issuecomment-487458629
           yq w -i ./charts/kubeform-provider/ci/ci-values.yaml license --tag '!!str' -- "${LICENSE_KEY}"
-          yq w -i ./charts/kubeform-provider-linode/ci/ci-values.yaml kubeform-provider.license --tag '!!str' -- "${LICENSE_KEY}"
+          {{- range .Providers }}
+          yq w -i ./charts/kubeform-provider-{{.}}/ci/ci-values.yaml kubeform-provider.license --tag '!!str' -- "${LICENSE_KEY}"
+          {{- end }}
 
       - name: Test charts
         run: |

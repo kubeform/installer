@@ -157,8 +157,43 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 
 	var buf bytes.Buffer
 
-	// installer/.generator/apis/installer/v1alpha1/register.go
-	root := filepath.Join(inputDir, "installer", ".generator", "apis")
+	// installer/.generator/.github/workflows/
+	root := filepath.Join(inputDir, "installer", ".generator", ".github", "workflows")
+	err = filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(root, path)
+		if err != nil {
+			return err
+		}
+		fmt.Println(rel)
+
+		/*
+			.
+			ci.yml
+		*/
+
+		target := filepath.Join(inputDir, "installer", ".github", "workflows", rel)
+
+		if info.IsDir() {
+			return os.MkdirAll(target, 0755)
+		}
+
+		tpl := template.Must(template.New("").Funcs(sprig.TxtFuncMap()).ParseFiles(path))
+		buf.Reset()
+		err = tpl.ExecuteTemplate(&buf, filepath.Base(path), providerList)
+		if err != nil {
+			return err
+		}
+		return ioutil.WriteFile(target, buf.Bytes(), 0644)
+	})
+	if err != nil {
+		return err
+	}
+
+	// installer/.generator/apis
+	root = filepath.Join(inputDir, "installer", ".generator", "apis")
 	err = filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -180,8 +215,10 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			installer/v1alpha1/types_test.go
 		*/
 
+		target := filepath.Join(inputDir, "installer", "apis", rel)
+
 		if info.IsDir() {
-			return os.MkdirAll(filepath.Join(inputDir, "installer", "apis", rel), 0755)
+			return os.MkdirAll(target, 0755)
 		}
 
 		switch rel {
@@ -196,7 +233,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			if err != nil {
 				return err
 			}
-			return ioutil.WriteFile(filepath.Join(inputDir, "installer", "apis", filepath.Dir(rel), fmt.Sprintf("kubeform_provider_%s.go", p)), buf.Bytes(), 0644)
+			return ioutil.WriteFile(filepath.Join(filepath.Dir(target), fmt.Sprintf("kubeform_provider_%s.go", p)), buf.Bytes(), 0644)
 		default:
 			tpl := template.Must(template.New("").Funcs(sprig.TxtFuncMap()).ParseFiles(path))
 			buf.Reset()
@@ -204,7 +241,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			if err != nil {
 				return err
 			}
-			return ioutil.WriteFile(filepath.Join(inputDir, "installer", "apis", rel), buf.Bytes(), 0644)
+			return ioutil.WriteFile(target, buf.Bytes(), 0644)
 		}
 	})
 	if err != nil {
