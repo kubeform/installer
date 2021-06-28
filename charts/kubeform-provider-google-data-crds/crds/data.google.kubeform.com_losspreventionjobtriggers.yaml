@@ -1,0 +1,828 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: losspreventionjobtriggers.data.google.kubeform.com
+spec:
+  group: data.google.kubeform.com
+  names:
+    kind: LossPreventionJobTrigger
+    listKind: LossPreventionJobTriggerList
+    plural: losspreventionjobtriggers
+    singular: losspreventionjobtrigger
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              description:
+                description: A description of the job trigger.
+                type: string
+              displayName:
+                description: User set display name of the job trigger.
+                type: string
+              id:
+                type: string
+              inspectJob:
+                description: Controls what and how to inspect for findings.
+                properties:
+                  actions:
+                    description: A task to execute on the completion of a job.
+                    items:
+                      properties:
+                        saveFindings:
+                          description: Schedule for triggered jobs
+                          properties:
+                            outputConfig:
+                              description: Information on where to store output
+                              properties:
+                                outputSchema:
+                                  description: "Schema used for writing the findings
+                                    for Inspect jobs. This field is only used for
+                                    Inspect and must be unspecified for Risk jobs.
+                                    Columns are derived from the Finding object. If
+                                    appending to an existing table, any columns from
+                                    the predefined schema that are missing will be
+                                    added. No columns in the existing table will be
+                                    deleted. \n If unspecified, then all available
+                                    columns will be used for a new table or an (existing)
+                                    table with no schema, and no changes will be made
+                                    to an existing table that has a schema. Only for
+                                    use with external storage. Possible values: [\"BASIC_COLUMNS\",
+                                    \"GCS_COLUMNS\", \"DATASTORE_COLUMNS\", \"BIG_QUERY_COLUMNS\",
+                                    \"ALL_COLUMNS\"]"
+                                  type: string
+                                table:
+                                  description: Information on the location of the
+                                    target BigQuery Table.
+                                  properties:
+                                    datasetID:
+                                      description: Dataset ID of the table.
+                                      type: string
+                                    projectID:
+                                      description: The Google Cloud Platform project
+                                        ID of the project containing the table.
+                                      type: string
+                                    tableID:
+                                      description: 'Name of the table. If is not set
+                                        a new one will be generated for you with the
+                                        following format: ''dlp_googleapis_yyyy_mm_dd_[dlp_job_id]''.
+                                        Pacific timezone will be used for generating
+                                        the date details.'
+                                      type: string
+                                  required:
+                                  - datasetID
+                                  - projectID
+                                  type: object
+                              required:
+                              - table
+                              type: object
+                          required:
+                          - outputConfig
+                          type: object
+                      required:
+                      - saveFindings
+                      type: object
+                    type: array
+                  inspectTemplateName:
+                    description: The name of the template to run when this job is
+                      triggered.
+                    type: string
+                  storageConfig:
+                    description: Information on where to inspect
+                    properties:
+                      bigQueryOptions:
+                        description: Options defining BigQuery table and row identifiers.
+                        properties:
+                          tableReference:
+                            description: Set of files to scan.
+                            properties:
+                              datasetID:
+                                description: The dataset ID of the table.
+                                type: string
+                              projectID:
+                                description: The Google Cloud Platform project ID
+                                  of the project containing the table.
+                                type: string
+                              tableID:
+                                description: The name of the table.
+                                type: string
+                            required:
+                            - datasetID
+                            - projectID
+                            - tableID
+                            type: object
+                        required:
+                        - tableReference
+                        type: object
+                      cloudStorageOptions:
+                        description: Options defining a file or a set of files within
+                          a Google Cloud Storage bucket.
+                        properties:
+                          bytesLimitPerFile:
+                            description: Max number of bytes to scan from a file.
+                              If a scanned file's size is bigger than this value then
+                              the rest of the bytes are omitted.
+                            format: int64
+                            type: integer
+                          bytesLimitPerFilePercent:
+                            description: Max percentage of bytes to scan from a file.
+                              The rest are omitted. The number of bytes scanned is
+                              rounded down. Must be between 0 and 100, inclusively.
+                              Both 0 and 100 means no limit.
+                            format: int64
+                            type: integer
+                          fileSet:
+                            description: Set of files to scan.
+                            properties:
+                              regexFileSet:
+                                description: The regex-filtered set of files to scan.
+                                properties:
+                                  bucketName:
+                                    description: The name of a Cloud Storage bucket.
+                                    type: string
+                                  excludeRegex:
+                                    description: A list of regular expressions matching
+                                      file paths to exclude. All files in the bucket
+                                      that match at least one of these regular expressions
+                                      will be excluded from the scan.
+                                    items:
+                                      type: string
+                                    type: array
+                                  includeRegex:
+                                    description: A list of regular expressions matching
+                                      file paths to include. All files in the bucket
+                                      that match at least one of these regular expressions
+                                      will be included in the set of files, except
+                                      for those that also match an item in excludeRegex.
+                                      Leaving this field empty will match all files
+                                      by default (this is equivalent to including
+                                      .* in the list)
+                                    items:
+                                      type: string
+                                    type: array
+                                required:
+                                - bucketName
+                                type: object
+                              url:
+                                description: "The Cloud Storage url of the file(s)
+                                  to scan, in the format 'gs://<bucket>/<path>'. Trailing
+                                  wildcard in the path is allowed. \n If the url ends
+                                  in a trailing slash, the bucket or directory represented
+                                  by the url will be scanned non-recursively (content
+                                  in sub-directories will not be scanned). This means
+                                  that 'gs://mybucket/' is equivalent to 'gs://mybucket/*',
+                                  and 'gs://mybucket/directory/' is equivalent to
+                                  'gs://mybucket/directory/*'."
+                                type: string
+                            type: object
+                          fileTypes:
+                            description: 'List of file type groups to include in the
+                              scan. If empty, all files are scanned and available
+                              data format processors are applied. In addition, the
+                              binary content of the selected files is always scanned
+                              as well. Images are scanned only as binary if the specified
+                              region does not support image inspection and no fileTypes
+                              were specified. Possible values: ["BINARY_FILE", "TEXT_FILE",
+                              "IMAGE", "WORD", "PDF", "AVRO", "CSV", "TSV"]'
+                            items:
+                              type: string
+                            type: array
+                          filesLimitPercent:
+                            description: Limits the number of files to scan to this
+                              percentage of the input FileSet. Number of files scanned
+                              is rounded down. Must be between 0 and 100, inclusively.
+                              Both 0 and 100 means no limit.
+                            format: int64
+                            type: integer
+                          sampleMethod:
+                            description: 'How to sample bytes if not all bytes are
+                              scanned. Meaningful only when used in conjunction with
+                              bytesLimitPerFile. If not specified, scanning would
+                              start from the top. Possible values: ["TOP", "RANDOM_START"]'
+                            type: string
+                        required:
+                        - fileSet
+                        type: object
+                      datastoreOptions:
+                        description: Options defining a data set within Google Cloud
+                          Datastore.
+                        properties:
+                          kind:
+                            description: A representation of a Datastore kind.
+                            properties:
+                              name:
+                                description: The name of the Datastore kind.
+                                type: string
+                            required:
+                            - name
+                            type: object
+                          partitionID:
+                            description: Datastore partition ID. A partition ID identifies
+                              a grouping of entities. The grouping is always by project
+                              and namespace, however the namespace ID may be empty.
+                            properties:
+                              namespaceID:
+                                description: If not empty, the ID of the namespace
+                                  to which the entities belong.
+                                type: string
+                              projectID:
+                                description: The ID of the project to which the entities
+                                  belong.
+                                type: string
+                            required:
+                            - projectID
+                            type: object
+                        required:
+                        - kind
+                        - partitionID
+                        type: object
+                      timespanConfig:
+                        description: Information on where to inspect
+                        properties:
+                          enableAutoPopulationOfTimespanConfig:
+                            description: When the job is started by a JobTrigger we
+                              will automatically figure out a valid startTime to avoid
+                              scanning files that have not been modified since the
+                              last time the JobTrigger executed. This will be based
+                              on the time of the execution of the last run of the
+                              JobTrigger.
+                            type: boolean
+                          endTime:
+                            description: Exclude files or rows newer than this value.
+                              If set to zero, no upper time limit is applied.
+                            type: string
+                          startTime:
+                            description: Exclude files or rows older than this value.
+                            type: string
+                          timestampField:
+                            description: Information on where to inspect
+                            properties:
+                              name:
+                                description: "Specification of the field containing
+                                  the timestamp of scanned items. Used for data sources
+                                  like Datastore and BigQuery. \n For BigQuery: Required
+                                  to filter out rows based on the given start and
+                                  end times. If not specified and the table was modified
+                                  between the given start and end times, the entire
+                                  table will be scanned. The valid data types of the
+                                  timestamp field are: INTEGER, DATE, TIMESTAMP, or
+                                  DATETIME BigQuery column. \n For Datastore. Valid
+                                  data types of the timestamp field are: TIMESTAMP.
+                                  Datastore entity will be scanned if the timestamp
+                                  property does not exist or its value is empty or
+                                  invalid."
+                                type: string
+                            required:
+                            - name
+                            type: object
+                        required:
+                        - timestampField
+                        type: object
+                    type: object
+                required:
+                - actions
+                - inspectTemplateName
+                - storageConfig
+                type: object
+              kubeformOutput:
+                properties:
+                  description:
+                    description: A description of the job trigger.
+                    type: string
+                  displayName:
+                    description: User set display name of the job trigger.
+                    type: string
+                  id:
+                    type: string
+                  inspectJob:
+                    description: Controls what and how to inspect for findings.
+                    properties:
+                      actions:
+                        description: A task to execute on the completion of a job.
+                        items:
+                          properties:
+                            saveFindings:
+                              description: Schedule for triggered jobs
+                              properties:
+                                outputConfig:
+                                  description: Information on where to store output
+                                  properties:
+                                    outputSchema:
+                                      description: "Schema used for writing the findings
+                                        for Inspect jobs. This field is only used
+                                        for Inspect and must be unspecified for Risk
+                                        jobs. Columns are derived from the Finding
+                                        object. If appending to an existing table,
+                                        any columns from the predefined schema that
+                                        are missing will be added. No columns in the
+                                        existing table will be deleted. \n If unspecified,
+                                        then all available columns will be used for
+                                        a new table or an (existing) table with no
+                                        schema, and no changes will be made to an
+                                        existing table that has a schema. Only for
+                                        use with external storage. Possible values:
+                                        [\"BASIC_COLUMNS\", \"GCS_COLUMNS\", \"DATASTORE_COLUMNS\",
+                                        \"BIG_QUERY_COLUMNS\", \"ALL_COLUMNS\"]"
+                                      type: string
+                                    table:
+                                      description: Information on the location of
+                                        the target BigQuery Table.
+                                      properties:
+                                        datasetID:
+                                          description: Dataset ID of the table.
+                                          type: string
+                                        projectID:
+                                          description: The Google Cloud Platform project
+                                            ID of the project containing the table.
+                                          type: string
+                                        tableID:
+                                          description: 'Name of the table. If is not
+                                            set a new one will be generated for you
+                                            with the following format: ''dlp_googleapis_yyyy_mm_dd_[dlp_job_id]''.
+                                            Pacific timezone will be used for generating
+                                            the date details.'
+                                          type: string
+                                      required:
+                                      - datasetID
+                                      - projectID
+                                      type: object
+                                  required:
+                                  - table
+                                  type: object
+                              required:
+                              - outputConfig
+                              type: object
+                          required:
+                          - saveFindings
+                          type: object
+                        type: array
+                      inspectTemplateName:
+                        description: The name of the template to run when this job
+                          is triggered.
+                        type: string
+                      storageConfig:
+                        description: Information on where to inspect
+                        properties:
+                          bigQueryOptions:
+                            description: Options defining BigQuery table and row identifiers.
+                            properties:
+                              tableReference:
+                                description: Set of files to scan.
+                                properties:
+                                  datasetID:
+                                    description: The dataset ID of the table.
+                                    type: string
+                                  projectID:
+                                    description: The Google Cloud Platform project
+                                      ID of the project containing the table.
+                                    type: string
+                                  tableID:
+                                    description: The name of the table.
+                                    type: string
+                                required:
+                                - datasetID
+                                - projectID
+                                - tableID
+                                type: object
+                            required:
+                            - tableReference
+                            type: object
+                          cloudStorageOptions:
+                            description: Options defining a file or a set of files
+                              within a Google Cloud Storage bucket.
+                            properties:
+                              bytesLimitPerFile:
+                                description: Max number of bytes to scan from a file.
+                                  If a scanned file's size is bigger than this value
+                                  then the rest of the bytes are omitted.
+                                format: int64
+                                type: integer
+                              bytesLimitPerFilePercent:
+                                description: Max percentage of bytes to scan from
+                                  a file. The rest are omitted. The number of bytes
+                                  scanned is rounded down. Must be between 0 and 100,
+                                  inclusively. Both 0 and 100 means no limit.
+                                format: int64
+                                type: integer
+                              fileSet:
+                                description: Set of files to scan.
+                                properties:
+                                  regexFileSet:
+                                    description: The regex-filtered set of files to
+                                      scan.
+                                    properties:
+                                      bucketName:
+                                        description: The name of a Cloud Storage bucket.
+                                        type: string
+                                      excludeRegex:
+                                        description: A list of regular expressions
+                                          matching file paths to exclude. All files
+                                          in the bucket that match at least one of
+                                          these regular expressions will be excluded
+                                          from the scan.
+                                        items:
+                                          type: string
+                                        type: array
+                                      includeRegex:
+                                        description: A list of regular expressions
+                                          matching file paths to include. All files
+                                          in the bucket that match at least one of
+                                          these regular expressions will be included
+                                          in the set of files, except for those that
+                                          also match an item in excludeRegex. Leaving
+                                          this field empty will match all files by
+                                          default (this is equivalent to including
+                                          .* in the list)
+                                        items:
+                                          type: string
+                                        type: array
+                                    required:
+                                    - bucketName
+                                    type: object
+                                  url:
+                                    description: "The Cloud Storage url of the file(s)
+                                      to scan, in the format 'gs://<bucket>/<path>'.
+                                      Trailing wildcard in the path is allowed. \n
+                                      If the url ends in a trailing slash, the bucket
+                                      or directory represented by the url will be
+                                      scanned non-recursively (content in sub-directories
+                                      will not be scanned). This means that 'gs://mybucket/'
+                                      is equivalent to 'gs://mybucket/*', and 'gs://mybucket/directory/'
+                                      is equivalent to 'gs://mybucket/directory/*'."
+                                    type: string
+                                type: object
+                              fileTypes:
+                                description: 'List of file type groups to include
+                                  in the scan. If empty, all files are scanned and
+                                  available data format processors are applied. In
+                                  addition, the binary content of the selected files
+                                  is always scanned as well. Images are scanned only
+                                  as binary if the specified region does not support
+                                  image inspection and no fileTypes were specified.
+                                  Possible values: ["BINARY_FILE", "TEXT_FILE", "IMAGE",
+                                  "WORD", "PDF", "AVRO", "CSV", "TSV"]'
+                                items:
+                                  type: string
+                                type: array
+                              filesLimitPercent:
+                                description: Limits the number of files to scan to
+                                  this percentage of the input FileSet. Number of
+                                  files scanned is rounded down. Must be between 0
+                                  and 100, inclusively. Both 0 and 100 means no limit.
+                                format: int64
+                                type: integer
+                              sampleMethod:
+                                description: 'How to sample bytes if not all bytes
+                                  are scanned. Meaningful only when used in conjunction
+                                  with bytesLimitPerFile. If not specified, scanning
+                                  would start from the top. Possible values: ["TOP",
+                                  "RANDOM_START"]'
+                                type: string
+                            required:
+                            - fileSet
+                            type: object
+                          datastoreOptions:
+                            description: Options defining a data set within Google
+                              Cloud Datastore.
+                            properties:
+                              kind:
+                                description: A representation of a Datastore kind.
+                                properties:
+                                  name:
+                                    description: The name of the Datastore kind.
+                                    type: string
+                                required:
+                                - name
+                                type: object
+                              partitionID:
+                                description: Datastore partition ID. A partition ID
+                                  identifies a grouping of entities. The grouping
+                                  is always by project and namespace, however the
+                                  namespace ID may be empty.
+                                properties:
+                                  namespaceID:
+                                    description: If not empty, the ID of the namespace
+                                      to which the entities belong.
+                                    type: string
+                                  projectID:
+                                    description: The ID of the project to which the
+                                      entities belong.
+                                    type: string
+                                required:
+                                - projectID
+                                type: object
+                            required:
+                            - kind
+                            - partitionID
+                            type: object
+                          timespanConfig:
+                            description: Information on where to inspect
+                            properties:
+                              enableAutoPopulationOfTimespanConfig:
+                                description: When the job is started by a JobTrigger
+                                  we will automatically figure out a valid startTime
+                                  to avoid scanning files that have not been modified
+                                  since the last time the JobTrigger executed. This
+                                  will be based on the time of the execution of the
+                                  last run of the JobTrigger.
+                                type: boolean
+                              endTime:
+                                description: Exclude files or rows newer than this
+                                  value. If set to zero, no upper time limit is applied.
+                                type: string
+                              startTime:
+                                description: Exclude files or rows older than this
+                                  value.
+                                type: string
+                              timestampField:
+                                description: Information on where to inspect
+                                properties:
+                                  name:
+                                    description: "Specification of the field containing
+                                      the timestamp of scanned items. Used for data
+                                      sources like Datastore and BigQuery. \n For
+                                      BigQuery: Required to filter out rows based
+                                      on the given start and end times. If not specified
+                                      and the table was modified between the given
+                                      start and end times, the entire table will be
+                                      scanned. The valid data types of the timestamp
+                                      field are: INTEGER, DATE, TIMESTAMP, or DATETIME
+                                      BigQuery column. \n For Datastore. Valid data
+                                      types of the timestamp field are: TIMESTAMP.
+                                      Datastore entity will be scanned if the timestamp
+                                      property does not exist or its value is empty
+                                      or invalid."
+                                    type: string
+                                required:
+                                - name
+                                type: object
+                            required:
+                            - timestampField
+                            type: object
+                        type: object
+                    required:
+                    - actions
+                    - inspectTemplateName
+                    - storageConfig
+                    type: object
+                  lastRunTime:
+                    description: The timestamp of the last time this trigger executed.
+                    type: string
+                  name:
+                    description: The resource name of the job trigger. Set by the
+                      server.
+                    type: string
+                  parent:
+                    description: The parent of the trigger, either in the format 'projects/{{project}}'
+                      or 'projects/{{project}}/locations/{{location}}'
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  status:
+                    description: 'Whether the trigger is currently active. Default
+                      value: "HEALTHY" Possible values: ["PAUSED", "HEALTHY", "CANCELLED"]'
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                  triggers:
+                    description: What event needs to occur for a new job to be started.
+                    items:
+                      properties:
+                        schedule:
+                          description: Schedule for triggered jobs
+                          properties:
+                            recurrencePeriodDuration:
+                              description: "With this option a job is started a regular
+                                periodic basis. For example: every day (86400 seconds).
+                                \n A scheduled start time will be skipped if the previous
+                                execution has not ended when its scheduled time occurs.
+                                \n This value must be set to a time duration greater
+                                than or equal to 1 day and can be no longer than 60
+                                days. \n A duration in seconds with up to nine fractional
+                                digits, terminated by 's'. Example: \"3.5s\"."
+                              type: string
+                          type: object
+                      type: object
+                    type: array
+                required:
+                - parent
+                - providerRef
+                - triggers
+                type: object
+              lastRunTime:
+                description: The timestamp of the last time this trigger executed.
+                type: string
+              name:
+                description: The resource name of the job trigger. Set by the server.
+                type: string
+              parent:
+                description: The parent of the trigger, either in the format 'projects/{{project}}'
+                  or 'projects/{{project}}/locations/{{location}}'
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              status:
+                description: 'Whether the trigger is currently active. Default value:
+                  "HEALTHY" Possible values: ["PAUSED", "HEALTHY", "CANCELLED"]'
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+              triggers:
+                description: What event needs to occur for a new job to be started.
+                items:
+                  properties:
+                    schedule:
+                      description: Schedule for triggered jobs
+                      properties:
+                        recurrencePeriodDuration:
+                          description: "With this option a job is started a regular
+                            periodic basis. For example: every day (86400 seconds).
+                            \n A scheduled start time will be skipped if the previous
+                            execution has not ended when its scheduled time occurs.
+                            \n This value must be set to a time duration greater than
+                            or equal to 1 day and can be no longer than 60 days. \n
+                            A duration in seconds with up to nine fractional digits,
+                            terminated by 's'. Example: \"3.5s\"."
+                          type: string
+                      type: object
+                  type: object
+                type: array
+            required:
+            - parent
+            - providerRef
+            - triggers
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

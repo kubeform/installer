@@ -1,0 +1,1365 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: triggers.cloudbuild.google.kubeform.com
+spec:
+  group: cloudbuild.google.kubeform.com
+  names:
+    kind: Trigger
+    listKind: TriggerList
+    plural: triggers
+    singular: trigger
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              build:
+                description: Contents of the build template. Either a filename or
+                  build template must be provided.
+                properties:
+                  artifacts:
+                    description: Artifacts produced by the build that should be uploaded
+                      upon successful completion of all build steps.
+                    properties:
+                      images:
+                        description: "A list of images to be pushed upon the successful
+                          completion of all build steps. \n The images will be pushed
+                          using the builder service account's credentials. \n The
+                          digests of the pushed images will be stored in the Build
+                          resource's results field. \n If any of the images fail to
+                          be pushed, the build is marked FAILURE."
+                        items:
+                          type: string
+                        type: array
+                      objects:
+                        description: "A list of objects to be uploaded to Cloud Storage
+                          upon successful completion of all build steps. \n Files
+                          in the workspace matching specified paths globs will be
+                          uploaded to the Cloud Storage location using the builder
+                          service account's credentials. \n The location and generation
+                          of the uploaded objects will be stored in the Build resource's
+                          results field. \n If any objects fail to be pushed, the
+                          build is marked FAILURE."
+                        properties:
+                          location:
+                            description: "Cloud Storage bucket and optional object
+                              path, in the form \"gs://bucket/path/to/somewhere/\".
+                              \n Files in the workspace matching any path pattern
+                              will be uploaded to Cloud Storage with this location
+                              as a prefix."
+                            type: string
+                          paths:
+                            description: Path globs used to match files in the build's
+                              workspace.
+                            items:
+                              type: string
+                            type: array
+                          timing:
+                            description: Output only. Stores timing information for
+                              pushing all artifact objects.
+                            items:
+                              properties:
+                                endTime:
+                                  description: "End of time span. \n A timestamp in
+                                    RFC3339 UTC \"Zulu\" format, with nanosecond resolution
+                                    and up to nine fractional digits. Examples: \"2014-10-02T15:01:23Z\"
+                                    and \"2014-10-02T15:01:23.045123456Z\"."
+                                  type: string
+                                startTime:
+                                  description: "Start of time span. \n A timestamp
+                                    in RFC3339 UTC \"Zulu\" format, with nanosecond
+                                    resolution and up to nine fractional digits. Examples:
+                                    \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\"."
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                    type: object
+                  images:
+                    description: A list of images to be pushed upon the successful
+                      completion of all build steps. The images are pushed using the
+                      builder service account's credentials. The digests of the pushed
+                      images will be stored in the Build resource's results field.
+                      If any of the images fail to be pushed, the build status is
+                      marked FAILURE.
+                    items:
+                      type: string
+                    type: array
+                  logsBucket:
+                    description: Google Cloud Storage bucket where logs should be
+                      written. Logs file names will be of the format ${logsBucket}/log-${build_id}.txt.
+                    type: string
+                  options:
+                    description: Special options for this build.
+                    properties:
+                      diskSizeGb:
+                        description: Requested disk size for the VM that runs the
+                          build. Note that this is NOT "disk free"; some of the space
+                          will be used by the operating system and build utilities.
+                          Also note that this is the minimum disk size that will be
+                          allocated for the build -- the build may run with a larger
+                          disk than requested. At present, the maximum disk size is
+                          1000GB; builds that request more than the maximum are rejected
+                          with an error.
+                        format: int64
+                        type: integer
+                      dynamicSubstitutions:
+                        description: "Option to specify whether or not to apply bash
+                          style string operations to the substitutions. \n NOTE this
+                          is always enabled for triggered builds and cannot be overridden
+                          in the build configuration file."
+                        type: boolean
+                      env:
+                        description: "A list of global environment variable definitions
+                          that will exist for all build steps in this build. If a
+                          variable is defined in both globally and in a build step,
+                          the variable will use the build step value. \n The elements
+                          are of the form \"KEY=VALUE\" for the environment variable
+                          \"KEY\" being given the value \"VALUE\"."
+                        items:
+                          type: string
+                        type: array
+                      logStreamingOption:
+                        description: 'Option to define build log streaming behavior
+                          to Google Cloud Storage. Possible values: ["STREAM_DEFAULT",
+                          "STREAM_ON", "STREAM_OFF"]'
+                        type: string
+                      logging:
+                        description: 'Option to specify the logging mode, which determines
+                          if and where build logs are stored. Possible values: ["LOGGING_UNSPECIFIED",
+                          "LEGACY", "GCS_ONLY", "STACKDRIVER_ONLY", "NONE"]'
+                        type: string
+                      machineType:
+                        description: 'Compute Engine machine type on which to run
+                          the build. Possible values: ["UNSPECIFIED", "N1_HIGHCPU_8",
+                          "N1_HIGHCPU_32", "E2_HIGHCPU_8", "E2_HIGHCPU_32"]'
+                        type: string
+                      requestedVerifyOption:
+                        description: 'Requested verifiability options. Possible values:
+                          ["NOT_VERIFIED", "VERIFIED"]'
+                        type: string
+                      secretEnv:
+                        description: A list of global environment variables, which
+                          are encrypted using a Cloud Key Management Service crypto
+                          key. These values must be specified in the build's Secret.
+                          These variables will be available to all build steps in
+                          this build.
+                        items:
+                          type: string
+                        type: array
+                      sourceProvenanceHash:
+                        description: 'Requested hash for SourceProvenance. Possible
+                          values: ["NONE", "SHA256", "MD5"]'
+                        items:
+                          type: string
+                        type: array
+                      substitutionOption:
+                        description: "Option to specify behavior when there is an
+                          error in the substitution checks. \n NOTE this is always
+                          set to ALLOW_LOOSE for triggered builds and cannot be overridden
+                          in the build configuration file. Possible values: [\"MUST_MATCH\",
+                          \"ALLOW_LOOSE\"]"
+                        type: string
+                      volumes:
+                        description: "Global list of volumes to mount for ALL build
+                          steps \n Each volume is created as an empty volume prior
+                          to starting the build process. Upon completion of the build,
+                          volumes and their contents are discarded. Global volume
+                          names and paths cannot conflict with the volumes defined
+                          a build step. \n Using a global volume in a build with only
+                          one step is not valid as it is indicative of a build request
+                          with an incorrect configuration."
+                        items:
+                          properties:
+                            name:
+                              description: "Name of the volume to mount. \n Volume
+                                names must be unique per build step and must be valid
+                                names for Docker volumes. Each named volume must be
+                                used by at least two build steps."
+                              type: string
+                            path:
+                              description: "Path at which to mount the volume. \n
+                                Paths must be absolute and cannot conflict with other
+                                volume paths on the same build step or with certain
+                                reserved volume paths."
+                              type: string
+                          type: object
+                        type: array
+                      workerPool:
+                        description: "Option to specify a WorkerPool for the build.
+                          Format projects/{project}/workerPools/{workerPool} \n This
+                          field is experimental."
+                        type: string
+                    type: object
+                  queueTtl:
+                    description: 'TTL in queue for this build. If provided and the
+                      build is enqueued longer than this value, the build will expire
+                      and the build status will be EXPIRED. The TTL starts ticking
+                      from createTime. A duration in seconds with up to nine fractional
+                      digits, terminated by ''s''. Example: "3.5s".'
+                    type: string
+                  secret:
+                    description: Secrets to decrypt using Cloud Key Management Service.
+                    items:
+                      properties:
+                        kmsKeyName:
+                          description: Cloud KMS key name to use to decrypt these
+                            envs.
+                          type: string
+                        secretEnv:
+                          additionalProperties:
+                            type: string
+                          description: Map of environment variable name to its encrypted
+                            value. Secret environment variables must be unique across
+                            all of a build's secrets, and must be used by at least
+                            one build step. Values can be at most 64 KB in size. There
+                            can be at most 100 secret values across all of a build's
+                            secrets.
+                          type: object
+                      required:
+                      - kmsKeyName
+                      type: object
+                    type: array
+                  source:
+                    description: "The location of the source files to build. \n One
+                      of 'storageSource' or 'repoSource' must be provided."
+                    properties:
+                      repoSource:
+                        description: Location of the source in a Google Cloud Source
+                          Repository.
+                        properties:
+                          branchName:
+                            description: Regex matching branches to build. Exactly
+                              one a of branch name, tag, or commit SHA must be provided.
+                              The syntax of the regular expressions accepted is the
+                              syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax
+                            type: string
+                          commitSha:
+                            description: Explicit commit SHA to build. Exactly one
+                              a of branch name, tag, or commit SHA must be provided.
+                            type: string
+                          dir:
+                            description: Directory, relative to the source root, in
+                              which to run the build. This must be a relative path.
+                              If a step's dir is specified and is an absolute path,
+                              this value is ignored for that step's execution.
+                            type: string
+                          invertRegex:
+                            description: Only trigger a build if the revision regex
+                              does NOT match the revision regex.
+                            type: boolean
+                          projectID:
+                            description: ID of the project that owns the Cloud Source
+                              Repository. If omitted, the project ID requesting the
+                              build is assumed.
+                            type: string
+                          repoName:
+                            description: Name of the Cloud Source Repository.
+                            type: string
+                          substitutions:
+                            additionalProperties:
+                              type: string
+                            description: Substitutions to use in a triggered build.
+                              Should only be used with triggers.run
+                            type: object
+                          tagName:
+                            description: Regex matching tags to build. Exactly one
+                              a of branch name, tag, or commit SHA must be provided.
+                              The syntax of the regular expressions accepted is the
+                              syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax
+                            type: string
+                        required:
+                        - repoName
+                        type: object
+                      storageSource:
+                        description: Location of the source in an archive file in
+                          Google Cloud Storage.
+                        properties:
+                          bucket:
+                            description: Google Cloud Storage bucket containing the
+                              source.
+                            type: string
+                          generation:
+                            description: Google Cloud Storage generation for the object.
+                              If the generation is omitted, the latest generation
+                              will be used
+                            type: string
+                          object:
+                            description: Google Cloud Storage object containing the
+                              source. This object must be a gzipped archive file (.tar.gz)
+                              containing source to build.
+                            type: string
+                        required:
+                        - bucket
+                        - object
+                        type: object
+                    type: object
+                  step:
+                    description: The operations to be performed on the workspace.
+                    items:
+                      properties:
+                        ID:
+                          description: Unique identifier for this build step, used
+                            in 'wait_for' to reference this build step as a dependency.
+                          type: string
+                        args:
+                          description: "A list of arguments that will be presented
+                            to the step when it is started. \n If the image used to
+                            run the step's container has an entrypoint, the args are
+                            used as arguments to that entrypoint. If the image does
+                            not define an entrypoint, the first element in args is
+                            used as the entrypoint, and the remainder will be used
+                            as arguments."
+                          items:
+                            type: string
+                          type: array
+                        dir:
+                          description: "Working directory to use when running this
+                            step's container. \n If this value is a relative path,
+                            it is relative to the build's working directory. If this
+                            value is absolute, it may be outside the build's working
+                            directory, in which case the contents of the path may
+                            not be persisted across build step executions, unless
+                            a 'volume' for that path is specified. \n If the build
+                            specifies a 'RepoSource' with 'dir' and a step with a
+                            'dir', which specifies an absolute path, the 'RepoSource'
+                            'dir' is ignored for the step's execution."
+                          type: string
+                        entrypoint:
+                          description: Entrypoint to be used instead of the build
+                            step image's default entrypoint. If unset, the image's
+                            default entrypoint is used
+                          type: string
+                        env:
+                          description: "A list of environment variable definitions
+                            to be used when running a step. \n The elements are of
+                            the form \"KEY=VALUE\" for the environment variable \"KEY\"
+                            being given the value \"VALUE\"."
+                          items:
+                            type: string
+                          type: array
+                        name:
+                          description: "The name of the container image that will
+                            run this particular build step. \n If the image is available
+                            in the host's Docker daemon's cache, it will be run directly.
+                            If not, the host will attempt to pull the image first,
+                            using the builder service account's credentials if necessary.
+                            \n The Docker daemon's cache will already have the latest
+                            versions of all of the officially supported build steps
+                            (see https://github.com/GoogleCloudPlatform/cloud-builders
+                            for images and examples). The Docker daemon will also
+                            have cached many of the layers for some popular images,
+                            like \"ubuntu\", \"debian\", but they will be refreshed
+                            at the time you attempt to use them. \n If you built an
+                            image in a previous build step, it will be stored in the
+                            host's Docker daemon's cache and is available to use as
+                            the name for a later build step."
+                          type: string
+                        secretEnv:
+                          description: A list of environment variables which are encrypted
+                            using a Cloud Key Management Service crypto key. These
+                            values must be specified in the build's 'Secret'.
+                          items:
+                            type: string
+                          type: array
+                        timeout:
+                          description: Time limit for executing this build step. If
+                            not defined, the step has no time limit and will be allowed
+                            to continue to run until either it completes or the build
+                            itself times out.
+                          type: string
+                        timing:
+                          description: Output only. Stores timing information for
+                            executing this build step.
+                          type: string
+                        volumes:
+                          description: "List of volumes to mount into the build step.
+                            \n Each volume is created as an empty volume prior to
+                            execution of the build step. Upon completion of the build,
+                            volumes and their contents are discarded. \n Using a named
+                            volume in only one step is not valid as it is indicative
+                            of a build request with an incorrect configuration."
+                          items:
+                            properties:
+                              name:
+                                description: "Name of the volume to mount. \n Volume
+                                  names must be unique per build step and must be
+                                  valid names for Docker volumes. Each named volume
+                                  must be used by at least two build steps."
+                                type: string
+                              path:
+                                description: "Path at which to mount the volume. \n
+                                  Paths must be absolute and cannot conflict with
+                                  other volume paths on the same build step or with
+                                  certain reserved volume paths."
+                                type: string
+                            required:
+                            - name
+                            - path
+                            type: object
+                          type: array
+                        waitFor:
+                          description: "The ID(s) of the step(s) that this build step
+                            depends on. \n This build step will not start until all
+                            the build steps in 'wait_for' have completed successfully.
+                            If 'wait_for' is empty, this build step will start when
+                            all previous build steps in the 'Build.Steps' list have
+                            completed successfully."
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - name
+                      type: object
+                    type: array
+                  substitutions:
+                    additionalProperties:
+                      type: string
+                    description: Substitutions data for Build resource.
+                    type: object
+                  tags:
+                    description: Tags for annotation of a Build. These are not docker
+                      tags.
+                    items:
+                      type: string
+                    type: array
+                  timeout:
+                    description: Amount of time that this build should be allowed
+                      to run, to second granularity. If this amount of time elapses,
+                      work on the build will cease and the build status will be TIMEOUT.
+                      This timeout must be equal to or greater than the sum of the
+                      timeouts for build steps within the build. The expected format
+                      is the number of seconds followed by s. Default time is ten
+                      minutes (600s).
+                    type: string
+                required:
+                - step
+                type: object
+              createTime:
+                description: Time when the trigger was created.
+                type: string
+              description:
+                description: Human-readable description of the trigger.
+                type: string
+              disabled:
+                description: Whether the trigger is disabled or not. If true, the
+                  trigger will never result in a build.
+                type: boolean
+              filename:
+                description: Path, from the source root, to a file whose contents
+                  is used for the template. Either a filename or build template must
+                  be provided.
+                type: string
+              github:
+                description: "Describes the configuration of a trigger that creates
+                  a build whenever a GitHub event is received. \n One of 'trigger_template'
+                  or 'github' must be provided."
+                properties:
+                  name:
+                    description: 'Name of the repository. For example: The name for
+                      https://github.com/googlecloudplatform/cloud-builders is "cloud-builders".'
+                    type: string
+                  owner:
+                    description: 'Owner of the repository. For example: The owner
+                      for https://github.com/googlecloudplatform/cloud-builders is
+                      "googlecloudplatform".'
+                    type: string
+                  pullRequest:
+                    description: filter to match changes in pull requests.  Specify
+                      only one of pullRequest or push.
+                    properties:
+                      branch:
+                        description: Regex of branches to match.
+                        type: string
+                      commentControl:
+                        description: 'Whether to block builds on a "/gcbrun" comment
+                          from a repository owner or collaborator. Possible values:
+                          ["COMMENTS_DISABLED", "COMMENTS_ENABLED", "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"]'
+                        type: string
+                      invertRegex:
+                        description: If true, branches that do NOT match the git_ref
+                          will trigger a build.
+                        type: boolean
+                    required:
+                    - branch
+                    type: object
+                  push:
+                    description: filter to match changes in refs, like branches or
+                      tags.  Specify only one of pullRequest or push.
+                    properties:
+                      branch:
+                        description: Regex of branches to match.  Specify only one
+                          of branch or tag.
+                        type: string
+                      invertRegex:
+                        description: When true, only trigger a build if the revision
+                          regex does NOT match the git_ref regex.
+                        type: boolean
+                      tag:
+                        description: Regex of tags to match.  Specify only one of
+                          branch or tag.
+                        type: string
+                    type: object
+                type: object
+              id:
+                type: string
+              ignoredFiles:
+                description: "ignoredFiles and includedFiles are file glob matches
+                  using https://golang.org/pkg/path/filepath/#Match extended with
+                  support for '**'. \n If ignoredFiles and changed files are both
+                  empty, then they are not used to determine whether or not to trigger
+                  a build. \n If ignoredFiles is not empty, then we ignore any files
+                  that match any of the ignored_file globs. If the change has no files
+                  that are outside of the ignoredFiles globs, then we do not trigger
+                  a build."
+                items:
+                  type: string
+                type: array
+              includedFiles:
+                description: "ignoredFiles and includedFiles are file glob matches
+                  using https://golang.org/pkg/path/filepath/#Match extended with
+                  support for '**'. \n If any of the files altered in the commit pass
+                  the ignoredFiles filter and includedFiles is empty, then as far
+                  as this filter is concerned, we should trigger the build. \n If
+                  any of the files altered in the commit pass the ignoredFiles filter
+                  and includedFiles is not empty, then we make sure that at least
+                  one of those files matches a includedFiles glob. If not, then we
+                  do not trigger a build."
+                items:
+                  type: string
+                type: array
+              kubeformOutput:
+                properties:
+                  build:
+                    description: Contents of the build template. Either a filename
+                      or build template must be provided.
+                    properties:
+                      artifacts:
+                        description: Artifacts produced by the build that should be
+                          uploaded upon successful completion of all build steps.
+                        properties:
+                          images:
+                            description: "A list of images to be pushed upon the successful
+                              completion of all build steps. \n The images will be
+                              pushed using the builder service account's credentials.
+                              \n The digests of the pushed images will be stored in
+                              the Build resource's results field. \n If any of the
+                              images fail to be pushed, the build is marked FAILURE."
+                            items:
+                              type: string
+                            type: array
+                          objects:
+                            description: "A list of objects to be uploaded to Cloud
+                              Storage upon successful completion of all build steps.
+                              \n Files in the workspace matching specified paths globs
+                              will be uploaded to the Cloud Storage location using
+                              the builder service account's credentials. \n The location
+                              and generation of the uploaded objects will be stored
+                              in the Build resource's results field. \n If any objects
+                              fail to be pushed, the build is marked FAILURE."
+                            properties:
+                              location:
+                                description: "Cloud Storage bucket and optional object
+                                  path, in the form \"gs://bucket/path/to/somewhere/\".
+                                  \n Files in the workspace matching any path pattern
+                                  will be uploaded to Cloud Storage with this location
+                                  as a prefix."
+                                type: string
+                              paths:
+                                description: Path globs used to match files in the
+                                  build's workspace.
+                                items:
+                                  type: string
+                                type: array
+                              timing:
+                                description: Output only. Stores timing information
+                                  for pushing all artifact objects.
+                                items:
+                                  properties:
+                                    endTime:
+                                      description: "End of time span. \n A timestamp
+                                        in RFC3339 UTC \"Zulu\" format, with nanosecond
+                                        resolution and up to nine fractional digits.
+                                        Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\"."
+                                      type: string
+                                    startTime:
+                                      description: "Start of time span. \n A timestamp
+                                        in RFC3339 UTC \"Zulu\" format, with nanosecond
+                                        resolution and up to nine fractional digits.
+                                        Examples: \"2014-10-02T15:01:23Z\" and \"2014-10-02T15:01:23.045123456Z\"."
+                                      type: string
+                                  type: object
+                                type: array
+                            type: object
+                        type: object
+                      images:
+                        description: A list of images to be pushed upon the successful
+                          completion of all build steps. The images are pushed using
+                          the builder service account's credentials. The digests of
+                          the pushed images will be stored in the Build resource's
+                          results field. If any of the images fail to be pushed, the
+                          build status is marked FAILURE.
+                        items:
+                          type: string
+                        type: array
+                      logsBucket:
+                        description: Google Cloud Storage bucket where logs should
+                          be written. Logs file names will be of the format ${logsBucket}/log-${build_id}.txt.
+                        type: string
+                      options:
+                        description: Special options for this build.
+                        properties:
+                          diskSizeGb:
+                            description: Requested disk size for the VM that runs
+                              the build. Note that this is NOT "disk free"; some of
+                              the space will be used by the operating system and build
+                              utilities. Also note that this is the minimum disk size
+                              that will be allocated for the build -- the build may
+                              run with a larger disk than requested. At present, the
+                              maximum disk size is 1000GB; builds that request more
+                              than the maximum are rejected with an error.
+                            format: int64
+                            type: integer
+                          dynamicSubstitutions:
+                            description: "Option to specify whether or not to apply
+                              bash style string operations to the substitutions. \n
+                              NOTE this is always enabled for triggered builds and
+                              cannot be overridden in the build configuration file."
+                            type: boolean
+                          env:
+                            description: "A list of global environment variable definitions
+                              that will exist for all build steps in this build. If
+                              a variable is defined in both globally and in a build
+                              step, the variable will use the build step value. \n
+                              The elements are of the form \"KEY=VALUE\" for the environment
+                              variable \"KEY\" being given the value \"VALUE\"."
+                            items:
+                              type: string
+                            type: array
+                          logStreamingOption:
+                            description: 'Option to define build log streaming behavior
+                              to Google Cloud Storage. Possible values: ["STREAM_DEFAULT",
+                              "STREAM_ON", "STREAM_OFF"]'
+                            type: string
+                          logging:
+                            description: 'Option to specify the logging mode, which
+                              determines if and where build logs are stored. Possible
+                              values: ["LOGGING_UNSPECIFIED", "LEGACY", "GCS_ONLY",
+                              "STACKDRIVER_ONLY", "NONE"]'
+                            type: string
+                          machineType:
+                            description: 'Compute Engine machine type on which to
+                              run the build. Possible values: ["UNSPECIFIED", "N1_HIGHCPU_8",
+                              "N1_HIGHCPU_32", "E2_HIGHCPU_8", "E2_HIGHCPU_32"]'
+                            type: string
+                          requestedVerifyOption:
+                            description: 'Requested verifiability options. Possible
+                              values: ["NOT_VERIFIED", "VERIFIED"]'
+                            type: string
+                          secretEnv:
+                            description: A list of global environment variables, which
+                              are encrypted using a Cloud Key Management Service crypto
+                              key. These values must be specified in the build's Secret.
+                              These variables will be available to all build steps
+                              in this build.
+                            items:
+                              type: string
+                            type: array
+                          sourceProvenanceHash:
+                            description: 'Requested hash for SourceProvenance. Possible
+                              values: ["NONE", "SHA256", "MD5"]'
+                            items:
+                              type: string
+                            type: array
+                          substitutionOption:
+                            description: "Option to specify behavior when there is
+                              an error in the substitution checks. \n NOTE this is
+                              always set to ALLOW_LOOSE for triggered builds and cannot
+                              be overridden in the build configuration file. Possible
+                              values: [\"MUST_MATCH\", \"ALLOW_LOOSE\"]"
+                            type: string
+                          volumes:
+                            description: "Global list of volumes to mount for ALL
+                              build steps \n Each volume is created as an empty volume
+                              prior to starting the build process. Upon completion
+                              of the build, volumes and their contents are discarded.
+                              Global volume names and paths cannot conflict with the
+                              volumes defined a build step. \n Using a global volume
+                              in a build with only one step is not valid as it is
+                              indicative of a build request with an incorrect configuration."
+                            items:
+                              properties:
+                                name:
+                                  description: "Name of the volume to mount. \n Volume
+                                    names must be unique per build step and must be
+                                    valid names for Docker volumes. Each named volume
+                                    must be used by at least two build steps."
+                                  type: string
+                                path:
+                                  description: "Path at which to mount the volume.
+                                    \n Paths must be absolute and cannot conflict
+                                    with other volume paths on the same build step
+                                    or with certain reserved volume paths."
+                                  type: string
+                              type: object
+                            type: array
+                          workerPool:
+                            description: "Option to specify a WorkerPool for the build.
+                              Format projects/{project}/workerPools/{workerPool} \n
+                              This field is experimental."
+                            type: string
+                        type: object
+                      queueTtl:
+                        description: 'TTL in queue for this build. If provided and
+                          the build is enqueued longer than this value, the build
+                          will expire and the build status will be EXPIRED. The TTL
+                          starts ticking from createTime. A duration in seconds with
+                          up to nine fractional digits, terminated by ''s''. Example:
+                          "3.5s".'
+                        type: string
+                      secret:
+                        description: Secrets to decrypt using Cloud Key Management
+                          Service.
+                        items:
+                          properties:
+                            kmsKeyName:
+                              description: Cloud KMS key name to use to decrypt these
+                                envs.
+                              type: string
+                            secretEnv:
+                              additionalProperties:
+                                type: string
+                              description: Map of environment variable name to its
+                                encrypted value. Secret environment variables must
+                                be unique across all of a build's secrets, and must
+                                be used by at least one build step. Values can be
+                                at most 64 KB in size. There can be at most 100 secret
+                                values across all of a build's secrets.
+                              type: object
+                          required:
+                          - kmsKeyName
+                          type: object
+                        type: array
+                      source:
+                        description: "The location of the source files to build. \n
+                          One of 'storageSource' or 'repoSource' must be provided."
+                        properties:
+                          repoSource:
+                            description: Location of the source in a Google Cloud
+                              Source Repository.
+                            properties:
+                              branchName:
+                                description: Regex matching branches to build. Exactly
+                                  one a of branch name, tag, or commit SHA must be
+                                  provided. The syntax of the regular expressions
+                                  accepted is the syntax accepted by RE2 and described
+                                  at https://github.com/google/re2/wiki/Syntax
+                                type: string
+                              commitSha:
+                                description: Explicit commit SHA to build. Exactly
+                                  one a of branch name, tag, or commit SHA must be
+                                  provided.
+                                type: string
+                              dir:
+                                description: Directory, relative to the source root,
+                                  in which to run the build. This must be a relative
+                                  path. If a step's dir is specified and is an absolute
+                                  path, this value is ignored for that step's execution.
+                                type: string
+                              invertRegex:
+                                description: Only trigger a build if the revision
+                                  regex does NOT match the revision regex.
+                                type: boolean
+                              projectID:
+                                description: ID of the project that owns the Cloud
+                                  Source Repository. If omitted, the project ID requesting
+                                  the build is assumed.
+                                type: string
+                              repoName:
+                                description: Name of the Cloud Source Repository.
+                                type: string
+                              substitutions:
+                                additionalProperties:
+                                  type: string
+                                description: Substitutions to use in a triggered build.
+                                  Should only be used with triggers.run
+                                type: object
+                              tagName:
+                                description: Regex matching tags to build. Exactly
+                                  one a of branch name, tag, or commit SHA must be
+                                  provided. The syntax of the regular expressions
+                                  accepted is the syntax accepted by RE2 and described
+                                  at https://github.com/google/re2/wiki/Syntax
+                                type: string
+                            required:
+                            - repoName
+                            type: object
+                          storageSource:
+                            description: Location of the source in an archive file
+                              in Google Cloud Storage.
+                            properties:
+                              bucket:
+                                description: Google Cloud Storage bucket containing
+                                  the source.
+                                type: string
+                              generation:
+                                description: Google Cloud Storage generation for the
+                                  object. If the generation is omitted, the latest
+                                  generation will be used
+                                type: string
+                              object:
+                                description: Google Cloud Storage object containing
+                                  the source. This object must be a gzipped archive
+                                  file (.tar.gz) containing source to build.
+                                type: string
+                            required:
+                            - bucket
+                            - object
+                            type: object
+                        type: object
+                      step:
+                        description: The operations to be performed on the workspace.
+                        items:
+                          properties:
+                            ID:
+                              description: Unique identifier for this build step,
+                                used in 'wait_for' to reference this build step as
+                                a dependency.
+                              type: string
+                            args:
+                              description: "A list of arguments that will be presented
+                                to the step when it is started. \n If the image used
+                                to run the step's container has an entrypoint, the
+                                args are used as arguments to that entrypoint. If
+                                the image does not define an entrypoint, the first
+                                element in args is used as the entrypoint, and the
+                                remainder will be used as arguments."
+                              items:
+                                type: string
+                              type: array
+                            dir:
+                              description: "Working directory to use when running
+                                this step's container. \n If this value is a relative
+                                path, it is relative to the build's working directory.
+                                If this value is absolute, it may be outside the build's
+                                working directory, in which case the contents of the
+                                path may not be persisted across build step executions,
+                                unless a 'volume' for that path is specified. \n If
+                                the build specifies a 'RepoSource' with 'dir' and
+                                a step with a 'dir', which specifies an absolute path,
+                                the 'RepoSource' 'dir' is ignored for the step's execution."
+                              type: string
+                            entrypoint:
+                              description: Entrypoint to be used instead of the build
+                                step image's default entrypoint. If unset, the image's
+                                default entrypoint is used
+                              type: string
+                            env:
+                              description: "A list of environment variable definitions
+                                to be used when running a step. \n The elements are
+                                of the form \"KEY=VALUE\" for the environment variable
+                                \"KEY\" being given the value \"VALUE\"."
+                              items:
+                                type: string
+                              type: array
+                            name:
+                              description: "The name of the container image that will
+                                run this particular build step. \n If the image is
+                                available in the host's Docker daemon's cache, it
+                                will be run directly. If not, the host will attempt
+                                to pull the image first, using the builder service
+                                account's credentials if necessary. \n The Docker
+                                daemon's cache will already have the latest versions
+                                of all of the officially supported build steps (see
+                                https://github.com/GoogleCloudPlatform/cloud-builders
+                                for images and examples). The Docker daemon will also
+                                have cached many of the layers for some popular images,
+                                like \"ubuntu\", \"debian\", but they will be refreshed
+                                at the time you attempt to use them. \n If you built
+                                an image in a previous build step, it will be stored
+                                in the host's Docker daemon's cache and is available
+                                to use as the name for a later build step."
+                              type: string
+                            secretEnv:
+                              description: A list of environment variables which are
+                                encrypted using a Cloud Key Management Service crypto
+                                key. These values must be specified in the build's
+                                'Secret'.
+                              items:
+                                type: string
+                              type: array
+                            timeout:
+                              description: Time limit for executing this build step.
+                                If not defined, the step has no time limit and will
+                                be allowed to continue to run until either it completes
+                                or the build itself times out.
+                              type: string
+                            timing:
+                              description: Output only. Stores timing information
+                                for executing this build step.
+                              type: string
+                            volumes:
+                              description: "List of volumes to mount into the build
+                                step. \n Each volume is created as an empty volume
+                                prior to execution of the build step. Upon completion
+                                of the build, volumes and their contents are discarded.
+                                \n Using a named volume in only one step is not valid
+                                as it is indicative of a build request with an incorrect
+                                configuration."
+                              items:
+                                properties:
+                                  name:
+                                    description: "Name of the volume to mount. \n
+                                      Volume names must be unique per build step and
+                                      must be valid names for Docker volumes. Each
+                                      named volume must be used by at least two build
+                                      steps."
+                                    type: string
+                                  path:
+                                    description: "Path at which to mount the volume.
+                                      \n Paths must be absolute and cannot conflict
+                                      with other volume paths on the same build step
+                                      or with certain reserved volume paths."
+                                    type: string
+                                required:
+                                - name
+                                - path
+                                type: object
+                              type: array
+                            waitFor:
+                              description: "The ID(s) of the step(s) that this build
+                                step depends on. \n This build step will not start
+                                until all the build steps in 'wait_for' have completed
+                                successfully. If 'wait_for' is empty, this build step
+                                will start when all previous build steps in the 'Build.Steps'
+                                list have completed successfully."
+                              items:
+                                type: string
+                              type: array
+                          required:
+                          - name
+                          type: object
+                        type: array
+                      substitutions:
+                        additionalProperties:
+                          type: string
+                        description: Substitutions data for Build resource.
+                        type: object
+                      tags:
+                        description: Tags for annotation of a Build. These are not
+                          docker tags.
+                        items:
+                          type: string
+                        type: array
+                      timeout:
+                        description: Amount of time that this build should be allowed
+                          to run, to second granularity. If this amount of time elapses,
+                          work on the build will cease and the build status will be
+                          TIMEOUT. This timeout must be equal to or greater than the
+                          sum of the timeouts for build steps within the build. The
+                          expected format is the number of seconds followed by s.
+                          Default time is ten minutes (600s).
+                        type: string
+                    required:
+                    - step
+                    type: object
+                  createTime:
+                    description: Time when the trigger was created.
+                    type: string
+                  description:
+                    description: Human-readable description of the trigger.
+                    type: string
+                  disabled:
+                    description: Whether the trigger is disabled or not. If true,
+                      the trigger will never result in a build.
+                    type: boolean
+                  filename:
+                    description: Path, from the source root, to a file whose contents
+                      is used for the template. Either a filename or build template
+                      must be provided.
+                    type: string
+                  github:
+                    description: "Describes the configuration of a trigger that creates
+                      a build whenever a GitHub event is received. \n One of 'trigger_template'
+                      or 'github' must be provided."
+                    properties:
+                      name:
+                        description: 'Name of the repository. For example: The name
+                          for https://github.com/googlecloudplatform/cloud-builders
+                          is "cloud-builders".'
+                        type: string
+                      owner:
+                        description: 'Owner of the repository. For example: The owner
+                          for https://github.com/googlecloudplatform/cloud-builders
+                          is "googlecloudplatform".'
+                        type: string
+                      pullRequest:
+                        description: filter to match changes in pull requests.  Specify
+                          only one of pullRequest or push.
+                        properties:
+                          branch:
+                            description: Regex of branches to match.
+                            type: string
+                          commentControl:
+                            description: 'Whether to block builds on a "/gcbrun" comment
+                              from a repository owner or collaborator. Possible values:
+                              ["COMMENTS_DISABLED", "COMMENTS_ENABLED", "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"]'
+                            type: string
+                          invertRegex:
+                            description: If true, branches that do NOT match the git_ref
+                              will trigger a build.
+                            type: boolean
+                        required:
+                        - branch
+                        type: object
+                      push:
+                        description: filter to match changes in refs, like branches
+                          or tags.  Specify only one of pullRequest or push.
+                        properties:
+                          branch:
+                            description: Regex of branches to match.  Specify only
+                              one of branch or tag.
+                            type: string
+                          invertRegex:
+                            description: When true, only trigger a build if the revision
+                              regex does NOT match the git_ref regex.
+                            type: boolean
+                          tag:
+                            description: Regex of tags to match.  Specify only one
+                              of branch or tag.
+                            type: string
+                        type: object
+                    type: object
+                  id:
+                    type: string
+                  ignoredFiles:
+                    description: "ignoredFiles and includedFiles are file glob matches
+                      using https://golang.org/pkg/path/filepath/#Match extended with
+                      support for '**'. \n If ignoredFiles and changed files are both
+                      empty, then they are not used to determine whether or not to
+                      trigger a build. \n If ignoredFiles is not empty, then we ignore
+                      any files that match any of the ignored_file globs. If the change
+                      has no files that are outside of the ignoredFiles globs, then
+                      we do not trigger a build."
+                    items:
+                      type: string
+                    type: array
+                  includedFiles:
+                    description: "ignoredFiles and includedFiles are file glob matches
+                      using https://golang.org/pkg/path/filepath/#Match extended with
+                      support for '**'. \n If any of the files altered in the commit
+                      pass the ignoredFiles filter and includedFiles is empty, then
+                      as far as this filter is concerned, we should trigger the build.
+                      \n If any of the files altered in the commit pass the ignoredFiles
+                      filter and includedFiles is not empty, then we make sure that
+                      at least one of those files matches a includedFiles glob. If
+                      not, then we do not trigger a build."
+                    items:
+                      type: string
+                    type: array
+                  name:
+                    description: Name of the trigger. Must be unique within the project.
+                    type: string
+                  project:
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  substitutions:
+                    additionalProperties:
+                      type: string
+                    description: Substitutions data for Build resource.
+                    type: object
+                  tags:
+                    description: Tags for annotation of a BuildTrigger
+                    items:
+                      type: string
+                    type: array
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                  triggerID:
+                    description: The unique identifier for the trigger.
+                    type: string
+                  triggerTemplate:
+                    description: "Template describing the types of source changes
+                      to trigger a build. \n Branch and tag names in trigger templates
+                      are interpreted as regular expressions. Any branch or tag change
+                      that matches that regular expression will trigger a build. \n
+                      One of 'trigger_template' or 'github' must be provided."
+                    properties:
+                      branchName:
+                        description: Name of the branch to build. Exactly one a of
+                          branch name, tag, or commit SHA must be provided. This field
+                          is a regular expression.
+                        type: string
+                      commitSha:
+                        description: Explicit commit SHA to build. Exactly one of
+                          a branch name, tag, or commit SHA must be provided.
+                        type: string
+                      dir:
+                        description: "Directory, relative to the source root, in which
+                          to run the build. \n This must be a relative path. If a
+                          step's dir is specified and is an absolute path, this value
+                          is ignored for that step's execution."
+                        type: string
+                      invertRegex:
+                        description: Only trigger a build if the revision regex does
+                          NOT match the revision regex.
+                        type: boolean
+                      projectID:
+                        description: ID of the project that owns the Cloud Source
+                          Repository. If omitted, the project ID requesting the build
+                          is assumed.
+                        type: string
+                      repoName:
+                        description: Name of the Cloud Source Repository. If omitted,
+                          the name "default" is assumed.
+                        type: string
+                      tagName:
+                        description: Name of the tag to build. Exactly one of a branch
+                          name, tag, or commit SHA must be provided. This field is
+                          a regular expression.
+                        type: string
+                    type: object
+                required:
+                - providerRef
+                type: object
+              name:
+                description: Name of the trigger. Must be unique within the project.
+                type: string
+              project:
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              substitutions:
+                additionalProperties:
+                  type: string
+                description: Substitutions data for Build resource.
+                type: object
+              tags:
+                description: Tags for annotation of a BuildTrigger
+                items:
+                  type: string
+                type: array
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+              triggerID:
+                description: The unique identifier for the trigger.
+                type: string
+              triggerTemplate:
+                description: "Template describing the types of source changes to trigger
+                  a build. \n Branch and tag names in trigger templates are interpreted
+                  as regular expressions. Any branch or tag change that matches that
+                  regular expression will trigger a build. \n One of 'trigger_template'
+                  or 'github' must be provided."
+                properties:
+                  branchName:
+                    description: Name of the branch to build. Exactly one a of branch
+                      name, tag, or commit SHA must be provided. This field is a regular
+                      expression.
+                    type: string
+                  commitSha:
+                    description: Explicit commit SHA to build. Exactly one of a branch
+                      name, tag, or commit SHA must be provided.
+                    type: string
+                  dir:
+                    description: "Directory, relative to the source root, in which
+                      to run the build. \n This must be a relative path. If a step's
+                      dir is specified and is an absolute path, this value is ignored
+                      for that step's execution."
+                    type: string
+                  invertRegex:
+                    description: Only trigger a build if the revision regex does NOT
+                      match the revision regex.
+                    type: boolean
+                  projectID:
+                    description: ID of the project that owns the Cloud Source Repository.
+                      If omitted, the project ID requesting the build is assumed.
+                    type: string
+                  repoName:
+                    description: Name of the Cloud Source Repository. If omitted,
+                      the name "default" is assumed.
+                    type: string
+                  tagName:
+                    description: Name of the tag to build. Exactly one of a branch
+                      name, tag, or commit SHA must be provided. This field is a regular
+                      expression.
+                    type: string
+                type: object
+            required:
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

@@ -1,0 +1,474 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: globalforwardingrules.compute.google.kubeform.com
+spec:
+  group: compute.google.kubeform.com
+  names:
+    kind: GlobalForwardingRule
+    listKind: GlobalForwardingRuleList
+    plural: globalforwardingrules
+    singular: globalforwardingrule
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              description:
+                description: An optional description of this resource. Provide this
+                  property when you create the resource.
+                type: string
+              id:
+                type: string
+              ipAddress:
+                description: "The IP address that this forwarding rule serves. When
+                  a client sends traffic to this IP address, the forwarding rule directs
+                  the traffic to the target that you specify in the forwarding rule.
+                  The loadBalancingScheme and the forwarding rule's target determine
+                  the type of IP address that you can use. For detailed information,
+                  refer to [IP address specifications](https://cloud.google.com/load-balancing/docs/forwarding-rule-concepts#ip_address_specifications).
+                  \n An address can be specified either by a literal IP address or
+                  a reference to an existing Address resource. If you don't specify
+                  a reserved IP address, an ephemeral IP address is assigned. \n The
+                  value must be set to 0.0.0.0 when the target is a targetGrpcProxy
+                  that has validateForProxyless field set to true. \n For Private
+                  Service Connect forwarding rules that forward traffic to Google
+                  APIs, IP address must be provided."
+                type: string
+              ipProtocol:
+                description: 'The IP protocol to which this rule applies. When the
+                  load balancing scheme is INTERNAL_SELF_MANAGED, only TCP is valid.
+                  This field must not be set if the global address is configured as
+                  a purpose of PRIVATE_SERVICE_CONNECT and addressType of INTERNAL
+                  Possible values: ["TCP", "UDP", "ESP", "AH", "SCTP", "ICMP"]'
+                type: string
+              ipVersion:
+                description: 'The IP Version that will be used by this global forwarding
+                  rule. Possible values: ["IPV4", "IPV6"]'
+                type: string
+              kubeformOutput:
+                properties:
+                  description:
+                    description: An optional description of this resource. Provide
+                      this property when you create the resource.
+                    type: string
+                  id:
+                    type: string
+                  ipAddress:
+                    description: "The IP address that this forwarding rule serves.
+                      When a client sends traffic to this IP address, the forwarding
+                      rule directs the traffic to the target that you specify in the
+                      forwarding rule. The loadBalancingScheme and the forwarding
+                      rule's target determine the type of IP address that you can
+                      use. For detailed information, refer to [IP address specifications](https://cloud.google.com/load-balancing/docs/forwarding-rule-concepts#ip_address_specifications).
+                      \n An address can be specified either by a literal IP address
+                      or a reference to an existing Address resource. If you don't
+                      specify a reserved IP address, an ephemeral IP address is assigned.
+                      \n The value must be set to 0.0.0.0 when the target is a targetGrpcProxy
+                      that has validateForProxyless field set to true. \n For Private
+                      Service Connect forwarding rules that forward traffic to Google
+                      APIs, IP address must be provided."
+                    type: string
+                  ipProtocol:
+                    description: 'The IP protocol to which this rule applies. When
+                      the load balancing scheme is INTERNAL_SELF_MANAGED, only TCP
+                      is valid. This field must not be set if the global address is
+                      configured as a purpose of PRIVATE_SERVICE_CONNECT and addressType
+                      of INTERNAL Possible values: ["TCP", "UDP", "ESP", "AH", "SCTP",
+                      "ICMP"]'
+                    type: string
+                  ipVersion:
+                    description: 'The IP Version that will be used by this global
+                      forwarding rule. Possible values: ["IPV4", "IPV6"]'
+                    type: string
+                  loadBalancingScheme:
+                    description: "This signifies what the GlobalForwardingRule will
+                      be used for. The value of INTERNAL_SELF_MANAGED means that this
+                      will be used for Internal Global HTTP(S) LB. The value of EXTERNAL
+                      means that this will be used for External Global Load Balancing
+                      (HTTP(S) LB, External TCP/UDP LB, SSL Proxy) \n ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html)
+                      only) Note: This field must be set \"\" if the global address
+                      is configured as a purpose of PRIVATE_SERVICE_CONNECT and addressType
+                      of INTERNAL. Default value: \"EXTERNAL\" Possible values: [\"EXTERNAL\",
+                      \"INTERNAL_SELF_MANAGED\"]"
+                    type: string
+                  metadataFilters:
+                    description: "Opaque filter criteria used by Loadbalancer to restrict
+                      routing configuration to a limited set xDS compliant clients.
+                      In their xDS requests to Loadbalancer, xDS clients present node
+                      metadata. If a match takes place, the relevant routing configuration
+                      is made available to those proxies. \n For each metadataFilter
+                      in this list, if its filterMatchCriteria is set to MATCH_ANY,
+                      at least one of the filterLabels must match the corresponding
+                      label provided in the metadata. If its filterMatchCriteria is
+                      set to MATCH_ALL, then all of its filterLabels must match with
+                      corresponding labels in the provided metadata. \n metadataFilters
+                      specified here can be overridden by those specified in the UrlMap
+                      that this ForwardingRule references. \n metadataFilters only
+                      applies to Loadbalancers that have their loadBalancingScheme
+                      set to INTERNAL_SELF_MANAGED."
+                    items:
+                      properties:
+                        filterLabels:
+                          description: "The list of label value pairs that must match
+                            labels in the provided metadata based on filterMatchCriteria
+                            \n This list must not be empty and can have at the most
+                            64 entries."
+                          items:
+                            properties:
+                              name:
+                                description: Name of the metadata label. The length
+                                  must be between 1 and 1024 characters, inclusive.
+                                type: string
+                              value:
+                                description: The value that the label must match.
+                                  The value has a maximum length of 1024 characters.
+                                type: string
+                            required:
+                            - name
+                            - value
+                            type: object
+                          maxItems: 64
+                          minItems: 1
+                          type: array
+                        filterMatchCriteria:
+                          description: "Specifies how individual filterLabel matches
+                            within the list of filterLabels contribute towards the
+                            overall metadataFilter match. \n MATCH_ANY - At least
+                            one of the filterLabels must have a matching label in
+                            the provided metadata. MATCH_ALL - All filterLabels must
+                            have matching labels in the provided metadata. Possible
+                            values: [\"MATCH_ANY\", \"MATCH_ALL\"]"
+                          type: string
+                      required:
+                      - filterLabels
+                      - filterMatchCriteria
+                      type: object
+                    type: array
+                  name:
+                    description: Name of the resource; provided by the client when
+                      the resource is created. The name must be 1-63 characters long,
+                      and comply with RFC1035. Specifically, the name must be 1-63
+                      characters long and match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?'
+                      which means the first character must be a lowercase letter,
+                      and all following characters must be a dash, lowercase letter,
+                      or digit, except the last character, which cannot be a dash.
+                    type: string
+                  portRange:
+                    description: "This field is used along with the target field for
+                      TargetHttpProxy, TargetHttpsProxy, TargetSslProxy, TargetTcpProxy,
+                      TargetVpnGateway, TargetPool, TargetInstance. \n Applicable
+                      only when IPProtocol is TCP, UDP, or SCTP, only packets addressed
+                      to ports in the specified range will be forwarded to target.
+                      Forwarding rules with the same [IPAddress, IPProtocol] pair
+                      must have disjoint port ranges. \n Some types of forwarding
+                      target have constraints on the acceptable ports: \n * TargetHttpProxy:
+                      80, 8080 * TargetHttpsProxy: 443 * TargetTcpProxy: 25, 43, 110,
+                      143, 195, 443, 465, 587, 700, 993, 995,                   1883,
+                      5222 * TargetSslProxy: 25, 43, 110, 143, 195, 443, 465, 587,
+                      700, 993, 995,                   1883, 5222 * TargetVpnGateway:
+                      500, 4500"
+                    type: string
+                  project:
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  selfLink:
+                    type: string
+                  target:
+                    description: "The URL of the target resource to receive the matched
+                      traffic. The forwarded traffic must be of a type appropriate
+                      to the target object. For INTERNAL_SELF_MANAGED load balancing,
+                      only HTTP and HTTPS targets are valid. \n ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html)
+                      only) For global address with a purpose of PRIVATE_SERVICE_CONNECT
+                      and addressType of INTERNAL, only \"all-apis\" and \"vpc-sc\"
+                      are valid."
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - providerRef
+                - target
+                type: object
+              loadBalancingScheme:
+                description: "This signifies what the GlobalForwardingRule will be
+                  used for. The value of INTERNAL_SELF_MANAGED means that this will
+                  be used for Internal Global HTTP(S) LB. The value of EXTERNAL means
+                  that this will be used for External Global Load Balancing (HTTP(S)
+                  LB, External TCP/UDP LB, SSL Proxy) \n ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html)
+                  only) Note: This field must be set \"\" if the global address is
+                  configured as a purpose of PRIVATE_SERVICE_CONNECT and addressType
+                  of INTERNAL. Default value: \"EXTERNAL\" Possible values: [\"EXTERNAL\",
+                  \"INTERNAL_SELF_MANAGED\"]"
+                type: string
+              metadataFilters:
+                description: "Opaque filter criteria used by Loadbalancer to restrict
+                  routing configuration to a limited set xDS compliant clients. In
+                  their xDS requests to Loadbalancer, xDS clients present node metadata.
+                  If a match takes place, the relevant routing configuration is made
+                  available to those proxies. \n For each metadataFilter in this list,
+                  if its filterMatchCriteria is set to MATCH_ANY, at least one of
+                  the filterLabels must match the corresponding label provided in
+                  the metadata. If its filterMatchCriteria is set to MATCH_ALL, then
+                  all of its filterLabels must match with corresponding labels in
+                  the provided metadata. \n metadataFilters specified here can be
+                  overridden by those specified in the UrlMap that this ForwardingRule
+                  references. \n metadataFilters only applies to Loadbalancers that
+                  have their loadBalancingScheme set to INTERNAL_SELF_MANAGED."
+                items:
+                  properties:
+                    filterLabels:
+                      description: "The list of label value pairs that must match
+                        labels in the provided metadata based on filterMatchCriteria
+                        \n This list must not be empty and can have at the most 64
+                        entries."
+                      items:
+                        properties:
+                          name:
+                            description: Name of the metadata label. The length must
+                              be between 1 and 1024 characters, inclusive.
+                            type: string
+                          value:
+                            description: The value that the label must match. The
+                              value has a maximum length of 1024 characters.
+                            type: string
+                        required:
+                        - name
+                        - value
+                        type: object
+                      maxItems: 64
+                      minItems: 1
+                      type: array
+                    filterMatchCriteria:
+                      description: "Specifies how individual filterLabel matches within
+                        the list of filterLabels contribute towards the overall metadataFilter
+                        match. \n MATCH_ANY - At least one of the filterLabels must
+                        have a matching label in the provided metadata. MATCH_ALL
+                        - All filterLabels must have matching labels in the provided
+                        metadata. Possible values: [\"MATCH_ANY\", \"MATCH_ALL\"]"
+                      type: string
+                  required:
+                  - filterLabels
+                  - filterMatchCriteria
+                  type: object
+                type: array
+              name:
+                description: Name of the resource; provided by the client when the
+                  resource is created. The name must be 1-63 characters long, and
+                  comply with RFC1035. Specifically, the name must be 1-63 characters
+                  long and match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?'
+                  which means the first character must be a lowercase letter, and
+                  all following characters must be a dash, lowercase letter, or digit,
+                  except the last character, which cannot be a dash.
+                type: string
+              portRange:
+                description: "This field is used along with the target field for TargetHttpProxy,
+                  TargetHttpsProxy, TargetSslProxy, TargetTcpProxy, TargetVpnGateway,
+                  TargetPool, TargetInstance. \n Applicable only when IPProtocol is
+                  TCP, UDP, or SCTP, only packets addressed to ports in the specified
+                  range will be forwarded to target. Forwarding rules with the same
+                  [IPAddress, IPProtocol] pair must have disjoint port ranges. \n
+                  Some types of forwarding target have constraints on the acceptable
+                  ports: \n * TargetHttpProxy: 80, 8080 * TargetHttpsProxy: 443 *
+                  TargetTcpProxy: 25, 43, 110, 143, 195, 443, 465, 587, 700, 993,
+                  995,                   1883, 5222 * TargetSslProxy: 25, 43, 110,
+                  143, 195, 443, 465, 587, 700, 993, 995,                   1883,
+                  5222 * TargetVpnGateway: 500, 4500"
+                type: string
+              project:
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              selfLink:
+                type: string
+              target:
+                description: "The URL of the target resource to receive the matched
+                  traffic. The forwarded traffic must be of a type appropriate to
+                  the target object. For INTERNAL_SELF_MANAGED load balancing, only
+                  HTTP and HTTPS targets are valid. \n ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html)
+                  only) For global address with a purpose of PRIVATE_SERVICE_CONNECT
+                  and addressType of INTERNAL, only \"all-apis\" and \"vpc-sc\" are
+                  valid."
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - name
+            - providerRef
+            - target
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

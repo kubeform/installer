@@ -29,6 +29,18 @@ var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
 		func(s *v1alpha1.KubeformProvider, c fuzz.Continue) {
 			c.FuzzNoCustom(s) // fuzz self without calling this function again
 		},
+		func(s *v1alpha1.KubeformProviderAws, c fuzz.Continue) {
+			c.FuzzNoCustom(s) // fuzz self without calling this function again
+		},
+		func(s *v1alpha1.KubeformProviderAzurerm, c fuzz.Continue) {
+			c.FuzzNoCustom(s) // fuzz self without calling this function again
+		},
+		func(s *v1alpha1.KubeformProviderDigitalocean, c fuzz.Continue) {
+			c.FuzzNoCustom(s) // fuzz self without calling this function again
+		},
+		func(s *v1alpha1.KubeformProviderGoogle, c fuzz.Continue) {
+			c.FuzzNoCustom(s) // fuzz self without calling this function again
+		},
 		func(s *v1alpha1.KubeformProviderLinode, c fuzz.Continue) {
 			c.FuzzNoCustom(s) // fuzz self without calling this function again
 		},

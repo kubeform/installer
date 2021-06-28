@@ -86,6 +86,10 @@ type ProviderGroupData struct {
 
 func main() {
 	var providers = []string{
+		"aws",
+		"azurerm",
+		"digitalocean",
+		"google",
 		"linode",
 	}
 	var provider string

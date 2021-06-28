@@ -1,0 +1,500 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: devices.cloudiot.google.kubeform.com
+spec:
+  group: cloudiot.google.kubeform.com
+  names:
+    kind: Device
+    listKind: DeviceList
+    plural: devices
+    singular: device
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              blocked:
+                description: If a device is blocked, connections or requests from
+                  this device will fail.
+                type: boolean
+              config:
+                description: The most recent device configuration, which is eventually
+                  sent from Cloud IoT Core to the device.
+                items:
+                  properties:
+                    binaryData:
+                      description: The device configuration data.
+                      type: string
+                    cloudUpdateTime:
+                      description: The time at which this configuration version was
+                        updated in Cloud IoT Core.
+                      type: string
+                    deviceACKTime:
+                      description: The time at which Cloud IoT Core received the acknowledgment
+                        from the device, indicating that the device has received this
+                        configuration version.
+                      type: string
+                    version:
+                      description: The version of this update.
+                      type: string
+                  type: object
+                type: array
+              credentials:
+                description: The credentials used to authenticate this device.
+                items:
+                  properties:
+                    expirationTime:
+                      description: The time at which this credential becomes invalid.
+                      type: string
+                    publicKey:
+                      description: A public key used to verify the signature of JSON
+                        Web Tokens (JWTs).
+                      properties:
+                        format:
+                          description: 'The format of the key. Possible values: ["RSA_PEM",
+                            "RSA_X509_PEM", "ES256_PEM", "ES256_X509_PEM"]'
+                          type: string
+                        key:
+                          description: The key data.
+                          type: string
+                      required:
+                      - format
+                      - key
+                      type: object
+                  required:
+                  - publicKey
+                  type: object
+                maxItems: 3
+                type: array
+              gatewayConfig:
+                description: Gateway-related configuration and state.
+                properties:
+                  gatewayAuthMethod:
+                    description: 'Indicates whether the device is a gateway. Possible
+                      values: ["ASSOCIATION_ONLY", "DEVICE_AUTH_TOKEN_ONLY", "ASSOCIATION_AND_DEVICE_AUTH_TOKEN"]'
+                    type: string
+                  gatewayType:
+                    description: 'Indicates whether the device is a gateway. Default
+                      value: "NON_GATEWAY" Possible values: ["GATEWAY", "NON_GATEWAY"]'
+                    type: string
+                  lastAccessedGatewayID:
+                    description: The ID of the gateway the device accessed most recently.
+                    type: string
+                  lastAccessedGatewayTime:
+                    description: The most recent time at which the device accessed
+                      the gateway specified in last_accessed_gateway.
+                    type: string
+                type: object
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  blocked:
+                    description: If a device is blocked, connections or requests from
+                      this device will fail.
+                    type: boolean
+                  config:
+                    description: The most recent device configuration, which is eventually
+                      sent from Cloud IoT Core to the device.
+                    items:
+                      properties:
+                        binaryData:
+                          description: The device configuration data.
+                          type: string
+                        cloudUpdateTime:
+                          description: The time at which this configuration version
+                            was updated in Cloud IoT Core.
+                          type: string
+                        deviceACKTime:
+                          description: The time at which Cloud IoT Core received the
+                            acknowledgment from the device, indicating that the device
+                            has received this configuration version.
+                          type: string
+                        version:
+                          description: The version of this update.
+                          type: string
+                      type: object
+                    type: array
+                  credentials:
+                    description: The credentials used to authenticate this device.
+                    items:
+                      properties:
+                        expirationTime:
+                          description: The time at which this credential becomes invalid.
+                          type: string
+                        publicKey:
+                          description: A public key used to verify the signature of
+                            JSON Web Tokens (JWTs).
+                          properties:
+                            format:
+                              description: 'The format of the key. Possible values:
+                                ["RSA_PEM", "RSA_X509_PEM", "ES256_PEM", "ES256_X509_PEM"]'
+                              type: string
+                            key:
+                              description: The key data.
+                              type: string
+                          required:
+                          - format
+                          - key
+                          type: object
+                      required:
+                      - publicKey
+                      type: object
+                    maxItems: 3
+                    type: array
+                  gatewayConfig:
+                    description: Gateway-related configuration and state.
+                    properties:
+                      gatewayAuthMethod:
+                        description: 'Indicates whether the device is a gateway. Possible
+                          values: ["ASSOCIATION_ONLY", "DEVICE_AUTH_TOKEN_ONLY", "ASSOCIATION_AND_DEVICE_AUTH_TOKEN"]'
+                        type: string
+                      gatewayType:
+                        description: 'Indicates whether the device is a gateway. Default
+                          value: "NON_GATEWAY" Possible values: ["GATEWAY", "NON_GATEWAY"]'
+                        type: string
+                      lastAccessedGatewayID:
+                        description: The ID of the gateway the device accessed most
+                          recently.
+                        type: string
+                      lastAccessedGatewayTime:
+                        description: The most recent time at which the device accessed
+                          the gateway specified in last_accessed_gateway.
+                        type: string
+                    type: object
+                  id:
+                    type: string
+                  lastConfigACKTime:
+                    description: The last time a cloud-to-device config version acknowledgment
+                      was received from the device.
+                    type: string
+                  lastConfigSendTime:
+                    description: The last time a cloud-to-device config version was
+                      sent to the device.
+                    type: string
+                  lastErrorStatus:
+                    description: The error message of the most recent error, such
+                      as a failure to publish to Cloud Pub/Sub.
+                    items:
+                      properties:
+                        message:
+                          description: A list of messages that carry the error details.
+                            A developer-facing error message, which should be in English.
+                          type: string
+                        number:
+                          description: The status code, which should be an enum value
+                            of google.rpc.Code.
+                          format: int64
+                          type: integer
+                      type: object
+                    type: array
+                  lastErrorTime:
+                    description: The time the most recent error occurred, such as
+                      a failure to publish to Cloud Pub/Sub.
+                    type: string
+                  lastEventTime:
+                    description: The last time a telemetry event was received.
+                    type: string
+                  lastHeartbeatTime:
+                    description: The last time an MQTT PINGREQ was received.
+                    type: string
+                  lastStateTime:
+                    description: The last time a state event was received.
+                    type: string
+                  logLevel:
+                    description: 'The logging verbosity for device activity. Possible
+                      values: ["NONE", "ERROR", "INFO", "DEBUG"]'
+                    type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    description: The metadata key-value pairs assigned to the device.
+                    type: object
+                  name:
+                    description: A unique name for the resource.
+                    type: string
+                  numID:
+                    description: A server-defined unique numeric ID for the device.
+                      This is a more compact way to identify devices, and it is globally
+                      unique.
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  registry:
+                    description: The name of the device registry where this device
+                      should be created.
+                    type: string
+                  state:
+                    description: The state most recently received from the device.
+                    items:
+                      properties:
+                        binaryData:
+                          description: The device state data.
+                          type: string
+                        updateTime:
+                          description: The time at which this state version was updated
+                            in Cloud IoT Core.
+                          type: string
+                      type: object
+                    type: array
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - providerRef
+                - registry
+                type: object
+              lastConfigACKTime:
+                description: The last time a cloud-to-device config version acknowledgment
+                  was received from the device.
+                type: string
+              lastConfigSendTime:
+                description: The last time a cloud-to-device config version was sent
+                  to the device.
+                type: string
+              lastErrorStatus:
+                description: The error message of the most recent error, such as a
+                  failure to publish to Cloud Pub/Sub.
+                items:
+                  properties:
+                    message:
+                      description: A list of messages that carry the error details.
+                        A developer-facing error message, which should be in English.
+                      type: string
+                    number:
+                      description: The status code, which should be an enum value
+                        of google.rpc.Code.
+                      format: int64
+                      type: integer
+                  type: object
+                type: array
+              lastErrorTime:
+                description: The time the most recent error occurred, such as a failure
+                  to publish to Cloud Pub/Sub.
+                type: string
+              lastEventTime:
+                description: The last time a telemetry event was received.
+                type: string
+              lastHeartbeatTime:
+                description: The last time an MQTT PINGREQ was received.
+                type: string
+              lastStateTime:
+                description: The last time a state event was received.
+                type: string
+              logLevel:
+                description: 'The logging verbosity for device activity. Possible
+                  values: ["NONE", "ERROR", "INFO", "DEBUG"]'
+                type: string
+              metadata:
+                additionalProperties:
+                  type: string
+                description: The metadata key-value pairs assigned to the device.
+                type: object
+              name:
+                description: A unique name for the resource.
+                type: string
+              numID:
+                description: A server-defined unique numeric ID for the device. This
+                  is a more compact way to identify devices, and it is globally unique.
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              registry:
+                description: The name of the device registry where this device should
+                  be created.
+                type: string
+              state:
+                description: The state most recently received from the device.
+                items:
+                  properties:
+                    binaryData:
+                      description: The device state data.
+                      type: string
+                    updateTime:
+                      description: The time at which this state version was updated
+                        in Cloud IoT Core.
+                      type: string
+                  type: object
+                type: array
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - name
+            - providerRef
+            - registry
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

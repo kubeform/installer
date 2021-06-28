@@ -16,4 +16,8 @@
 
 set -eou pipefail
 
+helm dependency update charts/kubeform-provider-aws
+helm dependency update charts/kubeform-provider-azurerm
+helm dependency update charts/kubeform-provider-digitalocean
+helm dependency update charts/kubeform-provider-google
 helm dependency update charts/kubeform-provider-linode

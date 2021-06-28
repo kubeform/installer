@@ -1,0 +1,210 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: iamcustomroles.organization.google.kubeform.com
+spec:
+  group: organization.google.kubeform.com
+  names:
+    kind: IamCustomRole
+    listKind: IamCustomRoleList
+    plural: iamcustomroles
+    singular: iamcustomrole
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              deleted:
+                description: The current deleted state of the role.
+                type: boolean
+              description:
+                description: A human-readable description for the role.
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  deleted:
+                    description: The current deleted state of the role.
+                    type: boolean
+                  description:
+                    description: A human-readable description for the role.
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    description: The name of the role in the format organizations/{{org_id}}/roles/{{role_id}}.
+                      Like id, this field can be used as a reference in other resources
+                      such as IAM role bindings.
+                    type: string
+                  orgID:
+                    description: The numeric ID of the organization in which you want
+                      to create a custom role.
+                    type: string
+                  permissions:
+                    description: The names of the permissions this role grants when
+                      bound in an IAM policy. At least one permission must be specified.
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  roleID:
+                    description: The role id to use for this role.
+                    type: string
+                  stage:
+                    description: The current launch stage of the role. Defaults to
+                      GA.
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  title:
+                    description: A human-readable title for the role.
+                    type: string
+                required:
+                - orgID
+                - permissions
+                - providerRef
+                - roleID
+                - title
+                type: object
+              name:
+                description: The name of the role in the format organizations/{{org_id}}/roles/{{role_id}}.
+                  Like id, this field can be used as a reference in other resources
+                  such as IAM role bindings.
+                type: string
+              orgID:
+                description: The numeric ID of the organization in which you want
+                  to create a custom role.
+                type: string
+              permissions:
+                description: The names of the permissions this role grants when bound
+                  in an IAM policy. At least one permission must be specified.
+                items:
+                  type: string
+                minItems: 1
+                type: array
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              roleID:
+                description: The role id to use for this role.
+                type: string
+              stage:
+                description: The current launch stage of the role. Defaults to GA.
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              title:
+                description: A human-readable title for the role.
+                type: string
+            required:
+            - orgID
+            - permissions
+            - providerRef
+            - roleID
+            - title
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

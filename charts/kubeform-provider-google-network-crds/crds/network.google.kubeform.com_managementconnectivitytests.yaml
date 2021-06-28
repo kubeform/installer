@@ -1,0 +1,447 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: managementconnectivitytests.network.google.kubeform.com
+spec:
+  group: network.google.kubeform.com
+  names:
+    kind: ManagementConnectivityTest
+    listKind: ManagementConnectivityTestList
+    plural: managementconnectivitytests
+    singular: managementconnectivitytest
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              description:
+                description: The user-supplied description of the Connectivity Test.
+                  Maximum of 512 characters.
+                type: string
+              destination:
+                description: "Required. Destination specification of the Connectivity
+                  Test. \n You can use a combination of destination IP address, Compute
+                  Engine VM instance, or VPC network to uniquely identify the destination
+                  location. \n Even if the destination IP address is not unique, the
+                  source IP location is unique. Usually, the analysis can infer the
+                  destination endpoint from route information. \n If the destination
+                  you specify is a VM instance and the instance has multiple network
+                  interfaces, then you must also specify either a destination IP address
+                  or VPC network to identify the destination interface. \n A reachability
+                  analysis proceeds even if the destination location is ambiguous.
+                  However, the result can include endpoints that you don't intend
+                  to test."
+                properties:
+                  instance:
+                    description: A Compute Engine instance URI.
+                    type: string
+                  ipAddress:
+                    description: The IP address of the endpoint, which can be an external
+                      or internal IP. An IPv6 address is only allowed when the test's
+                      destination is a global load balancer VIP.
+                    type: string
+                  network:
+                    description: A Compute Engine network URI.
+                    type: string
+                  port:
+                    description: The IP protocol port of the endpoint. Only applicable
+                      when protocol is TCP or UDP.
+                    format: int64
+                    type: integer
+                  projectID:
+                    description: 'Project ID where the endpoint is located. The Project
+                      ID can be derived from the URI if you provide a VM instance
+                      or network URI. The following are two cases where you must provide
+                      the project ID: 1. Only the IP address is specified, and the
+                      IP address is within a GCP project. 2. When you are using Shared
+                      VPC and the IP address that you provide is from the service
+                      project. In this case, the network that the IP address resides
+                      in is defined in the host project.'
+                    type: string
+                type: object
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  description:
+                    description: The user-supplied description of the Connectivity
+                      Test. Maximum of 512 characters.
+                    type: string
+                  destination:
+                    description: "Required. Destination specification of the Connectivity
+                      Test. \n You can use a combination of destination IP address,
+                      Compute Engine VM instance, or VPC network to uniquely identify
+                      the destination location. \n Even if the destination IP address
+                      is not unique, the source IP location is unique. Usually, the
+                      analysis can infer the destination endpoint from route information.
+                      \n If the destination you specify is a VM instance and the instance
+                      has multiple network interfaces, then you must also specify
+                      either a destination IP address or VPC network to identify the
+                      destination interface. \n A reachability analysis proceeds even
+                      if the destination location is ambiguous. However, the result
+                      can include endpoints that you don't intend to test."
+                    properties:
+                      instance:
+                        description: A Compute Engine instance URI.
+                        type: string
+                      ipAddress:
+                        description: The IP address of the endpoint, which can be
+                          an external or internal IP. An IPv6 address is only allowed
+                          when the test's destination is a global load balancer VIP.
+                        type: string
+                      network:
+                        description: A Compute Engine network URI.
+                        type: string
+                      port:
+                        description: The IP protocol port of the endpoint. Only applicable
+                          when protocol is TCP or UDP.
+                        format: int64
+                        type: integer
+                      projectID:
+                        description: 'Project ID where the endpoint is located. The
+                          Project ID can be derived from the URI if you provide a
+                          VM instance or network URI. The following are two cases
+                          where you must provide the project ID: 1. Only the IP address
+                          is specified, and the IP address is within a GCP project.
+                          2. When you are using Shared VPC and the IP address that
+                          you provide is from the service project. In this case, the
+                          network that the IP address resides in is defined in the
+                          host project.'
+                        type: string
+                    type: object
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    description: Resource labels to represent user-provided metadata.
+                    type: object
+                  name:
+                    description: Unique name for the connectivity test.
+                    type: string
+                  project:
+                    type: string
+                  protocol:
+                    description: IP Protocol of the test. When not provided, "TCP"
+                      is assumed.
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  relatedProjects:
+                    description: Other projects that may be relevant for reachability
+                      analysis. This is applicable to scenarios where a test can cross
+                      project boundaries.
+                    items:
+                      type: string
+                    type: array
+                  source:
+                    description: "Required. Source specification of the Connectivity
+                      Test. \n You can use a combination of source IP address, virtual
+                      machine (VM) instance, or Compute Engine network to uniquely
+                      identify the source location. \n Examples: If the source IP
+                      address is an internal IP address within a Google Cloud Virtual
+                      Private Cloud (VPC) network, then you must also specify the
+                      VPC network. Otherwise, specify the VM instance, which already
+                      contains its internal IP address and VPC network information.
+                      \n If the source of the test is within an on-premises network,
+                      then you must provide the destination VPC network. \n If the
+                      source endpoint is a Compute Engine VM instance with multiple
+                      network interfaces, the instance itself is not sufficient to
+                      identify the endpoint. So, you must also specify the source
+                      IP address or VPC network. \n A reachability analysis proceeds
+                      even if the source location is ambiguous. However, the test
+                      result may include endpoints that you don't intend to test."
+                    properties:
+                      instance:
+                        description: A Compute Engine instance URI.
+                        type: string
+                      ipAddress:
+                        description: The IP address of the endpoint, which can be
+                          an external or internal IP. An IPv6 address is only allowed
+                          when the test's destination is a global load balancer VIP.
+                        type: string
+                      network:
+                        description: A Compute Engine network URI.
+                        type: string
+                      networkType:
+                        description: 'Type of the network where the endpoint is located.
+                          Possible values: ["GCP_NETWORK", "NON_GCP_NETWORK"]'
+                        type: string
+                      port:
+                        description: The IP protocol port of the endpoint. Only applicable
+                          when protocol is TCP or UDP.
+                        format: int64
+                        type: integer
+                      projectID:
+                        description: "Project ID where the endpoint is located. The
+                          Project ID can be derived from the URI if you provide a
+                          VM instance or network URI. The following are two cases
+                          where you must provide the project ID: \n 1. Only the IP
+                          address is specified, and the IP address is    within a
+                          GCP project. 2. When you are using Shared VPC and the IP
+                          address    that you provide is from the service project.
+                          In this case,    the network that the IP address resides
+                          in is defined in the    host project."
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - destination
+                - name
+                - providerRef
+                - source
+                type: object
+              labels:
+                additionalProperties:
+                  type: string
+                description: Resource labels to represent user-provided metadata.
+                type: object
+              name:
+                description: Unique name for the connectivity test.
+                type: string
+              project:
+                type: string
+              protocol:
+                description: IP Protocol of the test. When not provided, "TCP" is
+                  assumed.
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              relatedProjects:
+                description: Other projects that may be relevant for reachability
+                  analysis. This is applicable to scenarios where a test can cross
+                  project boundaries.
+                items:
+                  type: string
+                type: array
+              source:
+                description: "Required. Source specification of the Connectivity Test.
+                  \n You can use a combination of source IP address, virtual machine
+                  (VM) instance, or Compute Engine network to uniquely identify the
+                  source location. \n Examples: If the source IP address is an internal
+                  IP address within a Google Cloud Virtual Private Cloud (VPC) network,
+                  then you must also specify the VPC network. Otherwise, specify the
+                  VM instance, which already contains its internal IP address and
+                  VPC network information. \n If the source of the test is within
+                  an on-premises network, then you must provide the destination VPC
+                  network. \n If the source endpoint is a Compute Engine VM instance
+                  with multiple network interfaces, the instance itself is not sufficient
+                  to identify the endpoint. So, you must also specify the source IP
+                  address or VPC network. \n A reachability analysis proceeds even
+                  if the source location is ambiguous. However, the test result may
+                  include endpoints that you don't intend to test."
+                properties:
+                  instance:
+                    description: A Compute Engine instance URI.
+                    type: string
+                  ipAddress:
+                    description: The IP address of the endpoint, which can be an external
+                      or internal IP. An IPv6 address is only allowed when the test's
+                      destination is a global load balancer VIP.
+                    type: string
+                  network:
+                    description: A Compute Engine network URI.
+                    type: string
+                  networkType:
+                    description: 'Type of the network where the endpoint is located.
+                      Possible values: ["GCP_NETWORK", "NON_GCP_NETWORK"]'
+                    type: string
+                  port:
+                    description: The IP protocol port of the endpoint. Only applicable
+                      when protocol is TCP or UDP.
+                    format: int64
+                    type: integer
+                  projectID:
+                    description: "Project ID where the endpoint is located. The Project
+                      ID can be derived from the URI if you provide a VM instance
+                      or network URI. The following are two cases where you must provide
+                      the project ID: \n 1. Only the IP address is specified, and
+                      the IP address is    within a GCP project. 2. When you are using
+                      Shared VPC and the IP address    that you provide is from the
+                      service project. In this case,    the network that the IP address
+                      resides in is defined in the    host project."
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - destination
+            - name
+            - providerRef
+            - source
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

@@ -1,0 +1,517 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: resourcepolicies.compute.google.kubeform.com
+spec:
+  group: compute.google.kubeform.com
+  names:
+    kind: ResourcePolicy
+    listKind: ResourcePolicyList
+    plural: resourcepolicies
+    singular: resourcepolicy
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              groupPlacementPolicy:
+                description: Resource policy for instances used for placement configuration.
+                properties:
+                  availabilityDomainCount:
+                    description: The number of availability domains instances will
+                      be spread across. If two instances are in different availability
+                      domain, they will not be put in the same low latency network
+                    format: int64
+                    type: integer
+                  collocation:
+                    description: 'Collocation specifies whether to place VMs inside
+                      the same availability domain on the same low-latency network.
+                      Specify ''COLLOCATED'' to enable collocation. Can only be specified
+                      with ''vm_count''. If compute instances are created with a COLLOCATED
+                      policy, then exactly ''vm_count'' instances must be created
+                      at the same time with the resource policy attached. Possible
+                      values: ["COLLOCATED"]'
+                    type: string
+                  vmCount:
+                    description: Number of vms in this placement group.
+                    format: int64
+                    type: integer
+                type: object
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  groupPlacementPolicy:
+                    description: Resource policy for instances used for placement
+                      configuration.
+                    properties:
+                      availabilityDomainCount:
+                        description: The number of availability domains instances
+                          will be spread across. If two instances are in different
+                          availability domain, they will not be put in the same low
+                          latency network
+                        format: int64
+                        type: integer
+                      collocation:
+                        description: 'Collocation specifies whether to place VMs inside
+                          the same availability domain on the same low-latency network.
+                          Specify ''COLLOCATED'' to enable collocation. Can only be
+                          specified with ''vm_count''. If compute instances are created
+                          with a COLLOCATED policy, then exactly ''vm_count'' instances
+                          must be created at the same time with the resource policy
+                          attached. Possible values: ["COLLOCATED"]'
+                        type: string
+                      vmCount:
+                        description: Number of vms in this placement group.
+                        format: int64
+                        type: integer
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    description: The name of the resource, provided by the client
+                      when initially creating the resource. The resource name must
+                      be 1-63 characters long, and comply with RFC1035. Specifically,
+                      the name must be 1-63 characters long and match the regular
+                      expression '[a-z]([-a-z0-9]*[a-z0-9])'? which means the first
+                      character must be a lowercase letter, and all following characters
+                      must be a dash, lowercase letter, or digit, except the last
+                      character, which cannot be a dash.
+                    type: string
+                  project:
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  region:
+                    description: Region where resource policy resides.
+                    type: string
+                  selfLink:
+                    type: string
+                  snapshotSchedulePolicy:
+                    description: Policy for creating snapshots of persistent disks.
+                    properties:
+                      retentionPolicy:
+                        description: Retention policy applied to snapshots created
+                          by this resource policy.
+                        properties:
+                          maxRetentionDays:
+                            description: Maximum age of the snapshot that is allowed
+                              to be kept.
+                            format: int64
+                            type: integer
+                          onSourceDiskDelete:
+                            description: 'Specifies the behavior to apply to scheduled
+                              snapshots when the source disk is deleted. Default value:
+                              "KEEP_AUTO_SNAPSHOTS" Possible values: ["KEEP_AUTO_SNAPSHOTS",
+                              "APPLY_RETENTION_POLICY"]'
+                            type: string
+                        required:
+                        - maxRetentionDays
+                        type: object
+                      schedule:
+                        description: Contains one of an 'hourlySchedule', 'dailySchedule',
+                          or 'weeklySchedule'.
+                        properties:
+                          dailySchedule:
+                            description: The policy will execute every nth day at
+                              the specified time.
+                            properties:
+                              daysInCycle:
+                                description: The number of days between snapshots.
+                                format: int64
+                                type: integer
+                              startTime:
+                                description: This must be in UTC format that resolves
+                                  to one of 00:00, 04:00, 08:00, 12:00, 16:00, or
+                                  20:00. For example, both 13:00-5 and 08:00 are valid.
+                                type: string
+                            required:
+                            - daysInCycle
+                            - startTime
+                            type: object
+                          hourlySchedule:
+                            description: The policy will execute every nth hour starting
+                              at the specified time.
+                            properties:
+                              hoursInCycle:
+                                description: The number of hours between snapshots.
+                                format: int64
+                                type: integer
+                              startTime:
+                                description: 'Time within the window to start the
+                                  operations. It must be in an hourly format "HH:MM",
+                                  where HH : [00-23] and MM : [00] GMT. eg: 21:00'
+                                type: string
+                            required:
+                            - hoursInCycle
+                            - startTime
+                            type: object
+                          weeklySchedule:
+                            description: Allows specifying a snapshot time for each
+                              day of the week.
+                            properties:
+                              dayOfWeeks:
+                                description: May contain up to seven (one for each
+                                  day of the week) snapshot times.
+                                items:
+                                  properties:
+                                    day:
+                                      description: 'The day of the week to create
+                                        the snapshot. e.g. MONDAY Possible values:
+                                        ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY",
+                                        "FRIDAY", "SATURDAY", "SUNDAY"]'
+                                      type: string
+                                    startTime:
+                                      description: 'Time within the window to start
+                                        the operations. It must be in format "HH:MM",
+                                        where HH : [00-23] and MM : [00-00] GMT.'
+                                      type: string
+                                  required:
+                                  - day
+                                  - startTime
+                                  type: object
+                                maxItems: 7
+                                minItems: 1
+                                type: array
+                            required:
+                            - dayOfWeeks
+                            type: object
+                        type: object
+                      snapshotProperties:
+                        description: Properties with which the snapshots are created,
+                          such as labels.
+                        properties:
+                          guestFlush:
+                            description: Whether to perform a 'guest aware' snapshot.
+                            type: boolean
+                          labels:
+                            additionalProperties:
+                              type: string
+                            description: A set of key-value pairs.
+                            type: object
+                          storageLocations:
+                            description: Cloud Storage bucket location to store the
+                              auto snapshot (regional or multi-regional)
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                    required:
+                    - schedule
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - providerRef
+                type: object
+              name:
+                description: The name of the resource, provided by the client when
+                  initially creating the resource. The resource name must be 1-63
+                  characters long, and comply with RFC1035. Specifically, the name
+                  must be 1-63 characters long and match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])'?
+                  which means the first character must be a lowercase letter, and
+                  all following characters must be a dash, lowercase letter, or digit,
+                  except the last character, which cannot be a dash.
+                type: string
+              project:
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              region:
+                description: Region where resource policy resides.
+                type: string
+              selfLink:
+                type: string
+              snapshotSchedulePolicy:
+                description: Policy for creating snapshots of persistent disks.
+                properties:
+                  retentionPolicy:
+                    description: Retention policy applied to snapshots created by
+                      this resource policy.
+                    properties:
+                      maxRetentionDays:
+                        description: Maximum age of the snapshot that is allowed to
+                          be kept.
+                        format: int64
+                        type: integer
+                      onSourceDiskDelete:
+                        description: 'Specifies the behavior to apply to scheduled
+                          snapshots when the source disk is deleted. Default value:
+                          "KEEP_AUTO_SNAPSHOTS" Possible values: ["KEEP_AUTO_SNAPSHOTS",
+                          "APPLY_RETENTION_POLICY"]'
+                        type: string
+                    required:
+                    - maxRetentionDays
+                    type: object
+                  schedule:
+                    description: Contains one of an 'hourlySchedule', 'dailySchedule',
+                      or 'weeklySchedule'.
+                    properties:
+                      dailySchedule:
+                        description: The policy will execute every nth day at the
+                          specified time.
+                        properties:
+                          daysInCycle:
+                            description: The number of days between snapshots.
+                            format: int64
+                            type: integer
+                          startTime:
+                            description: This must be in UTC format that resolves
+                              to one of 00:00, 04:00, 08:00, 12:00, 16:00, or 20:00.
+                              For example, both 13:00-5 and 08:00 are valid.
+                            type: string
+                        required:
+                        - daysInCycle
+                        - startTime
+                        type: object
+                      hourlySchedule:
+                        description: The policy will execute every nth hour starting
+                          at the specified time.
+                        properties:
+                          hoursInCycle:
+                            description: The number of hours between snapshots.
+                            format: int64
+                            type: integer
+                          startTime:
+                            description: 'Time within the window to start the operations.
+                              It must be in an hourly format "HH:MM", where HH : [00-23]
+                              and MM : [00] GMT. eg: 21:00'
+                            type: string
+                        required:
+                        - hoursInCycle
+                        - startTime
+                        type: object
+                      weeklySchedule:
+                        description: Allows specifying a snapshot time for each day
+                          of the week.
+                        properties:
+                          dayOfWeeks:
+                            description: May contain up to seven (one for each day
+                              of the week) snapshot times.
+                            items:
+                              properties:
+                                day:
+                                  description: 'The day of the week to create the
+                                    snapshot. e.g. MONDAY Possible values: ["MONDAY",
+                                    "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY",
+                                    "SATURDAY", "SUNDAY"]'
+                                  type: string
+                                startTime:
+                                  description: 'Time within the window to start the
+                                    operations. It must be in format "HH:MM", where
+                                    HH : [00-23] and MM : [00-00] GMT.'
+                                  type: string
+                              required:
+                              - day
+                              - startTime
+                              type: object
+                            maxItems: 7
+                            minItems: 1
+                            type: array
+                        required:
+                        - dayOfWeeks
+                        type: object
+                    type: object
+                  snapshotProperties:
+                    description: Properties with which the snapshots are created,
+                      such as labels.
+                    properties:
+                      guestFlush:
+                        description: Whether to perform a 'guest aware' snapshot.
+                        type: boolean
+                      labels:
+                        additionalProperties:
+                          type: string
+                        description: A set of key-value pairs.
+                        type: object
+                      storageLocations:
+                        description: Cloud Storage bucket location to store the auto
+                          snapshot (regional or multi-regional)
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                required:
+                - schedule
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

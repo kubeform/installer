@@ -1,0 +1,408 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: policies.binaryauthorization.google.kubeform.com
+spec:
+  group: binaryauthorization.google.kubeform.com
+  names:
+    kind: Policy
+    listKind: PolicyList
+    plural: policies
+    singular: policy
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              admissionWhitelistPatterns:
+                description: A whitelist of image patterns to exclude from admission
+                  rules. If an image's name matches a whitelist pattern, the image's
+                  admission requests will always be permitted regardless of your admission
+                  rules.
+                items:
+                  properties:
+                    namePattern:
+                      description: An image name pattern to whitelist, in the form
+                        'registry/path/to/image'. This supports a trailing * as a
+                        wildcard, but this is allowed only in text after the registry/
+                        part.
+                      type: string
+                  required:
+                  - namePattern
+                  type: object
+                type: array
+              clusterAdmissionRules:
+                description: "Per-cluster admission rules. An admission rule specifies
+                  either that all container images used in a pod creation request
+                  must be attested to by one or more attestors, that all pod creations
+                  will be allowed, or that all pod creations will be denied. There
+                  can be at most one admission rule per cluster spec. \n Identifier
+                  format: '{{location}}.{{clusterId}}'. A location is either a compute
+                  zone (e.g. 'us-central1-a') or a region (e.g. 'us-central1')."
+                items:
+                  properties:
+                    cluster:
+                      type: string
+                    enforcementMode:
+                      description: 'The action when a pod creation is denied by the
+                        admission rule. Possible values: ["ENFORCED_BLOCK_AND_AUDIT_LOG",
+                        "DRYRUN_AUDIT_LOG_ONLY"]'
+                      type: string
+                    evaluationMode:
+                      description: 'How this admission rule will be evaluated. Possible
+                        values: ["ALWAYS_ALLOW", "REQUIRE_ATTESTATION", "ALWAYS_DENY"]'
+                      type: string
+                    requireAttestationsBy:
+                      description: "The resource names of the attestors that must
+                        attest to a container image. If the attestor is in a different
+                        project from the policy, it should be specified in the format
+                        'projects/*/attestors/*'. Each attestor must exist before
+                        a policy can reference it. To add an attestor to a policy
+                        the principal issuing the policy change request must be able
+                        to read the attestor resource. \n Note: this field must be
+                        non-empty when the evaluation_mode field specifies REQUIRE_ATTESTATION,
+                        otherwise it must be empty."
+                      items:
+                        type: string
+                      type: array
+                  required:
+                  - cluster
+                  - enforcementMode
+                  - evaluationMode
+                  type: object
+                type: array
+              defaultAdmissionRule:
+                description: Default admission rule for a cluster without a per-cluster
+                  admission rule.
+                properties:
+                  enforcementMode:
+                    description: 'The action when a pod creation is denied by the
+                      admission rule. Possible values: ["ENFORCED_BLOCK_AND_AUDIT_LOG",
+                      "DRYRUN_AUDIT_LOG_ONLY"]'
+                    type: string
+                  evaluationMode:
+                    description: 'How this admission rule will be evaluated. Possible
+                      values: ["ALWAYS_ALLOW", "REQUIRE_ATTESTATION", "ALWAYS_DENY"]'
+                    type: string
+                  requireAttestationsBy:
+                    description: "The resource names of the attestors that must attest
+                      to a container image. If the attestor is in a different project
+                      from the policy, it should be specified in the format 'projects/*/attestors/*'.
+                      Each attestor must exist before a policy can reference it. To
+                      add an attestor to a policy the principal issuing the policy
+                      change request must be able to read the attestor resource. \n
+                      Note: this field must be non-empty when the evaluation_mode
+                      field specifies REQUIRE_ATTESTATION, otherwise it must be empty."
+                    items:
+                      type: string
+                    type: array
+                required:
+                - enforcementMode
+                - evaluationMode
+                type: object
+              description:
+                description: A descriptive comment.
+                type: string
+              globalPolicyEvaluationMode:
+                description: 'Controls the evaluation of a Google-maintained global
+                  admission policy for common system-level images. Images not covered
+                  by the global policy will be subject to the project admission policy.
+                  Possible values: ["ENABLE", "DISABLE"]'
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  admissionWhitelistPatterns:
+                    description: A whitelist of image patterns to exclude from admission
+                      rules. If an image's name matches a whitelist pattern, the image's
+                      admission requests will always be permitted regardless of your
+                      admission rules.
+                    items:
+                      properties:
+                        namePattern:
+                          description: An image name pattern to whitelist, in the
+                            form 'registry/path/to/image'. This supports a trailing
+                            * as a wildcard, but this is allowed only in text after
+                            the registry/ part.
+                          type: string
+                      required:
+                      - namePattern
+                      type: object
+                    type: array
+                  clusterAdmissionRules:
+                    description: "Per-cluster admission rules. An admission rule specifies
+                      either that all container images used in a pod creation request
+                      must be attested to by one or more attestors, that all pod creations
+                      will be allowed, or that all pod creations will be denied. There
+                      can be at most one admission rule per cluster spec. \n Identifier
+                      format: '{{location}}.{{clusterId}}'. A location is either a
+                      compute zone (e.g. 'us-central1-a') or a region (e.g. 'us-central1')."
+                    items:
+                      properties:
+                        cluster:
+                          type: string
+                        enforcementMode:
+                          description: 'The action when a pod creation is denied by
+                            the admission rule. Possible values: ["ENFORCED_BLOCK_AND_AUDIT_LOG",
+                            "DRYRUN_AUDIT_LOG_ONLY"]'
+                          type: string
+                        evaluationMode:
+                          description: 'How this admission rule will be evaluated.
+                            Possible values: ["ALWAYS_ALLOW", "REQUIRE_ATTESTATION",
+                            "ALWAYS_DENY"]'
+                          type: string
+                        requireAttestationsBy:
+                          description: "The resource names of the attestors that must
+                            attest to a container image. If the attestor is in a different
+                            project from the policy, it should be specified in the
+                            format 'projects/*/attestors/*'. Each attestor must exist
+                            before a policy can reference it. To add an attestor to
+                            a policy the principal issuing the policy change request
+                            must be able to read the attestor resource. \n Note: this
+                            field must be non-empty when the evaluation_mode field
+                            specifies REQUIRE_ATTESTATION, otherwise it must be empty."
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - cluster
+                      - enforcementMode
+                      - evaluationMode
+                      type: object
+                    type: array
+                  defaultAdmissionRule:
+                    description: Default admission rule for a cluster without a per-cluster
+                      admission rule.
+                    properties:
+                      enforcementMode:
+                        description: 'The action when a pod creation is denied by
+                          the admission rule. Possible values: ["ENFORCED_BLOCK_AND_AUDIT_LOG",
+                          "DRYRUN_AUDIT_LOG_ONLY"]'
+                        type: string
+                      evaluationMode:
+                        description: 'How this admission rule will be evaluated. Possible
+                          values: ["ALWAYS_ALLOW", "REQUIRE_ATTESTATION", "ALWAYS_DENY"]'
+                        type: string
+                      requireAttestationsBy:
+                        description: "The resource names of the attestors that must
+                          attest to a container image. If the attestor is in a different
+                          project from the policy, it should be specified in the format
+                          'projects/*/attestors/*'. Each attestor must exist before
+                          a policy can reference it. To add an attestor to a policy
+                          the principal issuing the policy change request must be
+                          able to read the attestor resource. \n Note: this field
+                          must be non-empty when the evaluation_mode field specifies
+                          REQUIRE_ATTESTATION, otherwise it must be empty."
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - enforcementMode
+                    - evaluationMode
+                    type: object
+                  description:
+                    description: A descriptive comment.
+                    type: string
+                  globalPolicyEvaluationMode:
+                    description: 'Controls the evaluation of a Google-maintained global
+                      admission policy for common system-level images. Images not
+                      covered by the global policy will be subject to the project
+                      admission policy. Possible values: ["ENABLE", "DISABLE"]'
+                    type: string
+                  id:
+                    type: string
+                  project:
+                    type: string
+                  providerRef:
+                    description: LocalObjectReference contains enough information
+                      to let you locate the referenced object inside the same namespace.
+                    properties:
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      default:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      delete:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      read:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                      update:
+                        description: A Duration represents the elapsed time between
+                          two instants as an int64 nanosecond count. The representation
+                          limits the largest representable duration to approximately
+                          290 years.
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - defaultAdmissionRule
+                - providerRef
+                type: object
+              project:
+                type: string
+              providerRef:
+                description: LocalObjectReference contains enough information to let
+                  you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      TODO: Add other useful fields. apiVersion, kind, uid?'
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  default:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  delete:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  read:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                  update:
+                    description: A Duration represents the elapsed time between two
+                      instants as an int64 nanosecond count. The representation limits
+                      the largest representable duration to approximately 290 years.
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - defaultAdmissionRule
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another. This should be when the underlying condition changed.  If
+                        that is not known, then using the time when the API field
+                        changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition. This field may be empty.
+                      type: string
+                    observedGeneration:
+                      description: If set, this represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.condition[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: The reason for the condition's last transition
+                        in CamelCase. The specific API may choose whether or not this
+                        field is considered a guaranteed API. This field may not be
+                        empty.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
+                        Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: Resource generation, which is updated on mutation by
+                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
