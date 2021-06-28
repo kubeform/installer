@@ -546,6 +546,8 @@ func processLocation(location string, store map[schema.GroupKind]map[string]*uns
 
 func extractCRD(store map[schema.GroupKind]map[string]*unstructured.Unstructured) func(obj *unstructured.Unstructured) error {
 	return func(obj *unstructured.Unstructured) error {
+		removeDescription(obj.UnstructuredContent())
+
 		var def Definition
 
 		err := meta_util.DecodeObject(obj.Object, &def)
@@ -661,4 +663,23 @@ func WriteCRD(store map[schema.GroupKind]map[string]*unstructured.Unstructured, 
 	}
 	filename := filepath.Join(dir, fmt.Sprintf("%s_%s.yaml", def.Spec.Group, def.Spec.Names.Plural))
 	return data, filename, nil
+}
+
+func removeDescription(m map[string]interface{}) {
+	for k, v := range m {
+		if k == "description" {
+			if _, ok := v.(string); ok {
+				delete(m, k)
+			}
+		}
+		if inner, ok := v.(map[string]interface{}); ok {
+			removeDescription(inner)
+		} else if arr, ok := v.([]interface{}); ok {
+			for i := range arr {
+				if inner, ok := arr[i].(map[string]interface{}); ok {
+					removeDescription(inner)
+				}
+			}
+		}
+	}
 }

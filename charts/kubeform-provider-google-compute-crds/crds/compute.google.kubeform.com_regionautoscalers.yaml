@@ -23,144 +23,68 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
           spec:
             properties:
               autoscalingPolicy:
-                description: "The configuration parameters for the autoscaling algorithm.
-                  You can define one or more of the policies for an autoscaler: cpuUtilization,
-                  customMetricUtilizations, and loadBalancingUtilization. \n If none
-                  of these are specified, the default will be to autoscale based on
-                  cpuUtilization to 0.6 or 60%."
                 properties:
                   cooldownPeriod:
-                    description: "The number of seconds that the autoscaler should
-                      wait before it starts collecting information from a new instance.
-                      This prevents the autoscaler from collecting information when
-                      the instance is initializing, during which the collected usage
-                      would not be reliable. The default time autoscaler waits is
-                      60 seconds. \n Virtual machine initialization times might vary
-                      because of numerous factors. We recommend that you test how
-                      long an instance may take to initialize. To do this, create
-                      an instance and time the startup process."
                     format: int64
                     type: integer
                   cpuUtilization:
-                    description: Defines the CPU utilization policy that allows the
-                      autoscaler to scale based on the average CPU utilization of
-                      a managed instance group.
                     properties:
                       target:
-                        description: "The target CPU utilization that the autoscaler
-                          should maintain. Must be a float value in the range (0,
-                          1]. If not specified, the default is 0.6. \n If the CPU
-                          level is below the target utilization, the autoscaler scales
-                          down the number of instances until it reaches the minimum
-                          number of instances you specified or until the average CPU
-                          of your instances reaches the target utilization. \n If
-                          the average CPU is above the target utilization, the autoscaler
-                          scales up until it reaches the maximum number of instances
-                          you specified or until the average utilization reaches the
-                          target utilization."
                         format: double
                         type: number
                     required:
                     - target
                     type: object
                   loadBalancingUtilization:
-                    description: Configuration parameters of autoscaling based on
-                      a load balancer.
                     properties:
                       target:
-                        description: Fraction of backend capacity utilization (set
-                          in HTTP(s) load balancing configuration) that autoscaler
-                          should maintain. Must be a positive float value. If not
-                          defined, the default is 0.8.
                         format: double
                         type: number
                     required:
                     - target
                     type: object
                   maxReplicas:
-                    description: The maximum number of instances that the autoscaler
-                      can scale up to. This is required when creating or updating
-                      an autoscaler. The maximum number of replicas should not be
-                      lower than minimal number of replicas.
                     format: int64
                     type: integer
                   metric:
-                    description: Configuration parameters of autoscaling based on
-                      a custom metric.
                     items:
                       properties:
                         name:
-                          description: "The identifier (type) of the Stackdriver Monitoring
-                            metric. The metric cannot have negative values. \n The
-                            metric must have a value type of INT64 or DOUBLE."
                           type: string
                         target:
-                          description: "The target value of the metric that autoscaler
-                            should maintain. This must be a positive value. A utilization
-                            metric scales number of virtual machines handling requests
-                            to increase or decrease proportionally to the metric.
-                            \n For example, a good metric to use as a utilizationTarget
-                            is www.googleapis.com/compute/instance/network/received_bytes_count.
-                            The autoscaler will work to keep this value constant for
-                            each of the instances."
                           format: double
                           type: number
                         type:
-                          description: 'Defines how target utilization value is expressed
-                            for a Stackdriver Monitoring metric. Possible values:
-                            ["GAUGE", "DELTA_PER_SECOND", "DELTA_PER_MINUTE"]'
                           type: string
                       required:
                       - name
                       type: object
                     type: array
                   minReplicas:
-                    description: The minimum number of replicas that the autoscaler
-                      can scale down to. This cannot be less than 0. If not provided,
-                      autoscaler will choose a default value depending on maximum
-                      number of instances allowed.
                     format: int64
                     type: integer
                   mode:
-                    description: 'Defines operating mode for this policy. Default
-                      value: "ON" Possible values: ["OFF", "ONLY_UP", "ON"]'
                     type: string
                   scaleInControl:
-                    description: Defines scale in controls to reduce the risk of response
-                      latency and outages due to abrupt scale-in events
                     properties:
                       maxScaledInReplicas:
-                        description: A nested object resource
                         properties:
                           fixed:
-                            description: Specifies a fixed number of VM instances.
-                              This must be a positive integer.
                             format: int64
                             type: integer
                           percent:
-                            description: Specifies a percentage of instances between
-                              0 to 100%, inclusive. For example, specify 80 for 80%.
                             format: int64
                             type: integer
                         type: object
                       timeWindowSec:
-                        description: How long back autoscaling should look when computing
-                          recommendations to include directives regarding slower scale
-                          down, as described above.
                         format: int64
                         type: integer
                     type: object
@@ -169,142 +93,68 @@ spec:
                 - minReplicas
                 type: object
               creationTimestamp:
-                description: Creation timestamp in RFC3339 text format.
                 type: string
               description:
-                description: An optional description of this resource.
                 type: string
               id:
                 type: string
               kubeformOutput:
                 properties:
                   autoscalingPolicy:
-                    description: "The configuration parameters for the autoscaling
-                      algorithm. You can define one or more of the policies for an
-                      autoscaler: cpuUtilization, customMetricUtilizations, and loadBalancingUtilization.
-                      \n If none of these are specified, the default will be to autoscale
-                      based on cpuUtilization to 0.6 or 60%."
                     properties:
                       cooldownPeriod:
-                        description: "The number of seconds that the autoscaler should
-                          wait before it starts collecting information from a new
-                          instance. This prevents the autoscaler from collecting information
-                          when the instance is initializing, during which the collected
-                          usage would not be reliable. The default time autoscaler
-                          waits is 60 seconds. \n Virtual machine initialization times
-                          might vary because of numerous factors. We recommend that
-                          you test how long an instance may take to initialize. To
-                          do this, create an instance and time the startup process."
                         format: int64
                         type: integer
                       cpuUtilization:
-                        description: Defines the CPU utilization policy that allows
-                          the autoscaler to scale based on the average CPU utilization
-                          of a managed instance group.
                         properties:
                           target:
-                            description: "The target CPU utilization that the autoscaler
-                              should maintain. Must be a float value in the range
-                              (0, 1]. If not specified, the default is 0.6. \n If
-                              the CPU level is below the target utilization, the autoscaler
-                              scales down the number of instances until it reaches
-                              the minimum number of instances you specified or until
-                              the average CPU of your instances reaches the target
-                              utilization. \n If the average CPU is above the target
-                              utilization, the autoscaler scales up until it reaches
-                              the maximum number of instances you specified or until
-                              the average utilization reaches the target utilization."
                             format: double
                             type: number
                         required:
                         - target
                         type: object
                       loadBalancingUtilization:
-                        description: Configuration parameters of autoscaling based
-                          on a load balancer.
                         properties:
                           target:
-                            description: Fraction of backend capacity utilization
-                              (set in HTTP(s) load balancing configuration) that autoscaler
-                              should maintain. Must be a positive float value. If
-                              not defined, the default is 0.8.
                             format: double
                             type: number
                         required:
                         - target
                         type: object
                       maxReplicas:
-                        description: The maximum number of instances that the autoscaler
-                          can scale up to. This is required when creating or updating
-                          an autoscaler. The maximum number of replicas should not
-                          be lower than minimal number of replicas.
                         format: int64
                         type: integer
                       metric:
-                        description: Configuration parameters of autoscaling based
-                          on a custom metric.
                         items:
                           properties:
                             name:
-                              description: "The identifier (type) of the Stackdriver
-                                Monitoring metric. The metric cannot have negative
-                                values. \n The metric must have a value type of INT64
-                                or DOUBLE."
                               type: string
                             target:
-                              description: "The target value of the metric that autoscaler
-                                should maintain. This must be a positive value. A
-                                utilization metric scales number of virtual machines
-                                handling requests to increase or decrease proportionally
-                                to the metric. \n For example, a good metric to use
-                                as a utilizationTarget is www.googleapis.com/compute/instance/network/received_bytes_count.
-                                The autoscaler will work to keep this value constant
-                                for each of the instances."
                               format: double
                               type: number
                             type:
-                              description: 'Defines how target utilization value is
-                                expressed for a Stackdriver Monitoring metric. Possible
-                                values: ["GAUGE", "DELTA_PER_SECOND", "DELTA_PER_MINUTE"]'
                               type: string
                           required:
                           - name
                           type: object
                         type: array
                       minReplicas:
-                        description: The minimum number of replicas that the autoscaler
-                          can scale down to. This cannot be less than 0. If not provided,
-                          autoscaler will choose a default value depending on maximum
-                          number of instances allowed.
                         format: int64
                         type: integer
                       mode:
-                        description: 'Defines operating mode for this policy. Default
-                          value: "ON" Possible values: ["OFF", "ONLY_UP", "ON"]'
                         type: string
                       scaleInControl:
-                        description: Defines scale in controls to reduce the risk
-                          of response latency and outages due to abrupt scale-in events
                         properties:
                           maxScaledInReplicas:
-                            description: A nested object resource
                             properties:
                               fixed:
-                                description: Specifies a fixed number of VM instances.
-                                  This must be a positive integer.
                                 format: int64
                                 type: integer
                               percent:
-                                description: Specifies a percentage of instances between
-                                  0 to 100%, inclusive. For example, specify 80 for
-                                  80%.
                                 format: int64
                                 type: integer
                             type: object
                           timeWindowSec:
-                            description: How long back autoscaling should look when
-                              computing recommendations to include directives regarding
-                              slower scale down, as described above.
                             format: int64
                             type: integer
                         type: object
@@ -313,39 +163,25 @@ spec:
                     - minReplicas
                     type: object
                   creationTimestamp:
-                    description: Creation timestamp in RFC3339 text format.
                     type: string
                   description:
-                    description: An optional description of this resource.
                     type: string
                   id:
                     type: string
                   name:
-                    description: Name of the resource. The name must be 1-63 characters
-                      long and match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?'
-                      which means the first character must be a lowercase letter,
-                      and all following characters must be a dash, lowercase letter,
-                      or digit, except the last character, which cannot be a dash.
                     type: string
                   project:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   region:
-                    description: URL of the region where the instance group resides.
                     type: string
                   selfLink:
                     type: string
                   target:
-                    description: URL of the managed instance group that this autoscaler
-                      will scale.
                     type: string
                   terminationPolicy:
                     enum:
@@ -355,38 +191,18 @@ spec:
                   timeouts:
                     properties:
                       create:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                       default:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                       delete:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                       read:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                       update:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                     type: object
@@ -397,31 +213,19 @@ spec:
                 - target
                 type: object
               name:
-                description: Name of the resource. The name must be 1-63 characters
-                  long and match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?'
-                  which means the first character must be a lowercase letter, and
-                  all following characters must be a dash, lowercase letter, or digit,
-                  except the last character, which cannot be a dash.
                 type: string
               project:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               region:
-                description: URL of the region where the instance group resides.
                 type: string
               selfLink:
                 type: string
               target:
-                description: URL of the managed instance group that this autoscaler
-                  will scale.
                 type: string
               terminationPolicy:
                 enum:
@@ -431,33 +235,18 @@ spec:
               timeouts:
                 properties:
                   create:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                   default:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                   delete:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                   read:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                   update:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                 type: object
@@ -473,39 +262,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -516,8 +284,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:

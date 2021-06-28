@@ -23,47 +23,27 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
           spec:
             properties:
               dataRefreshWindowDays:
-                description: The number of days to look back to automatically refresh
-                  the data. For example, if dataRefreshWindowDays = 10, then every
-                  day BigQuery reingests data for [today-10, today-1], rather than
-                  ingesting data for just [today-1]. Only valid if the data source
-                  supports the feature. Set the value to 0 to use the default value.
                 format: int64
                 type: integer
               dataSourceID:
-                description: The data source id. Cannot be changed once the transfer
-                  config is created.
                 type: string
               destinationDatasetID:
-                description: The BigQuery target dataset id.
                 type: string
               disabled:
-                description: When set to true, no runs are scheduled for a given transfer.
                 type: boolean
               displayName:
-                description: The user specified display name for the transfer config.
                 type: string
               emailPreferences:
-                description: Email notifications will be sent according to these preferences
-                  to the email address of the user who owns this transfer config.
                 properties:
                   enableFailureEmail:
-                    description: If true, email notifications will be sent on transfer
-                      run failures.
                     type: boolean
                 required:
                 - enableFailureEmail
@@ -73,37 +53,19 @@ spec:
               kubeformOutput:
                 properties:
                   dataRefreshWindowDays:
-                    description: The number of days to look back to automatically
-                      refresh the data. For example, if dataRefreshWindowDays = 10,
-                      then every day BigQuery reingests data for [today-10, today-1],
-                      rather than ingesting data for just [today-1]. Only valid if
-                      the data source supports the feature. Set the value to 0 to
-                      use the default value.
                     format: int64
                     type: integer
                   dataSourceID:
-                    description: The data source id. Cannot be changed once the transfer
-                      config is created.
                     type: string
                   destinationDatasetID:
-                    description: The BigQuery target dataset id.
                     type: string
                   disabled:
-                    description: When set to true, no runs are scheduled for a given
-                      transfer.
                     type: boolean
                   displayName:
-                    description: The user specified display name for the transfer
-                      config.
                     type: string
                   emailPreferences:
-                    description: Email notifications will be sent according to these
-                      preferences to the email address of the user who owns this transfer
-                      config.
                     properties:
                       enableFailureEmail:
-                        description: If true, email notifications will be sent on
-                          transfer run failures.
                         type: boolean
                     required:
                     - enableFailureEmail
@@ -111,97 +73,41 @@ spec:
                   id:
                     type: string
                   location:
-                    description: 'The geographic location where the transfer config
-                      should reside. Examples: US, EU, asia-northeast1. The default
-                      value is US.'
                     type: string
                   name:
-                    description: The resource name of the transfer config. Transfer
-                      config names have the form projects/{projectId}/locations/{location}/transferConfigs/{configId}.
-                      Where configId is usually a uuid, but this is not required.
-                      The name is ignored when creating a transfer config.
                     type: string
                   notificationPubsubTopic:
-                    description: Pub/Sub topic where notifications will be sent after
-                      transfer runs associated with this transfer config finish.
                     type: string
                   params:
                     additionalProperties:
                       type: string
-                    description: These parameters are specific to each data source.
                     type: object
                   project:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   schedule:
-                    description: 'Data transfer schedule. If the data source does
-                      not support a custom schedule, this should be empty. If it is
-                      empty, the default value for the data source will be used. The
-                      specified times are in UTC. Examples of valid format: 1st,3rd
-                      monday of month 15:30, every wed,fri of jan, jun 13:15, and
-                      first sunday of quarter 00:00. See more explanation about the
-                      format here: https://cloud.google.com/appengine/docs/flexible/python/scheduling-jobs-with-cron-yaml#the_schedule_format
-                      NOTE: the granularity should be at least 8 hours, or less frequent.'
                     type: string
                   scheduleOptions:
-                    description: Options customizing the data transfer schedule.
                     properties:
                       disableAutoScheduling:
-                        description: If true, automatic scheduling of data transfer
-                          runs for this configuration will be disabled. The runs can
-                          be started on ad-hoc basis using transferConfigs.startManualRuns
-                          API. When automatic scheduling is disabled, the TransferConfig.schedule
-                          field will be ignored.
                         type: boolean
                       endTime:
-                        description: Defines time to stop scheduling transfer runs.
-                          A transfer run cannot be scheduled at or after the end time.
-                          The end time can be changed at any moment. The time when
-                          a data transfer can be triggered manually is not limited
-                          by this option.
                         type: string
                       startTime:
-                        description: Specifies time to start scheduling transfer runs.
-                          The first run will be scheduled at or after the start time
-                          according to a recurrence pattern defined in the schedule
-                          string. The start time can be changed at any moment. The
-                          time when a data transfer can be triggered manually is not
-                          limited by this option.
                         type: string
                     type: object
                   secretRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   sensitiveParams:
-                    description: "Different parameters are configured primarily using
-                      the the 'params' field on this resource. This block contains
-                      the parameters which contain secrets or passwords so that they
-                      can be marked sensitive and hidden from plan output. The name
-                      of the field, eg: secret_access_key, will be the key in the
-                      'params' map in the api request. \n Credentials may not be specified
-                      in both locations and will cause an error. Changing from one
-                      location to a different credential configuration in the config
-                      will require an apply to update state."
                     type: object
                   serviceAccountName:
-                    description: Optional service account name. If this field is set,
-                      transfer config will be created with this service account credentials.
-                      It requires that requesting user calling this API has permissions
-                      to act as this service account.
                     type: string
                   terminationPolicy:
                     enum:
@@ -211,38 +117,18 @@ spec:
                   timeouts:
                     properties:
                       create:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                       default:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                       delete:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                       read:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                       update:
-                        description: A Duration represents the elapsed time between
-                          two instants as an int64 nanosecond count. The representation
-                          limits the largest representable duration to approximately
-                          290 years.
                         format: int64
                         type: integer
                     type: object
@@ -254,94 +140,41 @@ spec:
                 - providerRef
                 type: object
               location:
-                description: 'The geographic location where the transfer config should
-                  reside. Examples: US, EU, asia-northeast1. The default value is
-                  US.'
                 type: string
               name:
-                description: The resource name of the transfer config. Transfer config
-                  names have the form projects/{projectId}/locations/{location}/transferConfigs/{configId}.
-                  Where configId is usually a uuid, but this is not required. The
-                  name is ignored when creating a transfer config.
                 type: string
               notificationPubsubTopic:
-                description: Pub/Sub topic where notifications will be sent after
-                  transfer runs associated with this transfer config finish.
                 type: string
               params:
                 additionalProperties:
                   type: string
-                description: These parameters are specific to each data source.
                 type: object
               project:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               schedule:
-                description: 'Data transfer schedule. If the data source does not
-                  support a custom schedule, this should be empty. If it is empty,
-                  the default value for the data source will be used. The specified
-                  times are in UTC. Examples of valid format: 1st,3rd monday of month
-                  15:30, every wed,fri of jan, jun 13:15, and first sunday of quarter
-                  00:00. See more explanation about the format here: https://cloud.google.com/appengine/docs/flexible/python/scheduling-jobs-with-cron-yaml#the_schedule_format
-                  NOTE: the granularity should be at least 8 hours, or less frequent.'
                 type: string
               scheduleOptions:
-                description: Options customizing the data transfer schedule.
                 properties:
                   disableAutoScheduling:
-                    description: If true, automatic scheduling of data transfer runs
-                      for this configuration will be disabled. The runs can be started
-                      on ad-hoc basis using transferConfigs.startManualRuns API. When
-                      automatic scheduling is disabled, the TransferConfig.schedule
-                      field will be ignored.
                     type: boolean
                   endTime:
-                    description: Defines time to stop scheduling transfer runs. A
-                      transfer run cannot be scheduled at or after the end time. The
-                      end time can be changed at any moment. The time when a data
-                      transfer can be triggered manually is not limited by this option.
                     type: string
                   startTime:
-                    description: Specifies time to start scheduling transfer runs.
-                      The first run will be scheduled at or after the start time according
-                      to a recurrence pattern defined in the schedule string. The
-                      start time can be changed at any moment. The time when a data
-                      transfer can be triggered manually is not limited by this option.
                     type: string
                 type: object
               secretRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               sensitiveParams:
-                description: "Different parameters are configured primarily using
-                  the the 'params' field on this resource. This block contains the
-                  parameters which contain secrets or passwords so that they can be
-                  marked sensitive and hidden from plan output. The name of the field,
-                  eg: secret_access_key, will be the key in the 'params' map in the
-                  api request. \n Credentials may not be specified in both locations
-                  and will cause an error. Changing from one location to a different
-                  credential configuration in the config will require an apply to
-                  update state."
                 type: object
               serviceAccountName:
-                description: Optional service account name. If this field is set,
-                  transfer config will be created with this service account credentials.
-                  It requires that requesting user calling this API has permissions
-                  to act as this service account.
                 type: string
               terminationPolicy:
                 enum:
@@ -351,33 +184,18 @@ spec:
               timeouts:
                 properties:
                   create:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                   default:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                   delete:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                   read:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                   update:
-                    description: A Duration represents the elapsed time between two
-                      instants as an int64 nanosecond count. The representation limits
-                      the largest representable duration to approximately 290 years.
                     format: int64
                     type: integer
                 type: object
@@ -394,39 +212,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -437,8 +234,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:

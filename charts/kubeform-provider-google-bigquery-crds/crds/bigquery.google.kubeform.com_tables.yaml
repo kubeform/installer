@@ -23,184 +23,90 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
           spec:
             properties:
               clustering:
-                description: Specifies column names to use for data clustering. Up
-                  to four top-level columns are allowed, and should be specified in
-                  descending priority order.
                 items:
                   type: string
                 maxItems: 4
                 type: array
               creationTime:
-                description: The time when this table was created, in milliseconds
-                  since the epoch.
                 format: int64
                 type: integer
               datasetID:
-                description: The dataset ID to create the table in. Changing this
-                  forces a new resource to be created.
                 type: string
               deletionProtection:
-                description: Whether or not to allow Terraform to destroy the instance.
-                  Unless this field is set to false in Terraform state, a terraform
-                  destroy or terraform apply that would delete the instance will fail.
                 type: boolean
               description:
-                description: The field description.
                 type: string
               encryptionConfiguration:
-                description: Specifies how the table should be encrypted. If left
-                  blank, the table will be encrypted with a Google-managed key; that
-                  process is transparent to the user.
                 properties:
                   kmsKeyName:
-                    description: The self link or full name of a key which should
-                      be used to encrypt this table. Note that the default bigquery
-                      service account will need to have encrypt/decrypt permissions
-                      on this key - you may want to see the google_bigquery_default_service_account
-                      datasource and the google_kms_crypto_key_iam_binding resource.
                     type: string
                 required:
                 - kmsKeyName
                 type: object
               etag:
-                description: A hash of the resource.
                 type: string
               expirationTime:
-                description: The time when this table expires, in milliseconds since
-                  the epoch. If not present, the table will persist indefinitely.
-                  Expired tables will be deleted and their storage reclaimed.
                 format: int64
                 type: integer
               externalDataConfiguration:
-                description: Describes the data format, location, and other properties
-                  of a table stored outside of BigQuery. By defining these properties,
-                  the data source can then be queried as if it were a standard BigQuery
-                  table.
                 properties:
                   autodetect:
-                    description: Let BigQuery try to autodetect the schema and format
-                      of the table.
                     type: boolean
                   compression:
-                    description: The compression type of the data source. Valid values
-                      are "NONE" or "GZIP".
                     type: string
                   csvOptions:
-                    description: Additional properties to set if source_format is
-                      set to "CSV".
                     properties:
                       allowJaggedRows:
-                        description: Indicates if BigQuery should accept rows that
-                          are missing trailing optional columns.
                         type: boolean
                       allowQuotedNewlines:
-                        description: Indicates if BigQuery should allow quoted data
-                          sections that contain newline characters in a CSV file.
-                          The default value is false.
                         type: boolean
                       encoding:
-                        description: The character encoding of the data. The supported
-                          values are UTF-8 or ISO-8859-1.
                         type: string
                       fieldDelimiter:
-                        description: The separator for fields in a CSV file.
                         type: string
                       quote:
-                        description: The value that is used to quote data sections
-                          in a CSV file. If your data does not contain quoted sections,
-                          set the property value to an empty string. If your data
-                          contains quoted newline characters, you must also set the
-                          allow_quoted_newlines property to true. The API-side default
-                          is ", specified in Terraform escaped as \". Due to limitations
-                          with Terraform default values, this value is required to
-                          be explicitly set.
                         type: string
                       skipLeadingRows:
-                        description: The number of rows at the top of a CSV file that
-                          BigQuery will skip when reading the data.
                         format: int64
                         type: integer
                     required:
                     - quote
                     type: object
                   googleSheetsOptions:
-                    description: Additional options if source_format is set to "GOOGLE_SHEETS".
                     properties:
                       range:
-                        description: 'Range of a sheet to query from. Only used when
-                          non-empty. At least one of range or skip_leading_rows must
-                          be set. Typical format: "sheet_name!top_left_cell_id:bottom_right_cell_id"
-                          For example: "sheet1!A1:B20"'
                         type: string
                       skipLeadingRows:
-                        description: The number of rows at the top of the sheet that
-                          BigQuery will skip when reading the data. At least one of
-                          range or skip_leading_rows must be set.
                         format: int64
                         type: integer
                     type: object
                   hivePartitioningOptions:
-                    description: When set, configures hive partitioning support. Not
-                      all storage formats support hive partitioning -- requesting
-                      hive partitioning on an unsupported format will lead to an error,
-                      as will providing an invalid specification.
                     properties:
                       mode:
-                        description: When set, what mode of hive partitioning to use
-                          when reading data.
                         type: string
                       requirePartitionFilter:
-                        description: If set to true, queries over this table require
-                          a partition filter that can be used for partition elimination
-                          to be specified.
                         type: boolean
                       sourceURIPrefix:
-                        description: When hive partition detection is requested, a
-                          common for all source uris must be required. The prefix
-                          must end immediately before the partition key encoding begins.
                         type: string
                     type: object
                   ignoreUnknownValues:
-                    description: Indicates if BigQuery should allow extra values that
-                      are not represented in the table schema. If true, the extra
-                      values are ignored. If false, records with extra columns are
-                      treated as bad records, and if there are too many bad records,
-                      an invalid error is returned in the job result. The default
-                      value is false.
                     type: boolean
                   maxBadRecords:
-                    description: The maximum number of bad records that BigQuery can
-                      ignore when reading data.
                     format: int64
                     type: integer
                   schema:
-                    description: A JSON schema for the external table. Schema is required
-                      for CSV and JSON formats and is disallowed for Google Cloud
-                      Bigtable, Cloud Datastore backups, and Avro formats when using
-                      external tables.
                     type: string
                   sourceFormat:
-                    description: 'The data format. Supported values are: "CSV", "GOOGLE_SHEETS",
-                      "NEWLINE_DELIMITED_JSON", "AVRO", "PARQUET", "ORC" and "DATASTORE_BACKUP".
-                      To use "GOOGLE_SHEETS" the scopes must include "googleapis.com/auth/drive.readonly".'
                     type: string
                   sourceUris:
-                    description: A list of the fully-qualified URIs that point to
-                      your data in Google Cloud.
                     items:
                       type: string
                     type: array
@@ -210,181 +116,88 @@ spec:
                 - sourceUris
                 type: object
               friendlyName:
-                description: A descriptive name for the table.
                 type: string
               id:
                 type: string
               kubeformOutput:
                 properties:
                   clustering:
-                    description: Specifies column names to use for data clustering.
-                      Up to four top-level columns are allowed, and should be specified
-                      in descending priority order.
                     items:
                       type: string
                     maxItems: 4
                     type: array
                   creationTime:
-                    description: The time when this table was created, in milliseconds
-                      since the epoch.
                     format: int64
                     type: integer
                   datasetID:
-                    description: The dataset ID to create the table in. Changing this
-                      forces a new resource to be created.
                     type: string
                   deletionProtection:
-                    description: Whether or not to allow Terraform to destroy the
-                      instance. Unless this field is set to false in Terraform state,
-                      a terraform destroy or terraform apply that would delete the
-                      instance will fail.
                     type: boolean
                   description:
-                    description: The field description.
                     type: string
                   encryptionConfiguration:
-                    description: Specifies how the table should be encrypted. If left
-                      blank, the table will be encrypted with a Google-managed key;
-                      that process is transparent to the user.
                     properties:
                       kmsKeyName:
-                        description: The self link or full name of a key which should
-                          be used to encrypt this table. Note that the default bigquery
-                          service account will need to have encrypt/decrypt permissions
-                          on this key - you may want to see the google_bigquery_default_service_account
-                          datasource and the google_kms_crypto_key_iam_binding resource.
                         type: string
                     required:
                     - kmsKeyName
                     type: object
                   etag:
-                    description: A hash of the resource.
                     type: string
                   expirationTime:
-                    description: The time when this table expires, in milliseconds
-                      since the epoch. If not present, the table will persist indefinitely.
-                      Expired tables will be deleted and their storage reclaimed.
                     format: int64
                     type: integer
                   externalDataConfiguration:
-                    description: Describes the data format, location, and other properties
-                      of a table stored outside of BigQuery. By defining these properties,
-                      the data source can then be queried as if it were a standard
-                      BigQuery table.
                     properties:
                       autodetect:
-                        description: Let BigQuery try to autodetect the schema and
-                          format of the table.
                         type: boolean
                       compression:
-                        description: The compression type of the data source. Valid
-                          values are "NONE" or "GZIP".
                         type: string
                       csvOptions:
-                        description: Additional properties to set if source_format
-                          is set to "CSV".
                         properties:
                           allowJaggedRows:
-                            description: Indicates if BigQuery should accept rows
-                              that are missing trailing optional columns.
                             type: boolean
                           allowQuotedNewlines:
-                            description: Indicates if BigQuery should allow quoted
-                              data sections that contain newline characters in a CSV
-                              file. The default value is false.
                             type: boolean
                           encoding:
-                            description: The character encoding of the data. The supported
-                              values are UTF-8 or ISO-8859-1.
                             type: string
                           fieldDelimiter:
-                            description: The separator for fields in a CSV file.
                             type: string
                           quote:
-                            description: The value that is used to quote data sections
-                              in a CSV file. If your data does not contain quoted
-                              sections, set the property value to an empty string.
-                              If your data contains quoted newline characters, you
-                              must also set the allow_quoted_newlines property to
-                              true. The API-side default is ", specified in Terraform
-                              escaped as \". Due to limitations with Terraform default
-                              values, this value is required to be explicitly set.
                             type: string
                           skipLeadingRows:
-                            description: The number of rows at the top of a CSV file
-                              that BigQuery will skip when reading the data.
                             format: int64
                             type: integer
                         required:
                         - quote
                         type: object
                       googleSheetsOptions:
-                        description: Additional options if source_format is set to
-                          "GOOGLE_SHEETS".
                         properties:
                           range:
-                            description: 'Range of a sheet to query from. Only used
-                              when non-empty. At least one of range or skip_leading_rows
-                              must be set. Typical format: "sheet_name!top_left_cell_id:bottom_right_cell_id"
-                              For example: "sheet1!A1:B20"'
                             type: string
                           skipLeadingRows:
-                            description: The number of rows at the top of the sheet
-                              that BigQuery will skip when reading the data. At least
-                              one of range or skip_leading_rows must be set.
                             format: int64
                             type: integer
                         type: object
                       hivePartitioningOptions:
-                        description: When set, configures hive partitioning support.
-                          Not all storage formats support hive partitioning -- requesting
-                          hive partitioning on an unsupported format will lead to
-                          an error, as will providing an invalid specification.
                         properties:
                           mode:
-                            description: When set, what mode of hive partitioning
-                              to use when reading data.
                             type: string
                           requirePartitionFilter:
-                            description: If set to true, queries over this table require
-                              a partition filter that can be used for partition elimination
-                              to be specified.
                             type: boolean
                           sourceURIPrefix:
-                            description: When hive partition detection is requested,
-                              a common for all source uris must be required. The prefix
-                              must end immediately before the partition key encoding
-                              begins.
                             type: string
                         type: object
                       ignoreUnknownValues:
-                        description: Indicates if BigQuery should allow extra values
-                          that are not represented in the table schema. If true, the
-                          extra values are ignored. If false, records with extra columns
-                          are treated as bad records, and if there are too many bad
-                          records, an invalid error is returned in the job result.
-                          The default value is false.
                         type: boolean
                       maxBadRecords:
-                        description: The maximum number of bad records that BigQuery
-                          can ignore when reading data.
                         format: int64
                         type: integer
                       schema:
-                        description: A JSON schema for the external table. Schema
-                          is required for CSV and JSON formats and is disallowed for
-                          Google Cloud Bigtable, Cloud Datastore backups, and Avro
-                          formats when using external tables.
                         type: string
                       sourceFormat:
-                        description: 'The data format. Supported values are: "CSV",
-                          "GOOGLE_SHEETS", "NEWLINE_DELIMITED_JSON", "AVRO", "PARQUET",
-                          "ORC" and "DATASTORE_BACKUP". To use "GOOGLE_SHEETS" the
-                          scopes must include "googleapis.com/auth/drive.readonly".'
                         type: string
                       sourceUris:
-                        description: A list of the fully-qualified URIs that point
-                          to your data in Google Cloud.
                         items:
                           type: string
                         type: array
@@ -394,93 +207,59 @@ spec:
                     - sourceUris
                     type: object
                   friendlyName:
-                    description: A descriptive name for the table.
                     type: string
                   id:
                     type: string
                   labels:
                     additionalProperties:
                       type: string
-                    description: A mapping of labels to assign to the resource.
                     type: object
                   lastModifiedTime:
-                    description: The time when this table was last modified, in milliseconds
-                      since the epoch.
                     format: int64
                     type: integer
                   location:
-                    description: The geographic location where the table resides.
-                      This value is inherited from the dataset.
                     type: string
                   materializedView:
-                    description: If specified, configures this table as a materialized
-                      view.
                     properties:
                       enableRefresh:
-                        description: Specifies if BigQuery should automatically refresh
-                          materialized view when the base table is updated. The default
-                          is true.
                         type: boolean
                       query:
-                        description: A query whose result is persisted.
                         type: string
                       refreshIntervalMs:
-                        description: Specifies maximum frequency at which this materialized
-                          view will be refreshed. The default is 1800000
                         format: int64
                         type: integer
                     required:
                     - query
                     type: object
                   numBytes:
-                    description: The geographic location where the table resides.
-                      This value is inherited from the dataset.
                     format: int64
                     type: integer
                   numLongTermBytes:
-                    description: The number of bytes in the table that are considered
-                      "long-term storage".
                     format: int64
                     type: integer
                   numRows:
-                    description: The number of rows of data in this table, excluding
-                      any data in the streaming buffer.
                     format: int64
                     type: integer
                   project:
-                    description: The ID of the project in which the resource belongs.
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   rangePartitioning:
-                    description: If specified, configures range-based partitioning
-                      for this table.
                     properties:
                       field:
-                        description: The field used to determine how to create a range-based
-                          partition.
                         type: string
                       range:
-                        description: Information required to partition based on ranges.
-                          Structure is documented below.
                         properties:
                           end:
-                            description: End of the range partitioning, exclusive.
                             format: int64
                             type: integer
                           interval:
-                            description: The width of each range within the partition.
                             format: int64
                             type: integer
                           start:
-                            description: Start of the range partitioning, inclusive.
                             format: int64
                             type: integer
                         required:
@@ -493,14 +272,10 @@ spec:
                     - range
                     type: object
                   schema:
-                    description: A JSON schema for the table.
                     type: string
                   selfLink:
-                    description: The URI of the created resource.
                     type: string
                   tableID:
-                    description: A unique ID for the resource. Changing this forces
-                      a new resource to be created.
                     type: string
                   terminationPolicy:
                     enum:
@@ -508,46 +283,26 @@ spec:
                     - DoNotTerminate
                     type: string
                   timePartitioning:
-                    description: If specified, configures time-based partitioning
-                      for this table.
                     properties:
                       expirationMs:
-                        description: Number of milliseconds for which to keep the
-                          storage for a partition.
                         format: int64
                         type: integer
                       field:
-                        description: The field used to determine how to create a time-based
-                          partition. If time-based partitioning is enabled without
-                          this value, the table is partitioned based on the load time.
                         type: string
                       requirePartitionFilter:
-                        description: If set to true, queries over this table require
-                          a partition filter that can be used for partition elimination
-                          to be specified.
                         type: boolean
                       type:
-                        description: The supported types are DAY, HOUR, MONTH, and
-                          YEAR, which will generate one partition per day, hour, month,
-                          and year, respectively.
                         type: string
                     required:
                     - type
                     type: object
                   type:
-                    description: Describes the table type.
                     type: string
                   view:
-                    description: If specified, configures this table as a view.
                     properties:
                       query:
-                        description: A query that BigQuery executes when the view
-                          is referenced.
                         type: string
                       useLegacySQL:
-                        description: Specifies whether to use BigQuery's legacy SQL
-                          for this view. The default value is true. If set to false,
-                          the view will use BigQuery's standard SQL
                         type: boolean
                     required:
                     - query
@@ -560,86 +315,53 @@ spec:
               labels:
                 additionalProperties:
                   type: string
-                description: A mapping of labels to assign to the resource.
                 type: object
               lastModifiedTime:
-                description: The time when this table was last modified, in milliseconds
-                  since the epoch.
                 format: int64
                 type: integer
               location:
-                description: The geographic location where the table resides. This
-                  value is inherited from the dataset.
                 type: string
               materializedView:
-                description: If specified, configures this table as a materialized
-                  view.
                 properties:
                   enableRefresh:
-                    description: Specifies if BigQuery should automatically refresh
-                      materialized view when the base table is updated. The default
-                      is true.
                     type: boolean
                   query:
-                    description: A query whose result is persisted.
                     type: string
                   refreshIntervalMs:
-                    description: Specifies maximum frequency at which this materialized
-                      view will be refreshed. The default is 1800000
                     format: int64
                     type: integer
                 required:
                 - query
                 type: object
               numBytes:
-                description: The geographic location where the table resides. This
-                  value is inherited from the dataset.
                 format: int64
                 type: integer
               numLongTermBytes:
-                description: The number of bytes in the table that are considered
-                  "long-term storage".
                 format: int64
                 type: integer
               numRows:
-                description: The number of rows of data in this table, excluding any
-                  data in the streaming buffer.
                 format: int64
                 type: integer
               project:
-                description: The ID of the project in which the resource belongs.
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               rangePartitioning:
-                description: If specified, configures range-based partitioning for
-                  this table.
                 properties:
                   field:
-                    description: The field used to determine how to create a range-based
-                      partition.
                     type: string
                   range:
-                    description: Information required to partition based on ranges.
-                      Structure is documented below.
                     properties:
                       end:
-                        description: End of the range partitioning, exclusive.
                         format: int64
                         type: integer
                       interval:
-                        description: The width of each range within the partition.
                         format: int64
                         type: integer
                       start:
-                        description: Start of the range partitioning, inclusive.
                         format: int64
                         type: integer
                     required:
@@ -652,14 +374,10 @@ spec:
                 - range
                 type: object
               schema:
-                description: A JSON schema for the table.
                 type: string
               selfLink:
-                description: The URI of the created resource.
                 type: string
               tableID:
-                description: A unique ID for the resource. Changing this forces a
-                  new resource to be created.
                 type: string
               terminationPolicy:
                 enum:
@@ -667,45 +385,26 @@ spec:
                 - DoNotTerminate
                 type: string
               timePartitioning:
-                description: If specified, configures time-based partitioning for
-                  this table.
                 properties:
                   expirationMs:
-                    description: Number of milliseconds for which to keep the storage
-                      for a partition.
                     format: int64
                     type: integer
                   field:
-                    description: The field used to determine how to create a time-based
-                      partition. If time-based partitioning is enabled without this
-                      value, the table is partitioned based on the load time.
                     type: string
                   requirePartitionFilter:
-                    description: If set to true, queries over this table require a
-                      partition filter that can be used for partition elimination
-                      to be specified.
                     type: boolean
                   type:
-                    description: The supported types are DAY, HOUR, MONTH, and YEAR,
-                      which will generate one partition per day, hour, month, and
-                      year, respectively.
                     type: string
                 required:
                 - type
                 type: object
               type:
-                description: Describes the table type.
                 type: string
               view:
-                description: If specified, configures this table as a view.
                 properties:
                   query:
-                    description: A query that BigQuery executes when the view is referenced.
                     type: string
                   useLegacySQL:
-                    description: Specifies whether to use BigQuery's legacy SQL for
-                      this view. The default value is true. If set to false, the view
-                      will use BigQuery's standard SQL
                     type: boolean
                 required:
                 - query
@@ -721,39 +420,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -764,8 +442,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:

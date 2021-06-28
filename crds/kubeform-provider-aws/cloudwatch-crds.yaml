@@ -4,6 +4,126 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
+  name: dashboards.cloudwatch.aws.kubeform.com
+spec:
+  group: cloudwatch.aws.kubeform.com
+  names:
+    kind: Dashboard
+    listKind: DashboardList
+    plural: dashboards
+    singular: dashboard
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              dashboardArn:
+                type: string
+              dashboardBody:
+                type: string
+              dashboardName:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  dashboardArn:
+                    type: string
+                  dashboardBody:
+                    type: string
+                  dashboardName:
+                    type: string
+                  id:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - dashboardBody
+                - dashboardName
+                - providerRef
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - dashboardBody
+            - dashboardName
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
   name: eventarchives.cloudwatch.aws.kubeform.com
 spec:
   group: cloudwatch.aws.kubeform.com
@@ -23,14 +143,8 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -61,12 +175,8 @@ spec:
                   name:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   retentionDays:
@@ -85,12 +195,8 @@ spec:
               name:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               retentionDays:
@@ -112,39 +218,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -155,211 +240,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: compositealarms.cloudwatch.aws.kubeform.com
-spec:
-  group: cloudwatch.aws.kubeform.com
-  names:
-    kind: CompositeAlarm
-    listKind: CompositeAlarmList
-    plural: compositealarms
-    singular: compositealarm
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-            type: string
-          kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              actionsEnabled:
-                type: boolean
-              alarmActions:
-                items:
-                  type: string
-                maxItems: 5
-                type: array
-              alarmDescription:
-                type: string
-              alarmName:
-                type: string
-              alarmRule:
-                type: string
-              arn:
-                type: string
-              id:
-                type: string
-              insufficientDataActions:
-                items:
-                  type: string
-                maxItems: 5
-                type: array
-              kubeformOutput:
-                properties:
-                  actionsEnabled:
-                    type: boolean
-                  alarmActions:
-                    items:
-                      type: string
-                    maxItems: 5
-                    type: array
-                  alarmDescription:
-                    type: string
-                  alarmName:
-                    type: string
-                  alarmRule:
-                    type: string
-                  arn:
-                    type: string
-                  id:
-                    type: string
-                  insufficientDataActions:
-                    items:
-                      type: string
-                    maxItems: 5
-                    type: array
-                  okActions:
-                    items:
-                      type: string
-                    maxItems: 5
-                    type: array
-                  providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
-                    properties:
-                      name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
-                        type: string
-                    type: object
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - alarmName
-                - alarmRule
-                - providerRef
-                type: object
-              okActions:
-                items:
-                  type: string
-                maxItems: 5
-                type: array
-              providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
-                properties:
-                  name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
-                    type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - alarmName
-            - alarmRule
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
-                      format: date-time
-                      type: string
-                    message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
-                      type: string
-                    observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
-                      format: int64
-                      type: integer
-                    reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
-                      type: string
-                    status:
-                      description: Status of the condition, one of True, False, Unknown.
-                      type: string
-                    type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:
@@ -397,14 +277,8 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -441,12 +315,8 @@ spec:
                   namePrefix:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   roleArn:
@@ -470,12 +340,8 @@ spec:
               namePrefix:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               roleArn:
@@ -500,39 +366,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -543,674 +388,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: dashboards.cloudwatch.aws.kubeform.com
-spec:
-  group: cloudwatch.aws.kubeform.com
-  names:
-    kind: Dashboard
-    listKind: DashboardList
-    plural: dashboards
-    singular: dashboard
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-            type: string
-          kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              dashboardArn:
-                type: string
-              dashboardBody:
-                type: string
-              dashboardName:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  dashboardArn:
-                    type: string
-                  dashboardBody:
-                    type: string
-                  dashboardName:
-                    type: string
-                  id:
-                    type: string
-                  providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
-                    properties:
-                      name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - dashboardBody
-                - dashboardName
-                - providerRef
-                type: object
-              providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
-                properties:
-                  name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
-                    type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - dashboardBody
-            - dashboardName
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
-                      format: date-time
-                      type: string
-                    message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
-                      type: string
-                    observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
-                      format: int64
-                      type: integer
-                    reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
-                      type: string
-                    status:
-                      description: Status of the condition, one of True, False, Unknown.
-                      type: string
-                    type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: logdestinations.cloudwatch.aws.kubeform.com
-spec:
-  group: cloudwatch.aws.kubeform.com
-  names:
-    kind: LogDestination
-    listKind: LogDestinationList
-    plural: logdestinations
-    singular: logdestination
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-            type: string
-          kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              arn:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  arn:
-                    type: string
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
-                    properties:
-                      name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
-                        type: string
-                    type: object
-                  roleArn:
-                    type: string
-                  targetArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - name
-                - providerRef
-                - roleArn
-                - targetArn
-                type: object
-              name:
-                type: string
-              providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
-                properties:
-                  name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
-                    type: string
-                type: object
-              roleArn:
-                type: string
-              targetArn:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - name
-            - providerRef
-            - roleArn
-            - targetArn
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
-                      format: date-time
-                      type: string
-                    message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
-                      type: string
-                    observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
-                      format: int64
-                      type: integer
-                    reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
-                      type: string
-                    status:
-                      description: Status of the condition, one of True, False, Unknown.
-                      type: string
-                    type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: eventpermissions.cloudwatch.aws.kubeform.com
-spec:
-  group: cloudwatch.aws.kubeform.com
-  names:
-    kind: EventPermission
-    listKind: EventPermissionList
-    plural: eventpermissions
-    singular: eventpermission
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-            type: string
-          kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              action:
-                type: string
-              condition:
-                properties:
-                  key:
-                    type: string
-                  type:
-                    type: string
-                  value:
-                    type: string
-                required:
-                - key
-                - type
-                - value
-                type: object
-              eventBusName:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  action:
-                    type: string
-                  condition:
-                    properties:
-                      key:
-                        type: string
-                      type:
-                        type: string
-                      value:
-                        type: string
-                    required:
-                    - key
-                    - type
-                    - value
-                    type: object
-                  eventBusName:
-                    type: string
-                  id:
-                    type: string
-                  principal:
-                    type: string
-                  providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
-                    properties:
-                      name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
-                        type: string
-                    type: object
-                  statementID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - principal
-                - providerRef
-                - statementID
-                type: object
-              principal:
-                type: string
-              providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
-                properties:
-                  name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
-                    type: string
-                type: object
-              statementID:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - principal
-            - providerRef
-            - statementID
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
-                      format: date-time
-                      type: string
-                    message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
-                      type: string
-                    observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
-                      format: int64
-                      type: integer
-                    reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
-                      type: string
-                    status:
-                      description: Status of the condition, one of True, False, Unknown.
-                      type: string
-                    type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: eventbuses.cloudwatch.aws.kubeform.com
-spec:
-  group: cloudwatch.aws.kubeform.com
-  names:
-    kind: EventBus
-    listKind: EventBusList
-    plural: eventbuses
-    singular: eventbus
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-            type: string
-          kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              arn:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  arn:
-                    type: string
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
-                    properties:
-                      name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
-                        type: string
-                    type: object
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
-                properties:
-                  name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
-                    type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - name
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
-                      format: date-time
-                      type: string
-                    message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
-                      type: string
-                    observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
-                      format: int64
-                      type: integer
-                    reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
-                      type: string
-                    status:
-                      description: Status of the condition, one of True, False, Unknown.
-                      type: string
-                    type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:
@@ -1248,14 +425,8 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -1420,12 +591,8 @@ spec:
                         type: string
                     type: object
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   retryPolicy:
@@ -1474,12 +641,8 @@ spec:
                 - rule
                 type: object
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               retryPolicy:
@@ -1533,39 +696,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -1576,161 +718,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: logdestinationpolicies.cloudwatch.aws.kubeform.com
-spec:
-  group: cloudwatch.aws.kubeform.com
-  names:
-    kind: LogDestinationPolicy
-    listKind: LogDestinationPolicyList
-    plural: logdestinationpolicies
-    singular: logdestinationpolicy
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-            type: string
-          kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              accessPolicy:
-                type: string
-              destinationName:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  accessPolicy:
-                    type: string
-                  destinationName:
-                    type: string
-                  id:
-                    type: string
-                  providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
-                    properties:
-                      name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - accessPolicy
-                - destinationName
-                - providerRef
-                type: object
-              providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
-                properties:
-                  name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
-                    type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - accessPolicy
-            - destinationName
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
-                      format: date-time
-                      type: string
-                    message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
-                      type: string
-                    observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
-                      format: int64
-                      type: integer
-                    reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
-                      type: string
-                    status:
-                      description: Status of the condition, one of True, False, Unknown.
-                      type: string
-                    type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:
@@ -1768,14 +755,8 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -1800,12 +781,8 @@ spec:
                   namePrefix:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   retentionInDays:
@@ -1828,12 +805,8 @@ spec:
               namePrefix:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               retentionInDays:
@@ -1857,39 +830,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -1900,8 +852,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:
@@ -1920,14 +870,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: querydefinitions.cloudwatch.aws.kubeform.com
+  name: eventpermissions.cloudwatch.aws.kubeform.com
 spec:
   group: cloudwatch.aws.kubeform.com
   names:
-    kind: QueryDefinition
-    listKind: QueryDefinitionList
-    plural: querydefinitions
-    singular: querydefinition
+    kind: EventPermission
+    listKind: EventPermissionList
+    plural: eventpermissions
+    singular: eventpermission
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -1939,43 +889,61 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
           spec:
             properties:
+              action:
+                type: string
+              condition:
+                properties:
+                  key:
+                    type: string
+                  type:
+                    type: string
+                  value:
+                    type: string
+                required:
+                - key
+                - type
+                - value
+                type: object
+              eventBusName:
+                type: string
               id:
                 type: string
               kubeformOutput:
                 properties:
+                  action:
+                    type: string
+                  condition:
+                    properties:
+                      key:
+                        type: string
+                      type:
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - key
+                    - type
+                    - value
+                    type: object
+                  eventBusName:
+                    type: string
                   id:
                     type: string
-                  logGroupNames:
-                    items:
-                      type: string
-                    type: array
-                  name:
+                  principal:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
-                  queryDefinitionID:
-                    type: string
-                  queryString:
+                  statementID:
                     type: string
                   terminationPolicy:
                     enum:
@@ -1983,28 +951,18 @@ spec:
                     - DoNotTerminate
                     type: string
                 required:
-                - name
+                - principal
                 - providerRef
-                - queryString
+                - statementID
                 type: object
-              logGroupNames:
-                items:
-                  type: string
-                type: array
-              name:
+              principal:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
-              queryDefinitionID:
-                type: string
-              queryString:
+              statementID:
                 type: string
               terminationPolicy:
                 enum:
@@ -2012,9 +970,9 @@ spec:
                 - DoNotTerminate
                 type: string
             required:
-            - name
+            - principal
             - providerRef
-            - queryString
+            - statementID
             type: object
           status:
             properties:
@@ -2022,39 +980,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -2065,8 +1002,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:
@@ -2085,14 +1020,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: logstreams.cloudwatch.aws.kubeform.com
+  name: logdestinations.cloudwatch.aws.kubeform.com
 spec:
   group: cloudwatch.aws.kubeform.com
   names:
-    kind: LogStream
-    listKind: LogStreamList
-    plural: logstreams
-    singular: logstream
+    kind: LogDestination
+    listKind: LogDestinationList
+    plural: logdestinations
+    singular: logdestination
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -2104,14 +1039,8 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -2127,51 +1056,49 @@ spec:
                     type: string
                   id:
                     type: string
-                  logGroupName:
-                    type: string
                   name:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
+                  roleArn:
+                    type: string
+                  targetArn:
+                    type: string
                   terminationPolicy:
                     enum:
                     - Delete
                     - DoNotTerminate
                     type: string
                 required:
-                - logGroupName
                 - name
                 - providerRef
+                - roleArn
+                - targetArn
                 type: object
-              logGroupName:
-                type: string
               name:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
+              roleArn:
+                type: string
+              targetArn:
+                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
             required:
-            - logGroupName
             - name
             - providerRef
+            - roleArn
+            - targetArn
             type: object
           status:
             properties:
@@ -2179,39 +1106,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -2222,8 +1128,288 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: logdestinationpolicies.cloudwatch.aws.kubeform.com
+spec:
+  group: cloudwatch.aws.kubeform.com
+  names:
+    kind: LogDestinationPolicy
+    listKind: LogDestinationPolicyList
+    plural: logdestinationpolicies
+    singular: logdestinationpolicy
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              accessPolicy:
+                type: string
+              destinationName:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  accessPolicy:
+                    type: string
+                  destinationName:
+                    type: string
+                  id:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - accessPolicy
+                - destinationName
+                - providerRef
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - accessPolicy
+            - destinationName
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: compositealarms.cloudwatch.aws.kubeform.com
+spec:
+  group: cloudwatch.aws.kubeform.com
+  names:
+    kind: CompositeAlarm
+    listKind: CompositeAlarmList
+    plural: compositealarms
+    singular: compositealarm
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              actionsEnabled:
+                type: boolean
+              alarmActions:
+                items:
+                  type: string
+                maxItems: 5
+                type: array
+              alarmDescription:
+                type: string
+              alarmName:
+                type: string
+              alarmRule:
+                type: string
+              arn:
+                type: string
+              id:
+                type: string
+              insufficientDataActions:
+                items:
+                  type: string
+                maxItems: 5
+                type: array
+              kubeformOutput:
+                properties:
+                  actionsEnabled:
+                    type: boolean
+                  alarmActions:
+                    items:
+                      type: string
+                    maxItems: 5
+                    type: array
+                  alarmDescription:
+                    type: string
+                  alarmName:
+                    type: string
+                  alarmRule:
+                    type: string
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  insufficientDataActions:
+                    items:
+                      type: string
+                    maxItems: 5
+                    type: array
+                  okActions:
+                    items:
+                      type: string
+                    maxItems: 5
+                    type: array
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - alarmName
+                - alarmRule
+                - providerRef
+                type: object
+              okActions:
+                items:
+                  type: string
+                maxItems: 5
+                type: array
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - alarmName
+            - alarmRule
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
                 format: int64
                 type: integer
               phase:
@@ -2261,14 +1447,8 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -2285,12 +1465,8 @@ spec:
                   policyName:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   terminationPolicy:
@@ -2308,12 +1484,8 @@ spec:
               policyName:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               terminationPolicy:
@@ -2332,39 +1504,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -2375,8 +1526,248 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: logstreams.cloudwatch.aws.kubeform.com
+spec:
+  group: cloudwatch.aws.kubeform.com
+  names:
+    kind: LogStream
+    listKind: LogStreamList
+    plural: logstreams
+    singular: logstream
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              arn:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  logGroupName:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - logGroupName
+                - name
+                - providerRef
+                type: object
+              logGroupName:
+                type: string
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - logGroupName
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: eventbuses.cloudwatch.aws.kubeform.com
+spec:
+  group: cloudwatch.aws.kubeform.com
+  names:
+    kind: EventBus
+    listKind: EventBusList
+    plural: eventbuses
+    singular: eventbus
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              arn:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - name
+                - providerRef
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
                 format: int64
                 type: integer
               phase:
@@ -2414,14 +1805,8 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -2455,12 +1840,8 @@ spec:
                   pattern:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   terminationPolicy:
@@ -2497,12 +1878,8 @@ spec:
               pattern:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               terminationPolicy:
@@ -2523,39 +1900,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -2566,8 +1922,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:
@@ -2586,14 +1940,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: logsubscriptionfilters.cloudwatch.aws.kubeform.com
+  name: querydefinitions.cloudwatch.aws.kubeform.com
 spec:
   group: cloudwatch.aws.kubeform.com
   names:
-    kind: LogSubscriptionFilter
-    listKind: LogSubscriptionFilterList
-    plural: logsubscriptionfilters
-    singular: logsubscriptionfilter
+    kind: QueryDefinition
+    listKind: QueryDefinitionList
+    plural: querydefinitions
+    singular: querydefinition
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -2605,51 +1959,33 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
           spec:
             properties:
-              destinationArn:
-                type: string
-              distribution:
-                type: string
-              filterPattern:
-                type: string
               id:
                 type: string
               kubeformOutput:
                 properties:
-                  destinationArn:
-                    type: string
-                  distribution:
-                    type: string
-                  filterPattern:
-                    type: string
                   id:
                     type: string
-                  logGroupName:
-                    type: string
+                  logGroupNames:
+                    items:
+                      type: string
+                    type: array
                   name:
                     type: string
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
-                  roleArn:
+                  queryDefinitionID:
+                    type: string
+                  queryString:
                     type: string
                   terminationPolicy:
                     enum:
@@ -2657,26 +1993,24 @@ spec:
                     - DoNotTerminate
                     type: string
                 required:
-                - destinationArn
-                - filterPattern
-                - logGroupName
                 - name
                 - providerRef
+                - queryString
                 type: object
-              logGroupName:
-                type: string
+              logGroupNames:
+                items:
+                  type: string
+                type: array
               name:
                 type: string
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
-              roleArn:
+              queryDefinitionID:
+                type: string
+              queryString:
                 type: string
               terminationPolicy:
                 enum:
@@ -2684,11 +2018,9 @@ spec:
                 - DoNotTerminate
                 type: string
             required:
-            - destinationArn
-            - filterPattern
-            - logGroupName
             - name
             - providerRef
+            - queryString
             type: object
           status:
             properties:
@@ -2696,39 +2028,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -2739,8 +2050,6 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
                 format: int64
                 type: integer
               phase:
@@ -2778,14 +2087,8 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -2913,12 +2216,8 @@ spec:
                     format: int64
                     type: integer
                   providerRef:
-                    description: LocalObjectReference contains enough information
-                      to let you locate the referenced object inside the same namespace.
                     properties:
                       name:
-                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
                   statistic:
@@ -2997,12 +2296,8 @@ spec:
                 format: int64
                 type: integer
               providerRef:
-                description: LocalObjectReference contains enough information to let
-                  you locate the referenced object inside the same namespace.
                 properties:
                   name:
-                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Add other useful fields. apiVersion, kind, uid?'
                     type: string
                 type: object
               statistic:
@@ -3037,39 +2332,18 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Last time the condition transitioned from one status
-                        to another. This should be when the underlying condition changed.  If
-                        that is not known, then using the time when the API field
-                        changed is acceptable.
                       format: date-time
                       type: string
                     message:
-                      description: A human readable message indicating details about
-                        the transition. This field may be empty.
                       type: string
                     observedGeneration:
-                      description: If set, this represents the .metadata.generation
-                        that the condition was set based upon. For instance, if .metadata.generation
-                        is currently 12, but the .status.condition[x].observedGeneration
-                        is 9, the condition is out of date with respect to the current
-                        state of the instance.
                       format: int64
                       type: integer
                     reason:
-                      description: The reason for the condition's last transition
-                        in CamelCase. The specific API may choose whether or not this
-                        field is considered a guaranteed API. This field may not be
-                        empty.
                       type: string
                     status:
-                      description: Status of the condition, one of True, False, Unknown.
                       type: string
                     type:
-                      description: Type of condition in CamelCase or in foo.example.com/CamelCase.
-                        Many .condition.type values are consistent across resources
-                        like Available, but because arbitrary conditions can be useful
-                        (see .node.status.conditions), the ability to deconflict is
-                        important.
                       type: string
                   required:
                   - lastTransitionTime
@@ -3080,8 +2354,142 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: Resource generation, which is updated on mutation by
-                  the API Server.
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: logsubscriptionfilters.cloudwatch.aws.kubeform.com
+spec:
+  group: cloudwatch.aws.kubeform.com
+  names:
+    kind: LogSubscriptionFilter
+    listKind: LogSubscriptionFilterList
+    plural: logsubscriptionfilters
+    singular: logsubscriptionfilter
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              destinationArn:
+                type: string
+              distribution:
+                type: string
+              filterPattern:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  destinationArn:
+                    type: string
+                  distribution:
+                    type: string
+                  filterPattern:
+                    type: string
+                  id:
+                    type: string
+                  logGroupName:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  roleArn:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - destinationArn
+                - filterPattern
+                - logGroupName
+                - name
+                - providerRef
+                type: object
+              logGroupName:
+                type: string
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              roleArn:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - destinationArn
+            - filterPattern
+            - logGroupName
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
                 format: int64
                 type: integer
               phase:
@@ -3129,43 +2537,21 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
           spec:
-            description: MetricsConfigurationSpec is the spec of MetricsConfiguration
-              object.
             properties:
               metrics:
-                description: List of Metrics configuration for the resource object
-                  defined in TargetRef
                 items:
-                  description: Metrics contains the configuration of a metric in prometheus
-                    style.
                   properties:
                     field:
-                      description: Field defines the metric value path of the manifest
-                        file and the type of that value
                       properties:
                         path:
-                          description: 'Path defines the json path of the object.
-                            Example: For deployment spec replica count, the path will
-                            be .spec.replicas'
                           type: string
                         type:
-                          description: Type defines the type of the value in the given
-                            Path Type can be "Integer" for integer value like .spec.replicas,
-                            "DateTime" for time stamp value like .metadata.creationTimestamp
-                            "Array" for array field like .spec.containers "String"
-                            for string field like .statue.phase (for pod status)
                           enum:
                           - Integer
                           - DateTime
@@ -3177,210 +2563,62 @@ spec:
                       - type
                       type: object
                     help:
-                      description: 'Help is used to describe the metrics. Example:
-                        For kube_deployment_spec_replicas, help string can be "Number
-                        of desired pods for a deployment."'
                       type: string
                     labels:
-                      description: Labels defines the metric labels as a key-value
-                        pair
                       items:
-                        description: "Label contains the information of a metric label.
-                          Given labels are always added in the metrics along with
-                          resource name and namespace. Resource's name and namespace
-                          are always added in the labels by default. No configuration
-                          is needed for name and namespace labels. \n Example: kube_pod_info{pod=\"<pod_name>\",
-                          namespace=\"<pod_namespace>\", host_ip=\"172.18.0.2\", pod_ip=\"10.244.0.14\",
-                          node=\"kind-control-plane\"}  1 In the example pod, namespace,
-                          host_ip, pod_ip, node are labels. pod(resource name) and
-                          namespace are default labels. No configurations is needed
-                          for those. \n To generate others labels, config should be
-                          given in the following way \n labels:   - key: host_ip     valuePath:
-                          .status.hostIP   - key: pod_ip     valuePath: .status.podIP
-                          \  - key: node     valuePath: .spec.nodeName \n Either Value
-                          or ValuePath must be specified for a Label. If both is specified,
-                          ValuePath is ignored. Note that if a valuePath doesn't exist
-                          for a label key, the label will be ignored."
                         properties:
                           key:
-                            description: Key defines the label key
                             type: string
                           value:
-                            description: 'Value defines the hard coded label value.
-                              Example: labels:   - key: unit     value: byte   - key:
-                              environment     value: production'
                             type: string
                           valuePath:
-                            description: 'ValuePath defines the label value path.
-                              Example: To add deployment''s resource version as labels,
-                              labels:   - key: version     valuePath: .metadata.resourceVersion'
                             type: string
                         required:
                         - key
                         type: object
                       type: array
                     metricValue:
-                      description: "MetricValue defines the configuration to obtain
-                        metric value. \n Metrics must contain either States or MetricValue.
-                        If both are specified, MetricValue will be ignored."
                       properties:
                         value:
-                          description: "Value contains the metric value. It is always
-                            equal to 1. It is defined when some information of the
-                            object is collected as labels but there is no specific
-                            metric value. \n Example: For metrics \"kube_pod_info\",
-                            there are some information like host_ip, pod_ip, node
-                            name is collected as labels. As there must be a metric
-                            value, metric value is kept as 1. The metric will look
-                            like `kube_pod_info{host_ip=\"172.18.0.2\", pod_ip=\"10.244.0.14\",
-                            node=\"kind-control-plane\" .....}  1`"
                           format: double
                           type: number
                         valueFromExpression:
-                          description: "ValueFromExpression contains an expression
-                            for the metric value expression can be a function as well.
-                            Parameters is used in the expression string \n Available
-                            expression evaluation functions are: \n toInt() returns
-                            1 if the expression is true otherwise 0, example: toInt(phase
-                            == 'Running') \n evaluatePercentage(a, b) returns the
-                            value of (a * b%) example: evaluatePercentage(replicas,
-                            maxUnavailable) \n calculateCPU() returns the cpu in unit
-                            core example: calculateCPU(cpu), for cpu value 150m, it
-                            will return 0.15 \n calculateMemory() returns the memory
-                            size in byte example: calculateMemory(memory), for memory
-                            value 1 ki, it will return 1024 \n toUnix() returns the
-                            DateTime string into unix format. example: toUnix(dateTime)
-                            will return the corresponding unix value for the given
-                            dateTime \n in above examples phase, replicas, maxUnavailable,
-                            cpu, memory, dateTime are Parameter's key those values
-                            will come from corresponding Parameter's value"
                           type: string
                         valueFromPath:
-                          description: "ValueFromPath contains the field path of the
-                            manifest file of a object. ValueFromPath is used when
-                            the metric value is coming from any specific json path
-                            of the object. \n Example: For metrics \"kube_deployment_spec_replicas\",
-                            the metricValue is coming from a specific path .spec.replicas
-                            In this case, valueFromPath: .spec.replicas Some example
-                            of json path: .metadata.observedGeneration, .spec.restartPolicy,
-                            .status.startTime \n Some example of json path which is
-                            coming from an element of an array: .spec.containers[*].image,
-                            .status.containerStatuses[*].restartCount"
                           type: string
                       type: object
                     name:
-                      description: 'Name defines the metrics name. Name should be
-                        in snake case. Example: kube_deployment_spec_replicas'
                       type: string
                     params:
-                      description: Params is list of parameters configuration used
-                        in expression evaluation
                       items:
-                        description: Parameter contains the information of a parameter
-                          used in expression evaluation Parameter should contain an
-                          user defined key and corresponding Value or ValuePath. Either
-                          Value or ValuePath must be specified. If both are specified,
-                          ValuePath is ignored.
                         properties:
                           key:
-                            description: Key defines the parameter's key
                             type: string
                           value:
-                            description: Value defines user defined parameter's value.
                             type: string
                           valuePath:
-                            description: 'ValuePath defines the manifest field path
-                              for the parameter''s value. Example: To add deployment''s
-                              spec replica count as parameter, params:   - key: replica     valuePath:
-                              .spec.replicas'
                             type: string
                         required:
                         - key
                         type: object
                       type: array
                     states:
-                      description: "States handle metrics with label cardinality.
-                        States specify the possible states for a label and their corresponding
-                        MetricValue configuration. \n Metrics must contain either
-                        States or MetricValue. If both are specified, MetricValue
-                        will be ignored."
                       properties:
                         labelKey:
-                          description: 'LabelKey defines an user defined label key
-                            of the label which label cardinality is greater than one.
-                            Example: For metric "kube_pod_status_phase", the LabelKey
-                            can be "phase"'
                           type: string
                         values:
-                          description: 'Values contains the list of state values.
-                            The size of the list is always equal to the cardinality
-                            of that label. Example: "kube_pod_statue_phase" metric
-                            has a label "phase" which cardinality is equal to 5. So
-                            Values should have StateValues config for all of them.'
                           items:
-                            description: StateValues contains the information of a
-                              state value. StateValues is used to define state with
-                              all possible label values and corresponding MetricValue.
                             properties:
                               labelValue:
-                                description: 'LabelValue defines the value of the
-                                  label. Example: For labelKey "phase" (metric: kube_pod_status_phase
-                                  path: .status.phase ) label value can be "Running",
-                                  "Succeeded", "Failed", "Unknown" and "Pending"'
                                 type: string
                               metricValue:
-                                description: MetricValue defines the configuration
-                                  of the metric value for the corresponding LabelValue
                                 properties:
                                   value:
-                                    description: "Value contains the metric value.
-                                      It is always equal to 1. It is defined when
-                                      some information of the object is collected
-                                      as labels but there is no specific metric value.
-                                      \n Example: For metrics \"kube_pod_info\", there
-                                      are some information like host_ip, pod_ip, node
-                                      name is collected as labels. As there must be
-                                      a metric value, metric value is kept as 1. The
-                                      metric will look like `kube_pod_info{host_ip=\"172.18.0.2\",
-                                      pod_ip=\"10.244.0.14\", node=\"kind-control-plane\"
-                                      .....}  1`"
                                     format: double
                                     type: number
                                   valueFromExpression:
-                                    description: "ValueFromExpression contains an
-                                      expression for the metric value expression can
-                                      be a function as well. Parameters is used in
-                                      the expression string \n Available expression
-                                      evaluation functions are: \n toInt() returns
-                                      1 if the expression is true otherwise 0, example:
-                                      toInt(phase == 'Running') \n evaluatePercentage(a,
-                                      b) returns the value of (a * b%) example: evaluatePercentage(replicas,
-                                      maxUnavailable) \n calculateCPU() returns the
-                                      cpu in unit core example: calculateCPU(cpu),
-                                      for cpu value 150m, it will return 0.15 \n calculateMemory()
-                                      returns the memory size in byte example: calculateMemory(memory),
-                                      for memory value 1 ki, it will return 1024 \n
-                                      toUnix() returns the DateTime string into unix
-                                      format. example: toUnix(dateTime) will return
-                                      the corresponding unix value for the given dateTime
-                                      \n in above examples phase, replicas, maxUnavailable,
-                                      cpu, memory, dateTime are Parameter's key those
-                                      values will come from corresponding Parameter's
-                                      value"
                                     type: string
                                   valueFromPath:
-                                    description: "ValueFromPath contains the field
-                                      path of the manifest file of a object. ValueFromPath
-                                      is used when the metric value is coming from
-                                      any specific json path of the object. \n Example:
-                                      For metrics \"kube_deployment_spec_replicas\",
-                                      the metricValue is coming from a specific path
-                                      .spec.replicas In this case, valueFromPath:
-                                      .spec.replicas Some example of json path: .metadata.observedGeneration,
-                                      .spec.restartPolicy, .status.startTime \n Some
-                                      example of json path which is coming from an
-                                      element of an array: .spec.containers[*].image,
-                                      .status.containerStatuses[*].restartCount"
                                     type: string
                                 type: object
                             required:
@@ -3393,8 +2631,6 @@ spec:
                       - values
                       type: object
                     type:
-                      description: Type defines the metrics type. For kubernetes based
-                        object, types can only be "gauge"
                       enum:
                       - gauge
                       type: string
@@ -3405,16 +2641,10 @@ spec:
                   type: object
                 type: array
               targetRef:
-                description: TargetRef defines the object for which metrics will be
-                  collected
                 properties:
                   apiVersion:
-                    description: APIVersion defines the versioned schema of this representation
-                      of an object.
                     type: string
                   kind:
-                    description: Kind is a string value representing the REST resource
-                      this object represents. In CamelCase.
                     type: string
                 required:
                 - apiVersion
