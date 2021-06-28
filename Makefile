@@ -214,7 +214,7 @@ gen-values-schema: $(BUILD_DIRS)
 	@for dir in charts/*/; do \
 		dir=$${dir%*/}; \
 		dir=$${dir##*/}; \
-		crd_file=.crds/installer.kubedb.com_$$(echo $$dir | tr -d '-')s.yaml; \
+		crd_file=.crds/installer.kubeform.com_$$(echo $$dir | tr -d '-')s.yaml; \
 		if [ ! -f $${crd_file} ]; then \
 			continue; \
 		fi; \
