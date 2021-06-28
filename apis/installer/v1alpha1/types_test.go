@@ -27,6 +27,7 @@ import (
 func TestDefaultValues(t *testing.T) {
 	checker := schemachecker.New("../../..", []interface{}{
 		v1alpha1.KubeformProviderSpec{},
+		v1alpha1.KubeformProviderLinodeSpec{},
 	})
 	checker.TestAll(t)
 }
