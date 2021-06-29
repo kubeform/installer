@@ -3,6 +3,164 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
+spec:
+  group: metrics.appscode.com
+  names:
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
+      type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              metrics:
+                items:
+                  properties:
+                    field:
+                      properties:
+                        path:
+                          type: string
+                        type:
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
+                          type: string
+                      required:
+                      - path
+                      - type
+                      type: object
+                    help:
+                      type: string
+                    labels:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
+                      properties:
+                        value:
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          type: string
+                        valueFromPath:
+                          type: string
+                      type: object
+                    name:
+                      type: string
+                    params:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
+                      properties:
+                        labelKey:
+                          type: string
+                        values:
+                          items:
+                            properties:
+                              labelValue:
+                                type: string
+                              metricValue:
+                                properties:
+                                  value:
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    type: string
+                                  valueFromPath:
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
+                      required:
+                      - labelKey
+                      - values
+                      type: object
+                    type:
+                      enum:
+                      - gauge
+                      type: string
+                  required:
+                  - help
+                  - name
+                  - type
+                  type: object
+                type: array
+              targetRef:
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
     app.kubernetes.io/name: kubeform
   name: bytematchsets.wafregional.aws.kubeform.com
 spec:
@@ -296,14 +454,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: rulegroups.wafregional.aws.kubeform.com
+  name: ipsets.wafregional.aws.kubeform.com
 spec:
   group: wafregional.aws.kubeform.com
   names:
-    kind: RuleGroup
-    listKind: RuleGroupList
-    plural: rulegroups
-    singular: rulegroup
+    kind: Ipset
+    listKind: IpsetList
+    plural: ipsets
+    singular: ipset
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -322,253 +480,63 @@ spec:
             type: object
           spec:
             properties:
-              activatedRule:
-                items:
-                  properties:
-                    action:
-                      properties:
-                        type:
-                          type: string
-                      required:
-                      - type
-                      type: object
-                    priority:
-                      format: int64
-                      type: integer
-                    ruleID:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - action
-                  - priority
-                  - ruleID
-                  type: object
-                type: array
               arn:
                 type: string
               id:
                 type: string
+              ipSetDescriptor:
+                items:
+                  properties:
+                    type:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                  - type
+                  - value
+                  type: object
+                type: array
               kubeformOutput:
                 properties:
-                  activatedRule:
-                    items:
-                      properties:
-                        action:
-                          properties:
-                            type:
-                              type: string
-                          required:
-                          - type
-                          type: object
-                        priority:
-                          format: int64
-                          type: integer
-                        ruleID:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                      - action
-                      - priority
-                      - ruleID
-                      type: object
-                    type: array
                   arn:
                     type: string
                   id:
                     type: string
-                  metricName:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - metricName
-                - name
-                - providerRef
-                type: object
-              metricName:
-                type: string
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - metricName
-            - name
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: regexmatchsets.wafregional.aws.kubeform.com
-spec:
-  group: wafregional.aws.kubeform.com
-  names:
-    kind: RegexMatchSet
-    listKind: RegexMatchSetList
-    plural: regexmatchsets
-    singular: regexmatchset
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  regexMatchTuple:
+                  ipSetDescriptor:
                     items:
                       properties:
-                        fieldToMatch:
-                          properties:
-                            data:
-                              type: string
-                            type:
-                              type: string
-                          required:
-                          - type
-                          type: object
-                        regexPatternSetID:
-                          type: string
-                        textTransformation:
-                          type: string
-                      required:
-                      - fieldToMatch
-                      - regexPatternSetID
-                      - textTransformation
-                      type: object
-                    type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              regexMatchTuple:
-                items:
-                  properties:
-                    fieldToMatch:
-                      properties:
-                        data:
-                          type: string
                         type:
+                          type: string
+                        value:
                           type: string
                       required:
                       - type
+                      - value
                       type: object
-                    regexPatternSetID:
-                      type: string
-                    textTransformation:
-                      type: string
-                  required:
-                  - fieldToMatch
-                  - regexPatternSetID
-                  - textTransformation
-                  type: object
-                type: array
+                    type: array
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - name
+                - providerRef
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
@@ -796,130 +764,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: webaclassociations.wafregional.aws.kubeform.com
+  name: regexmatchsets.wafregional.aws.kubeform.com
 spec:
   group: wafregional.aws.kubeform.com
   names:
-    kind: WebACLAssociation
-    listKind: WebACLAssociationList
-    plural: webaclassociations
-    singular: webaclassociation
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resourceArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  webACLID:
-                    type: string
-                required:
-                - providerRef
-                - resourceArn
-                - webACLID
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resourceArn:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              webACLID:
-                type: string
-            required:
-            - providerRef
-            - resourceArn
-            - webACLID
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: sqlinjectionmatchsets.wafregional.aws.kubeform.com
-spec:
-  group: wafregional.aws.kubeform.com
-  names:
-    kind: SqlInjectionMatchSet
-    listKind: SqlInjectionMatchSetList
-    plural: sqlinjectionmatchsets
-    singular: sqlinjectionmatchset
+    kind: RegexMatchSet
+    listKind: RegexMatchSetList
+    plural: regexmatchsets
+    singular: regexmatchset
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -951,7 +803,7 @@ spec:
                       name:
                         type: string
                     type: object
-                  sqlInjectionMatchTuple:
+                  regexMatchTuple:
                     items:
                       properties:
                         fieldToMatch:
@@ -963,10 +815,13 @@ spec:
                           required:
                           - type
                           type: object
+                        regexPatternSetID:
+                          type: string
                         textTransformation:
                           type: string
                       required:
                       - fieldToMatch
+                      - regexPatternSetID
                       - textTransformation
                       type: object
                     type: array
@@ -986,7 +841,7 @@ spec:
                   name:
                     type: string
                 type: object
-              sqlInjectionMatchTuple:
+              regexMatchTuple:
                 items:
                   properties:
                     fieldToMatch:
@@ -998,10 +853,13 @@ spec:
                       required:
                       - type
                       type: object
+                    regexPatternSetID:
+                      type: string
                     textTransformation:
                       type: string
                   required:
                   - fieldToMatch
+                  - regexPatternSetID
                   - textTransformation
                   type: object
                 type: array
@@ -1178,14 +1036,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: ipsets.wafregional.aws.kubeform.com
+  name: rules.wafregional.aws.kubeform.com
 spec:
   group: wafregional.aws.kubeform.com
   names:
-    kind: Ipset
-    listKind: IpsetList
-    plural: ipsets
-    singular: ipset
+    kind: Rule
+    listKind: RuleList
+    plural: rules
+    singular: rule
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -1208,42 +1066,39 @@ spec:
                 type: string
               id:
                 type: string
-              ipSetDescriptor:
-                items:
-                  properties:
-                    type:
-                      type: string
-                    value:
-                      type: string
-                  required:
-                  - type
-                  - value
-                  type: object
-                type: array
               kubeformOutput:
                 properties:
                   arn:
                     type: string
                   id:
                     type: string
-                  ipSetDescriptor:
-                    items:
-                      properties:
-                        type:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - type
-                      - value
-                      type: object
-                    type: array
+                  metricName:
+                    type: string
                   name:
                     type: string
+                  predicate:
+                    items:
+                      properties:
+                        dataID:
+                          type: string
+                        negated:
+                          type: boolean
+                        type:
+                          type: string
+                      required:
+                      - dataID
+                      - negated
+                      - type
+                      type: object
+                    type: array
                   providerRef:
                     properties:
                       name:
                         type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
                     type: object
                   terminationPolicy:
                     enum:
@@ -1251,15 +1106,37 @@ spec:
                     - DoNotTerminate
                     type: string
                 required:
+                - metricName
                 - name
                 - providerRef
                 type: object
+              metricName:
+                type: string
               name:
                 type: string
+              predicate:
+                items:
+                  properties:
+                    dataID:
+                      type: string
+                    negated:
+                      type: boolean
+                    type:
+                      type: string
+                  required:
+                  - dataID
+                  - negated
+                  - type
+                  type: object
+                type: array
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              tags:
+                additionalProperties:
+                  type: string
                 type: object
               terminationPolicy:
                 enum:
@@ -1267,6 +1144,181 @@ spec:
                 - DoNotTerminate
                 type: string
             required:
+            - metricName
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: rulegroups.wafregional.aws.kubeform.com
+spec:
+  group: wafregional.aws.kubeform.com
+  names:
+    kind: RuleGroup
+    listKind: RuleGroupList
+    plural: rulegroups
+    singular: rulegroup
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              activatedRule:
+                items:
+                  properties:
+                    action:
+                      properties:
+                        type:
+                          type: string
+                      required:
+                      - type
+                      type: object
+                    priority:
+                      format: int64
+                      type: integer
+                    ruleID:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - action
+                  - priority
+                  - ruleID
+                  type: object
+                type: array
+              arn:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  activatedRule:
+                    items:
+                      properties:
+                        action:
+                          properties:
+                            type:
+                              type: string
+                          required:
+                          - type
+                          type: object
+                        priority:
+                          format: int64
+                          type: integer
+                        ruleID:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                      - action
+                      - priority
+                      - ruleID
+                      type: object
+                    type: array
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  metricName:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - metricName
+                - name
+                - providerRef
+                type: object
+              metricName:
+                type: string
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - metricName
             - name
             - providerRef
             type: object
@@ -1481,31 +1533,21 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: metrics
-  name: metricsconfigurations.metrics.appscode.com
+    app.kubernetes.io/name: kubeform
+  name: sqlinjectionmatchsets.wafregional.aws.kubeform.com
 spec:
-  group: metrics.appscode.com
+  group: wafregional.aws.kubeform.com
   names:
-    categories:
-    - metrics
-    - appscode
-    - all
-    kind: MetricsConfiguration
-    listKind: MetricsConfigurationList
-    plural: metricsconfigurations
-    singular: metricsconfiguration
-  scope: Cluster
+    kind: SqlInjectionMatchSet
+    listKind: SqlInjectionMatchSetList
+    plural: sqlinjectionmatchsets
+    singular: sqlinjectionmatchset
+  scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.targetRef.apiVersion
-      name: APIVersion
+    - jsonPath: .status.phase
+      name: Phase
       type: string
-    - jsonPath: .spec.targetRef.kind
-      name: Kind
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -1518,120 +1560,120 @@ spec:
             type: object
           spec:
             properties:
-              metrics:
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  sqlInjectionMatchTuple:
+                    items:
+                      properties:
+                        fieldToMatch:
+                          properties:
+                            data:
+                              type: string
+                            type:
+                              type: string
+                          required:
+                          - type
+                          type: object
+                        textTransformation:
+                          type: string
+                      required:
+                      - fieldToMatch
+                      - textTransformation
+                      type: object
+                    type: array
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - name
+                - providerRef
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              sqlInjectionMatchTuple:
                 items:
                   properties:
-                    field:
+                    fieldToMatch:
                       properties:
-                        path:
+                        data:
                           type: string
                         type:
-                          enum:
-                          - Integer
-                          - DateTime
-                          - Array
-                          - String
                           type: string
                       required:
-                      - path
                       - type
                       type: object
-                    help:
-                      type: string
-                    labels:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    metricValue:
-                      properties:
-                        value:
-                          format: double
-                          type: number
-                        valueFromExpression:
-                          type: string
-                        valueFromPath:
-                          type: string
-                      type: object
-                    name:
-                      type: string
-                    params:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    states:
-                      properties:
-                        labelKey:
-                          type: string
-                        values:
-                          items:
-                            properties:
-                              labelValue:
-                                type: string
-                              metricValue:
-                                properties:
-                                  value:
-                                    format: double
-                                    type: number
-                                  valueFromExpression:
-                                    type: string
-                                  valueFromPath:
-                                    type: string
-                                type: object
-                            required:
-                            - labelValue
-                            - metricValue
-                            type: object
-                          type: array
-                      required:
-                      - labelKey
-                      - values
-                      type: object
-                    type:
-                      enum:
-                      - gauge
+                    textTransformation:
                       type: string
                   required:
-                  - help
-                  - name
+                  - fieldToMatch
+                  - textTransformation
+                  type: object
+                type: array
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
                   - type
                   type: object
                 type: array
-              targetRef:
-                properties:
-                  apiVersion:
-                    type: string
-                  kind:
-                    type: string
-                required:
-                - apiVersion
-                - kind
-                type: object
-            required:
-            - metrics
-            - targetRef
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
             type: object
         type: object
     served: true
     storage: true
-    subresources: {}
+    subresources:
+      status: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -1888,14 +1930,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: rules.wafregional.aws.kubeform.com
+  name: webaclassociations.wafregional.aws.kubeform.com
 spec:
   group: wafregional.aws.kubeform.com
   names:
-    kind: Rule
-    listKind: RuleList
-    plural: rules
-    singular: rule
+    kind: WebACLAssociation
+    listKind: WebACLAssociationList
+    plural: webaclassociations
+    singular: webaclassociation
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -1914,91 +1956,49 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
               id:
                 type: string
               kubeformOutput:
                 properties:
-                  arn:
-                    type: string
                   id:
                     type: string
-                  metricName:
-                    type: string
-                  name:
-                    type: string
-                  predicate:
-                    items:
-                      properties:
-                        dataID:
-                          type: string
-                        negated:
-                          type: boolean
-                        type:
-                          type: string
-                      required:
-                      - dataID
-                      - negated
-                      - type
-                      type: object
-                    type: array
                   providerRef:
                     properties:
                       name:
                         type: string
                     type: object
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
+                  resourceArn:
+                    type: string
                   terminationPolicy:
                     enum:
                     - Delete
                     - DoNotTerminate
                     type: string
+                  webACLID:
+                    type: string
                 required:
-                - metricName
-                - name
                 - providerRef
+                - resourceArn
+                - webACLID
                 type: object
-              metricName:
-                type: string
-              name:
-                type: string
-              predicate:
-                items:
-                  properties:
-                    dataID:
-                      type: string
-                    negated:
-                      type: boolean
-                    type:
-                      type: string
-                  required:
-                  - dataID
-                  - negated
-                  - type
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
+              resourceArn:
+                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              webACLID:
+                type: string
             required:
-            - metricName
-            - name
             - providerRef
+            - resourceArn
+            - webACLID
             type: object
           status:
             properties:

@@ -3,21 +3,31 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
-  name: managementpolicies.storage.azurerm.kubeform.com
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
 spec:
-  group: storage.azurerm.kubeform.com
+  group: metrics.appscode.com
   names:
-    kind: ManagementPolicy
-    listKind: ManagementPolicyList
-    plural: managementpolicies
-    singular: managementpolicy
-  scope: Namespaced
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
       type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -30,866 +40,120 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  rule:
-                    items:
-                      properties:
-                        actions:
-                          properties:
-                            baseBlob:
-                              properties:
-                                deleteAfterDaysSinceModificationGreaterThan:
-                                  format: int64
-                                  type: integer
-                                tierToArchiveAfterDaysSinceModificationGreaterThan:
-                                  format: int64
-                                  type: integer
-                                tierToCoolAfterDaysSinceModificationGreaterThan:
-                                  format: int64
-                                  type: integer
-                              type: object
-                            snapshot:
-                              properties:
-                                changeTierToArchiveAfterDaysSinceCreation:
-                                  format: int64
-                                  type: integer
-                                changeTierToCoolAfterDaysSinceCreation:
-                                  format: int64
-                                  type: integer
-                                deleteAfterDaysSinceCreationGreaterThan:
-                                  format: int64
-                                  type: integer
-                              type: object
-                            version:
-                              properties:
-                                changeTierToArchiveAfterDaysSinceCreation:
-                                  format: int64
-                                  type: integer
-                                changeTierToCoolAfterDaysSinceCreation:
-                                  format: int64
-                                  type: integer
-                                deleteAfterDaysSinceCreation:
-                                  format: int64
-                                  type: integer
-                              type: object
-                          type: object
-                        enabled:
-                          type: boolean
-                        filters:
-                          properties:
-                            blobTypes:
-                              items:
-                                type: string
-                              type: array
-                            matchBlobIndexTag:
-                              items:
-                                properties:
-                                  name:
-                                    type: string
-                                  operation:
-                                    type: string
-                                  value:
-                                    type: string
-                                required:
-                                - name
-                                - value
-                                type: object
-                              type: array
-                            prefixMatch:
-                              items:
-                                type: string
-                              type: array
-                          type: object
-                        name:
-                          type: string
-                      required:
-                      - actions
-                      - enabled
-                      - name
-                      type: object
-                    minItems: 1
-                    type: array
-                  storageAccountID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - providerRef
-                - storageAccountID
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rule:
+              metrics:
                 items:
                   properties:
-                    actions:
+                    field:
                       properties:
-                        baseBlob:
-                          properties:
-                            deleteAfterDaysSinceModificationGreaterThan:
-                              format: int64
-                              type: integer
-                            tierToArchiveAfterDaysSinceModificationGreaterThan:
-                              format: int64
-                              type: integer
-                            tierToCoolAfterDaysSinceModificationGreaterThan:
-                              format: int64
-                              type: integer
-                          type: object
-                        snapshot:
-                          properties:
-                            changeTierToArchiveAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                            changeTierToCoolAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                            deleteAfterDaysSinceCreationGreaterThan:
-                              format: int64
-                              type: integer
-                          type: object
-                        version:
-                          properties:
-                            changeTierToArchiveAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                            changeTierToCoolAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                            deleteAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                          type: object
+                        path:
+                          type: string
+                        type:
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
+                          type: string
+                      required:
+                      - path
+                      - type
                       type: object
-                    enabled:
-                      type: boolean
-                    filters:
+                    help:
+                      type: string
+                    labels:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
                       properties:
-                        blobTypes:
-                          items:
-                            type: string
-                          type: array
-                        matchBlobIndexTag:
-                          items:
-                            properties:
-                              name:
-                                type: string
-                              operation:
-                                type: string
-                              value:
-                                type: string
-                            required:
-                            - name
-                            - value
-                            type: object
-                          type: array
-                        prefixMatch:
-                          items:
-                            type: string
-                          type: array
+                        value:
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          type: string
+                        valueFromPath:
+                          type: string
                       type: object
                     name:
                       type: string
-                  required:
-                  - actions
-                  - enabled
-                  - name
-                  type: object
-                minItems: 1
-                type: array
-              storageAccountID:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - providerRef
-            - storageAccountID
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: blobs.storage.azurerm.kubeform.com
-spec:
-  group: storage.azurerm.kubeform.com
-  names:
-    kind: Blob
-    listKind: BlobList
-    plural: blobs
-    singular: blob
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              accessTier:
-                type: string
-              contentMd5:
-                type: string
-              contentType:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  accessTier:
-                    type: string
-                  contentMd5:
-                    type: string
-                  contentType:
-                    type: string
-                  id:
-                    type: string
-                  metadata:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  name:
-                    type: string
-                  parallelism:
-                    format: int64
-                    type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  size:
-                    format: int64
-                    type: integer
-                  source:
-                    type: string
-                  sourceContent:
-                    type: string
-                  sourceURI:
-                    type: string
-                  storageAccountName:
-                    type: string
-                  storageContainerName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                  type:
-                    type: string
-                  url:
-                    type: string
-                required:
-                - name
-                - providerRef
-                - storageAccountName
-                - storageContainerName
-                - type
-                type: object
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              parallelism:
-                format: int64
-                type: integer
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              size:
-                format: int64
-                type: integer
-              source:
-                type: string
-              sourceContent:
-                type: string
-              sourceURI:
-                type: string
-              storageAccountName:
-                type: string
-              storageContainerName:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
-                type: string
-              url:
-                type: string
-            required:
-            - name
-            - providerRef
-            - storageAccountName
-            - storageContainerName
-            - type
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: containers.storage.azurerm.kubeform.com
-spec:
-  group: storage.azurerm.kubeform.com
-  names:
-    kind: Container
-    listKind: ContainerList
-    plural: containers
-    singular: container
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              containerAccessType:
-                type: string
-              hasImmutabilityPolicy:
-                type: boolean
-              hasLegalHold:
-                type: boolean
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  containerAccessType:
-                    type: string
-                  hasImmutabilityPolicy:
-                    type: boolean
-                  hasLegalHold:
-                    type: boolean
-                  id:
-                    type: string
-                  metadata:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resourceManagerID:
-                    type: string
-                  storageAccountName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - name
-                - providerRef
-                - storageAccountName
-                type: object
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resourceManagerID:
-                type: string
-              storageAccountName:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - name
-            - providerRef
-            - storageAccountName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: datalakegen2paths.storage.azurerm.kubeform.com
-spec:
-  group: storage.azurerm.kubeform.com
-  names:
-    kind: DataLakeGen2Path
-    listKind: DataLakeGen2PathList
-    plural: datalakegen2paths
-    singular: datalakegen2path
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              ace:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    permissions:
-                      type: string
-                    scope:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - permissions
-                  - type
-                  type: object
-                type: array
-              filesystemName:
-                type: string
-              group:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  ace:
-                    items:
+                    params:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
                       properties:
-                        ID:
+                        labelKey:
                           type: string
-                        permissions:
-                          type: string
-                        scope:
-                          type: string
-                        type:
-                          type: string
+                        values:
+                          items:
+                            properties:
+                              labelValue:
+                                type: string
+                              metricValue:
+                                properties:
+                                  value:
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    type: string
+                                  valueFromPath:
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
                       required:
-                      - permissions
-                      - type
+                      - labelKey
+                      - values
                       type: object
-                    type: array
-                  filesystemName:
-                    type: string
-                  group:
-                    type: string
-                  id:
-                    type: string
-                  owner:
-                    type: string
-                  path:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resource:
-                    type: string
-                  storageAccountID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - filesystemName
-                - path
-                - providerRef
-                - resource
-                - storageAccountID
-                type: object
-              owner:
-                type: string
-              path:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resource:
-                type: string
-              storageAccountID:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - filesystemName
-            - path
-            - providerRef
-            - resource
-            - storageAccountID
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
                     type:
+                      enum:
+                      - gauge
                       type: string
                   required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
+                  - help
+                  - name
                   - type
                   type: object
                 type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
+              targetRef:
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
             type: object
         type: object
     served: true
     storage: true
-    subresources:
-      status: {}
+    subresources: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -1710,172 +974,6 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: encryptionscopes.storage.azurerm.kubeform.com
-spec:
-  group: storage.azurerm.kubeform.com
-  names:
-    kind: EncryptionScope
-    listKind: EncryptionScopeList
-    plural: encryptionscopes
-    singular: encryptionscope
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              id:
-                type: string
-              infrastructureEncryptionRequired:
-                type: boolean
-              keyVaultKeyID:
-                type: string
-              kubeformOutput:
-                properties:
-                  id:
-                    type: string
-                  infrastructureEncryptionRequired:
-                    type: boolean
-                  keyVaultKeyID:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  source:
-                    type: string
-                  storageAccountID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - name
-                - providerRef
-                - source
-                - storageAccountID
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              source:
-                type: string
-              storageAccountID:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - name
-            - providerRef
-            - source
-            - storageAccountID
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
   name: accountcustomermanagedkeys.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
@@ -1991,6 +1089,422 @@ spec:
             - keyVaultID
             - providerRef
             - storageAccountID
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: accountnetworkrules.storage.azurerm.kubeform.com
+spec:
+  group: storage.azurerm.kubeform.com
+  names:
+    kind: AccountNetworkRules
+    listKind: AccountNetworkRulesList
+    plural: accountnetworkrules
+    singular: accountnetworkrules
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              bypass:
+                items:
+                  type: string
+                type: array
+              defaultAction:
+                type: string
+              id:
+                type: string
+              ipRules:
+                items:
+                  type: string
+                type: array
+              kubeformOutput:
+                properties:
+                  bypass:
+                    items:
+                      type: string
+                    type: array
+                  defaultAction:
+                    type: string
+                  id:
+                    type: string
+                  ipRules:
+                    items:
+                      type: string
+                    type: array
+                  privateLinkAccess:
+                    items:
+                      properties:
+                        endpointResourceID:
+                          type: string
+                        endpointTenantID:
+                          type: string
+                      required:
+                      - endpointResourceID
+                      type: object
+                    type: array
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  storageAccountName:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualNetworkSubnetIDS:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - defaultAction
+                - providerRef
+                - resourceGroupName
+                - storageAccountName
+                type: object
+              privateLinkAccess:
+                items:
+                  properties:
+                    endpointResourceID:
+                      type: string
+                    endpointTenantID:
+                      type: string
+                  required:
+                  - endpointResourceID
+                  type: object
+                type: array
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resourceGroupName:
+                type: string
+              storageAccountName:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+              virtualNetworkSubnetIDS:
+                items:
+                  type: string
+                type: array
+            required:
+            - defaultAction
+            - providerRef
+            - resourceGroupName
+            - storageAccountName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: blobs.storage.azurerm.kubeform.com
+spec:
+  group: storage.azurerm.kubeform.com
+  names:
+    kind: Blob
+    listKind: BlobList
+    plural: blobs
+    singular: blob
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              accessTier:
+                type: string
+              contentMd5:
+                type: string
+              contentType:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  accessTier:
+                    type: string
+                  contentMd5:
+                    type: string
+                  contentType:
+                    type: string
+                  id:
+                    type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  parallelism:
+                    format: int64
+                    type: integer
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  size:
+                    format: int64
+                    type: integer
+                  source:
+                    type: string
+                  sourceContent:
+                    type: string
+                  sourceURI:
+                    type: string
+                  storageAccountName:
+                    type: string
+                  storageContainerName:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                  url:
+                    type: string
+                required:
+                - name
+                - providerRef
+                - storageAccountName
+                - storageContainerName
+                - type
+                type: object
+              metadata:
+                additionalProperties:
+                  type: string
+                type: object
+              name:
+                type: string
+              parallelism:
+                format: int64
+                type: integer
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              size:
+                format: int64
+                type: integer
+              source:
+                type: string
+              sourceContent:
+                type: string
+              sourceURI:
+                type: string
+              storageAccountName:
+                type: string
+              storageContainerName:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+              type:
+                type: string
+              url:
+                type: string
+            required:
+            - name
+            - providerRef
+            - storageAccountName
+            - storageContainerName
+            - type
             type: object
           status:
             properties:
@@ -2246,14 +1760,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: accountnetworkrules.storage.azurerm.kubeform.com
+  name: containers.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
   names:
-    kind: AccountNetworkRules
-    listKind: AccountNetworkRulesList
-    plural: accountnetworkrules
-    singular: accountnetworkrules
+    kind: Container
+    listKind: ContainerList
+    plural: containers
+    singular: container
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -2272,49 +1786,36 @@ spec:
             type: object
           spec:
             properties:
-              bypass:
-                items:
-                  type: string
-                type: array
-              defaultAction:
+              containerAccessType:
                 type: string
+              hasImmutabilityPolicy:
+                type: boolean
+              hasLegalHold:
+                type: boolean
               id:
                 type: string
-              ipRules:
-                items:
-                  type: string
-                type: array
               kubeformOutput:
                 properties:
-                  bypass:
-                    items:
-                      type: string
-                    type: array
-                  defaultAction:
+                  containerAccessType:
                     type: string
+                  hasImmutabilityPolicy:
+                    type: boolean
+                  hasLegalHold:
+                    type: boolean
                   id:
                     type: string
-                  ipRules:
-                    items:
+                  metadata:
+                    additionalProperties:
                       type: string
-                    type: array
-                  privateLinkAccess:
-                    items:
-                      properties:
-                        endpointResourceID:
-                          type: string
-                        endpointTenantID:
-                          type: string
-                      required:
-                      - endpointResourceID
-                      type: object
-                    type: array
+                    type: object
+                  name:
+                    type: string
                   providerRef:
                     properties:
                       name:
                         type: string
                     type: object
-                  resourceGroupName:
+                  resourceManagerID:
                     type: string
                   storageAccountName:
                     type: string
@@ -2341,33 +1842,23 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  virtualNetworkSubnetIDS:
-                    items:
-                      type: string
-                    type: array
                 required:
-                - defaultAction
+                - name
                 - providerRef
-                - resourceGroupName
                 - storageAccountName
                 type: object
-              privateLinkAccess:
-                items:
-                  properties:
-                    endpointResourceID:
-                      type: string
-                    endpointTenantID:
-                      type: string
-                  required:
-                  - endpointResourceID
-                  type: object
-                type: array
+              metadata:
+                additionalProperties:
+                  type: string
+                type: object
+              name:
+                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
+              resourceManagerID:
                 type: string
               storageAccountName:
                 type: string
@@ -2394,14 +1885,9 @@ spec:
                     format: int64
                     type: integer
                 type: object
-              virtualNetworkSubnetIDS:
-                items:
-                  type: string
-                type: array
             required:
-            - defaultAction
+            - name
             - providerRef
-            - resourceGroupName
             - storageAccountName
             type: object
           status:
@@ -2641,173 +2127,15 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: metrics
-  name: metricsconfigurations.metrics.appscode.com
-spec:
-  group: metrics.appscode.com
-  names:
-    categories:
-    - metrics
-    - appscode
-    - all
-    kind: MetricsConfiguration
-    listKind: MetricsConfigurationList
-    plural: metricsconfigurations
-    singular: metricsconfiguration
-  scope: Cluster
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.targetRef.apiVersion
-      name: APIVersion
-      type: string
-    - jsonPath: .spec.targetRef.kind
-      name: Kind
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              metrics:
-                items:
-                  properties:
-                    field:
-                      properties:
-                        path:
-                          type: string
-                        type:
-                          enum:
-                          - Integer
-                          - DateTime
-                          - Array
-                          - String
-                          type: string
-                      required:
-                      - path
-                      - type
-                      type: object
-                    help:
-                      type: string
-                    labels:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    metricValue:
-                      properties:
-                        value:
-                          format: double
-                          type: number
-                        valueFromExpression:
-                          type: string
-                        valueFromPath:
-                          type: string
-                      type: object
-                    name:
-                      type: string
-                    params:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    states:
-                      properties:
-                        labelKey:
-                          type: string
-                        values:
-                          items:
-                            properties:
-                              labelValue:
-                                type: string
-                              metricValue:
-                                properties:
-                                  value:
-                                    format: double
-                                    type: number
-                                  valueFromExpression:
-                                    type: string
-                                  valueFromPath:
-                                    type: string
-                                type: object
-                            required:
-                            - labelValue
-                            - metricValue
-                            type: object
-                          type: array
-                      required:
-                      - labelKey
-                      - values
-                      type: object
-                    type:
-                      enum:
-                      - gauge
-                      type: string
-                  required:
-                  - help
-                  - name
-                  - type
-                  type: object
-                type: array
-              targetRef:
-                properties:
-                  apiVersion:
-                    type: string
-                  kind:
-                    type: string
-                required:
-                - apiVersion
-                - kind
-                type: object
-            required:
-            - metrics
-            - targetRef
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
     app.kubernetes.io/name: kubeform
-  name: syncgroups.storage.azurerm.kubeform.com
+  name: datalakegen2paths.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
   names:
-    kind: SyncGroup
-    listKind: SyncGroupList
-    plural: syncgroups
-    singular: syncgroup
+    kind: DataLakeGen2Path
+    listKind: DataLakeGen2PathList
+    plural: datalakegen2paths
+    singular: datalakegen2path
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -2826,20 +2154,64 @@ spec:
             type: object
           spec:
             properties:
+              ace:
+                items:
+                  properties:
+                    ID:
+                      type: string
+                    permissions:
+                      type: string
+                    scope:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - permissions
+                  - type
+                  type: object
+                type: array
+              filesystemName:
+                type: string
+              group:
+                type: string
               id:
                 type: string
               kubeformOutput:
                 properties:
+                  ace:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        permissions:
+                          type: string
+                        scope:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                      - permissions
+                      - type
+                      type: object
+                    type: array
+                  filesystemName:
+                    type: string
+                  group:
+                    type: string
                   id:
                     type: string
-                  name:
+                  owner:
+                    type: string
+                  path:
                     type: string
                   providerRef:
                     properties:
                       name:
                         type: string
                     type: object
-                  storageSyncID:
+                  resource:
+                    type: string
+                  storageAccountID:
                     type: string
                   terminationPolicy:
                     enum:
@@ -2865,18 +2237,24 @@ spec:
                         type: integer
                     type: object
                 required:
-                - name
+                - filesystemName
+                - path
                 - providerRef
-                - storageSyncID
+                - resource
+                - storageAccountID
                 type: object
-              name:
+              owner:
+                type: string
+              path:
                 type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              storageSyncID:
+              resource:
+                type: string
+              storageAccountID:
                 type: string
               terminationPolicy:
                 enum:
@@ -2902,9 +2280,11 @@ spec:
                     type: integer
                 type: object
             required:
-            - name
+            - filesystemName
+            - path
             - providerRef
-            - storageSyncID
+            - resource
+            - storageAccountID
             type: object
           status:
             properties:
@@ -2952,14 +2332,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: synccloudendpoints.storage.azurerm.kubeform.com
+  name: encryptionscopes.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
   names:
-    kind: SyncCloudEndpoint
-    listKind: SyncCloudEndpointList
-    plural: synccloudendpoints
-    singular: synccloudendpoint
+    kind: EncryptionScope
+    listKind: EncryptionScopeList
+    plural: encryptionscopes
+    singular: encryptionscope
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -2978,15 +2358,19 @@ spec:
             type: object
           spec:
             properties:
-              fileShareName:
-                type: string
               id:
+                type: string
+              infrastructureEncryptionRequired:
+                type: boolean
+              keyVaultKeyID:
                 type: string
               kubeformOutput:
                 properties:
-                  fileShareName:
-                    type: string
                   id:
+                    type: string
+                  infrastructureEncryptionRequired:
+                    type: boolean
+                  keyVaultKeyID:
                     type: string
                   name:
                     type: string
@@ -2995,11 +2379,9 @@ spec:
                       name:
                         type: string
                     type: object
+                  source:
+                    type: string
                   storageAccountID:
-                    type: string
-                  storageAccountTenantID:
-                    type: string
-                  storageSyncGroupID:
                     type: string
                   terminationPolicy:
                     enum:
@@ -3025,11 +2407,10 @@ spec:
                         type: integer
                     type: object
                 required:
-                - fileShareName
                 - name
                 - providerRef
+                - source
                 - storageAccountID
-                - storageSyncGroupID
                 type: object
               name:
                 type: string
@@ -3038,11 +2419,9 @@ spec:
                   name:
                     type: string
                 type: object
+              source:
+                type: string
               storageAccountID:
-                type: string
-              storageAccountTenantID:
-                type: string
-              storageSyncGroupID:
                 type: string
               terminationPolicy:
                 enum:
@@ -3068,11 +2447,312 @@ spec:
                     type: integer
                 type: object
             required:
-            - fileShareName
             - name
             - providerRef
+            - source
             - storageAccountID
-            - storageSyncGroupID
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: managementpolicies.storage.azurerm.kubeform.com
+spec:
+  group: storage.azurerm.kubeform.com
+  names:
+    kind: ManagementPolicy
+    listKind: ManagementPolicyList
+    plural: managementpolicies
+    singular: managementpolicy
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  id:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  rule:
+                    items:
+                      properties:
+                        actions:
+                          properties:
+                            baseBlob:
+                              properties:
+                                deleteAfterDaysSinceModificationGreaterThan:
+                                  format: int64
+                                  type: integer
+                                tierToArchiveAfterDaysSinceModificationGreaterThan:
+                                  format: int64
+                                  type: integer
+                                tierToCoolAfterDaysSinceModificationGreaterThan:
+                                  format: int64
+                                  type: integer
+                              type: object
+                            snapshot:
+                              properties:
+                                changeTierToArchiveAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                                changeTierToCoolAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                                deleteAfterDaysSinceCreationGreaterThan:
+                                  format: int64
+                                  type: integer
+                              type: object
+                            version:
+                              properties:
+                                changeTierToArchiveAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                                changeTierToCoolAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                                deleteAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                              type: object
+                          type: object
+                        enabled:
+                          type: boolean
+                        filters:
+                          properties:
+                            blobTypes:
+                              items:
+                                type: string
+                              type: array
+                            matchBlobIndexTag:
+                              items:
+                                properties:
+                                  name:
+                                    type: string
+                                  operation:
+                                    type: string
+                                  value:
+                                    type: string
+                                required:
+                                - name
+                                - value
+                                type: object
+                              type: array
+                            prefixMatch:
+                              items:
+                                type: string
+                              type: array
+                          type: object
+                        name:
+                          type: string
+                      required:
+                      - actions
+                      - enabled
+                      - name
+                      type: object
+                    minItems: 1
+                    type: array
+                  storageAccountID:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - providerRef
+                - storageAccountID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              rule:
+                items:
+                  properties:
+                    actions:
+                      properties:
+                        baseBlob:
+                          properties:
+                            deleteAfterDaysSinceModificationGreaterThan:
+                              format: int64
+                              type: integer
+                            tierToArchiveAfterDaysSinceModificationGreaterThan:
+                              format: int64
+                              type: integer
+                            tierToCoolAfterDaysSinceModificationGreaterThan:
+                              format: int64
+                              type: integer
+                          type: object
+                        snapshot:
+                          properties:
+                            changeTierToArchiveAfterDaysSinceCreation:
+                              format: int64
+                              type: integer
+                            changeTierToCoolAfterDaysSinceCreation:
+                              format: int64
+                              type: integer
+                            deleteAfterDaysSinceCreationGreaterThan:
+                              format: int64
+                              type: integer
+                          type: object
+                        version:
+                          properties:
+                            changeTierToArchiveAfterDaysSinceCreation:
+                              format: int64
+                              type: integer
+                            changeTierToCoolAfterDaysSinceCreation:
+                              format: int64
+                              type: integer
+                            deleteAfterDaysSinceCreation:
+                              format: int64
+                              type: integer
+                          type: object
+                      type: object
+                    enabled:
+                      type: boolean
+                    filters:
+                      properties:
+                        blobTypes:
+                          items:
+                            type: string
+                          type: array
+                        matchBlobIndexTag:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              operation:
+                                type: string
+                              value:
+                                type: string
+                            required:
+                            - name
+                            - value
+                            type: object
+                          type: array
+                        prefixMatch:
+                          items:
+                            type: string
+                          type: array
+                      type: object
+                    name:
+                      type: string
+                  required:
+                  - actions
+                  - enabled
+                  - name
+                  type: object
+                minItems: 1
+                type: array
+              storageAccountID:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - providerRef
+            - storageAccountID
             type: object
           status:
             properties:
@@ -3498,14 +3178,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: tables.storage.azurerm.kubeform.com
+  name: sharedirectories.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
   names:
-    kind: Table
-    listKind: TableList
-    plural: tables
-    singular: table
+    kind: ShareDirectory
+    listKind: ShareDirectoryList
+    plural: sharedirectories
+    singular: sharedirectory
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -3524,60 +3204,16 @@ spec:
             type: object
           spec:
             properties:
-              acl:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    accessPolicy:
-                      items:
-                        properties:
-                          expiry:
-                            type: string
-                          permissions:
-                            type: string
-                          start:
-                            type: string
-                        required:
-                        - expiry
-                        - permissions
-                        - start
-                        type: object
-                      type: array
-                  required:
-                  - ID
-                  type: object
-                type: array
               id:
                 type: string
               kubeformOutput:
                 properties:
-                  acl:
-                    items:
-                      properties:
-                        ID:
-                          type: string
-                        accessPolicy:
-                          items:
-                            properties:
-                              expiry:
-                                type: string
-                              permissions:
-                                type: string
-                              start:
-                                type: string
-                            required:
-                            - expiry
-                            - permissions
-                            - start
-                            type: object
-                          type: array
-                      required:
-                      - ID
-                      type: object
-                    type: array
                   id:
                     type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    type: object
                   name:
                     type: string
                   providerRef:
@@ -3585,6 +3221,8 @@ spec:
                       name:
                         type: string
                     type: object
+                  shareName:
+                    type: string
                   storageAccountName:
                     type: string
                   terminationPolicy:
@@ -3613,7 +3251,12 @@ spec:
                 required:
                 - name
                 - providerRef
+                - shareName
                 - storageAccountName
+                type: object
+              metadata:
+                additionalProperties:
+                  type: string
                 type: object
               name:
                 type: string
@@ -3622,6 +3265,8 @@ spec:
                   name:
                     type: string
                 type: object
+              shareName:
+                type: string
               storageAccountName:
                 type: string
               terminationPolicy:
@@ -3650,181 +3295,8 @@ spec:
             required:
             - name
             - providerRef
+            - shareName
             - storageAccountName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: tableentities.storage.azurerm.kubeform.com
-spec:
-  group: storage.azurerm.kubeform.com
-  names:
-    kind: TableEntity
-    listKind: TableEntityList
-    plural: tableentities
-    singular: tableentity
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              entity:
-                additionalProperties:
-                  type: string
-                type: object
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  entity:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  id:
-                    type: string
-                  partitionKey:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  rowKey:
-                    type: string
-                  storageAccountName:
-                    type: string
-                  tableName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - entity
-                - partitionKey
-                - providerRef
-                - rowKey
-                - storageAccountName
-                - tableName
-                type: object
-              partitionKey:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rowKey:
-                type: string
-              storageAccountName:
-                type: string
-              tableName:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - entity
-            - partitionKey
-            - providerRef
-            - rowKey
-            - storageAccountName
-            - tableName
             type: object
           status:
             properties:
@@ -4226,14 +3698,182 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: sharedirectories.storage.azurerm.kubeform.com
+  name: synccloudendpoints.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
   names:
-    kind: ShareDirectory
-    listKind: ShareDirectoryList
-    plural: sharedirectories
-    singular: sharedirectory
+    kind: SyncCloudEndpoint
+    listKind: SyncCloudEndpointList
+    plural: synccloudendpoints
+    singular: synccloudendpoint
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              fileShareName:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  fileShareName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  storageAccountID:
+                    type: string
+                  storageAccountTenantID:
+                    type: string
+                  storageSyncGroupID:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - fileShareName
+                - name
+                - providerRef
+                - storageAccountID
+                - storageSyncGroupID
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              storageAccountID:
+                type: string
+              storageAccountTenantID:
+                type: string
+              storageSyncGroupID:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - fileShareName
+            - name
+            - providerRef
+            - storageAccountID
+            - storageSyncGroupID
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: syncgroups.storage.azurerm.kubeform.com
+spec:
+  group: storage.azurerm.kubeform.com
+  names:
+    kind: SyncGroup
+    listKind: SyncGroupList
+    plural: syncgroups
+    singular: syncgroup
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -4258,10 +3898,6 @@ spec:
                 properties:
                   id:
                     type: string
-                  metadata:
-                    additionalProperties:
-                      type: string
-                    type: object
                   name:
                     type: string
                   providerRef:
@@ -4269,8 +3905,206 @@ spec:
                       name:
                         type: string
                     type: object
-                  shareName:
+                  storageSyncID:
                     type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - providerRef
+                - storageSyncID
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              storageSyncID:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - name
+            - providerRef
+            - storageSyncID
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: tables.storage.azurerm.kubeform.com
+spec:
+  group: storage.azurerm.kubeform.com
+  names:
+    kind: Table
+    listKind: TableList
+    plural: tables
+    singular: table
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              acl:
+                items:
+                  properties:
+                    ID:
+                      type: string
+                    accessPolicy:
+                      items:
+                        properties:
+                          expiry:
+                            type: string
+                          permissions:
+                            type: string
+                          start:
+                            type: string
+                        required:
+                        - expiry
+                        - permissions
+                        - start
+                        type: object
+                      type: array
+                  required:
+                  - ID
+                  type: object
+                type: array
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  acl:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        accessPolicy:
+                          items:
+                            properties:
+                              expiry:
+                                type: string
+                              permissions:
+                                type: string
+                              start:
+                                type: string
+                            required:
+                            - expiry
+                            - permissions
+                            - start
+                            type: object
+                          type: array
+                      required:
+                      - ID
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
                   storageAccountName:
                     type: string
                   terminationPolicy:
@@ -4299,12 +4133,7 @@ spec:
                 required:
                 - name
                 - providerRef
-                - shareName
                 - storageAccountName
-                type: object
-              metadata:
-                additionalProperties:
-                  type: string
                 type: object
               name:
                 type: string
@@ -4313,8 +4142,6 @@ spec:
                   name:
                     type: string
                 type: object
-              shareName:
-                type: string
               storageAccountName:
                 type: string
               terminationPolicy:
@@ -4343,8 +4170,181 @@ spec:
             required:
             - name
             - providerRef
-            - shareName
             - storageAccountName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: tableentities.storage.azurerm.kubeform.com
+spec:
+  group: storage.azurerm.kubeform.com
+  names:
+    kind: TableEntity
+    listKind: TableEntityList
+    plural: tableentities
+    singular: tableentity
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              entity:
+                additionalProperties:
+                  type: string
+                type: object
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  entity:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  id:
+                    type: string
+                  partitionKey:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  rowKey:
+                    type: string
+                  storageAccountName:
+                    type: string
+                  tableName:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - entity
+                - partitionKey
+                - providerRef
+                - rowKey
+                - storageAccountName
+                - tableName
+                type: object
+              partitionKey:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              rowKey:
+                type: string
+              storageAccountName:
+                type: string
+              tableName:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - entity
+            - partitionKey
+            - providerRef
+            - rowKey
+            - storageAccountName
+            - tableName
             type: object
           status:
             properties:

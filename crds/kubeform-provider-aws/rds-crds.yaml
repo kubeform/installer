@@ -3,21 +3,31 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
-  name: clusterendpoints.rds.aws.kubeform.com
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
 spec:
-  group: rds.aws.kubeform.com
+  group: metrics.appscode.com
   names:
-    kind: ClusterEndpoint
-    listKind: ClusterEndpointList
-    plural: clusterendpoints
-    singular: clusterendpoint
-  scope: Namespaced
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
       type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -30,288 +40,120 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              clusterEndpointIdentifier:
-                type: string
-              clusterIdentifier:
-                type: string
-              customEndpointType:
-                type: string
-              endpoint:
-                type: string
-              excludedMembers:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  arn:
-                    type: string
-                  clusterEndpointIdentifier:
-                    type: string
-                  clusterIdentifier:
-                    type: string
-                  customEndpointType:
-                    type: string
-                  endpoint:
-                    type: string
-                  excludedMembers:
-                    items:
-                      type: string
-                    type: array
-                  id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  staticMembers:
-                    items:
-                      type: string
-                    type: array
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - clusterEndpointIdentifier
-                - clusterIdentifier
-                - customEndpointType
-                - providerRef
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              staticMembers:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - clusterEndpointIdentifier
-            - clusterIdentifier
-            - customEndpointType
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
+              metrics:
                 items:
                   properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: clusterparametergroups.rds.aws.kubeform.com
-spec:
-  group: rds.aws.kubeform.com
-  names:
-    kind: ClusterParameterGroup
-    listKind: ClusterParameterGroupList
-    plural: clusterparametergroups
-    singular: clusterparametergroup
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              arn:
-                type: string
-              description:
-                type: string
-              family:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  arn:
-                    type: string
-                  description:
-                    type: string
-                  family:
-                    type: string
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  namePrefix:
-                    type: string
-                  parameter:
-                    items:
+                    field:
                       properties:
-                        applyMethod:
+                        path:
                           type: string
-                        name:
-                          type: string
-                        value:
+                        type:
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
                           type: string
                       required:
-                      - name
-                      - value
+                      - path
+                      - type
                       type: object
-                    type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  tags:
-                    additionalProperties:
+                    help:
                       type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - family
-                - providerRef
-                type: object
-              name:
-                type: string
-              namePrefix:
-                type: string
-              parameter:
-                items:
-                  properties:
-                    applyMethod:
-                      type: string
+                    labels:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
+                      properties:
+                        value:
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          type: string
+                        valueFromPath:
+                          type: string
+                      type: object
                     name:
                       type: string
-                    value:
-                      type: string
-                  required:
-                  - name
-                  - value
-                  type: object
-                type: array
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - family
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
+                    params:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
+                      properties:
+                        labelKey:
+                          type: string
+                        values:
+                          items:
+                            properties:
+                              labelValue:
+                                type: string
+                              metricValue:
+                                properties:
+                                  value:
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    type: string
+                                  valueFromPath:
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
+                      required:
+                      - labelKey
+                      - values
+                      type: object
                     type:
+                      enum:
+                      - gauge
                       type: string
                   required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
+                  - help
+                  - name
                   - type
                   type: object
                 type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
+              targetRef:
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
             type: object
         type: object
     served: true
     storage: true
-    subresources:
-      status: {}
+    subresources: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -750,14 +592,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: globalclusters.rds.aws.kubeform.com
+  name: clusterendpoints.rds.aws.kubeform.com
 spec:
   group: rds.aws.kubeform.com
   names:
-    kind: GlobalCluster
-    listKind: GlobalClusterList
-    plural: globalclusters
-    singular: globalcluster
+    kind: ClusterEndpoint
+    listKind: ClusterEndpointList
+    plural: clusterendpoints
+    singular: clusterendpoint
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -778,58 +620,36 @@ spec:
             properties:
               arn:
                 type: string
-              databaseName:
+              clusterEndpointIdentifier:
                 type: string
-              deletionProtection:
-                type: boolean
-              engine:
+              clusterIdentifier:
                 type: string
-              engineVersion:
+              customEndpointType:
                 type: string
-              forceDestroy:
-                type: boolean
-              globalClusterIdentifier:
+              endpoint:
                 type: string
-              globalClusterMembers:
+              excludedMembers:
                 items:
-                  properties:
-                    dbClusterArn:
-                      type: string
-                    isWriter:
-                      type: boolean
-                  type: object
+                  type: string
                 type: array
-              globalClusterResourceID:
-                type: string
               id:
                 type: string
               kubeformOutput:
                 properties:
                   arn:
                     type: string
-                  databaseName:
+                  clusterEndpointIdentifier:
                     type: string
-                  deletionProtection:
-                    type: boolean
-                  engine:
+                  clusterIdentifier:
                     type: string
-                  engineVersion:
+                  customEndpointType:
                     type: string
-                  forceDestroy:
-                    type: boolean
-                  globalClusterIdentifier:
+                  endpoint:
                     type: string
-                  globalClusterMembers:
+                  excludedMembers:
                     items:
-                      properties:
-                        dbClusterArn:
-                          type: string
-                        isWriter:
-                          type: boolean
-                      type: object
+                      type: string
                     type: array
-                  globalClusterResourceID:
-                    type: string
                   id:
                     type: string
                   providerRef:
@@ -837,17 +657,23 @@ spec:
                       name:
                         type: string
                     type: object
-                  sourceDbClusterIdentifier:
-                    type: string
-                  storageEncrypted:
-                    type: boolean
+                  staticMembers:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
                   terminationPolicy:
                     enum:
                     - Delete
                     - DoNotTerminate
                     type: string
                 required:
-                - globalClusterIdentifier
+                - clusterEndpointIdentifier
+                - clusterIdentifier
+                - customEndpointType
                 - providerRef
                 type: object
               providerRef:
@@ -855,17 +681,23 @@ spec:
                   name:
                     type: string
                 type: object
-              sourceDbClusterIdentifier:
-                type: string
-              storageEncrypted:
-                type: boolean
+              staticMembers:
+                items:
+                  type: string
+                type: array
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
             required:
-            - globalClusterIdentifier
+            - clusterEndpointIdentifier
+            - clusterIdentifier
+            - customEndpointType
             - providerRef
             type: object
           status:
@@ -906,164 +738,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: metrics
-  name: metricsconfigurations.metrics.appscode.com
-spec:
-  group: metrics.appscode.com
-  names:
-    categories:
-    - metrics
-    - appscode
-    - all
-    kind: MetricsConfiguration
-    listKind: MetricsConfigurationList
-    plural: metricsconfigurations
-    singular: metricsconfiguration
-  scope: Cluster
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.targetRef.apiVersion
-      name: APIVersion
-      type: string
-    - jsonPath: .spec.targetRef.kind
-      name: Kind
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              metrics:
-                items:
-                  properties:
-                    field:
-                      properties:
-                        path:
-                          type: string
-                        type:
-                          enum:
-                          - Integer
-                          - DateTime
-                          - Array
-                          - String
-                          type: string
-                      required:
-                      - path
-                      - type
-                      type: object
-                    help:
-                      type: string
-                    labels:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    metricValue:
-                      properties:
-                        value:
-                          format: double
-                          type: number
-                        valueFromExpression:
-                          type: string
-                        valueFromPath:
-                          type: string
-                      type: object
-                    name:
-                      type: string
-                    params:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    states:
-                      properties:
-                        labelKey:
-                          type: string
-                        values:
-                          items:
-                            properties:
-                              labelValue:
-                                type: string
-                              metricValue:
-                                properties:
-                                  value:
-                                    format: double
-                                    type: number
-                                  valueFromExpression:
-                                    type: string
-                                  valueFromPath:
-                                    type: string
-                                type: object
-                            required:
-                            - labelValue
-                            - metricValue
-                            type: object
-                          type: array
-                      required:
-                      - labelKey
-                      - values
-                      type: object
-                    type:
-                      enum:
-                      - gauge
-                      type: string
-                  required:
-                  - help
-                  - name
-                  - type
-                  type: object
-                type: array
-              targetRef:
-                properties:
-                  apiVersion:
-                    type: string
-                  kind:
-                    type: string
-                required:
-                - apiVersion
-                - kind
-                type: object
-            required:
-            - metrics
-            - targetRef
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -1294,6 +968,332 @@ spec:
             required:
             - clusterIdentifier
             - instanceClass
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: clusterparametergroups.rds.aws.kubeform.com
+spec:
+  group: rds.aws.kubeform.com
+  names:
+    kind: ClusterParameterGroup
+    listKind: ClusterParameterGroupList
+    plural: clusterparametergroups
+    singular: clusterparametergroup
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              arn:
+                type: string
+              description:
+                type: string
+              family:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  family:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  parameter:
+                    items:
+                      properties:
+                        applyMethod:
+                          type: string
+                        name:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - name
+                      - value
+                      type: object
+                    type: array
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - family
+                - providerRef
+                type: object
+              name:
+                type: string
+              namePrefix:
+                type: string
+              parameter:
+                items:
+                  properties:
+                    applyMethod:
+                      type: string
+                    name:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                  - name
+                  - value
+                  type: object
+                type: array
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - family
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: globalclusters.rds.aws.kubeform.com
+spec:
+  group: rds.aws.kubeform.com
+  names:
+    kind: GlobalCluster
+    listKind: GlobalClusterList
+    plural: globalclusters
+    singular: globalcluster
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              arn:
+                type: string
+              databaseName:
+                type: string
+              deletionProtection:
+                type: boolean
+              engine:
+                type: string
+              engineVersion:
+                type: string
+              forceDestroy:
+                type: boolean
+              globalClusterIdentifier:
+                type: string
+              globalClusterMembers:
+                items:
+                  properties:
+                    dbClusterArn:
+                      type: string
+                    isWriter:
+                      type: boolean
+                  type: object
+                type: array
+              globalClusterResourceID:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  databaseName:
+                    type: string
+                  deletionProtection:
+                    type: boolean
+                  engine:
+                    type: string
+                  engineVersion:
+                    type: string
+                  forceDestroy:
+                    type: boolean
+                  globalClusterIdentifier:
+                    type: string
+                  globalClusterMembers:
+                    items:
+                      properties:
+                        dbClusterArn:
+                          type: string
+                        isWriter:
+                          type: boolean
+                      type: object
+                    type: array
+                  globalClusterResourceID:
+                    type: string
+                  id:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  sourceDbClusterIdentifier:
+                    type: string
+                  storageEncrypted:
+                    type: boolean
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - globalClusterIdentifier
+                - providerRef
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              sourceDbClusterIdentifier:
+                type: string
+              storageEncrypted:
+                type: boolean
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - globalClusterIdentifier
             - providerRef
             type: object
           status:

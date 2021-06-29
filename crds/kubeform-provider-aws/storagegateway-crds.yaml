@@ -3,6 +3,280 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
+spec:
+  group: metrics.appscode.com
+  names:
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
+      type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              metrics:
+                items:
+                  properties:
+                    field:
+                      properties:
+                        path:
+                          type: string
+                        type:
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
+                          type: string
+                      required:
+                      - path
+                      - type
+                      type: object
+                    help:
+                      type: string
+                    labels:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
+                      properties:
+                        value:
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          type: string
+                        valueFromPath:
+                          type: string
+                      type: object
+                    name:
+                      type: string
+                    params:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
+                      properties:
+                        labelKey:
+                          type: string
+                        values:
+                          items:
+                            properties:
+                              labelValue:
+                                type: string
+                              metricValue:
+                                properties:
+                                  value:
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    type: string
+                                  valueFromPath:
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
+                      required:
+                      - labelKey
+                      - values
+                      type: object
+                    type:
+                      enum:
+                      - gauge
+                      type: string
+                  required:
+                  - help
+                  - name
+                  - type
+                  type: object
+                type: array
+              targetRef:
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: caches.storagegateway.aws.kubeform.com
+spec:
+  group: storagegateway.aws.kubeform.com
+  names:
+    kind: Cache
+    listKind: CacheList
+    plural: caches
+    singular: cache
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              diskID:
+                type: string
+              gatewayArn:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  diskID:
+                    type: string
+                  gatewayArn:
+                    type: string
+                  id:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - diskID
+                - gatewayArn
+                - providerRef
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - diskID
+            - gatewayArn
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
     app.kubernetes.io/name: kubeform
   name: cachediscsivolumes.storagegateway.aws.kubeform.com
 spec:
@@ -182,164 +456,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: metrics
-  name: metricsconfigurations.metrics.appscode.com
-spec:
-  group: metrics.appscode.com
-  names:
-    categories:
-    - metrics
-    - appscode
-    - all
-    kind: MetricsConfiguration
-    listKind: MetricsConfigurationList
-    plural: metricsconfigurations
-    singular: metricsconfiguration
-  scope: Cluster
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.targetRef.apiVersion
-      name: APIVersion
-      type: string
-    - jsonPath: .spec.targetRef.kind
-      name: Kind
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              metrics:
-                items:
-                  properties:
-                    field:
-                      properties:
-                        path:
-                          type: string
-                        type:
-                          enum:
-                          - Integer
-                          - DateTime
-                          - Array
-                          - String
-                          type: string
-                      required:
-                      - path
-                      - type
-                      type: object
-                    help:
-                      type: string
-                    labels:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    metricValue:
-                      properties:
-                        value:
-                          format: double
-                          type: number
-                        valueFromExpression:
-                          type: string
-                        valueFromPath:
-                          type: string
-                      type: object
-                    name:
-                      type: string
-                    params:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    states:
-                      properties:
-                        labelKey:
-                          type: string
-                        values:
-                          items:
-                            properties:
-                              labelValue:
-                                type: string
-                              metricValue:
-                                properties:
-                                  value:
-                                    format: double
-                                    type: number
-                                  valueFromExpression:
-                                    type: string
-                                  valueFromPath:
-                                    type: string
-                                type: object
-                            required:
-                            - labelValue
-                            - metricValue
-                            type: object
-                          type: array
-                      required:
-                      - labelKey
-                      - values
-                      type: object
-                    type:
-                      enum:
-                      - gauge
-                      type: string
-                  required:
-                  - help
-                  - name
-                  - type
-                  type: object
-                type: array
-              targetRef:
-                properties:
-                  apiVersion:
-                    type: string
-                  kind:
-                    type: string
-                required:
-                - apiVersion
-                - kind
-                type: object
-            required:
-            - metrics
-            - targetRef
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -642,14 +758,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: tapepools.storagegateway.aws.kubeform.com
+  name: nfsfileshares.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
   names:
-    kind: TapePool
-    listKind: TapePoolList
-    plural: tapepools
-    singular: tapepool
+    kind: NfsFileShare
+    listKind: NfsFileShareList
+    plural: nfsfileshares
+    singular: nfsfileshare
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -670,27 +786,97 @@ spec:
             properties:
               arn:
                 type: string
+              cacheAttributes:
+                properties:
+                  cacheStaleTimeoutInSeconds:
+                    format: int64
+                    type: integer
+                type: object
+              clientList:
+                items:
+                  type: string
+                maxItems: 100
+                minItems: 1
+                type: array
+              defaultStorageClass:
+                type: string
+              fileShareName:
+                type: string
+              fileshareID:
+                type: string
+              gatewayArn:
+                type: string
+              guessMimeTypeEnabled:
+                type: boolean
               id:
+                type: string
+              kmsEncrypted:
+                type: boolean
+              kmsKeyArn:
                 type: string
               kubeformOutput:
                 properties:
                   arn:
                     type: string
+                  cacheAttributes:
+                    properties:
+                      cacheStaleTimeoutInSeconds:
+                        format: int64
+                        type: integer
+                    type: object
+                  clientList:
+                    items:
+                      type: string
+                    maxItems: 100
+                    minItems: 1
+                    type: array
+                  defaultStorageClass:
+                    type: string
+                  fileShareName:
+                    type: string
+                  fileshareID:
+                    type: string
+                  gatewayArn:
+                    type: string
+                  guessMimeTypeEnabled:
+                    type: boolean
                   id:
                     type: string
-                  poolName:
+                  kmsEncrypted:
+                    type: boolean
+                  kmsKeyArn:
+                    type: string
+                  locationArn:
+                    type: string
+                  nfsFileShareDefaults:
+                    properties:
+                      directoryMode:
+                        type: string
+                      fileMode:
+                        type: string
+                      groupID:
+                        type: string
+                      ownerID:
+                        type: string
+                    type: object
+                  notificationPolicy:
+                    type: string
+                  objectACL:
+                    type: string
+                  path:
                     type: string
                   providerRef:
                     properties:
                       name:
                         type: string
                     type: object
-                  retentionLockTimeInDays:
-                    format: int64
-                    type: integer
-                  retentionLockType:
+                  readOnly:
+                    type: boolean
+                  requesterPays:
+                    type: boolean
+                  roleArn:
                     type: string
-                  storageClass:
+                  squash:
                     type: string
                   tags:
                     additionalProperties:
@@ -701,24 +887,62 @@ spec:
                     - Delete
                     - DoNotTerminate
                     type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - poolName
+                - clientList
+                - gatewayArn
+                - locationArn
                 - providerRef
-                - storageClass
+                - roleArn
                 type: object
-              poolName:
+              locationArn:
+                type: string
+              nfsFileShareDefaults:
+                properties:
+                  directoryMode:
+                    type: string
+                  fileMode:
+                    type: string
+                  groupID:
+                    type: string
+                  ownerID:
+                    type: string
+                type: object
+              notificationPolicy:
+                type: string
+              objectACL:
+                type: string
+              path:
                 type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              retentionLockTimeInDays:
-                format: int64
-                type: integer
-              retentionLockType:
+              readOnly:
+                type: boolean
+              requesterPays:
+                type: boolean
+              roleArn:
                 type: string
-              storageClass:
+              squash:
                 type: string
               tags:
                 additionalProperties:
@@ -729,10 +953,30 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
             required:
-            - poolName
+            - clientList
+            - gatewayArn
+            - locationArn
             - providerRef
-            - storageClass
+            - roleArn
             type: object
           status:
             properties:
@@ -1054,506 +1298,6 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: nfsfileshares.storagegateway.aws.kubeform.com
-spec:
-  group: storagegateway.aws.kubeform.com
-  names:
-    kind: NfsFileShare
-    listKind: NfsFileShareList
-    plural: nfsfileshares
-    singular: nfsfileshare
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              arn:
-                type: string
-              cacheAttributes:
-                properties:
-                  cacheStaleTimeoutInSeconds:
-                    format: int64
-                    type: integer
-                type: object
-              clientList:
-                items:
-                  type: string
-                maxItems: 100
-                minItems: 1
-                type: array
-              defaultStorageClass:
-                type: string
-              fileShareName:
-                type: string
-              fileshareID:
-                type: string
-              gatewayArn:
-                type: string
-              guessMimeTypeEnabled:
-                type: boolean
-              id:
-                type: string
-              kmsEncrypted:
-                type: boolean
-              kmsKeyArn:
-                type: string
-              kubeformOutput:
-                properties:
-                  arn:
-                    type: string
-                  cacheAttributes:
-                    properties:
-                      cacheStaleTimeoutInSeconds:
-                        format: int64
-                        type: integer
-                    type: object
-                  clientList:
-                    items:
-                      type: string
-                    maxItems: 100
-                    minItems: 1
-                    type: array
-                  defaultStorageClass:
-                    type: string
-                  fileShareName:
-                    type: string
-                  fileshareID:
-                    type: string
-                  gatewayArn:
-                    type: string
-                  guessMimeTypeEnabled:
-                    type: boolean
-                  id:
-                    type: string
-                  kmsEncrypted:
-                    type: boolean
-                  kmsKeyArn:
-                    type: string
-                  locationArn:
-                    type: string
-                  nfsFileShareDefaults:
-                    properties:
-                      directoryMode:
-                        type: string
-                      fileMode:
-                        type: string
-                      groupID:
-                        type: string
-                      ownerID:
-                        type: string
-                    type: object
-                  notificationPolicy:
-                    type: string
-                  objectACL:
-                    type: string
-                  path:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  readOnly:
-                    type: boolean
-                  requesterPays:
-                    type: boolean
-                  roleArn:
-                    type: string
-                  squash:
-                    type: string
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - clientList
-                - gatewayArn
-                - locationArn
-                - providerRef
-                - roleArn
-                type: object
-              locationArn:
-                type: string
-              nfsFileShareDefaults:
-                properties:
-                  directoryMode:
-                    type: string
-                  fileMode:
-                    type: string
-                  groupID:
-                    type: string
-                  ownerID:
-                    type: string
-                type: object
-              notificationPolicy:
-                type: string
-              objectACL:
-                type: string
-              path:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              readOnly:
-                type: boolean
-              requesterPays:
-                type: boolean
-              roleArn:
-                type: string
-              squash:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - clientList
-            - gatewayArn
-            - locationArn
-            - providerRef
-            - roleArn
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: uploadbuffers.storagegateway.aws.kubeform.com
-spec:
-  group: storagegateway.aws.kubeform.com
-  names:
-    kind: UploadBuffer
-    listKind: UploadBufferList
-    plural: uploadbuffers
-    singular: uploadbuffer
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              diskID:
-                type: string
-              diskPath:
-                type: string
-              gatewayArn:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  diskID:
-                    type: string
-                  diskPath:
-                    type: string
-                  gatewayArn:
-                    type: string
-                  id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - gatewayArn
-                - providerRef
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - gatewayArn
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: caches.storagegateway.aws.kubeform.com
-spec:
-  group: storagegateway.aws.kubeform.com
-  names:
-    kind: Cache
-    listKind: CacheList
-    plural: caches
-    singular: cache
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              diskID:
-                type: string
-              gatewayArn:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  diskID:
-                    type: string
-                  gatewayArn:
-                    type: string
-                  id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - diskID
-                - gatewayArn
-                - providerRef
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - diskID
-            - gatewayArn
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
   name: storediscsivolumes.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -1707,6 +1451,262 @@ spec:
             - preserveExistingData
             - providerRef
             - targetName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: tapepools.storagegateway.aws.kubeform.com
+spec:
+  group: storagegateway.aws.kubeform.com
+  names:
+    kind: TapePool
+    listKind: TapePoolList
+    plural: tapepools
+    singular: tapepool
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              arn:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  poolName:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  retentionLockTimeInDays:
+                    format: int64
+                    type: integer
+                  retentionLockType:
+                    type: string
+                  storageClass:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - poolName
+                - providerRef
+                - storageClass
+                type: object
+              poolName:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              retentionLockTimeInDays:
+                format: int64
+                type: integer
+              retentionLockType:
+                type: string
+              storageClass:
+                type: string
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - poolName
+            - providerRef
+            - storageClass
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: uploadbuffers.storagegateway.aws.kubeform.com
+spec:
+  group: storagegateway.aws.kubeform.com
+  names:
+    kind: UploadBuffer
+    listKind: UploadBufferList
+    plural: uploadbuffers
+    singular: uploadbuffer
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              diskID:
+                type: string
+              diskPath:
+                type: string
+              gatewayArn:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  diskID:
+                    type: string
+                  diskPath:
+                    type: string
+                  gatewayArn:
+                    type: string
+                  id:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - gatewayArn
+                - providerRef
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - gatewayArn
+            - providerRef
             type: object
           status:
             properties:

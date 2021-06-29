@@ -480,14 +480,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: sqlcontainers.cosmosdb.azurerm.kubeform.com
+  name: cassandrakeyspaces.cosmosdb.azurerm.kubeform.com
 spec:
   group: cosmosdb.azurerm.kubeform.com
   names:
-    kind: SqlContainer
-    listKind: SqlContainerList
-    plural: sqlcontainers
-    singular: sqlcontainer
+    kind: CassandraKeyspace
+    listKind: CassandraKeyspaceList
+    plural: cassandrakeyspaces
+    singular: cassandrakeyspace
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -508,157 +508,28 @@ spec:
             properties:
               accountName:
                 type: string
-              analyticalStorageTtl:
-                format: int64
-                type: integer
               autoscaleSettings:
                 properties:
                   maxThroughput:
                     format: int64
                     type: integer
                 type: object
-              conflictResolutionPolicy:
-                properties:
-                  conflictResolutionPath:
-                    type: string
-                  conflictResolutionProcedure:
-                    type: string
-                  mode:
-                    type: string
-                required:
-                - mode
-                type: object
-              databaseName:
-                type: string
-              defaultTtl:
-                format: int64
-                type: integer
               id:
                 type: string
-              indexingPolicy:
-                properties:
-                  compositeIndex:
-                    items:
-                      properties:
-                        index:
-                          items:
-                            properties:
-                              order:
-                                type: string
-                              path:
-                                type: string
-                            required:
-                            - order
-                            - path
-                            type: object
-                          minItems: 1
-                          type: array
-                      required:
-                      - index
-                      type: object
-                    type: array
-                  excludedPath:
-                    items:
-                      properties:
-                        path:
-                          type: string
-                      required:
-                      - path
-                      type: object
-                    type: array
-                  includedPath:
-                    items:
-                      properties:
-                        path:
-                          type: string
-                      required:
-                      - path
-                      type: object
-                    type: array
-                  indexingMode:
-                    type: string
-                type: object
               kubeformOutput:
                 properties:
                   accountName:
                     type: string
-                  analyticalStorageTtl:
-                    format: int64
-                    type: integer
                   autoscaleSettings:
                     properties:
                       maxThroughput:
                         format: int64
                         type: integer
                     type: object
-                  conflictResolutionPolicy:
-                    properties:
-                      conflictResolutionPath:
-                        type: string
-                      conflictResolutionProcedure:
-                        type: string
-                      mode:
-                        type: string
-                    required:
-                    - mode
-                    type: object
-                  databaseName:
-                    type: string
-                  defaultTtl:
-                    format: int64
-                    type: integer
                   id:
                     type: string
-                  indexingPolicy:
-                    properties:
-                      compositeIndex:
-                        items:
-                          properties:
-                            index:
-                              items:
-                                properties:
-                                  order:
-                                    type: string
-                                  path:
-                                    type: string
-                                required:
-                                - order
-                                - path
-                                type: object
-                              minItems: 1
-                              type: array
-                          required:
-                          - index
-                          type: object
-                        type: array
-                      excludedPath:
-                        items:
-                          properties:
-                            path:
-                              type: string
-                          required:
-                          - path
-                          type: object
-                        type: array
-                      includedPath:
-                        items:
-                          properties:
-                            path:
-                              type: string
-                          required:
-                          - path
-                          type: object
-                        type: array
-                      indexingMode:
-                        type: string
-                    type: object
                   name:
                     type: string
-                  partitionKeyPath:
-                    type: string
-                  partitionKeyVersion:
-                    format: int64
-                    type: integer
                   providerRef:
                     properties:
                       name:
@@ -692,32 +563,14 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  uniqueKey:
-                    items:
-                      properties:
-                        paths:
-                          items:
-                            type: string
-                          type: array
-                      required:
-                      - paths
-                      type: object
-                    type: array
                 required:
                 - accountName
-                - databaseName
                 - name
-                - partitionKeyPath
                 - providerRef
                 - resourceGroupName
                 type: object
               name:
                 type: string
-              partitionKeyPath:
-                type: string
-              partitionKeyVersion:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
@@ -751,22 +604,449 @@ spec:
                     format: int64
                     type: integer
                 type: object
-              uniqueKey:
-                items:
-                  properties:
-                    paths:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - paths
-                  type: object
-                type: array
             required:
             - accountName
-            - databaseName
             - name
-            - partitionKeyPath
+            - providerRef
+            - resourceGroupName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: cassandratables.cosmosdb.azurerm.kubeform.com
+spec:
+  group: cosmosdb.azurerm.kubeform.com
+  names:
+    kind: CassandraTable
+    listKind: CassandraTableList
+    plural: cassandratables
+    singular: cassandratable
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              analyticalStorageTtl:
+                format: int64
+                type: integer
+              autoscaleSettings:
+                properties:
+                  maxThroughput:
+                    format: int64
+                    type: integer
+                type: object
+              cassandraKeyspaceID:
+                type: string
+              defaultTtl:
+                format: int64
+                type: integer
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  analyticalStorageTtl:
+                    format: int64
+                    type: integer
+                  autoscaleSettings:
+                    properties:
+                      maxThroughput:
+                        format: int64
+                        type: integer
+                    type: object
+                  cassandraKeyspaceID:
+                    type: string
+                  defaultTtl:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  schema:
+                    properties:
+                      clusterKey:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            orderBy:
+                              type: string
+                          required:
+                          - name
+                          - orderBy
+                          type: object
+                        type: array
+                      column:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            type:
+                              type: string
+                          required:
+                          - name
+                          - type
+                          type: object
+                        minItems: 1
+                        type: array
+                      partitionKey:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        type: array
+                    required:
+                    - column
+                    - partitionKey
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  throughput:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - cassandraKeyspaceID
+                - name
+                - providerRef
+                - schema
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              schema:
+                properties:
+                  clusterKey:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        orderBy:
+                          type: string
+                      required:
+                      - name
+                      - orderBy
+                      type: object
+                    type: array
+                  column:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                      - name
+                      - type
+                      type: object
+                    minItems: 1
+                    type: array
+                  partitionKey:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    type: array
+                required:
+                - column
+                - partitionKey
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              throughput:
+                format: int64
+                type: integer
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - cassandraKeyspaceID
+            - name
+            - providerRef
+            - schema
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: gremlindatabases.cosmosdb.azurerm.kubeform.com
+spec:
+  group: cosmosdb.azurerm.kubeform.com
+  names:
+    kind: GremlinDatabase
+    listKind: GremlinDatabaseList
+    plural: gremlindatabases
+    singular: gremlindatabase
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              accountName:
+                type: string
+              autoscaleSettings:
+                properties:
+                  maxThroughput:
+                    format: int64
+                    type: integer
+                type: object
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  accountName:
+                    type: string
+                  autoscaleSettings:
+                    properties:
+                      maxThroughput:
+                        format: int64
+                        type: integer
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  throughput:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - accountName
+                - name
+                - providerRef
+                - resourceGroupName
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resourceGroupName:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              throughput:
+                format: int64
+                type: integer
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - accountName
+            - name
             - providerRef
             - resourceGroupName
             type: object
@@ -1045,6 +1325,252 @@ spec:
             - indexPolicy
             - name
             - partitionKeyPath
+            - providerRef
+            - resourceGroupName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: mongocollections.cosmosdb.azurerm.kubeform.com
+spec:
+  group: cosmosdb.azurerm.kubeform.com
+  names:
+    kind: MongoCollection
+    listKind: MongoCollectionList
+    plural: mongocollections
+    singular: mongocollection
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              accountName:
+                type: string
+              analyticalStorageTtl:
+                format: int64
+                type: integer
+              autoscaleSettings:
+                properties:
+                  maxThroughput:
+                    format: int64
+                    type: integer
+                type: object
+              databaseName:
+                type: string
+              defaultTtlSeconds:
+                format: int64
+                type: integer
+              id:
+                type: string
+              index:
+                items:
+                  properties:
+                    keys:
+                      items:
+                        type: string
+                      type: array
+                    unique:
+                      type: boolean
+                  required:
+                  - keys
+                  type: object
+                type: array
+              kubeformOutput:
+                properties:
+                  accountName:
+                    type: string
+                  analyticalStorageTtl:
+                    format: int64
+                    type: integer
+                  autoscaleSettings:
+                    properties:
+                      maxThroughput:
+                        format: int64
+                        type: integer
+                    type: object
+                  databaseName:
+                    type: string
+                  defaultTtlSeconds:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  index:
+                    items:
+                      properties:
+                        keys:
+                          items:
+                            type: string
+                          type: array
+                        unique:
+                          type: boolean
+                      required:
+                      - keys
+                      type: object
+                    type: array
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  shardKey:
+                    type: string
+                  systemIndexes:
+                    items:
+                      properties:
+                        keys:
+                          items:
+                            type: string
+                          type: array
+                        unique:
+                          type: boolean
+                      type: object
+                    type: array
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  throughput:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - accountName
+                - databaseName
+                - name
+                - providerRef
+                - resourceGroupName
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resourceGroupName:
+                type: string
+              shardKey:
+                type: string
+              systemIndexes:
+                items:
+                  properties:
+                    keys:
+                      items:
+                        type: string
+                      type: array
+                    unique:
+                      type: boolean
+                  type: object
+                type: array
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              throughput:
+                format: int64
+                type: integer
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - accountName
+            - databaseName
+            - name
             - providerRef
             - resourceGroupName
             type: object
@@ -1432,14 +1958,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: cassandratables.cosmosdb.azurerm.kubeform.com
+  name: sqlcontainers.cosmosdb.azurerm.kubeform.com
 spec:
   group: cosmosdb.azurerm.kubeform.com
   names:
-    kind: CassandraTable
-    listKind: CassandraTableList
-    plural: cassandratables
-    singular: cassandratable
+    kind: SqlContainer
+    listKind: SqlContainerList
+    plural: sqlcontainers
+    singular: sqlcontainer
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -1458,6 +1984,8 @@ spec:
             type: object
           spec:
             properties:
+              accountName:
+                type: string
               analyticalStorageTtl:
                 format: int64
                 type: integer
@@ -1467,15 +1995,71 @@ spec:
                     format: int64
                     type: integer
                 type: object
-              cassandraKeyspaceID:
+              conflictResolutionPolicy:
+                properties:
+                  conflictResolutionPath:
+                    type: string
+                  conflictResolutionProcedure:
+                    type: string
+                  mode:
+                    type: string
+                required:
+                - mode
+                type: object
+              databaseName:
                 type: string
               defaultTtl:
                 format: int64
                 type: integer
               id:
                 type: string
+              indexingPolicy:
+                properties:
+                  compositeIndex:
+                    items:
+                      properties:
+                        index:
+                          items:
+                            properties:
+                              order:
+                                type: string
+                              path:
+                                type: string
+                            required:
+                            - order
+                            - path
+                            type: object
+                          minItems: 1
+                          type: array
+                      required:
+                      - index
+                      type: object
+                    type: array
+                  excludedPath:
+                    items:
+                      properties:
+                        path:
+                          type: string
+                      required:
+                      - path
+                      type: object
+                    type: array
+                  includedPath:
+                    items:
+                      properties:
+                        path:
+                          type: string
+                      required:
+                      - path
+                      type: object
+                    type: array
+                  indexingMode:
+                    type: string
+                type: object
               kubeformOutput:
                 properties:
+                  accountName:
+                    type: string
                   analyticalStorageTtl:
                     format: int64
                     type: integer
@@ -1485,11 +2069,277 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  cassandraKeyspaceID:
+                  conflictResolutionPolicy:
+                    properties:
+                      conflictResolutionPath:
+                        type: string
+                      conflictResolutionProcedure:
+                        type: string
+                      mode:
+                        type: string
+                    required:
+                    - mode
+                    type: object
+                  databaseName:
                     type: string
                   defaultTtl:
                     format: int64
                     type: integer
+                  id:
+                    type: string
+                  indexingPolicy:
+                    properties:
+                      compositeIndex:
+                        items:
+                          properties:
+                            index:
+                              items:
+                                properties:
+                                  order:
+                                    type: string
+                                  path:
+                                    type: string
+                                required:
+                                - order
+                                - path
+                                type: object
+                              minItems: 1
+                              type: array
+                          required:
+                          - index
+                          type: object
+                        type: array
+                      excludedPath:
+                        items:
+                          properties:
+                            path:
+                              type: string
+                          required:
+                          - path
+                          type: object
+                        type: array
+                      includedPath:
+                        items:
+                          properties:
+                            path:
+                              type: string
+                          required:
+                          - path
+                          type: object
+                        type: array
+                      indexingMode:
+                        type: string
+                    type: object
+                  name:
+                    type: string
+                  partitionKeyPath:
+                    type: string
+                  partitionKeyVersion:
+                    format: int64
+                    type: integer
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  throughput:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  uniqueKey:
+                    items:
+                      properties:
+                        paths:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - paths
+                      type: object
+                    type: array
+                required:
+                - accountName
+                - databaseName
+                - name
+                - partitionKeyPath
+                - providerRef
+                - resourceGroupName
+                type: object
+              name:
+                type: string
+              partitionKeyPath:
+                type: string
+              partitionKeyVersion:
+                format: int64
+                type: integer
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resourceGroupName:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              throughput:
+                format: int64
+                type: integer
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+              uniqueKey:
+                items:
+                  properties:
+                    paths:
+                      items:
+                        type: string
+                      type: array
+                  required:
+                  - paths
+                  type: object
+                type: array
+            required:
+            - accountName
+            - databaseName
+            - name
+            - partitionKeyPath
+            - providerRef
+            - resourceGroupName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: sqldatabases.cosmosdb.azurerm.kubeform.com
+spec:
+  group: cosmosdb.azurerm.kubeform.com
+  names:
+    kind: SqlDatabase
+    listKind: SqlDatabaseList
+    plural: sqldatabases
+    singular: sqldatabase
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              accountName:
+                type: string
+              autoscaleSettings:
+                properties:
+                  maxThroughput:
+                    format: int64
+                    type: integer
+                type: object
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  accountName:
+                    type: string
+                  autoscaleSettings:
+                    properties:
+                      maxThroughput:
+                        format: int64
+                        type: integer
+                    type: object
                   id:
                     type: string
                   name:
@@ -1499,46 +2349,8 @@ spec:
                       name:
                         type: string
                     type: object
-                  schema:
-                    properties:
-                      clusterKey:
-                        items:
-                          properties:
-                            name:
-                              type: string
-                            orderBy:
-                              type: string
-                          required:
-                          - name
-                          - orderBy
-                          type: object
-                        type: array
-                      column:
-                        items:
-                          properties:
-                            name:
-                              type: string
-                            type:
-                              type: string
-                          required:
-                          - name
-                          - type
-                          type: object
-                        minItems: 1
-                        type: array
-                      partitionKey:
-                        items:
-                          properties:
-                            name:
-                              type: string
-                          required:
-                          - name
-                          type: object
-                        type: array
-                    required:
-                    - column
-                    - partitionKey
-                    type: object
+                  resourceGroupName:
+                    type: string
                   terminationPolicy:
                     enum:
                     - Delete
@@ -1566,10 +2378,10 @@ spec:
                         type: integer
                     type: object
                 required:
-                - cassandraKeyspaceID
+                - accountName
                 - name
                 - providerRef
-                - schema
+                - resourceGroupName
                 type: object
               name:
                 type: string
@@ -1578,46 +2390,8 @@ spec:
                   name:
                     type: string
                 type: object
-              schema:
-                properties:
-                  clusterKey:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        orderBy:
-                          type: string
-                      required:
-                      - name
-                      - orderBy
-                      type: object
-                    type: array
-                  column:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                      - name
-                      - type
-                      type: object
-                    minItems: 1
-                    type: array
-                  partitionKey:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                      required:
-                      - name
-                      type: object
-                    type: array
-                required:
-                - column
-                - partitionKey
-                type: object
+              resourceGroupName:
+                type: string
               terminationPolicy:
                 enum:
                 - Delete
@@ -1645,10 +2419,10 @@ spec:
                     type: integer
                 type: object
             required:
-            - cassandraKeyspaceID
+            - accountName
             - name
             - providerRef
-            - schema
+            - resourceGroupName
             type: object
           status:
             properties:
@@ -1854,604 +2628,6 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: gremlindatabases.cosmosdb.azurerm.kubeform.com
-spec:
-  group: cosmosdb.azurerm.kubeform.com
-  names:
-    kind: GremlinDatabase
-    listKind: GremlinDatabaseList
-    plural: gremlindatabases
-    singular: gremlindatabase
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              accountName:
-                type: string
-              autoscaleSettings:
-                properties:
-                  maxThroughput:
-                    format: int64
-                    type: integer
-                type: object
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  accountName:
-                    type: string
-                  autoscaleSettings:
-                    properties:
-                      maxThroughput:
-                        format: int64
-                        type: integer
-                    type: object
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  throughput:
-                    format: int64
-                    type: integer
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - accountName
-                - name
-                - providerRef
-                - resourceGroupName
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resourceGroupName:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              throughput:
-                format: int64
-                type: integer
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - accountName
-            - name
-            - providerRef
-            - resourceGroupName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: cassandrakeyspaces.cosmosdb.azurerm.kubeform.com
-spec:
-  group: cosmosdb.azurerm.kubeform.com
-  names:
-    kind: CassandraKeyspace
-    listKind: CassandraKeyspaceList
-    plural: cassandrakeyspaces
-    singular: cassandrakeyspace
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              accountName:
-                type: string
-              autoscaleSettings:
-                properties:
-                  maxThroughput:
-                    format: int64
-                    type: integer
-                type: object
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  accountName:
-                    type: string
-                  autoscaleSettings:
-                    properties:
-                      maxThroughput:
-                        format: int64
-                        type: integer
-                    type: object
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  throughput:
-                    format: int64
-                    type: integer
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - accountName
-                - name
-                - providerRef
-                - resourceGroupName
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resourceGroupName:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              throughput:
-                format: int64
-                type: integer
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - accountName
-            - name
-            - providerRef
-            - resourceGroupName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: mongocollections.cosmosdb.azurerm.kubeform.com
-spec:
-  group: cosmosdb.azurerm.kubeform.com
-  names:
-    kind: MongoCollection
-    listKind: MongoCollectionList
-    plural: mongocollections
-    singular: mongocollection
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              accountName:
-                type: string
-              analyticalStorageTtl:
-                format: int64
-                type: integer
-              autoscaleSettings:
-                properties:
-                  maxThroughput:
-                    format: int64
-                    type: integer
-                type: object
-              databaseName:
-                type: string
-              defaultTtlSeconds:
-                format: int64
-                type: integer
-              id:
-                type: string
-              index:
-                items:
-                  properties:
-                    keys:
-                      items:
-                        type: string
-                      type: array
-                    unique:
-                      type: boolean
-                  required:
-                  - keys
-                  type: object
-                type: array
-              kubeformOutput:
-                properties:
-                  accountName:
-                    type: string
-                  analyticalStorageTtl:
-                    format: int64
-                    type: integer
-                  autoscaleSettings:
-                    properties:
-                      maxThroughput:
-                        format: int64
-                        type: integer
-                    type: object
-                  databaseName:
-                    type: string
-                  defaultTtlSeconds:
-                    format: int64
-                    type: integer
-                  id:
-                    type: string
-                  index:
-                    items:
-                      properties:
-                        keys:
-                          items:
-                            type: string
-                          type: array
-                        unique:
-                          type: boolean
-                      required:
-                      - keys
-                      type: object
-                    type: array
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resourceGroupName:
-                    type: string
-                  shardKey:
-                    type: string
-                  systemIndexes:
-                    items:
-                      properties:
-                        keys:
-                          items:
-                            type: string
-                          type: array
-                        unique:
-                          type: boolean
-                      type: object
-                    type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  throughput:
-                    format: int64
-                    type: integer
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - accountName
-                - databaseName
-                - name
-                - providerRef
-                - resourceGroupName
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resourceGroupName:
-                type: string
-              shardKey:
-                type: string
-              systemIndexes:
-                items:
-                  properties:
-                    keys:
-                      items:
-                        type: string
-                      type: array
-                    unique:
-                      type: boolean
-                  type: object
-                type: array
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              throughput:
-                format: int64
-                type: integer
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - accountName
-            - databaseName
-            - name
-            - providerRef
-            - resourceGroupName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
   name: sqlstoredprocedures.cosmosdb.azurerm.kubeform.com
 spec:
   group: cosmosdb.azurerm.kubeform.com
@@ -2578,182 +2754,6 @@ spec:
             - body
             - containerName
             - databaseName
-            - name
-            - providerRef
-            - resourceGroupName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: sqldatabases.cosmosdb.azurerm.kubeform.com
-spec:
-  group: cosmosdb.azurerm.kubeform.com
-  names:
-    kind: SqlDatabase
-    listKind: SqlDatabaseList
-    plural: sqldatabases
-    singular: sqldatabase
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              accountName:
-                type: string
-              autoscaleSettings:
-                properties:
-                  maxThroughput:
-                    format: int64
-                    type: integer
-                type: object
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  accountName:
-                    type: string
-                  autoscaleSettings:
-                    properties:
-                      maxThroughput:
-                        format: int64
-                        type: integer
-                    type: object
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  throughput:
-                    format: int64
-                    type: integer
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - accountName
-                - name
-                - providerRef
-                - resourceGroupName
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resourceGroupName:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              throughput:
-                format: int64
-                type: integer
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - accountName
             - name
             - providerRef
             - resourceGroupName

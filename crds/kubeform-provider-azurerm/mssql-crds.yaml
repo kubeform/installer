@@ -3,6 +3,164 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
+spec:
+  group: metrics.appscode.com
+  names:
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
+      type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              metrics:
+                items:
+                  properties:
+                    field:
+                      properties:
+                        path:
+                          type: string
+                        type:
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
+                          type: string
+                      required:
+                      - path
+                      - type
+                      type: object
+                    help:
+                      type: string
+                    labels:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
+                      properties:
+                        value:
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          type: string
+                        valueFromPath:
+                          type: string
+                      type: object
+                    name:
+                      type: string
+                    params:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
+                      properties:
+                        labelKey:
+                          type: string
+                        values:
+                          items:
+                            properties:
+                              labelValue:
+                                type: string
+                              metricValue:
+                                properties:
+                                  value:
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    type: string
+                                  valueFromPath:
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
+                      required:
+                      - labelKey
+                      - values
+                      type: object
+                    type:
+                      enum:
+                      - gauge
+                      type: string
+                  required:
+                  - help
+                  - name
+                  - type
+                  type: object
+                type: array
+              targetRef:
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
     app.kubernetes.io/name: kubeform
   name: databases.mssql.azurerm.kubeform.com
 spec:
@@ -361,31 +519,21 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: metrics
-  name: metricsconfigurations.metrics.appscode.com
+    app.kubernetes.io/name: kubeform
+  name: databaseextendedauditingpolicies.mssql.azurerm.kubeform.com
 spec:
-  group: metrics.appscode.com
+  group: mssql.azurerm.kubeform.com
   names:
-    categories:
-    - metrics
-    - appscode
-    - all
-    kind: MetricsConfiguration
-    listKind: MetricsConfigurationList
-    plural: metricsconfigurations
-    singular: metricsconfiguration
-  scope: Cluster
+    kind: DatabaseExtendedAuditingPolicy
+    listKind: DatabaseExtendedAuditingPolicyList
+    plural: databaseextendedauditingpolicies
+    singular: databaseextendedauditingpolicy
+  scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.targetRef.apiVersion
-      name: APIVersion
+    - jsonPath: .status.phase
+      name: Phase
       type: string
-    - jsonPath: .spec.targetRef.kind
-      name: Kind
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -398,120 +546,332 @@ spec:
             type: object
           spec:
             properties:
-              metrics:
+              databaseID:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  databaseID:
+                    type: string
+                  id:
+                    type: string
+                  logMonitoringEnabled:
+                    type: boolean
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  retentionInDays:
+                    format: int64
+                    type: integer
+                  secretRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  storageAccountAccessKeyIsSecondary:
+                    type: boolean
+                  storageEndpoint:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - databaseID
+                - providerRef
+                type: object
+              logMonitoringEnabled:
+                type: boolean
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              retentionInDays:
+                format: int64
+                type: integer
+              secretRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              storageAccountAccessKeyIsSecondary:
+                type: boolean
+              storageEndpoint:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - databaseID
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
                 items:
                   properties:
-                    field:
-                      properties:
-                        path:
-                          type: string
-                        type:
-                          enum:
-                          - Integer
-                          - DateTime
-                          - Array
-                          - String
-                          type: string
-                      required:
-                      - path
-                      - type
-                      type: object
-                    help:
+                    lastTransitionTime:
+                      format: date-time
                       type: string
-                    labels:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    metricValue:
-                      properties:
-                        value:
-                          format: double
-                          type: number
-                        valueFromExpression:
-                          type: string
-                        valueFromPath:
-                          type: string
-                      type: object
-                    name:
+                    message:
                       type: string
-                    params:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    states:
-                      properties:
-                        labelKey:
-                          type: string
-                        values:
-                          items:
-                            properties:
-                              labelValue:
-                                type: string
-                              metricValue:
-                                properties:
-                                  value:
-                                    format: double
-                                    type: number
-                                  valueFromExpression:
-                                    type: string
-                                  valueFromPath:
-                                    type: string
-                                type: object
-                            required:
-                            - labelValue
-                            - metricValue
-                            type: object
-                          type: array
-                      required:
-                      - labelKey
-                      - values
-                      type: object
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
                     type:
-                      enum:
-                      - gauge
                       type: string
                   required:
-                  - help
-                  - name
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
                   - type
                   type: object
                 type: array
-              targetRef:
-                properties:
-                  apiVersion:
-                    type: string
-                  kind:
-                    type: string
-                required:
-                - apiVersion
-                - kind
-                type: object
-            required:
-            - metrics
-            - targetRef
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
             type: object
         type: object
     served: true
     storage: true
-    subresources: {}
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: databasevulnerabilityassessmentrulebaselines.mssql.azurerm.kubeform.com
+spec:
+  group: mssql.azurerm.kubeform.com
+  names:
+    kind: DatabaseVulnerabilityAssessmentRuleBaseline
+    listKind: DatabaseVulnerabilityAssessmentRuleBaselineList
+    plural: databasevulnerabilityassessmentrulebaselines
+    singular: databasevulnerabilityassessmentrulebaseline
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              baselineName:
+                type: string
+              baselineResult:
+                items:
+                  properties:
+                    result:
+                      items:
+                        type: string
+                      type: array
+                  required:
+                  - result
+                  type: object
+                type: array
+              databaseName:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  baselineName:
+                    type: string
+                  baselineResult:
+                    items:
+                      properties:
+                        result:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - result
+                      type: object
+                    type: array
+                  databaseName:
+                    type: string
+                  id:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  ruleID:
+                    type: string
+                  serverVulnerabilityAssessmentID:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - baselineResult
+                - databaseName
+                - providerRef
+                - ruleID
+                - serverVulnerabilityAssessmentID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              ruleID:
+                type: string
+              serverVulnerabilityAssessmentID:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - baselineResult
+            - databaseName
+            - providerRef
+            - ruleID
+            - serverVulnerabilityAssessmentID
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -772,14 +1132,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: jobcredentials.mssql.azurerm.kubeform.com
+  name: firewallrules.mssql.azurerm.kubeform.com
 spec:
   group: mssql.azurerm.kubeform.com
   names:
-    kind: JobCredential
-    listKind: JobCredentialList
-    plural: jobcredentials
-    singular: jobcredential
+    kind: FirewallRule
+    listKind: FirewallRuleList
+    plural: firewallrules
+    singular: firewallrule
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -798,15 +1158,15 @@ spec:
             type: object
           spec:
             properties:
-              id:
+              endIPAddress:
                 type: string
-              jobAgentID:
+              id:
                 type: string
               kubeformOutput:
                 properties:
-                  id:
+                  endIPAddress:
                     type: string
-                  jobAgentID:
+                  id:
                     type: string
                   name:
                     type: string
@@ -815,11 +1175,10 @@ spec:
                       name:
                         type: string
                     type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
+                  serverID:
+                    type: string
+                  startIPAddress:
+                    type: string
                   terminationPolicy:
                     enum:
                     - Delete
@@ -843,13 +1202,12 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  username:
-                    type: string
                 required:
-                - jobAgentID
+                - endIPAddress
                 - name
                 - providerRef
-                - username
+                - serverID
+                - startIPAddress
                 type: object
               name:
                 type: string
@@ -858,188 +1216,9 @@ spec:
                   name:
                     type: string
                 type: object
-              secretRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              username:
-                type: string
-            required:
-            - jobAgentID
-            - name
-            - providerRef
-            - username
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: serverextendedauditingpolicies.mssql.azurerm.kubeform.com
-spec:
-  group: mssql.azurerm.kubeform.com
-  names:
-    kind: ServerExtendedAuditingPolicy
-    listKind: ServerExtendedAuditingPolicyList
-    plural: serverextendedauditingpolicies
-    singular: serverextendedauditingpolicy
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  id:
-                    type: string
-                  logMonitoringEnabled:
-                    type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  retentionInDays:
-                    format: int64
-                    type: integer
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  serverID:
-                    type: string
-                  storageAccountAccessKeyIsSecondary:
-                    type: boolean
-                  storageEndpoint:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - providerRef
-                - serverID
-                type: object
-              logMonitoringEnabled:
-                type: boolean
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              retentionInDays:
-                format: int64
-                type: integer
-              secretRef:
-                properties:
-                  name:
-                    type: string
-                type: object
               serverID:
                 type: string
-              storageAccountAccessKeyIsSecondary:
-                type: boolean
-              storageEndpoint:
+              startIPAddress:
                 type: string
               terminationPolicy:
                 enum:
@@ -1065,182 +1244,11 @@ spec:
                     type: integer
                 type: object
             required:
+            - endIPAddress
+            - name
             - providerRef
             - serverID
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: databaseextendedauditingpolicies.mssql.azurerm.kubeform.com
-spec:
-  group: mssql.azurerm.kubeform.com
-  names:
-    kind: DatabaseExtendedAuditingPolicy
-    listKind: DatabaseExtendedAuditingPolicyList
-    plural: databaseextendedauditingpolicies
-    singular: databaseextendedauditingpolicy
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              databaseID:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  databaseID:
-                    type: string
-                  id:
-                    type: string
-                  logMonitoringEnabled:
-                    type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  retentionInDays:
-                    format: int64
-                    type: integer
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  storageAccountAccessKeyIsSecondary:
-                    type: boolean
-                  storageEndpoint:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - databaseID
-                - providerRef
-                type: object
-              logMonitoringEnabled:
-                type: boolean
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              retentionInDays:
-                format: int64
-                type: integer
-              secretRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              storageAccountAccessKeyIsSecondary:
-                type: boolean
-              storageEndpoint:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - databaseID
-            - providerRef
+            - startIPAddress
             type: object
           status:
             properties:
@@ -1407,6 +1415,174 @@ spec:
             - location
             - name
             - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: jobcredentials.mssql.azurerm.kubeform.com
+spec:
+  group: mssql.azurerm.kubeform.com
+  names:
+    kind: JobCredential
+    listKind: JobCredentialList
+    plural: jobcredentials
+    singular: jobcredential
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              id:
+                type: string
+              jobAgentID:
+                type: string
+              kubeformOutput:
+                properties:
+                  id:
+                    type: string
+                  jobAgentID:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  secretRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  username:
+                    type: string
+                required:
+                - jobAgentID
+                - name
+                - providerRef
+                - username
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              secretRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+              username:
+                type: string
+            required:
+            - jobAgentID
+            - name
+            - providerRef
+            - username
             type: object
           status:
             properties:
@@ -1736,14 +1912,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: firewallrules.mssql.azurerm.kubeform.com
+  name: serverextendedauditingpolicies.mssql.azurerm.kubeform.com
 spec:
   group: mssql.azurerm.kubeform.com
   names:
-    kind: FirewallRule
-    listKind: FirewallRuleList
-    plural: firewallrules
-    singular: firewallrule
+    kind: ServerExtendedAuditingPolicy
+    listKind: ServerExtendedAuditingPolicyList
+    plural: serverextendedauditingpolicies
+    singular: serverextendedauditingpolicy
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -1762,26 +1938,32 @@ spec:
             type: object
           spec:
             properties:
-              endIPAddress:
-                type: string
               id:
                 type: string
               kubeformOutput:
                 properties:
-                  endIPAddress:
-                    type: string
                   id:
                     type: string
-                  name:
-                    type: string
+                  logMonitoringEnabled:
+                    type: boolean
                   providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  retentionInDays:
+                    format: int64
+                    type: integer
+                  secretRef:
                     properties:
                       name:
                         type: string
                     type: object
                   serverID:
                     type: string
-                  startIPAddress:
+                  storageAccountAccessKeyIsSecondary:
+                    type: boolean
+                  storageEndpoint:
                     type: string
                   terminationPolicy:
                     enum:
@@ -1807,22 +1989,29 @@ spec:
                         type: integer
                     type: object
                 required:
-                - endIPAddress
-                - name
                 - providerRef
                 - serverID
-                - startIPAddress
                 type: object
-              name:
-                type: string
+              logMonitoringEnabled:
+                type: boolean
               providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              retentionInDays:
+                format: int64
+                type: integer
+              secretRef:
                 properties:
                   name:
                     type: string
                 type: object
               serverID:
                 type: string
-              startIPAddress:
+              storageAccountAccessKeyIsSecondary:
+                type: boolean
+              storageEndpoint:
                 type: string
               terminationPolicy:
                 enum:
@@ -1848,11 +2037,8 @@ spec:
                     type: integer
                 type: object
             required:
-            - endIPAddress
-            - name
             - providerRef
             - serverID
-            - startIPAddress
             type: object
           status:
             properties:
@@ -2051,6 +2237,340 @@ spec:
             - resourceGroupName
             - serverName
             - state
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: servertransparentdataencryptions.mssql.azurerm.kubeform.com
+spec:
+  group: mssql.azurerm.kubeform.com
+  names:
+    kind: ServerTransparentDataEncryption
+    listKind: ServerTransparentDataEncryptionList
+    plural: servertransparentdataencryptions
+    singular: servertransparentdataencryption
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              id:
+                type: string
+              keyVaultKeyID:
+                type: string
+              kubeformOutput:
+                properties:
+                  id:
+                    type: string
+                  keyVaultKeyID:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  serverID:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - providerRef
+                - serverID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              serverID:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - providerRef
+            - serverID
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: servervulnerabilityassessments.mssql.azurerm.kubeform.com
+spec:
+  group: mssql.azurerm.kubeform.com
+  names:
+    kind: ServerVulnerabilityAssessment
+    listKind: ServerVulnerabilityAssessmentList
+    plural: servervulnerabilityassessments
+    singular: servervulnerabilityassessment
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  id:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  recurringScans:
+                    properties:
+                      emailSubscriptionAdmins:
+                        type: boolean
+                      emails:
+                        items:
+                          type: string
+                        type: array
+                      enabled:
+                        type: boolean
+                    type: object
+                  secretRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  serverSecurityAlertPolicyID:
+                    type: string
+                  storageContainerPath:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - providerRef
+                - serverSecurityAlertPolicyID
+                - storageContainerPath
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              recurringScans:
+                properties:
+                  emailSubscriptionAdmins:
+                    type: boolean
+                  emails:
+                    items:
+                      type: string
+                    type: array
+                  enabled:
+                    type: boolean
+                type: object
+              secretRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              serverSecurityAlertPolicyID:
+                type: string
+              storageContainerPath:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - providerRef
+            - serverSecurityAlertPolicyID
+            - storageContainerPath
             type: object
           status:
             properties:
@@ -2451,526 +2971,6 @@ spec:
             - providerRef
             - sqlLicenseType
             - virtualMachineID
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: databasevulnerabilityassessmentrulebaselines.mssql.azurerm.kubeform.com
-spec:
-  group: mssql.azurerm.kubeform.com
-  names:
-    kind: DatabaseVulnerabilityAssessmentRuleBaseline
-    listKind: DatabaseVulnerabilityAssessmentRuleBaselineList
-    plural: databasevulnerabilityassessmentrulebaselines
-    singular: databasevulnerabilityassessmentrulebaseline
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              baselineName:
-                type: string
-              baselineResult:
-                items:
-                  properties:
-                    result:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - result
-                  type: object
-                type: array
-              databaseName:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  baselineName:
-                    type: string
-                  baselineResult:
-                    items:
-                      properties:
-                        result:
-                          items:
-                            type: string
-                          type: array
-                      required:
-                      - result
-                      type: object
-                    type: array
-                  databaseName:
-                    type: string
-                  id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  ruleID:
-                    type: string
-                  serverVulnerabilityAssessmentID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - baselineResult
-                - databaseName
-                - providerRef
-                - ruleID
-                - serverVulnerabilityAssessmentID
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              ruleID:
-                type: string
-              serverVulnerabilityAssessmentID:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - baselineResult
-            - databaseName
-            - providerRef
-            - ruleID
-            - serverVulnerabilityAssessmentID
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: servervulnerabilityassessments.mssql.azurerm.kubeform.com
-spec:
-  group: mssql.azurerm.kubeform.com
-  names:
-    kind: ServerVulnerabilityAssessment
-    listKind: ServerVulnerabilityAssessmentList
-    plural: servervulnerabilityassessments
-    singular: servervulnerabilityassessment
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  recurringScans:
-                    properties:
-                      emailSubscriptionAdmins:
-                        type: boolean
-                      emails:
-                        items:
-                          type: string
-                        type: array
-                      enabled:
-                        type: boolean
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  serverSecurityAlertPolicyID:
-                    type: string
-                  storageContainerPath:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - providerRef
-                - serverSecurityAlertPolicyID
-                - storageContainerPath
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              recurringScans:
-                properties:
-                  emailSubscriptionAdmins:
-                    type: boolean
-                  emails:
-                    items:
-                      type: string
-                    type: array
-                  enabled:
-                    type: boolean
-                type: object
-              secretRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              serverSecurityAlertPolicyID:
-                type: string
-              storageContainerPath:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - providerRef
-            - serverSecurityAlertPolicyID
-            - storageContainerPath
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: servertransparentdataencryptions.mssql.azurerm.kubeform.com
-spec:
-  group: mssql.azurerm.kubeform.com
-  names:
-    kind: ServerTransparentDataEncryption
-    listKind: ServerTransparentDataEncryptionList
-    plural: servertransparentdataencryptions
-    singular: servertransparentdataencryption
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              id:
-                type: string
-              keyVaultKeyID:
-                type: string
-              kubeformOutput:
-                properties:
-                  id:
-                    type: string
-                  keyVaultKeyID:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  serverID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - providerRef
-                - serverID
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              serverID:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - providerRef
-            - serverID
             type: object
           status:
             properties:

@@ -3,21 +3,31 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
-  name: dataconnectorawscloudtrails.sentinel.azurerm.kubeform.com
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
 spec:
-  group: sentinel.azurerm.kubeform.com
+  group: metrics.appscode.com
   names:
-    kind: DataConnectorAwsCloudTrail
-    listKind: DataConnectorAwsCloudTrailList
-    plural: dataconnectorawscloudtrails
-    singular: dataconnectorawscloudtrail
-  scope: Namespaced
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
       type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -30,130 +40,120 @@ spec:
             type: object
           spec:
             properties:
-              awsRoleArn:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  awsRoleArn:
-                    type: string
-                  id:
-                    type: string
-                  logAnalyticsWorkspaceID:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - awsRoleArn
-                - logAnalyticsWorkspaceID
-                - name
-                - providerRef
-                type: object
-              logAnalyticsWorkspaceID:
-                type: string
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - awsRoleArn
-            - logAnalyticsWorkspaceID
-            - name
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
+              metrics:
                 items:
                   properties:
-                    lastTransitionTime:
-                      format: date-time
+                    field:
+                      properties:
+                        path:
+                          type: string
+                        type:
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
+                          type: string
+                      required:
+                      - path
+                      - type
+                      type: object
+                    help:
                       type: string
-                    message:
+                    labels:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
+                      properties:
+                        value:
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          type: string
+                        valueFromPath:
+                          type: string
+                      type: object
+                    name:
                       type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
+                    params:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
+                      properties:
+                        labelKey:
+                          type: string
+                        values:
+                          items:
+                            properties:
+                              labelValue:
+                                type: string
+                              metricValue:
+                                properties:
+                                  value:
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    type: string
+                                  valueFromPath:
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
+                      required:
+                      - labelKey
+                      - values
+                      type: object
                     type:
+                      enum:
+                      - gauge
                       type: string
                   required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
+                  - help
+                  - name
                   - type
                   type: object
                 type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
+              targetRef:
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
             type: object
         type: object
     served: true
     storage: true
-    subresources:
-      status: {}
+    subresources: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -486,6 +486,224 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
+  name: alertrulemssecurityincidents.sentinel.azurerm.kubeform.com
+spec:
+  group: sentinel.azurerm.kubeform.com
+  names:
+    kind: AlertRuleMsSecurityIncident
+    listKind: AlertRuleMsSecurityIncidentList
+    plural: alertrulemssecurityincidents
+    singular: alertrulemssecurityincident
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              alertRuleTemplateGuid:
+                type: string
+              description:
+                type: string
+              displayName:
+                type: string
+              displayNameExcludeFilter:
+                items:
+                  type: string
+                minItems: 1
+                type: array
+              displayNameFilter:
+                items:
+                  type: string
+                minItems: 1
+                type: array
+              enabled:
+                type: boolean
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  alertRuleTemplateGuid:
+                    type: string
+                  description:
+                    type: string
+                  displayName:
+                    type: string
+                  displayNameExcludeFilter:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  displayNameFilter:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  enabled:
+                    type: boolean
+                  id:
+                    type: string
+                  logAnalyticsWorkspaceID:
+                    type: string
+                  name:
+                    type: string
+                  productFilter:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  severityFilter:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  textWhitelist:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - displayName
+                - logAnalyticsWorkspaceID
+                - name
+                - productFilter
+                - providerRef
+                - severityFilter
+                type: object
+              logAnalyticsWorkspaceID:
+                type: string
+              name:
+                type: string
+              productFilter:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              severityFilter:
+                items:
+                  type: string
+                minItems: 1
+                type: array
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              textWhitelist:
+                items:
+                  type: string
+                minItems: 1
+                type: array
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - displayName
+            - logAnalyticsWorkspaceID
+            - name
+            - productFilter
+            - providerRef
+            - severityFilter
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
   name: alertrulescheduleds.sentinel.azurerm.kubeform.com
 spec:
   group: sentinel.azurerm.kubeform.com
@@ -762,6 +980,164 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
+  name: dataconnectorawscloudtrails.sentinel.azurerm.kubeform.com
+spec:
+  group: sentinel.azurerm.kubeform.com
+  names:
+    kind: DataConnectorAwsCloudTrail
+    listKind: DataConnectorAwsCloudTrailList
+    plural: dataconnectorawscloudtrails
+    singular: dataconnectorawscloudtrail
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              awsRoleArn:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  awsRoleArn:
+                    type: string
+                  id:
+                    type: string
+                  logAnalyticsWorkspaceID:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - awsRoleArn
+                - logAnalyticsWorkspaceID
+                - name
+                - providerRef
+                type: object
+              logAnalyticsWorkspaceID:
+                type: string
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - awsRoleArn
+            - logAnalyticsWorkspaceID
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
   name: dataconnectorazureactivedirectories.sentinel.azurerm.kubeform.com
 spec:
   group: sentinel.azurerm.kubeform.com
@@ -918,390 +1294,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: alertrulemssecurityincidents.sentinel.azurerm.kubeform.com
+  name: dataconnectorazureadvancedthreatprotections.sentinel.azurerm.kubeform.com
 spec:
   group: sentinel.azurerm.kubeform.com
   names:
-    kind: AlertRuleMsSecurityIncident
-    listKind: AlertRuleMsSecurityIncidentList
-    plural: alertrulemssecurityincidents
-    singular: alertrulemssecurityincident
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              alertRuleTemplateGuid:
-                type: string
-              description:
-                type: string
-              displayName:
-                type: string
-              displayNameExcludeFilter:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              displayNameFilter:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              enabled:
-                type: boolean
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  alertRuleTemplateGuid:
-                    type: string
-                  description:
-                    type: string
-                  displayName:
-                    type: string
-                  displayNameExcludeFilter:
-                    items:
-                      type: string
-                    minItems: 1
-                    type: array
-                  displayNameFilter:
-                    items:
-                      type: string
-                    minItems: 1
-                    type: array
-                  enabled:
-                    type: boolean
-                  id:
-                    type: string
-                  logAnalyticsWorkspaceID:
-                    type: string
-                  name:
-                    type: string
-                  productFilter:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  severityFilter:
-                    items:
-                      type: string
-                    minItems: 1
-                    type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  textWhitelist:
-                    items:
-                      type: string
-                    minItems: 1
-                    type: array
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - displayName
-                - logAnalyticsWorkspaceID
-                - name
-                - productFilter
-                - providerRef
-                - severityFilter
-                type: object
-              logAnalyticsWorkspaceID:
-                type: string
-              name:
-                type: string
-              productFilter:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              severityFilter:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              textWhitelist:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - displayName
-            - logAnalyticsWorkspaceID
-            - name
-            - productFilter
-            - providerRef
-            - severityFilter
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: metrics
-  name: metricsconfigurations.metrics.appscode.com
-spec:
-  group: metrics.appscode.com
-  names:
-    categories:
-    - metrics
-    - appscode
-    - all
-    kind: MetricsConfiguration
-    listKind: MetricsConfigurationList
-    plural: metricsconfigurations
-    singular: metricsconfiguration
-  scope: Cluster
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.targetRef.apiVersion
-      name: APIVersion
-      type: string
-    - jsonPath: .spec.targetRef.kind
-      name: Kind
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              metrics:
-                items:
-                  properties:
-                    field:
-                      properties:
-                        path:
-                          type: string
-                        type:
-                          enum:
-                          - Integer
-                          - DateTime
-                          - Array
-                          - String
-                          type: string
-                      required:
-                      - path
-                      - type
-                      type: object
-                    help:
-                      type: string
-                    labels:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    metricValue:
-                      properties:
-                        value:
-                          format: double
-                          type: number
-                        valueFromExpression:
-                          type: string
-                        valueFromPath:
-                          type: string
-                      type: object
-                    name:
-                      type: string
-                    params:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    states:
-                      properties:
-                        labelKey:
-                          type: string
-                        values:
-                          items:
-                            properties:
-                              labelValue:
-                                type: string
-                              metricValue:
-                                properties:
-                                  value:
-                                    format: double
-                                    type: number
-                                  valueFromExpression:
-                                    type: string
-                                  valueFromPath:
-                                    type: string
-                                type: object
-                            required:
-                            - labelValue
-                            - metricValue
-                            type: object
-                          type: array
-                      required:
-                      - labelKey
-                      - values
-                      type: object
-                    type:
-                      enum:
-                      - gauge
-                      type: string
-                  required:
-                  - help
-                  - name
-                  - type
-                  type: object
-                type: array
-              targetRef:
-                properties:
-                  apiVersion:
-                    type: string
-                  kind:
-                    type: string
-                required:
-                - apiVersion
-                - kind
-                type: object
-            required:
-            - metrics
-            - targetRef
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: dataconnectorthreatintelligences.sentinel.azurerm.kubeform.com
-spec:
-  group: sentinel.azurerm.kubeform.com
-  names:
-    kind: DataConnectorThreatIntelligence
-    listKind: DataConnectorThreatIntelligenceList
-    plural: dataconnectorthreatintelligences
-    singular: dataconnectorthreatintelligence
+    kind: DataConnectorAzureAdvancedThreatProtection
+    listKind: DataConnectorAzureAdvancedThreatProtectionList
+    plural: dataconnectorazureadvancedthreatprotections
+    singular: dataconnectorazureadvancedthreatprotection
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -1770,14 +1770,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: dataconnectorazureadvancedthreatprotections.sentinel.azurerm.kubeform.com
+  name: dataconnectormicrosoftdefenderadvancedthreatprotections.sentinel.azurerm.kubeform.com
 spec:
   group: sentinel.azurerm.kubeform.com
   names:
-    kind: DataConnectorAzureAdvancedThreatProtection
-    listKind: DataConnectorAzureAdvancedThreatProtectionList
-    plural: dataconnectorazureadvancedthreatprotections
-    singular: dataconnectorazureadvancedthreatprotection
+    kind: DataConnectorMicrosoftDefenderAdvancedThreatProtection
+    listKind: DataConnectorMicrosoftDefenderAdvancedThreatProtectionList
+    plural: dataconnectormicrosoftdefenderadvancedthreatprotections
+    singular: dataconnectormicrosoftdefenderadvancedthreatprotection
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -2094,14 +2094,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: dataconnectormicrosoftdefenderadvancedthreatprotections.sentinel.azurerm.kubeform.com
+  name: dataconnectorthreatintelligences.sentinel.azurerm.kubeform.com
 spec:
   group: sentinel.azurerm.kubeform.com
   names:
-    kind: DataConnectorMicrosoftDefenderAdvancedThreatProtection
-    listKind: DataConnectorMicrosoftDefenderAdvancedThreatProtectionList
-    plural: dataconnectormicrosoftdefenderadvancedthreatprotections
-    singular: dataconnectormicrosoftdefenderadvancedthreatprotection
+    kind: DataConnectorThreatIntelligence
+    listKind: DataConnectorThreatIntelligenceList
+    plural: dataconnectorthreatintelligences
+    singular: dataconnectorthreatintelligence
   scope: Namespaced
   versions:
   - additionalPrinterColumns:

@@ -3,6 +3,464 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
+spec:
+  group: metrics.appscode.com
+  names:
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
+      type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              metrics:
+                items:
+                  properties:
+                    field:
+                      properties:
+                        path:
+                          type: string
+                        type:
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
+                          type: string
+                      required:
+                      - path
+                      - type
+                      type: object
+                    help:
+                      type: string
+                    labels:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
+                      properties:
+                        value:
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          type: string
+                        valueFromPath:
+                          type: string
+                      type: object
+                    name:
+                      type: string
+                    params:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
+                      properties:
+                        labelKey:
+                          type: string
+                        values:
+                          items:
+                            properties:
+                              labelValue:
+                                type: string
+                              metricValue:
+                                properties:
+                                  value:
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    type: string
+                                  valueFromPath:
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
+                      required:
+                      - labelKey
+                      - values
+                      type: object
+                    type:
+                      enum:
+                      - gauge
+                      type: string
+                  required:
+                  - help
+                  - name
+                  - type
+                  type: object
+                type: array
+              targetRef:
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: accesspoints.s3.aws.kubeform.com
+spec:
+  group: s3.aws.kubeform.com
+  names:
+    kind: AccessPoint
+    listKind: AccessPointList
+    plural: accesspoints
+    singular: accesspoint
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              accountID:
+                type: string
+              arn:
+                type: string
+              bucket:
+                type: string
+              domainName:
+                type: string
+              hasPublicAccessPolicy:
+                type: boolean
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  accountID:
+                    type: string
+                  arn:
+                    type: string
+                  bucket:
+                    type: string
+                  domainName:
+                    type: string
+                  hasPublicAccessPolicy:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  networkOrigin:
+                    type: string
+                  policy:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  publicAccessBlockConfiguration:
+                    properties:
+                      blockPublicAcls:
+                        type: boolean
+                      blockPublicPolicy:
+                        type: boolean
+                      ignorePublicAcls:
+                        type: boolean
+                      restrictPublicBuckets:
+                        type: boolean
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  vpcConfiguration:
+                    properties:
+                      vpcID:
+                        type: string
+                    required:
+                    - vpcID
+                    type: object
+                required:
+                - bucket
+                - name
+                - providerRef
+                type: object
+              name:
+                type: string
+              networkOrigin:
+                type: string
+              policy:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              publicAccessBlockConfiguration:
+                properties:
+                  blockPublicAcls:
+                    type: boolean
+                  blockPublicPolicy:
+                    type: boolean
+                  ignorePublicAcls:
+                    type: boolean
+                  restrictPublicBuckets:
+                    type: boolean
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              vpcConfiguration:
+                properties:
+                  vpcID:
+                    type: string
+                required:
+                - vpcID
+                type: object
+            required:
+            - bucket
+            - name
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: accountpublicaccessblocks.s3.aws.kubeform.com
+spec:
+  group: s3.aws.kubeform.com
+  names:
+    kind: AccountPublicAccessBlock
+    listKind: AccountPublicAccessBlockList
+    plural: accountpublicaccessblocks
+    singular: accountpublicaccessblock
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              accountID:
+                type: string
+              blockPublicAcls:
+                type: boolean
+              blockPublicPolicy:
+                type: boolean
+              id:
+                type: string
+              ignorePublicAcls:
+                type: boolean
+              kubeformOutput:
+                properties:
+                  accountID:
+                    type: string
+                  blockPublicAcls:
+                    type: boolean
+                  blockPublicPolicy:
+                    type: boolean
+                  id:
+                    type: string
+                  ignorePublicAcls:
+                    type: boolean
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  restrictPublicBuckets:
+                    type: boolean
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - providerRef
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              restrictPublicBuckets:
+                type: boolean
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
     app.kubernetes.io/name: kubeform
   name: buckets.s3.aws.kubeform.com
 spec:
@@ -664,14 +1122,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: accountpublicaccessblocks.s3.aws.kubeform.com
+  name: bucketanalyticsconfigurations.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
   names:
-    kind: AccountPublicAccessBlock
-    listKind: AccountPublicAccessBlockList
-    plural: accountpublicaccessblocks
-    singular: accountpublicaccessblock
+    kind: BucketAnalyticsConfiguration
+    listKind: BucketAnalyticsConfigurationList
+    plural: bucketanalyticsconfigurations
+    singular: bucketanalyticsconfiguration
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -690,190 +1148,76 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              blockPublicAcls:
-                type: boolean
-              blockPublicPolicy:
-                type: boolean
-              id:
-                type: string
-              ignorePublicAcls:
-                type: boolean
-              kubeformOutput:
-                properties:
-                  accountID:
-                    type: string
-                  blockPublicAcls:
-                    type: boolean
-                  blockPublicPolicy:
-                    type: boolean
-                  id:
-                    type: string
-                  ignorePublicAcls:
-                    type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  restrictPublicBuckets:
-                    type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              restrictPublicBuckets:
-                type: boolean
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: accesspoints.s3.aws.kubeform.com
-spec:
-  group: s3.aws.kubeform.com
-  names:
-    kind: AccessPoint
-    listKind: AccessPointList
-    plural: accesspoints
-    singular: accesspoint
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              accountID:
-                type: string
-              arn:
-                type: string
               bucket:
                 type: string
-              domainName:
-                type: string
-              hasPublicAccessPolicy:
-                type: boolean
+              filter:
+                properties:
+                  prefix:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                type: object
               id:
                 type: string
               kubeformOutput:
                 properties:
-                  accountID:
-                    type: string
-                  arn:
-                    type: string
                   bucket:
                     type: string
-                  domainName:
-                    type: string
-                  hasPublicAccessPolicy:
-                    type: boolean
+                  filter:
+                    properties:
+                      prefix:
+                        type: string
+                      tags:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
                   id:
                     type: string
                   name:
-                    type: string
-                  networkOrigin:
-                    type: string
-                  policy:
                     type: string
                   providerRef:
                     properties:
                       name:
                         type: string
                     type: object
-                  publicAccessBlockConfiguration:
+                  storageClassAnalysis:
                     properties:
-                      blockPublicAcls:
-                        type: boolean
-                      blockPublicPolicy:
-                        type: boolean
-                      ignorePublicAcls:
-                        type: boolean
-                      restrictPublicBuckets:
-                        type: boolean
+                      dataExport:
+                        properties:
+                          destination:
+                            properties:
+                              s3BucketDestination:
+                                properties:
+                                  bucketAccountID:
+                                    type: string
+                                  bucketArn:
+                                    type: string
+                                  format:
+                                    type: string
+                                  prefix:
+                                    type: string
+                                required:
+                                - bucketArn
+                                type: object
+                            required:
+                            - s3BucketDestination
+                            type: object
+                          outputSchemaVersion:
+                            type: string
+                        required:
+                        - destination
+                        type: object
+                    required:
+                    - dataExport
                     type: object
                   terminationPolicy:
                     enum:
                     - Delete
                     - DoNotTerminate
                     type: string
-                  vpcConfiguration:
-                    properties:
-                      vpcID:
-                        type: string
-                    required:
-                    - vpcID
-                    type: object
                 required:
                 - bucket
                 - name
@@ -881,38 +1225,46 @@ spec:
                 type: object
               name:
                 type: string
-              networkOrigin:
-                type: string
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicAccessBlockConfiguration:
+              storageClassAnalysis:
                 properties:
-                  blockPublicAcls:
-                    type: boolean
-                  blockPublicPolicy:
-                    type: boolean
-                  ignorePublicAcls:
-                    type: boolean
-                  restrictPublicBuckets:
-                    type: boolean
+                  dataExport:
+                    properties:
+                      destination:
+                        properties:
+                          s3BucketDestination:
+                            properties:
+                              bucketAccountID:
+                                type: string
+                              bucketArn:
+                                type: string
+                              format:
+                                type: string
+                              prefix:
+                                type: string
+                            required:
+                            - bucketArn
+                            type: object
+                        required:
+                        - s3BucketDestination
+                        type: object
+                      outputSchemaVersion:
+                        type: string
+                    required:
+                    - destination
+                    type: object
+                required:
+                - dataExport
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcConfiguration:
-                properties:
-                  vpcID:
-                    type: string
-                required:
-                - vpcID
-                type: object
             required:
             - bucket
             - name
@@ -956,164 +1308,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: metrics
-  name: metricsconfigurations.metrics.appscode.com
-spec:
-  group: metrics.appscode.com
-  names:
-    categories:
-    - metrics
-    - appscode
-    - all
-    kind: MetricsConfiguration
-    listKind: MetricsConfigurationList
-    plural: metricsconfigurations
-    singular: metricsconfiguration
-  scope: Cluster
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.targetRef.apiVersion
-      name: APIVersion
-      type: string
-    - jsonPath: .spec.targetRef.kind
-      name: Kind
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              metrics:
-                items:
-                  properties:
-                    field:
-                      properties:
-                        path:
-                          type: string
-                        type:
-                          enum:
-                          - Integer
-                          - DateTime
-                          - Array
-                          - String
-                          type: string
-                      required:
-                      - path
-                      - type
-                      type: object
-                    help:
-                      type: string
-                    labels:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    metricValue:
-                      properties:
-                        value:
-                          format: double
-                          type: number
-                        valueFromExpression:
-                          type: string
-                        valueFromPath:
-                          type: string
-                      type: object
-                    name:
-                      type: string
-                    params:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    states:
-                      properties:
-                        labelKey:
-                          type: string
-                        values:
-                          items:
-                            properties:
-                              labelValue:
-                                type: string
-                              metricValue:
-                                properties:
-                                  value:
-                                    format: double
-                                    type: number
-                                  valueFromExpression:
-                                    type: string
-                                  valueFromPath:
-                                    type: string
-                                type: object
-                            required:
-                            - labelValue
-                            - metricValue
-                            type: object
-                          type: array
-                      required:
-                      - labelKey
-                      - values
-                      type: object
-                    type:
-                      enum:
-                      - gauge
-                      type: string
-                  required:
-                  - help
-                  - name
-                  - type
-                  type: object
-                type: array
-              targetRef:
-                properties:
-                  apiVersion:
-                    type: string
-                  kind:
-                    type: string
-                required:
-                - apiVersion
-                - kind
-                type: object
-            required:
-            - metrics
-            - targetRef
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -1346,14 +1540,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: bucketanalyticsconfigurations.s3.aws.kubeform.com
+  name: bucketmetrics.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
   names:
-    kind: BucketAnalyticsConfiguration
-    listKind: BucketAnalyticsConfigurationList
-    plural: bucketanalyticsconfigurations
-    singular: bucketanalyticsconfiguration
+    kind: BucketMetric
+    listKind: BucketMetricList
+    plural: bucketmetrics
+    singular: bucketmetric
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -1407,36 +1601,6 @@ spec:
                       name:
                         type: string
                     type: object
-                  storageClassAnalysis:
-                    properties:
-                      dataExport:
-                        properties:
-                          destination:
-                            properties:
-                              s3BucketDestination:
-                                properties:
-                                  bucketAccountID:
-                                    type: string
-                                  bucketArn:
-                                    type: string
-                                  format:
-                                    type: string
-                                  prefix:
-                                    type: string
-                                required:
-                                - bucketArn
-                                type: object
-                            required:
-                            - s3BucketDestination
-                            type: object
-                          outputSchemaVersion:
-                            type: string
-                        required:
-                        - destination
-                        type: object
-                    required:
-                    - dataExport
-                    type: object
                   terminationPolicy:
                     enum:
                     - Delete
@@ -1454,36 +1618,6 @@ spec:
                   name:
                     type: string
                 type: object
-              storageClassAnalysis:
-                properties:
-                  dataExport:
-                    properties:
-                      destination:
-                        properties:
-                          s3BucketDestination:
-                            properties:
-                              bucketAccountID:
-                                type: string
-                              bucketArn:
-                                type: string
-                              format:
-                                type: string
-                              prefix:
-                                type: string
-                            required:
-                            - bucketArn
-                            type: object
-                        required:
-                        - s3BucketDestination
-                        type: object
-                      outputSchemaVersion:
-                        type: string
-                    required:
-                    - destination
-                    type: object
-                required:
-                - dataExport
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
@@ -1492,586 +1626,6 @@ spec:
             required:
             - bucket
             - name
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: bucketownershipcontrols.s3.aws.kubeform.com
-spec:
-  group: s3.aws.kubeform.com
-  names:
-    kind: BucketOwnershipControls
-    listKind: BucketOwnershipControlsList
-    plural: bucketownershipcontrols
-    singular: bucketownershipcontrols
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              bucket:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  bucket:
-                    type: string
-                  id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  rule:
-                    properties:
-                      objectOwnership:
-                        type: string
-                    required:
-                    - objectOwnership
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - bucket
-                - providerRef
-                - rule
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rule:
-                properties:
-                  objectOwnership:
-                    type: string
-                required:
-                - objectOwnership
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - bucket
-            - providerRef
-            - rule
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: bucketpublicaccessblocks.s3.aws.kubeform.com
-spec:
-  group: s3.aws.kubeform.com
-  names:
-    kind: BucketPublicAccessBlock
-    listKind: BucketPublicAccessBlockList
-    plural: bucketpublicaccessblocks
-    singular: bucketpublicaccessblock
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              blockPublicAcls:
-                type: boolean
-              blockPublicPolicy:
-                type: boolean
-              bucket:
-                type: string
-              id:
-                type: string
-              ignorePublicAcls:
-                type: boolean
-              kubeformOutput:
-                properties:
-                  blockPublicAcls:
-                    type: boolean
-                  blockPublicPolicy:
-                    type: boolean
-                  bucket:
-                    type: string
-                  id:
-                    type: string
-                  ignorePublicAcls:
-                    type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  restrictPublicBuckets:
-                    type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - bucket
-                - providerRef
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              restrictPublicBuckets:
-                type: boolean
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - bucket
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: bucketobjects.s3.aws.kubeform.com
-spec:
-  group: s3.aws.kubeform.com
-  names:
-    kind: BucketObject
-    listKind: BucketObjectList
-    plural: bucketobjects
-    singular: bucketobject
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              acl:
-                type: string
-              bucket:
-                type: string
-              bucketKeyEnabled:
-                type: boolean
-              cacheControl:
-                type: string
-              content:
-                type: string
-              contentBase64:
-                type: string
-              contentDisposition:
-                type: string
-              contentEncoding:
-                type: string
-              contentLanguage:
-                type: string
-              contentType:
-                type: string
-              etag:
-                type: string
-              forceDestroy:
-                type: boolean
-              id:
-                type: string
-              key:
-                type: string
-              kmsKeyID:
-                type: string
-              kubeformOutput:
-                properties:
-                  acl:
-                    type: string
-                  bucket:
-                    type: string
-                  bucketKeyEnabled:
-                    type: boolean
-                  cacheControl:
-                    type: string
-                  content:
-                    type: string
-                  contentBase64:
-                    type: string
-                  contentDisposition:
-                    type: string
-                  contentEncoding:
-                    type: string
-                  contentLanguage:
-                    type: string
-                  contentType:
-                    type: string
-                  etag:
-                    type: string
-                  forceDestroy:
-                    type: boolean
-                  id:
-                    type: string
-                  key:
-                    type: string
-                  kmsKeyID:
-                    type: string
-                  metadata:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  objectLockLegalHoldStatus:
-                    type: string
-                  objectLockMode:
-                    type: string
-                  objectLockRetainUntilDate:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  serverSideEncryption:
-                    type: string
-                  source:
-                    type: string
-                  storageClass:
-                    type: string
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  versionID:
-                    type: string
-                  websiteRedirect:
-                    type: string
-                required:
-                - bucket
-                - key
-                - providerRef
-                type: object
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              objectLockLegalHoldStatus:
-                type: string
-              objectLockMode:
-                type: string
-              objectLockRetainUntilDate:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              serverSideEncryption:
-                type: string
-              source:
-                type: string
-              storageClass:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              versionID:
-                type: string
-              websiteRedirect:
-                type: string
-            required:
-            - bucket
-            - key
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: bucketpolicies.s3.aws.kubeform.com
-spec:
-  group: s3.aws.kubeform.com
-  names:
-    kind: BucketPolicy
-    listKind: BucketPolicyList
-    plural: bucketpolicies
-    singular: bucketpolicy
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              bucket:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  bucket:
-                    type: string
-                  id:
-                    type: string
-                  policy:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - bucket
-                - policy
-                - providerRef
-                type: object
-              policy:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - bucket
-            - policy
             - providerRef
             type: object
           status:
@@ -2348,14 +1902,226 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: bucketmetrics.s3.aws.kubeform.com
+  name: bucketobjects.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
   names:
-    kind: BucketMetric
-    listKind: BucketMetricList
-    plural: bucketmetrics
-    singular: bucketmetric
+    kind: BucketObject
+    listKind: BucketObjectList
+    plural: bucketobjects
+    singular: bucketobject
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              acl:
+                type: string
+              bucket:
+                type: string
+              bucketKeyEnabled:
+                type: boolean
+              cacheControl:
+                type: string
+              content:
+                type: string
+              contentBase64:
+                type: string
+              contentDisposition:
+                type: string
+              contentEncoding:
+                type: string
+              contentLanguage:
+                type: string
+              contentType:
+                type: string
+              etag:
+                type: string
+              forceDestroy:
+                type: boolean
+              id:
+                type: string
+              key:
+                type: string
+              kmsKeyID:
+                type: string
+              kubeformOutput:
+                properties:
+                  acl:
+                    type: string
+                  bucket:
+                    type: string
+                  bucketKeyEnabled:
+                    type: boolean
+                  cacheControl:
+                    type: string
+                  content:
+                    type: string
+                  contentBase64:
+                    type: string
+                  contentDisposition:
+                    type: string
+                  contentEncoding:
+                    type: string
+                  contentLanguage:
+                    type: string
+                  contentType:
+                    type: string
+                  etag:
+                    type: string
+                  forceDestroy:
+                    type: boolean
+                  id:
+                    type: string
+                  key:
+                    type: string
+                  kmsKeyID:
+                    type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  objectLockLegalHoldStatus:
+                    type: string
+                  objectLockMode:
+                    type: string
+                  objectLockRetainUntilDate:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  serverSideEncryption:
+                    type: string
+                  source:
+                    type: string
+                  storageClass:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  versionID:
+                    type: string
+                  websiteRedirect:
+                    type: string
+                required:
+                - bucket
+                - key
+                - providerRef
+                type: object
+              metadata:
+                additionalProperties:
+                  type: string
+                type: object
+              objectLockLegalHoldStatus:
+                type: string
+              objectLockMode:
+                type: string
+              objectLockRetainUntilDate:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              serverSideEncryption:
+                type: string
+              source:
+                type: string
+              storageClass:
+                type: string
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              versionID:
+                type: string
+              websiteRedirect:
+                type: string
+            required:
+            - bucket
+            - key
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: bucketownershipcontrols.s3.aws.kubeform.com
+spec:
+  group: s3.aws.kubeform.com
+  names:
+    kind: BucketOwnershipControls
+    listKind: BucketOwnershipControlsList
+    plural: bucketownershipcontrols
+    singular: bucketownershipcontrols
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -2376,33 +2142,141 @@ spec:
             properties:
               bucket:
                 type: string
-              filter:
-                properties:
-                  prefix:
-                    type: string
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
               id:
                 type: string
               kubeformOutput:
                 properties:
                   bucket:
                     type: string
-                  filter:
-                    properties:
-                      prefix:
-                        type: string
-                      tags:
-                        additionalProperties:
-                          type: string
-                        type: object
-                    type: object
                   id:
                     type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  rule:
+                    properties:
+                      objectOwnership:
+                        type: string
+                    required:
+                    - objectOwnership
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - bucket
+                - providerRef
+                - rule
+                type: object
+              providerRef:
+                properties:
                   name:
+                    type: string
+                type: object
+              rule:
+                properties:
+                  objectOwnership:
+                    type: string
+                required:
+                - objectOwnership
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - bucket
+            - providerRef
+            - rule
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: bucketpolicies.s3.aws.kubeform.com
+spec:
+  group: s3.aws.kubeform.com
+  names:
+    kind: BucketPolicy
+    listKind: BucketPolicyList
+    plural: bucketpolicies
+    singular: bucketpolicy
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              bucket:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  bucket:
+                    type: string
+                  id:
+                    type: string
+                  policy:
                     type: string
                   providerRef:
                     properties:
@@ -2416,10 +2290,10 @@ spec:
                     type: string
                 required:
                 - bucket
-                - name
+                - policy
                 - providerRef
                 type: object
-              name:
+              policy:
                 type: string
               providerRef:
                 properties:
@@ -2433,7 +2307,133 @@ spec:
                 type: string
             required:
             - bucket
-            - name
+            - policy
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: bucketpublicaccessblocks.s3.aws.kubeform.com
+spec:
+  group: s3.aws.kubeform.com
+  names:
+    kind: BucketPublicAccessBlock
+    listKind: BucketPublicAccessBlockList
+    plural: bucketpublicaccessblocks
+    singular: bucketpublicaccessblock
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              blockPublicAcls:
+                type: boolean
+              blockPublicPolicy:
+                type: boolean
+              bucket:
+                type: string
+              id:
+                type: string
+              ignorePublicAcls:
+                type: boolean
+              kubeformOutput:
+                properties:
+                  blockPublicAcls:
+                    type: boolean
+                  blockPublicPolicy:
+                    type: boolean
+                  bucket:
+                    type: string
+                  id:
+                    type: string
+                  ignorePublicAcls:
+                    type: boolean
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  restrictPublicBuckets:
+                    type: boolean
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - bucket
+                - providerRef
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              restrictPublicBuckets:
+                type: boolean
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - bucket
             - providerRef
             type: object
           status:

@@ -3,21 +3,31 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
-  name: enterprisedatabases.redis.azurerm.kubeform.com
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
 spec:
-  group: redis.azurerm.kubeform.com
+  group: metrics.appscode.com
   names:
-    kind: EnterpriseDatabase
-    listKind: EnterpriseDatabaseList
-    plural: enterprisedatabases
-    singular: enterprisedatabase
-  scope: Namespaced
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
       type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -30,184 +40,120 @@ spec:
             type: object
           spec:
             properties:
-              clientProtocol:
-                type: string
-              clusterID:
-                type: string
-              clusteringPolicy:
-                type: string
-              evictionPolicy:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  clientProtocol:
-                    type: string
-                  clusterID:
-                    type: string
-                  clusteringPolicy:
-                    type: string
-                  evictionPolicy:
-                    type: string
-                  id:
-                    type: string
-                  module:
-                    items:
+              metrics:
+                items:
+                  properties:
+                    field:
                       properties:
-                        args:
+                        path:
                           type: string
-                        name:
-                          type: string
-                        version:
+                        type:
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
                           type: string
                       required:
-                      - name
+                      - path
+                      - type
                       type: object
-                    maxItems: 3
-                    type: array
-                  name:
-                    type: string
-                  port:
-                    format: int64
-                    type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - clusterID
-                - providerRef
-                - resourceGroupName
-                type: object
-              module:
-                items:
-                  properties:
-                    args:
+                    help:
                       type: string
+                    labels:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
+                      properties:
+                        value:
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          type: string
+                        valueFromPath:
+                          type: string
+                      type: object
                     name:
                       type: string
-                    version:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                maxItems: 3
-                type: array
-              name:
-                type: string
-              port:
-                format: int64
-                type: integer
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resourceGroupName:
-                type: string
-              secretRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - clusterID
-            - providerRef
-            - resourceGroupName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
+                    params:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
+                      properties:
+                        labelKey:
+                          type: string
+                        values:
+                          items:
+                            properties:
+                              labelValue:
+                                type: string
+                              metricValue:
+                                properties:
+                                  value:
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    type: string
+                                  valueFromPath:
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
+                      required:
+                      - labelKey
+                      - values
+                      type: object
                     type:
+                      enum:
+                      - gauge
                       type: string
                   required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
+                  - help
+                  - name
                   - type
                   type: object
                 type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
+              targetRef:
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
             type: object
         type: object
     served: true
     storage: true
-    subresources:
-      status: {}
+    subresources: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -556,176 +502,6 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: firewallrules.redis.azurerm.kubeform.com
-spec:
-  group: redis.azurerm.kubeform.com
-  names:
-    kind: FirewallRule
-    listKind: FirewallRuleList
-    plural: firewallrules
-    singular: firewallrule
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              endIP:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  endIP:
-                    type: string
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  redisCacheName:
-                    type: string
-                  resourceGroupName:
-                    type: string
-                  startIP:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - endIP
-                - name
-                - providerRef
-                - redisCacheName
-                - resourceGroupName
-                - startIP
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              redisCacheName:
-                type: string
-              resourceGroupName:
-                type: string
-              startIP:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - endIP
-            - name
-            - providerRef
-            - redisCacheName
-            - resourceGroupName
-            - startIP
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
   name: enterpriseclusters.redis.azurerm.kubeform.com
 spec:
   group: redis.azurerm.kubeform.com
@@ -919,31 +695,21 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: metrics
-  name: metricsconfigurations.metrics.appscode.com
+    app.kubernetes.io/name: kubeform
+  name: enterprisedatabases.redis.azurerm.kubeform.com
 spec:
-  group: metrics.appscode.com
+  group: redis.azurerm.kubeform.com
   names:
-    categories:
-    - metrics
-    - appscode
-    - all
-    kind: MetricsConfiguration
-    listKind: MetricsConfigurationList
-    plural: metricsconfigurations
-    singular: metricsconfiguration
-  scope: Cluster
+    kind: EnterpriseDatabase
+    listKind: EnterpriseDatabaseList
+    plural: enterprisedatabases
+    singular: enterprisedatabase
+  scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.targetRef.apiVersion
-      name: APIVersion
+    - jsonPath: .status.phase
+      name: Phase
       type: string
-    - jsonPath: .spec.targetRef.kind
-      name: Kind
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -956,120 +722,354 @@ spec:
             type: object
           spec:
             properties:
-              metrics:
+              clientProtocol:
+                type: string
+              clusterID:
+                type: string
+              clusteringPolicy:
+                type: string
+              evictionPolicy:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  clientProtocol:
+                    type: string
+                  clusterID:
+                    type: string
+                  clusteringPolicy:
+                    type: string
+                  evictionPolicy:
+                    type: string
+                  id:
+                    type: string
+                  module:
+                    items:
+                      properties:
+                        args:
+                          type: string
+                        name:
+                          type: string
+                        version:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    maxItems: 3
+                    type: array
+                  name:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  secretRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterID
+                - providerRef
+                - resourceGroupName
+                type: object
+              module:
                 items:
                   properties:
-                    field:
-                      properties:
-                        path:
-                          type: string
-                        type:
-                          enum:
-                          - Integer
-                          - DateTime
-                          - Array
-                          - String
-                          type: string
-                      required:
-                      - path
-                      - type
-                      type: object
-                    help:
+                    args:
                       type: string
-                    labels:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    metricValue:
-                      properties:
-                        value:
-                          format: double
-                          type: number
-                        valueFromExpression:
-                          type: string
-                        valueFromPath:
-                          type: string
-                      type: object
                     name:
                       type: string
-                    params:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    states:
-                      properties:
-                        labelKey:
-                          type: string
-                        values:
-                          items:
-                            properties:
-                              labelValue:
-                                type: string
-                              metricValue:
-                                properties:
-                                  value:
-                                    format: double
-                                    type: number
-                                  valueFromExpression:
-                                    type: string
-                                  valueFromPath:
-                                    type: string
-                                type: object
-                            required:
-                            - labelValue
-                            - metricValue
-                            type: object
-                          type: array
-                      required:
-                      - labelKey
-                      - values
-                      type: object
-                    type:
-                      enum:
-                      - gauge
+                    version:
                       type: string
                   required:
-                  - help
                   - name
+                  type: object
+                maxItems: 3
+                type: array
+              name:
+                type: string
+              port:
+                format: int64
+                type: integer
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resourceGroupName:
+                type: string
+              secretRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - clusterID
+            - providerRef
+            - resourceGroupName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
                   - type
                   type: object
                 type: array
-              targetRef:
-                properties:
-                  apiVersion:
-                    type: string
-                  kind:
-                    type: string
-                required:
-                - apiVersion
-                - kind
-                type: object
-            required:
-            - metrics
-            - targetRef
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
             type: object
         type: object
     served: true
     storage: true
-    subresources: {}
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: firewallrules.redis.azurerm.kubeform.com
+spec:
+  group: redis.azurerm.kubeform.com
+  names:
+    kind: FirewallRule
+    listKind: FirewallRuleList
+    plural: firewallrules
+    singular: firewallrule
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              endIP:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  endIP:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  redisCacheName:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  startIP:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - endIP
+                - name
+                - providerRef
+                - redisCacheName
+                - resourceGroupName
+                - startIP
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              redisCacheName:
+                type: string
+              resourceGroupName:
+                type: string
+              startIP:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - endIP
+            - name
+            - providerRef
+            - redisCacheName
+            - resourceGroupName
+            - startIP
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1

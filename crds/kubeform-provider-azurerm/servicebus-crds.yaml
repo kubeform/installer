@@ -3,15 +3,173 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
+    app.kubernetes.io/name: metrics
+  name: metricsconfigurations.metrics.appscode.com
+spec:
+  group: metrics.appscode.com
+  names:
+    categories:
+    - metrics
+    - appscode
+    - all
+    kind: MetricsConfiguration
+    listKind: MetricsConfigurationList
+    plural: metricsconfigurations
+    singular: metricsconfiguration
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.targetRef.apiVersion
+      name: APIVersion
+      type: string
+    - jsonPath: .spec.targetRef.kind
+      name: Kind
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              metrics:
+                items:
+                  properties:
+                    field:
+                      properties:
+                        path:
+                          type: string
+                        type:
+                          enum:
+                          - Integer
+                          - DateTime
+                          - Array
+                          - String
+                          type: string
+                      required:
+                      - path
+                      - type
+                      type: object
+                    help:
+                      type: string
+                    labels:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    metricValue:
+                      properties:
+                        value:
+                          format: double
+                          type: number
+                        valueFromExpression:
+                          type: string
+                        valueFromPath:
+                          type: string
+                      type: object
+                    name:
+                      type: string
+                    params:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: string
+                          valuePath:
+                            type: string
+                        required:
+                        - key
+                        type: object
+                      type: array
+                    states:
+                      properties:
+                        labelKey:
+                          type: string
+                        values:
+                          items:
+                            properties:
+                              labelValue:
+                                type: string
+                              metricValue:
+                                properties:
+                                  value:
+                                    format: double
+                                    type: number
+                                  valueFromExpression:
+                                    type: string
+                                  valueFromPath:
+                                    type: string
+                                type: object
+                            required:
+                            - labelValue
+                            - metricValue
+                            type: object
+                          type: array
+                      required:
+                      - labelKey
+                      - values
+                      type: object
+                    type:
+                      enum:
+                      - gauge
+                      type: string
+                  required:
+                  - help
+                  - name
+                  - type
+                  type: object
+                type: array
+              targetRef:
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                type: object
+            required:
+            - metrics
+            - targetRef
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
     app.kubernetes.io/name: kubeform
-  name: namespacenetworkrulesets.servicebus.azurerm.kubeform.com
+  name: namespaceauthorizationrules.servicebus.azurerm.kubeform.com
 spec:
   group: servicebus.azurerm.kubeform.com
   names:
-    kind: NamespaceNetworkRuleSet
-    listKind: NamespaceNetworkRuleSetList
-    plural: namespacenetworkrulesets
-    singular: namespacenetworkruleset
+    kind: NamespaceAuthorizationRule
+    listKind: NamespaceAuthorizationRuleList
+    plural: namespaceauthorizationrules
+    singular: namespaceauthorizationrule
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -30,37 +188,20 @@ spec:
             type: object
           spec:
             properties:
-              defaultAction:
-                type: string
               id:
                 type: string
-              ipRules:
-                items:
-                  type: string
-                type: array
               kubeformOutput:
                 properties:
-                  defaultAction:
-                    type: string
                   id:
                     type: string
-                  ipRules:
-                    items:
-                      type: string
-                    type: array
+                  listen:
+                    type: boolean
+                  manage:
+                    type: boolean
+                  name:
+                    type: string
                   namespaceName:
                     type: string
-                  networkRules:
-                    items:
-                      properties:
-                        ignoreMissingVnetServiceEndpoint:
-                          type: boolean
-                        subnetID:
-                          type: string
-                      required:
-                      - subnetID
-                      type: object
-                    type: array
                   providerRef:
                     properties:
                       name:
@@ -68,6 +209,13 @@ spec:
                     type: object
                   resourceGroupName:
                     type: string
+                  secretRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  send:
+                    type: boolean
                   terminationPolicy:
                     enum:
                     - Delete
@@ -92,23 +240,19 @@ spec:
                         type: integer
                     type: object
                 required:
+                - name
                 - namespaceName
                 - providerRef
                 - resourceGroupName
                 type: object
+              listen:
+                type: boolean
+              manage:
+                type: boolean
+              name:
+                type: string
               namespaceName:
                 type: string
-              networkRules:
-                items:
-                  properties:
-                    ignoreMissingVnetServiceEndpoint:
-                      type: boolean
-                    subnetID:
-                      type: string
-                  required:
-                  - subnetID
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
@@ -116,6 +260,13 @@ spec:
                 type: object
               resourceGroupName:
                 type: string
+              secretRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              send:
+                type: boolean
               terminationPolicy:
                 enum:
                 - Delete
@@ -140,6 +291,7 @@ spec:
                     type: integer
                 type: object
             required:
+            - name
             - namespaceName
             - providerRef
             - resourceGroupName
@@ -358,14 +510,614 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: namespaceauthorizationrules.servicebus.azurerm.kubeform.com
+  name: namespacenetworkrulesets.servicebus.azurerm.kubeform.com
 spec:
   group: servicebus.azurerm.kubeform.com
   names:
-    kind: NamespaceAuthorizationRule
-    listKind: NamespaceAuthorizationRuleList
-    plural: namespaceauthorizationrules
-    singular: namespaceauthorizationrule
+    kind: NamespaceNetworkRuleSet
+    listKind: NamespaceNetworkRuleSetList
+    plural: namespacenetworkrulesets
+    singular: namespacenetworkruleset
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              defaultAction:
+                type: string
+              id:
+                type: string
+              ipRules:
+                items:
+                  type: string
+                type: array
+              kubeformOutput:
+                properties:
+                  defaultAction:
+                    type: string
+                  id:
+                    type: string
+                  ipRules:
+                    items:
+                      type: string
+                    type: array
+                  namespaceName:
+                    type: string
+                  networkRules:
+                    items:
+                      properties:
+                        ignoreMissingVnetServiceEndpoint:
+                          type: boolean
+                        subnetID:
+                          type: string
+                      required:
+                      - subnetID
+                      type: object
+                    type: array
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - namespaceName
+                - providerRef
+                - resourceGroupName
+                type: object
+              namespaceName:
+                type: string
+              networkRules:
+                items:
+                  properties:
+                    ignoreMissingVnetServiceEndpoint:
+                      type: boolean
+                    subnetID:
+                      type: string
+                  required:
+                  - subnetID
+                  type: object
+                type: array
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resourceGroupName:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - namespaceName
+            - providerRef
+            - resourceGroupName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: namespace_s.servicebus.azurerm.kubeform.com
+spec:
+  group: servicebus.azurerm.kubeform.com
+  names:
+    kind: Namespace_
+    listKind: Namespace_List
+    plural: namespace_s
+    singular: namespace_
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              capacity:
+                format: int64
+                type: integer
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  capacity:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  secretRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  sku:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  zoneRedundant:
+                    type: boolean
+                required:
+                - location
+                - name
+                - providerRef
+                - resourceGroupName
+                - sku
+                type: object
+              location:
+                type: string
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resourceGroupName:
+                type: string
+              secretRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              sku:
+                type: string
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+              zoneRedundant:
+                type: boolean
+            required:
+            - location
+            - name
+            - providerRef
+            - resourceGroupName
+            - sku
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: queues.servicebus.azurerm.kubeform.com
+spec:
+  group: servicebus.azurerm.kubeform.com
+  names:
+    kind: Queue
+    listKind: QueueList
+    plural: queues
+    singular: queue
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              autoDeleteOnIdle:
+                type: string
+              deadLetteringOnMessageExpiration:
+                type: boolean
+              defaultMessageTtl:
+                type: string
+              duplicateDetectionHistoryTimeWindow:
+                type: string
+              enableBatchedOperations:
+                type: boolean
+              enableExpress:
+                type: boolean
+              enablePartitioning:
+                type: boolean
+              forwardDeadLetteredMessagesTo:
+                type: string
+              forwardTo:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  autoDeleteOnIdle:
+                    type: string
+                  deadLetteringOnMessageExpiration:
+                    type: boolean
+                  defaultMessageTtl:
+                    type: string
+                  duplicateDetectionHistoryTimeWindow:
+                    type: string
+                  enableBatchedOperations:
+                    type: boolean
+                  enableExpress:
+                    type: boolean
+                  enablePartitioning:
+                    type: boolean
+                  forwardDeadLetteredMessagesTo:
+                    type: string
+                  forwardTo:
+                    type: string
+                  id:
+                    type: string
+                  lockDuration:
+                    type: string
+                  maxDeliveryCount:
+                    format: int64
+                    type: integer
+                  maxSizeInMegabytes:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  namespaceName:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  requiresDuplicateDetection:
+                    type: boolean
+                  requiresSession:
+                    type: boolean
+                  resourceGroupName:
+                    type: string
+                  status:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - namespaceName
+                - providerRef
+                - resourceGroupName
+                type: object
+              lockDuration:
+                type: string
+              maxDeliveryCount:
+                format: int64
+                type: integer
+              maxSizeInMegabytes:
+                format: int64
+                type: integer
+              name:
+                type: string
+              namespaceName:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              requiresDuplicateDetection:
+                type: boolean
+              requiresSession:
+                type: boolean
+              resourceGroupName:
+                type: string
+              status:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - name
+            - namespaceName
+            - providerRef
+            - resourceGroupName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: queueauthorizationrules.servicebus.azurerm.kubeform.com
+spec:
+  group: servicebus.azurerm.kubeform.com
+  names:
+    kind: QueueAuthorizationRule
+    listKind: QueueAuthorizationRuleList
+    plural: queueauthorizationrules
+    singular: queueauthorizationrule
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -403,6 +1155,8 @@ spec:
                       name:
                         type: string
                     type: object
+                  queueName:
+                    type: string
                   resourceGroupName:
                     type: string
                   secretRef:
@@ -439,6 +1193,7 @@ spec:
                 - name
                 - namespaceName
                 - providerRef
+                - queueName
                 - resourceGroupName
                 type: object
               listen:
@@ -454,6 +1209,8 @@ spec:
                   name:
                     type: string
                 type: object
+              queueName:
+                type: string
               resourceGroupName:
                 type: string
               secretRef:
@@ -490,6 +1247,7 @@ spec:
             - name
             - namespaceName
             - providerRef
+            - queueName
             - resourceGroupName
             type: object
           status:
@@ -750,14 +1508,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: namespace_s.servicebus.azurerm.kubeform.com
+  name: subscriptionrules.servicebus.azurerm.kubeform.com
 spec:
   group: servicebus.azurerm.kubeform.com
   names:
-    kind: Namespace_
-    listKind: Namespace_List
-    plural: namespace_s
-    singular: namespace_
+    kind: SubscriptionRule
+    listKind: SubscriptionRuleList
+    plural: subscriptionrules
+    singular: subscriptionrule
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -776,208 +1534,66 @@ spec:
             type: object
           spec:
             properties:
-              capacity:
-                format: int64
-                type: integer
-              id:
+              action:
                 type: string
-              kubeformOutput:
+              correlationFilter:
                 properties:
-                  capacity:
-                    format: int64
-                    type: integer
-                  id:
+                  contentType:
                     type: string
-                  location:
+                  correlationID:
                     type: string
-                  name:
+                  label:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resourceGroupName:
+                  messageID:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  sku:
-                    type: string
-                  tags:
+                  properties:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  replyTo:
                     type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                  zoneRedundant:
-                    type: boolean
-                required:
-                - location
-                - name
-                - providerRef
-                - resourceGroupName
-                - sku
-                type: object
-              location:
-                type: string
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
+                  replyToSessionID:
+                    type: string
+                  sessionID:
+                    type: string
+                  to:
                     type: string
                 type: object
-              resourceGroupName:
+              filterType:
                 type: string
-              secretRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              sku:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              zoneRedundant:
-                type: boolean
-            required:
-            - location
-            - name
-            - providerRef
-            - resourceGroupName
-            - sku
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: queueauthorizationrules.servicebus.azurerm.kubeform.com
-spec:
-  group: servicebus.azurerm.kubeform.com
-  names:
-    kind: QueueAuthorizationRule
-    listKind: QueueAuthorizationRuleList
-    plural: queueauthorizationrules
-    singular: queueauthorizationrule
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
               id:
                 type: string
               kubeformOutput:
                 properties:
+                  action:
+                    type: string
+                  correlationFilter:
+                    properties:
+                      contentType:
+                        type: string
+                      correlationID:
+                        type: string
+                      label:
+                        type: string
+                      messageID:
+                        type: string
+                      properties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      replyTo:
+                        type: string
+                      replyToSessionID:
+                        type: string
+                      sessionID:
+                        type: string
+                      to:
+                        type: string
+                    type: object
+                  filterType:
+                    type: string
                   id:
                     type: string
-                  listen:
-                    type: boolean
-                  manage:
-                    type: boolean
                   name:
                     type: string
                   namespaceName:
@@ -987,17 +1603,12 @@ spec:
                       name:
                         type: string
                     type: object
-                  queueName:
-                    type: string
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  send:
-                    type: boolean
+                  sqlFilter:
+                    type: string
+                  subscriptionName:
+                    type: string
                   terminationPolicy:
                     enum:
                     - Delete
@@ -1021,17 +1632,17 @@ spec:
                         format: int64
                         type: integer
                     type: object
+                  topicName:
+                    type: string
                 required:
+                - filterType
                 - name
                 - namespaceName
                 - providerRef
-                - queueName
                 - resourceGroupName
+                - subscriptionName
+                - topicName
                 type: object
-              listen:
-                type: boolean
-              manage:
-                type: boolean
               name:
                 type: string
               namespaceName:
@@ -1041,17 +1652,12 @@ spec:
                   name:
                     type: string
                 type: object
-              queueName:
-                type: string
               resourceGroupName:
                 type: string
-              secretRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              send:
-                type: boolean
+              sqlFilter:
+                type: string
+              subscriptionName:
+                type: string
               terminationPolicy:
                 enum:
                 - Delete
@@ -1075,12 +1681,16 @@ spec:
                     format: int64
                     type: integer
                 type: object
+              topicName:
+                type: string
             required:
+            - filterType
             - name
             - namespaceName
             - providerRef
-            - queueName
             - resourceGroupName
+            - subscriptionName
+            - topicName
             type: object
           status:
             properties:
@@ -1120,164 +1730,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: metrics
-  name: metricsconfigurations.metrics.appscode.com
-spec:
-  group: metrics.appscode.com
-  names:
-    categories:
-    - metrics
-    - appscode
-    - all
-    kind: MetricsConfiguration
-    listKind: MetricsConfigurationList
-    plural: metricsconfigurations
-    singular: metricsconfiguration
-  scope: Cluster
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.targetRef.apiVersion
-      name: APIVersion
-      type: string
-    - jsonPath: .spec.targetRef.kind
-      name: Kind
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              metrics:
-                items:
-                  properties:
-                    field:
-                      properties:
-                        path:
-                          type: string
-                        type:
-                          enum:
-                          - Integer
-                          - DateTime
-                          - Array
-                          - String
-                          type: string
-                      required:
-                      - path
-                      - type
-                      type: object
-                    help:
-                      type: string
-                    labels:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    metricValue:
-                      properties:
-                        value:
-                          format: double
-                          type: number
-                        valueFromExpression:
-                          type: string
-                        valueFromPath:
-                          type: string
-                      type: object
-                    name:
-                      type: string
-                    params:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          value:
-                            type: string
-                          valuePath:
-                            type: string
-                        required:
-                        - key
-                        type: object
-                      type: array
-                    states:
-                      properties:
-                        labelKey:
-                          type: string
-                        values:
-                          items:
-                            properties:
-                              labelValue:
-                                type: string
-                              metricValue:
-                                properties:
-                                  value:
-                                    format: double
-                                    type: number
-                                  valueFromExpression:
-                                    type: string
-                                  valueFromPath:
-                                    type: string
-                                type: object
-                            required:
-                            - labelValue
-                            - metricValue
-                            type: object
-                          type: array
-                      required:
-                      - labelKey
-                      - values
-                      type: object
-                    type:
-                      enum:
-                      - gauge
-                      type: string
-                  required:
-                  - help
-                  - name
-                  - type
-                  type: object
-                type: array
-              targetRef:
-                properties:
-                  apiVersion:
-                    type: string
-                  kind:
-                    type: string
-                required:
-                - apiVersion
-                - kind
-                type: object
-            required:
-            - metrics
-            - targetRef
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources: {}
 
 ---
 apiVersion: apiextensions.k8s.io/v1
@@ -1625,458 +2077,6 @@ spec:
             - providerRef
             - resourceGroupName
             - topicName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: subscriptionrules.servicebus.azurerm.kubeform.com
-spec:
-  group: servicebus.azurerm.kubeform.com
-  names:
-    kind: SubscriptionRule
-    listKind: SubscriptionRuleList
-    plural: subscriptionrules
-    singular: subscriptionrule
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              action:
-                type: string
-              correlationFilter:
-                properties:
-                  contentType:
-                    type: string
-                  correlationID:
-                    type: string
-                  label:
-                    type: string
-                  messageID:
-                    type: string
-                  properties:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  replyTo:
-                    type: string
-                  replyToSessionID:
-                    type: string
-                  sessionID:
-                    type: string
-                  to:
-                    type: string
-                type: object
-              filterType:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  action:
-                    type: string
-                  correlationFilter:
-                    properties:
-                      contentType:
-                        type: string
-                      correlationID:
-                        type: string
-                      label:
-                        type: string
-                      messageID:
-                        type: string
-                      properties:
-                        additionalProperties:
-                          type: string
-                        type: object
-                      replyTo:
-                        type: string
-                      replyToSessionID:
-                        type: string
-                      sessionID:
-                        type: string
-                      to:
-                        type: string
-                    type: object
-                  filterType:
-                    type: string
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  namespaceName:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  resourceGroupName:
-                    type: string
-                  sqlFilter:
-                    type: string
-                  subscriptionName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                  topicName:
-                    type: string
-                required:
-                - filterType
-                - name
-                - namespaceName
-                - providerRef
-                - resourceGroupName
-                - subscriptionName
-                - topicName
-                type: object
-              name:
-                type: string
-              namespaceName:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resourceGroupName:
-                type: string
-              sqlFilter:
-                type: string
-              subscriptionName:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              topicName:
-                type: string
-            required:
-            - filterType
-            - name
-            - namespaceName
-            - providerRef
-            - resourceGroupName
-            - subscriptionName
-            - topicName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: queues.servicebus.azurerm.kubeform.com
-spec:
-  group: servicebus.azurerm.kubeform.com
-  names:
-    kind: Queue
-    listKind: QueueList
-    plural: queues
-    singular: queue
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              autoDeleteOnIdle:
-                type: string
-              deadLetteringOnMessageExpiration:
-                type: boolean
-              defaultMessageTtl:
-                type: string
-              duplicateDetectionHistoryTimeWindow:
-                type: string
-              enableBatchedOperations:
-                type: boolean
-              enableExpress:
-                type: boolean
-              enablePartitioning:
-                type: boolean
-              forwardDeadLetteredMessagesTo:
-                type: string
-              forwardTo:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  autoDeleteOnIdle:
-                    type: string
-                  deadLetteringOnMessageExpiration:
-                    type: boolean
-                  defaultMessageTtl:
-                    type: string
-                  duplicateDetectionHistoryTimeWindow:
-                    type: string
-                  enableBatchedOperations:
-                    type: boolean
-                  enableExpress:
-                    type: boolean
-                  enablePartitioning:
-                    type: boolean
-                  forwardDeadLetteredMessagesTo:
-                    type: string
-                  forwardTo:
-                    type: string
-                  id:
-                    type: string
-                  lockDuration:
-                    type: string
-                  maxDeliveryCount:
-                    format: int64
-                    type: integer
-                  maxSizeInMegabytes:
-                    format: int64
-                    type: integer
-                  name:
-                    type: string
-                  namespaceName:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  requiresDuplicateDetection:
-                    type: boolean
-                  requiresSession:
-                    type: boolean
-                  resourceGroupName:
-                    type: string
-                  status:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - name
-                - namespaceName
-                - providerRef
-                - resourceGroupName
-                type: object
-              lockDuration:
-                type: string
-              maxDeliveryCount:
-                format: int64
-                type: integer
-              maxSizeInMegabytes:
-                format: int64
-                type: integer
-              name:
-                type: string
-              namespaceName:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              requiresDuplicateDetection:
-                type: boolean
-              requiresSession:
-                type: boolean
-              resourceGroupName:
-                type: string
-              status:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - name
-            - namespaceName
-            - providerRef
-            - resourceGroupName
             type: object
           status:
             properties:

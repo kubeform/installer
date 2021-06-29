@@ -64,6 +64,11 @@ type ProviderList struct {
 	Providers []string
 }
 
+type CRD struct {
+	GK  schema.GroupKind
+	Def []byte
+}
+
 var providerList ProviderList
 
 type ProviderData struct {
@@ -163,6 +168,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 	var buf bytes.Buffer
 
 	// installer/.generator/.github/workflows/
+	fmt.Println(filepath.Join(inputDir, "installer", ".github", "workflows"))
 	root := filepath.Join(inputDir, "installer", ".generator", ".github", "workflows")
 	err = filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
@@ -172,7 +178,6 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(rel)
 
 		/*
 			.
@@ -198,6 +203,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 	}
 
 	// installer/.generator/apis
+	fmt.Println(filepath.Join(inputDir, "installer", "apis"))
 	root = filepath.Join(inputDir, "installer", ".generator", "apis")
 	err = filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
@@ -207,7 +213,6 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(rel)
 
 		/*
 			.
@@ -254,6 +259,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 	}
 
 	// installer/.generator/charts/kubeform-provider-p
+	fmt.Println(filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s", p)))
 	root = filepath.Join(inputDir, "installer", ".generator", "charts", "kubeform-provider-p")
 	err = filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
@@ -263,7 +269,6 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(rel)
 
 		/*
 			.
@@ -349,13 +354,12 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		gidsToProcess = []string{gid}
 	}
 	for _, g := range gidsToProcess {
-		//err = os.MkdirAll(filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g)), 0755)
-		//if err != nil {
-		//	return err
-		//}
+		fmt.Println(filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g)))
 
-		outputGKs := make([]schema.GroupKind, 0, len(crdstore)+len(extrastore))
-		outputCRDs := make([][]byte, 0, len(crdstore)+len(extrastore))
+		// remove crds folder so that we can cleanly recreate it.
+		_ = os.RemoveAll(filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g), "crds"))
+
+		outputCRDs := make([]CRD, 0, len(crdstore)+len(extrastore))
 
 		root = filepath.Join(inputDir, "installer", ".generator", "charts", "kubeform-provider-p-g-crds")
 		err = filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
@@ -366,7 +370,6 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			if err != nil {
 				return err
 			}
-			fmt.Println(rel)
 
 			/*
 				.
@@ -403,8 +406,10 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 							panic(err)
 						}
 
-						outputGKs = append(outputGKs, gk)
-						outputCRDs = append(outputCRDs, data)
+						outputCRDs = append(outputCRDs, CRD{
+							GK:  gk,
+							Def: data,
+						})
 					}
 					for gk := range extrastore {
 						data, filename, err := WriteCRD(extrastore, target, gk, crdVersion)
@@ -416,8 +421,10 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 							panic(err)
 						}
 
-						outputGKs = append(outputGKs, gk)
-						outputCRDs = append(outputCRDs, data)
+						outputCRDs = append(outputCRDs, CRD{
+							GK:  gk,
+							Def: data,
+						})
 					}
 				}
 				return nil
@@ -453,10 +460,10 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 
 		// write kubeform-provider-p-g-crds.yaml file
 		sort.Slice(outputCRDs, func(i, j int) bool {
-			if outputGKs[i].Group == outputGKs[j].Group {
-				return outputGKs[i].Kind < outputGKs[j].Kind
+			if outputCRDs[i].GK.Group == outputCRDs[j].GK.Group {
+				return outputCRDs[i].GK.Kind < outputCRDs[j].GK.Kind
 			}
-			return outputGKs[i].Group < outputGKs[j].Group
+			return outputCRDs[i].GK.Group < outputCRDs[j].GK.Group
 		})
 
 		target := filepath.Join(inputDir, "installer", "crds", fmt.Sprintf("kubeform-provider-%s", p), fmt.Sprintf("%s-crds.yaml", g))
@@ -465,14 +472,21 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			return err
 		}
 
-		data := bytes.Join(outputCRDs, []byte("\n---\n"))
-		err = ioutil.WriteFile(target, data, 0644)
+		buf.Reset()
+		for i, crd := range outputCRDs {
+			if i > 0 {
+				buf.WriteString("\n---\n")
+			}
+			buf.Write(crd.Def)
+		}
+		err = ioutil.WriteFile(target, buf.Bytes(), 0644)
 		if err != nil {
 			return err
 		}
 	}
 
 	// installer/.generator/hack/scripts
+	fmt.Println(filepath.Join(inputDir, "installer", "hack", "scripts"))
 	root = filepath.Join(inputDir, "installer", ".generator", "hack", "scripts")
 	err = filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
@@ -482,7 +496,6 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(rel)
 
 		/*
 			.
@@ -490,8 +503,10 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			update-chart-dependencies.sh
 		*/
 
+		target := filepath.Join(inputDir, "installer", "hack", "scripts", rel)
+
 		if info.IsDir() {
-			return os.MkdirAll(filepath.Join(inputDir, "installer", "hack", "scripts", rel), 0755)
+			return os.MkdirAll(target, 0755)
 		}
 
 		tpl := template.Must(template.New("").Funcs(sprig.TxtFuncMap()).ParseFiles(path))
@@ -500,7 +515,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		if err != nil {
 			return err
 		}
-		return ioutil.WriteFile(filepath.Join(inputDir, "installer", "hack", "scripts", rel), buf.Bytes(), 0755)
+		return ioutil.WriteFile(target, buf.Bytes(), 0755)
 	})
 	if err != nil {
 		return err

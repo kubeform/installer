@@ -132,14 +132,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: conformancepacks.config.aws.kubeform.com
+  name: configrules.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
   names:
-    kind: ConformancePack
-    listKind: ConformancePackList
-    plural: conformancepacks
-    singular: conformancepack
+    kind: ConfigRule
+    listKind: ConfigRuleList
+    plural: configrules
+    singular: configrule
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -160,48 +160,24 @@ spec:
             properties:
               arn:
                 type: string
-              deliveryS3Bucket:
-                type: string
-              deliveryS3KeyPrefix:
+              description:
                 type: string
               id:
                 type: string
-              inputParameter:
-                items:
-                  properties:
-                    parameterName:
-                      type: string
-                    parameterValue:
-                      type: string
-                  required:
-                  - parameterName
-                  - parameterValue
-                  type: object
-                maxItems: 60
-                type: array
+              inputParameters:
+                type: string
               kubeformOutput:
                 properties:
                   arn:
                     type: string
-                  deliveryS3Bucket:
-                    type: string
-                  deliveryS3KeyPrefix:
+                  description:
                     type: string
                   id:
                     type: string
-                  inputParameter:
-                    items:
-                      properties:
-                        parameterName:
-                          type: string
-                        parameterValue:
-                          type: string
-                      required:
-                      - parameterName
-                      - parameterValue
-                      type: object
-                    maxItems: 60
-                    type: array
+                  inputParameters:
+                    type: string
+                  maximumExecutionFrequency:
+                    type: string
                   name:
                     type: string
                   providerRef:
@@ -209,10 +185,48 @@ spec:
                       name:
                         type: string
                     type: object
-                  templateBody:
+                  ruleID:
                     type: string
-                  templateS3URI:
-                    type: string
+                  scope:
+                    properties:
+                      complianceResourceID:
+                        type: string
+                      complianceResourceTypes:
+                        items:
+                          type: string
+                        maxItems: 100
+                        type: array
+                      tagKey:
+                        type: string
+                      tagValue:
+                        type: string
+                    type: object
+                  source:
+                    properties:
+                      owner:
+                        type: string
+                      sourceDetail:
+                        items:
+                          properties:
+                            eventSource:
+                              type: string
+                            maximumExecutionFrequency:
+                              type: string
+                            messageType:
+                              type: string
+                          type: object
+                        maxItems: 25
+                        type: array
+                      sourceIdentifier:
+                        type: string
+                    required:
+                    - owner
+                    - sourceIdentifier
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
                   terminationPolicy:
                     enum:
                     - Delete
@@ -221,7 +235,10 @@ spec:
                 required:
                 - name
                 - providerRef
+                - source
                 type: object
+              maximumExecutionFrequency:
+                type: string
               name:
                 type: string
               providerRef:
@@ -229,10 +246,48 @@ spec:
                   name:
                     type: string
                 type: object
-              templateBody:
+              ruleID:
                 type: string
-              templateS3URI:
-                type: string
+              scope:
+                properties:
+                  complianceResourceID:
+                    type: string
+                  complianceResourceTypes:
+                    items:
+                      type: string
+                    maxItems: 100
+                    type: array
+                  tagKey:
+                    type: string
+                  tagValue:
+                    type: string
+                type: object
+              source:
+                properties:
+                  owner:
+                    type: string
+                  sourceDetail:
+                    items:
+                      properties:
+                        eventSource:
+                          type: string
+                        maximumExecutionFrequency:
+                          type: string
+                        messageType:
+                          type: string
+                      type: object
+                    maxItems: 25
+                    type: array
+                  sourceIdentifier:
+                    type: string
+                required:
+                - owner
+                - sourceIdentifier
+                type: object
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
@@ -241,6 +296,7 @@ spec:
             required:
             - name
             - providerRef
+            - source
             type: object
           status:
             properties:
@@ -472,14 +528,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: deliverychannels.config.aws.kubeform.com
+  name: configurationrecorders.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
   names:
-    kind: DeliveryChannel
-    listKind: DeliveryChannelList
-    plural: deliverychannels
-    singular: deliverychannel
+    kind: ConfigurationRecorder
+    listKind: ConfigurationRecorderList
+    plural: configurationrecorders
+    singular: configurationrecorder
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -511,16 +567,18 @@ spec:
                       name:
                         type: string
                     type: object
-                  s3BucketName:
-                    type: string
-                  s3KeyPrefix:
-                    type: string
-                  snapshotDeliveryProperties:
+                  recordingGroup:
                     properties:
-                      deliveryFrequency:
-                        type: string
+                      allSupported:
+                        type: boolean
+                      includeGlobalResourceTypes:
+                        type: boolean
+                      resourceTypes:
+                        items:
+                          type: string
+                        type: array
                     type: object
-                  snsTopicArn:
+                  roleArn:
                     type: string
                   terminationPolicy:
                     enum:
@@ -529,7 +587,7 @@ spec:
                     type: string
                 required:
                 - providerRef
-                - s3BucketName
+                - roleArn
                 type: object
               name:
                 type: string
@@ -538,16 +596,18 @@ spec:
                   name:
                     type: string
                 type: object
-              s3BucketName:
-                type: string
-              s3KeyPrefix:
-                type: string
-              snapshotDeliveryProperties:
+              recordingGroup:
                 properties:
-                  deliveryFrequency:
-                    type: string
+                  allSupported:
+                    type: boolean
+                  includeGlobalResourceTypes:
+                    type: boolean
+                  resourceTypes:
+                    items:
+                      type: string
+                    type: array
                 type: object
-              snsTopicArn:
+              roleArn:
                 type: string
               terminationPolicy:
                 enum:
@@ -556,7 +616,7 @@ spec:
                 type: string
             required:
             - providerRef
-            - s3BucketName
+            - roleArn
             type: object
           status:
             properties:
@@ -720,14 +780,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: remediationconfigurations.config.aws.kubeform.com
+  name: conformancepacks.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
   names:
-    kind: RemediationConfiguration
-    listKind: RemediationConfigurationList
-    plural: remediationconfigurations
-    singular: remediationconfiguration
+    kind: ConformancePack
+    listKind: ConformancePackList
+    plural: conformancepacks
+    singular: conformancepack
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -748,44 +808,58 @@ spec:
             properties:
               arn:
                 type: string
-              configRuleName:
+              deliveryS3Bucket:
+                type: string
+              deliveryS3KeyPrefix:
                 type: string
               id:
                 type: string
+              inputParameter:
+                items:
+                  properties:
+                    parameterName:
+                      type: string
+                    parameterValue:
+                      type: string
+                  required:
+                  - parameterName
+                  - parameterValue
+                  type: object
+                maxItems: 60
+                type: array
               kubeformOutput:
                 properties:
                   arn:
                     type: string
-                  configRuleName:
+                  deliveryS3Bucket:
+                    type: string
+                  deliveryS3KeyPrefix:
                     type: string
                   id:
                     type: string
-                  parameter:
+                  inputParameter:
                     items:
                       properties:
-                        name:
+                        parameterName:
                           type: string
-                        resourceValue:
-                          type: string
-                        staticValue:
+                        parameterValue:
                           type: string
                       required:
-                      - name
+                      - parameterName
+                      - parameterValue
                       type: object
-                    maxItems: 25
+                    maxItems: 60
                     type: array
+                  name:
+                    type: string
                   providerRef:
                     properties:
                       name:
                         type: string
                     type: object
-                  resourceType:
+                  templateBody:
                     type: string
-                  targetID:
-                    type: string
-                  targetType:
-                    type: string
-                  targetVersion:
+                  templateS3URI:
                     type: string
                   terminationPolicy:
                     enum:
@@ -793,37 +867,19 @@ spec:
                     - DoNotTerminate
                     type: string
                 required:
-                - configRuleName
+                - name
                 - providerRef
-                - targetID
-                - targetType
                 type: object
-              parameter:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    resourceValue:
-                      type: string
-                    staticValue:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                maxItems: 25
-                type: array
+              name:
+                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceType:
+              templateBody:
                 type: string
-              targetID:
-                type: string
-              targetType:
-                type: string
-              targetVersion:
+              templateS3URI:
                 type: string
               terminationPolicy:
                 enum:
@@ -831,10 +887,8 @@ spec:
                 - DoNotTerminate
                 type: string
             required:
-            - configRuleName
+            - name
             - providerRef
-            - targetID
-            - targetType
             type: object
           status:
             properties:
@@ -882,14 +936,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: configrules.config.aws.kubeform.com
+  name: deliverychannels.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
   names:
-    kind: ConfigRule
-    listKind: ConfigRuleList
-    plural: configrules
-    singular: configrule
+    kind: DeliveryChannel
+    listKind: DeliveryChannelList
+    plural: deliverychannels
+    singular: deliverychannel
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -908,25 +962,11 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
               id:
-                type: string
-              inputParameters:
                 type: string
               kubeformOutput:
                 properties:
-                  arn:
-                    type: string
-                  description:
-                    type: string
                   id:
-                    type: string
-                  inputParameters:
-                    type: string
-                  maximumExecutionFrequency:
                     type: string
                   name:
                     type: string
@@ -935,60 +975,26 @@ spec:
                       name:
                         type: string
                     type: object
-                  ruleID:
+                  s3BucketName:
                     type: string
-                  scope:
+                  s3KeyPrefix:
+                    type: string
+                  snapshotDeliveryProperties:
                     properties:
-                      complianceResourceID:
-                        type: string
-                      complianceResourceTypes:
-                        items:
-                          type: string
-                        maxItems: 100
-                        type: array
-                      tagKey:
-                        type: string
-                      tagValue:
+                      deliveryFrequency:
                         type: string
                     type: object
-                  source:
-                    properties:
-                      owner:
-                        type: string
-                      sourceDetail:
-                        items:
-                          properties:
-                            eventSource:
-                              type: string
-                            maximumExecutionFrequency:
-                              type: string
-                            messageType:
-                              type: string
-                          type: object
-                        maxItems: 25
-                        type: array
-                      sourceIdentifier:
-                        type: string
-                    required:
-                    - owner
-                    - sourceIdentifier
-                    type: object
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
+                  snsTopicArn:
+                    type: string
                   terminationPolicy:
                     enum:
                     - Delete
                     - DoNotTerminate
                     type: string
                 required:
-                - name
                 - providerRef
-                - source
+                - s3BucketName
                 type: object
-              maximumExecutionFrequency:
-                type: string
               name:
                 type: string
               providerRef:
@@ -996,57 +1002,25 @@ spec:
                   name:
                     type: string
                 type: object
-              ruleID:
+              s3BucketName:
                 type: string
-              scope:
+              s3KeyPrefix:
+                type: string
+              snapshotDeliveryProperties:
                 properties:
-                  complianceResourceID:
-                    type: string
-                  complianceResourceTypes:
-                    items:
-                      type: string
-                    maxItems: 100
-                    type: array
-                  tagKey:
-                    type: string
-                  tagValue:
+                  deliveryFrequency:
                     type: string
                 type: object
-              source:
-                properties:
-                  owner:
-                    type: string
-                  sourceDetail:
-                    items:
-                      properties:
-                        eventSource:
-                          type: string
-                        maximumExecutionFrequency:
-                          type: string
-                        messageType:
-                          type: string
-                      type: object
-                    maxItems: 25
-                    type: array
-                  sourceIdentifier:
-                    type: string
-                required:
-                - owner
-                - sourceIdentifier
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
+              snsTopicArn:
+                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
             required:
-            - name
             - providerRef
-            - source
+            - s3BucketName
             type: object
           status:
             properties:
@@ -1308,142 +1282,6 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: configurationrecorders.config.aws.kubeform.com
-spec:
-  group: config.aws.kubeform.com
-  names:
-    kind: ConfigurationRecorder
-    listKind: ConfigurationRecorderList
-    plural: configurationrecorders
-    singular: configurationrecorder
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  recordingGroup:
-                    properties:
-                      allSupported:
-                        type: boolean
-                      includeGlobalResourceTypes:
-                        type: boolean
-                      resourceTypes:
-                        items:
-                          type: string
-                        type: array
-                    type: object
-                  roleArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
-                - roleArn
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              recordingGroup:
-                properties:
-                  allSupported:
-                    type: boolean
-                  includeGlobalResourceTypes:
-                    type: boolean
-                  resourceTypes:
-                    items:
-                      type: string
-                    type: array
-                type: object
-              roleArn:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - providerRef
-            - roleArn
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
   name: organizationmanagedrules.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -1597,6 +1435,168 @@ spec:
             - name
             - providerRef
             - ruleIdentifier
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: remediationconfigurations.config.aws.kubeform.com
+spec:
+  group: config.aws.kubeform.com
+  names:
+    kind: RemediationConfiguration
+    listKind: RemediationConfigurationList
+    plural: remediationconfigurations
+    singular: remediationconfiguration
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              arn:
+                type: string
+              configRuleName:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  configRuleName:
+                    type: string
+                  id:
+                    type: string
+                  parameter:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        resourceValue:
+                          type: string
+                        staticValue:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    maxItems: 25
+                    type: array
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  resourceType:
+                    type: string
+                  targetID:
+                    type: string
+                  targetType:
+                    type: string
+                  targetVersion:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - configRuleName
+                - providerRef
+                - targetID
+                - targetType
+                type: object
+              parameter:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    resourceValue:
+                      type: string
+                    staticValue:
+                      type: string
+                  required:
+                  - name
+                  type: object
+                maxItems: 25
+                type: array
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resourceType:
+                type: string
+              targetID:
+                type: string
+              targetType:
+                type: string
+              targetVersion:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - configRuleName
+            - providerRef
+            - targetID
+            - targetType
             type: object
           status:
             properties:

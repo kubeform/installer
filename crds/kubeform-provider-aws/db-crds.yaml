@@ -224,14 +224,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: parametergroups.db.aws.kubeform.com
+  name: eventsubscriptions.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
   names:
-    kind: ParameterGroup
-    listKind: ParameterGroupList
-    plural: parametergroups
-    singular: parametergroup
+    kind: EventSubscription
+    listKind: EventSubscriptionList
+    plural: eventsubscriptions
+    singular: eventsubscription
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -252,230 +252,46 @@ spec:
             properties:
               arn:
                 type: string
-              description:
+              customerAwsID:
                 type: string
-              family:
-                type: string
+              enabled:
+                type: boolean
+              eventCategories:
+                items:
+                  type: string
+                type: array
               id:
                 type: string
               kubeformOutput:
                 properties:
                   arn:
                     type: string
-                  description:
+                  customerAwsID:
                     type: string
-                  family:
-                    type: string
+                  enabled:
+                    type: boolean
+                  eventCategories:
+                    items:
+                      type: string
+                    type: array
                   id:
                     type: string
                   name:
                     type: string
                   namePrefix:
                     type: string
-                  parameter:
-                    items:
-                      properties:
-                        applyMethod:
-                          type: string
-                        name:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - name
-                      - value
-                      type: object
-                    type: array
                   providerRef:
                     properties:
                       name:
                         type: string
                     type: object
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  snsTopic:
                     type: string
-                required:
-                - family
-                - providerRef
-                type: object
-              name:
-                type: string
-              namePrefix:
-                type: string
-              parameter:
-                items:
-                  properties:
-                    applyMethod:
-                      type: string
-                    name:
-                      type: string
-                    value:
-                      type: string
-                  required:
-                  - name
-                  - value
-                  type: object
-                type: array
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - family
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: proxies.db.aws.kubeform.com
-spec:
-  group: db.aws.kubeform.com
-  names:
-    kind: Proxy
-    listKind: ProxyList
-    plural: proxies
-    singular: proxy
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              arn:
-                type: string
-              auth:
-                items:
-                  properties:
-                    authScheme:
-                      type: string
-                    description:
-                      type: string
-                    iamAuth:
-                      type: string
-                    secretArn:
-                      type: string
-                  type: object
-                type: array
-              debugLogging:
-                type: boolean
-              endpoint:
-                type: string
-              engineFamily:
-                type: string
-              id:
-                type: string
-              idleClientTimeout:
-                format: int64
-                type: integer
-              kubeformOutput:
-                properties:
-                  arn:
-                    type: string
-                  auth:
+                  sourceIDS:
                     items:
-                      properties:
-                        authScheme:
-                          type: string
-                        description:
-                          type: string
-                        iamAuth:
-                          type: string
-                        secretArn:
-                          type: string
-                      type: object
+                      type: string
                     type: array
-                  debugLogging:
-                    type: boolean
-                  endpoint:
-                    type: string
-                  engineFamily:
-                    type: string
-                  id:
-                    type: string
-                  idleClientTimeout:
-                    format: int64
-                    type: integer
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  requireTLS:
-                    type: boolean
-                  roleArn:
+                  sourceType:
                     type: string
                   tags:
                     additionalProperties:
@@ -504,32 +320,26 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  vpcSecurityGroupIDS:
-                    items:
-                      type: string
-                    type: array
-                  vpcSubnetIDS:
-                    items:
-                      type: string
-                    type: array
                 required:
-                - auth
-                - engineFamily
-                - name
                 - providerRef
-                - roleArn
-                - vpcSubnetIDS
+                - snsTopic
                 type: object
               name:
+                type: string
+              namePrefix:
                 type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requireTLS:
-                type: boolean
-              roleArn:
+              snsTopic:
+                type: string
+              sourceIDS:
+                items:
+                  type: string
+                type: array
+              sourceType:
                 type: string
               tags:
                 additionalProperties:
@@ -558,21 +368,9 @@ spec:
                     format: int64
                     type: integer
                 type: object
-              vpcSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              vpcSubnetIDS:
-                items:
-                  type: string
-                type: array
             required:
-            - auth
-            - engineFamily
-            - name
             - providerRef
-            - roleArn
-            - vpcSubnetIDS
+            - snsTopic
             type: object
           status:
             properties:
@@ -1092,346 +890,6 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: proxytargets.db.aws.kubeform.com
-spec:
-  group: db.aws.kubeform.com
-  names:
-    kind: ProxyTarget
-    listKind: ProxyTargetList
-    plural: proxytargets
-    singular: proxytarget
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              dbClusterIdentifier:
-                type: string
-              dbInstanceIdentifier:
-                type: string
-              dbProxyName:
-                type: string
-              endpoint:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  dbClusterIdentifier:
-                    type: string
-                  dbInstanceIdentifier:
-                    type: string
-                  dbProxyName:
-                    type: string
-                  endpoint:
-                    type: string
-                  id:
-                    type: string
-                  port:
-                    format: int64
-                    type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  rdsResourceID:
-                    type: string
-                  targetArn:
-                    type: string
-                  targetGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  trackedClusterID:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - dbProxyName
-                - providerRef
-                - targetGroupName
-                type: object
-              port:
-                format: int64
-                type: integer
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rdsResourceID:
-                type: string
-              targetArn:
-                type: string
-              targetGroupName:
-                type: string
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              trackedClusterID:
-                type: string
-              type:
-                type: string
-            required:
-            - dbProxyName
-            - providerRef
-            - targetGroupName
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: proxydefaulttargetgroups.db.aws.kubeform.com
-spec:
-  group: db.aws.kubeform.com
-  names:
-    kind: ProxyDefaultTargetGroup
-    listKind: ProxyDefaultTargetGroupList
-    plural: proxydefaulttargetgroups
-    singular: proxydefaulttargetgroup
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              arn:
-                type: string
-              connectionPoolConfig:
-                properties:
-                  connectionBorrowTimeout:
-                    format: int64
-                    type: integer
-                  initQuery:
-                    type: string
-                  maxConnectionsPercent:
-                    format: int64
-                    type: integer
-                  maxIdleConnectionsPercent:
-                    format: int64
-                    type: integer
-                  sessionPinningFilters:
-                    items:
-                      type: string
-                    type: array
-                type: object
-              dbProxyName:
-                type: string
-              id:
-                type: string
-              kubeformOutput:
-                properties:
-                  arn:
-                    type: string
-                  connectionPoolConfig:
-                    properties:
-                      connectionBorrowTimeout:
-                        format: int64
-                        type: integer
-                      initQuery:
-                        type: string
-                      maxConnectionsPercent:
-                        format: int64
-                        type: integer
-                      maxIdleConnectionsPercent:
-                        format: int64
-                        type: integer
-                      sessionPinningFilters:
-                        items:
-                          type: string
-                        type: array
-                    type: object
-                  dbProxyName:
-                    type: string
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                  timeouts:
-                    properties:
-                      create:
-                        format: int64
-                        type: integer
-                      default:
-                        format: int64
-                        type: integer
-                      delete:
-                        format: int64
-                        type: integer
-                      read:
-                        format: int64
-                        type: integer
-                      update:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - dbProxyName
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-            required:
-            - dbProxyName
-            - providerRef
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
   name: instanceroleassociations.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -1507,160 +965,6 @@ spec:
             - featureName
             - providerRef
             - roleArn
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              observedGeneration:
-                format: int64
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: kubeform
-  name: securitygroups.db.aws.kubeform.com
-spec:
-  group: db.aws.kubeform.com
-  names:
-    kind: SecurityGroup
-    listKind: SecurityGroupList
-    plural: securitygroups
-    singular: securitygroup
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              ingress:
-                items:
-                  properties:
-                    cidr:
-                      type: string
-                    securityGroupID:
-                      type: string
-                    securityGroupName:
-                      type: string
-                    securityGroupOwnerID:
-                      type: string
-                  type: object
-                type: array
-              kubeformOutput:
-                properties:
-                  arn:
-                    type: string
-                  description:
-                    type: string
-                  id:
-                    type: string
-                  ingress:
-                    items:
-                      properties:
-                        cidr:
-                          type: string
-                        securityGroupID:
-                          type: string
-                        securityGroupName:
-                          type: string
-                        securityGroupOwnerID:
-                          type: string
-                      type: object
-                    type: array
-                  name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - ingress
-                - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-            required:
-            - ingress
-            - name
-            - providerRef
             type: object
           status:
             properties:
@@ -1952,14 +1256,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kubeform
-  name: eventsubscriptions.db.aws.kubeform.com
+  name: parametergroups.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
   names:
-    kind: EventSubscription
-    listKind: EventSubscriptionList
-    plural: eventsubscriptions
-    singular: eventsubscription
+    kind: ParameterGroup
+    listKind: ParameterGroupList
+    plural: parametergroups
+    singular: parametergroup
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -1980,46 +1284,230 @@ spec:
             properties:
               arn:
                 type: string
-              customerAwsID:
+              description:
                 type: string
-              enabled:
-                type: boolean
-              eventCategories:
-                items:
-                  type: string
-                type: array
+              family:
+                type: string
               id:
                 type: string
               kubeformOutput:
                 properties:
                   arn:
                     type: string
-                  customerAwsID:
+                  description:
                     type: string
-                  enabled:
-                    type: boolean
-                  eventCategories:
-                    items:
-                      type: string
-                    type: array
+                  family:
+                    type: string
                   id:
                     type: string
                   name:
                     type: string
                   namePrefix:
                     type: string
+                  parameter:
+                    items:
+                      properties:
+                        applyMethod:
+                          type: string
+                        name:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - name
+                      - value
+                      type: object
+                    type: array
                   providerRef:
                     properties:
                       name:
                         type: string
                     type: object
-                  snsTopic:
-                    type: string
-                  sourceIDS:
-                    items:
+                  tags:
+                    additionalProperties:
                       type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - family
+                - providerRef
+                type: object
+              name:
+                type: string
+              namePrefix:
+                type: string
+              parameter:
+                items:
+                  properties:
+                    applyMethod:
+                      type: string
+                    name:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                  - name
+                  - value
+                  type: object
+                type: array
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - family
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: proxies.db.aws.kubeform.com
+spec:
+  group: db.aws.kubeform.com
+  names:
+    kind: Proxy
+    listKind: ProxyList
+    plural: proxies
+    singular: proxy
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              arn:
+                type: string
+              auth:
+                items:
+                  properties:
+                    authScheme:
+                      type: string
+                    description:
+                      type: string
+                    iamAuth:
+                      type: string
+                    secretArn:
+                      type: string
+                  type: object
+                type: array
+              debugLogging:
+                type: boolean
+              endpoint:
+                type: string
+              engineFamily:
+                type: string
+              id:
+                type: string
+              idleClientTimeout:
+                format: int64
+                type: integer
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  auth:
+                    items:
+                      properties:
+                        authScheme:
+                          type: string
+                        description:
+                          type: string
+                        iamAuth:
+                          type: string
+                        secretArn:
+                          type: string
+                      type: object
                     type: array
-                  sourceType:
+                  debugLogging:
+                    type: boolean
+                  endpoint:
+                    type: string
+                  engineFamily:
+                    type: string
+                  id:
+                    type: string
+                  idleClientTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  requireTLS:
+                    type: boolean
+                  roleArn:
                     type: string
                   tags:
                     additionalProperties:
@@ -2048,26 +1536,32 @@ spec:
                         format: int64
                         type: integer
                     type: object
+                  vpcSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  vpcSubnetIDS:
+                    items:
+                      type: string
+                    type: array
                 required:
+                - auth
+                - engineFamily
+                - name
                 - providerRef
-                - snsTopic
+                - roleArn
+                - vpcSubnetIDS
                 type: object
               name:
-                type: string
-              namePrefix:
                 type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              snsTopic:
-                type: string
-              sourceIDS:
-                items:
-                  type: string
-                type: array
-              sourceType:
+              requireTLS:
+                type: boolean
+              roleArn:
                 type: string
               tags:
                 additionalProperties:
@@ -2096,9 +1590,515 @@ spec:
                     format: int64
                     type: integer
                 type: object
+              vpcSecurityGroupIDS:
+                items:
+                  type: string
+                type: array
+              vpcSubnetIDS:
+                items:
+                  type: string
+                type: array
             required:
+            - auth
+            - engineFamily
+            - name
             - providerRef
-            - snsTopic
+            - roleArn
+            - vpcSubnetIDS
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: proxydefaulttargetgroups.db.aws.kubeform.com
+spec:
+  group: db.aws.kubeform.com
+  names:
+    kind: ProxyDefaultTargetGroup
+    listKind: ProxyDefaultTargetGroupList
+    plural: proxydefaulttargetgroups
+    singular: proxydefaulttargetgroup
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              arn:
+                type: string
+              connectionPoolConfig:
+                properties:
+                  connectionBorrowTimeout:
+                    format: int64
+                    type: integer
+                  initQuery:
+                    type: string
+                  maxConnectionsPercent:
+                    format: int64
+                    type: integer
+                  maxIdleConnectionsPercent:
+                    format: int64
+                    type: integer
+                  sessionPinningFilters:
+                    items:
+                      type: string
+                    type: array
+                type: object
+              dbProxyName:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  connectionPoolConfig:
+                    properties:
+                      connectionBorrowTimeout:
+                        format: int64
+                        type: integer
+                      initQuery:
+                        type: string
+                      maxConnectionsPercent:
+                        format: int64
+                        type: integer
+                      maxIdleConnectionsPercent:
+                        format: int64
+                        type: integer
+                      sessionPinningFilters:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  dbProxyName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - dbProxyName
+                - providerRef
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              timeouts:
+                properties:
+                  create:
+                    format: int64
+                    type: integer
+                  default:
+                    format: int64
+                    type: integer
+                  delete:
+                    format: int64
+                    type: integer
+                  read:
+                    format: int64
+                    type: integer
+                  update:
+                    format: int64
+                    type: integer
+                type: object
+            required:
+            - dbProxyName
+            - providerRef
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: proxytargets.db.aws.kubeform.com
+spec:
+  group: db.aws.kubeform.com
+  names:
+    kind: ProxyTarget
+    listKind: ProxyTargetList
+    plural: proxytargets
+    singular: proxytarget
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              dbClusterIdentifier:
+                type: string
+              dbInstanceIdentifier:
+                type: string
+              dbProxyName:
+                type: string
+              endpoint:
+                type: string
+              id:
+                type: string
+              kubeformOutput:
+                properties:
+                  dbClusterIdentifier:
+                    type: string
+                  dbInstanceIdentifier:
+                    type: string
+                  dbProxyName:
+                    type: string
+                  endpoint:
+                    type: string
+                  id:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  rdsResourceID:
+                    type: string
+                  targetArn:
+                    type: string
+                  targetGroupName:
+                    type: string
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                  trackedClusterID:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - dbProxyName
+                - providerRef
+                - targetGroupName
+                type: object
+              port:
+                format: int64
+                type: integer
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              rdsResourceID:
+                type: string
+              targetArn:
+                type: string
+              targetGroupName:
+                type: string
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              trackedClusterID:
+                type: string
+              type:
+                type: string
+            required:
+            - dbProxyName
+            - providerRef
+            - targetGroupName
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: kubeform
+  name: securitygroups.db.aws.kubeform.com
+spec:
+  group: db.aws.kubeform.com
+  names:
+    kind: SecurityGroup
+    listKind: SecurityGroupList
+    plural: securitygroups
+    singular: securitygroup
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              arn:
+                type: string
+              description:
+                type: string
+              id:
+                type: string
+              ingress:
+                items:
+                  properties:
+                    cidr:
+                      type: string
+                    securityGroupID:
+                      type: string
+                    securityGroupName:
+                      type: string
+                    securityGroupOwnerID:
+                      type: string
+                  type: object
+                type: array
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  ingress:
+                    items:
+                      properties:
+                        cidr:
+                          type: string
+                        securityGroupID:
+                          type: string
+                        securityGroupName:
+                          type: string
+                        securityGroupOwnerID:
+                          type: string
+                      type: object
+                    type: array
+                  name:
+                    type: string
+                  providerRef:
+                    properties:
+                      name:
+                        type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  terminationPolicy:
+                    enum:
+                    - Delete
+                    - DoNotTerminate
+                    type: string
+                required:
+                - ingress
+                - name
+                - providerRef
+                type: object
+              name:
+                type: string
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              tags:
+                additionalProperties:
+                  type: string
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+            required:
+            - ingress
+            - name
+            - providerRef
             type: object
           status:
             properties:
