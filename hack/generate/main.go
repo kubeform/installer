@@ -18,6 +18,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	goflag "flag"
 	"fmt"
 	"io"
@@ -47,6 +48,7 @@ import (
 var (
 	crdstore   = map[schema.GroupKind]map[string]*unstructured.Unstructured{}
 	extrastore = map[schema.GroupKind]map[string]*unstructured.Unstructured{}
+	catalog    = map[string][]string{}
 )
 
 type Definition struct {
@@ -131,16 +133,42 @@ func main() {
 	}
 	provider = strings.ToLower(strings.TrimSpace(provider))
 
-	providersToProcess := strset.List()
-	if provider != "" {
-		providersToProcess = []string{provider}
+	catalogfile := filepath.Join(inputDir, "installer", "crds", "catalog.json")
+	err := os.MkdirAll(filepath.Dir(catalogfile), 0755)
+	if err != nil {
+		panic(err)
 	}
-
-	for _, p := range providersToProcess {
-		err := processProvider(inputDir, p, gid, crdVersion)
+	if _, err := os.Stat(catalogfile); !os.IsNotExist(err) {
+		data, err := ioutil.ReadFile(catalogfile)
 		if err != nil {
 			panic(err)
 		}
+		err = json.Unmarshal(data, &catalog)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	{
+		providersToProcess := strset.List()
+		if provider != "" {
+			providersToProcess = []string{provider}
+		}
+		for _, p := range providersToProcess {
+			err := processProvider(inputDir, p, gid, crdVersion)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
+	data, err := json.MarshalIndent(catalog, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	err = ioutil.WriteFile(catalogfile, data, 0644)
+	if err != nil {
+		panic(err)
 	}
 }
 
@@ -159,10 +187,24 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		groups.Insert(gk.Group)
 		gids.Insert(gk.Group[0:strings.IndexRune(gk.Group, '.')])
 	}
+	catalog[p] = groups.List()
 
 	err = os.MkdirAll(filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s", p)), 0755)
 	if err != nil {
 		return err
+	}
+
+	// remove crd charts for api groups that don't exist anymore
+	entries, err := ioutil.ReadDir(filepath.Join(inputDir, "installer", "charts"))
+	if err != nil {
+		return err
+	}
+	for _, fi := range entries {
+		if fi.IsDir() &&
+			strings.HasPrefix(fi.Name(), fmt.Sprintf("kubeform-provider-%s-", p)) &&
+			!gids.Has(strings.TrimSuffix(strings.TrimPrefix(fi.Name(), fmt.Sprintf("kubeform-provider-%s-", p)), "-crds")) {
+			_ = os.RemoveAll(filepath.Join(inputDir, "installer", "charts", fi.Name()))
+		}
 	}
 
 	var buf bytes.Buffer
