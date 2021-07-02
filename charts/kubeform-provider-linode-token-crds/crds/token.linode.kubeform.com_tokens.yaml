@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: linode.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: tokens.token.linode.kubeform.com
 spec:
   group: token.linode.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              created:
-                type: string
-              expiry:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   created:
@@ -46,36 +41,31 @@ spec:
                     type: string
                   label:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   scopes:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - scopes
                 type: object
-              label:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              scopes:
-                type: string
+              resource:
+                properties:
+                  created:
+                    type: string
+                  expiry:
+                    type: string
+                  id:
+                    type: string
+                  label:
+                    type: string
+                  scopes:
+                    type: string
+                required:
+                - scopes
+                type: object
               secretRef:
                 properties:
                   name:
@@ -86,9 +76,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - scopes
+            - resource
             type: object
           status:
             properties:

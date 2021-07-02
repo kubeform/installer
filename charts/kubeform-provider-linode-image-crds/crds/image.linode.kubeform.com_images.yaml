@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: linode.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: images.image.linode.kubeform.com
 spec:
   group: image.linode.kubeform.com
@@ -30,23 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              created:
-                type: string
-              createdBy:
-                type: string
-              deprecated:
-                type: boolean
-              description:
-                type: string
-              diskID:
-                format: int64
-                type: integer
-              expiry:
-                type: string
-              id:
-                type: string
-              isPublic:
-                type: boolean
               kubeformOutput:
                 properties:
                   created:
@@ -62,6 +46,10 @@ spec:
                     type: integer
                   expiry:
                     type: string
+                  fileHash:
+                    type: string
+                  filePath:
+                    type: string
                   id:
                     type: string
                   isPublic:
@@ -71,18 +59,12 @@ spec:
                   linodeID:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
+                  region:
+                    type: string
                   size:
                     format: int64
                     type: integer
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  status:
                     type: string
                   timeouts:
                     properties:
@@ -107,56 +89,86 @@ spec:
                   vendor:
                     type: string
                 required:
-                - diskID
                 - label
-                - linodeID
-                - providerRef
                 type: object
-              label:
-                type: string
-              linodeID:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              size:
-                format: int64
-                type: integer
+              resource:
+                properties:
+                  created:
+                    type: string
+                  createdBy:
+                    type: string
+                  deprecated:
+                    type: boolean
+                  description:
+                    type: string
+                  diskID:
+                    format: int64
+                    type: integer
+                  expiry:
+                    type: string
+                  fileHash:
+                    type: string
+                  filePath:
+                    type: string
+                  id:
+                    type: string
+                  isPublic:
+                    type: boolean
+                  label:
+                    type: string
+                  linodeID:
+                    format: int64
+                    type: integer
+                  region:
+                    type: string
+                  size:
+                    format: int64
+                    type: integer
+                  status:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                  vendor:
+                    type: string
+                required:
+                - label
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
-                type: string
-              vendor:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - diskID
-            - label
-            - linodeID
             - providerRef
+            - resource
             type: object
           status:
             properties:

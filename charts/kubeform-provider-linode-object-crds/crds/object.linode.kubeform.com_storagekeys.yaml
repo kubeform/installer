@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: linode.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: storagekeys.object.linode.kubeform.com
 spec:
   group: object.linode.kubeform.com
@@ -30,25 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accessKey:
-                type: string
-              bucketAccess:
-                items:
-                  properties:
-                    bucketName:
-                      type: string
-                    cluster:
-                      type: string
-                    permissions:
-                      type: string
-                  required:
-                  - bucketName
-                  - cluster
-                  - permissions
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accessKey:
@@ -74,33 +56,41 @@ spec:
                     type: string
                   limited:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - label
-                - providerRef
                 type: object
-              label:
-                type: string
-              limited:
-                type: boolean
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  accessKey:
+                    type: string
+                  bucketAccess:
+                    items:
+                      properties:
+                        bucketName:
+                          type: string
+                        cluster:
+                          type: string
+                        permissions:
+                          type: string
+                      required:
+                      - bucketName
+                      - cluster
+                      - permissions
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  label:
+                    type: string
+                  limited:
+                    type: boolean
+                required:
+                - label
                 type: object
               secretRef:
                 properties:
@@ -112,9 +102,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - label
             - providerRef
+            - resource
             type: object
           status:
             properties:

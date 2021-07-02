@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: linode.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusters.lke.linode.kubeform.com
 spec:
   group: lke.linode.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiEndpoints:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
-              k8sVersion:
-                type: string
               kubeformOutput:
                 properties:
                   apiEndpoints:
@@ -79,29 +72,14 @@ spec:
                       type: object
                     minItems: 1
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   status:
                     type: string
                   tags:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -124,87 +102,104 @@ spec:
                 - k8sVersion
                 - label
                 - pool
-                - providerRef
                 - region
                 type: object
-              label:
-                type: string
-              pool:
-                items:
-                  properties:
-                    ID:
-                      format: int64
-                      type: integer
-                    count:
-                      format: int64
-                      type: integer
-                    nodes:
-                      items:
-                        properties:
-                          ID:
-                            type: string
-                          instanceID:
-                            format: int64
-                            type: integer
-                          status:
-                            type: string
-                        type: object
-                      type: array
-                    type:
-                      type: string
-                  required:
-                  - count
-                  - type
-                  type: object
-                minItems: 1
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  apiEndpoints:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  k8sVersion:
+                    type: string
+                  label:
+                    type: string
+                  pool:
+                    items:
+                      properties:
+                        ID:
+                          format: int64
+                          type: integer
+                        count:
+                          format: int64
+                          type: integer
+                        nodes:
+                          items:
+                            properties:
+                              ID:
+                                type: string
+                              instanceID:
+                                format: int64
+                                type: integer
+                              status:
+                                type: string
+                            type: object
+                          type: array
+                        type:
+                          type: string
+                      required:
+                      - count
+                      - type
+                      type: object
+                    minItems: 1
+                    type: array
+                  region:
+                    type: string
+                  status:
+                    type: string
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - k8sVersion
+                - label
+                - pool
+                - region
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              status:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - k8sVersion
-            - label
-            - pool
             - providerRef
-            - region
+            - resource
             type: object
           status:
             properties:
