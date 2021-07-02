@@ -59,7 +59,6 @@ The following table lists the configurable parameters of the `kubeform-provider-
 | crds.stackscript  | If true, installs the kubeform-provider-linode-stackscript-crds chart  | `false`                                                      |
 | crds.token        | If true, installs the kubeform-provider-linode-token-crds chart        | `false`                                                      |
 | crds.user         | If true, installs the kubeform-provider-linode-user-crds chart         | `false`                                                      |
-| crds.vlan         | If true, installs the kubeform-provider-linode-vlan-crds chart         | `false`                                                      |
 | crds.volume       | If true, installs the kubeform-provider-linode-volume-crds chart       | `false`                                                      |
 
 
