@@ -429,47 +429,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			target := filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g), rel)
 
 			if info.IsDir() {
-				err = os.MkdirAll(target, 0755)
-				if err != nil {
-					return err
-				}
-				if rel == "crds" {
-					// crds
-					for gk := range crdstore {
-						if !strings.HasPrefix(gk.Group, g+".") {
-							continue
-						}
-						data, filename, err := WriteCRD(crdstore, target, gk, crdVersion)
-						if err != nil {
-							panic(err)
-						}
-						err = ioutil.WriteFile(filename, data, 0644)
-						if err != nil {
-							panic(err)
-						}
-
-						outputCRDs = append(outputCRDs, CRD{
-							GK:  gk,
-							Def: data,
-						})
-					}
-					for gk := range extrastore {
-						data, filename, err := WriteCRD(extrastore, target, gk, crdVersion)
-						if err != nil {
-							panic(err)
-						}
-						err = ioutil.WriteFile(filename, data, 0644)
-						if err != nil {
-							panic(err)
-						}
-
-						outputCRDs = append(outputCRDs, CRD{
-							GK:  gk,
-							Def: data,
-						})
-					}
-				}
-				return nil
+				return os.MkdirAll(target, 0755)
 			}
 
 			switch rel {
@@ -500,6 +460,46 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			return err
 		}
 
+		// crds
+		target := filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g), "crds")
+		err = os.MkdirAll(target, 0755)
+		if err != nil {
+			return err
+		}
+		for gk := range crdstore {
+			if !strings.HasPrefix(gk.Group, g+".") {
+				continue
+			}
+			data, filename, err := WriteCRD(crdstore, target, gk, crdVersion)
+			if err != nil {
+				panic(err)
+			}
+			err = ioutil.WriteFile(filename, data, 0644)
+			if err != nil {
+				panic(err)
+			}
+
+			outputCRDs = append(outputCRDs, CRD{
+				GK:  gk,
+				Def: data,
+			})
+		}
+		for gk := range extrastore {
+			data, filename, err := WriteCRD(extrastore, target, gk, crdVersion)
+			if err != nil {
+				panic(err)
+			}
+			err = ioutil.WriteFile(filename, data, 0644)
+			if err != nil {
+				panic(err)
+			}
+
+			outputCRDs = append(outputCRDs, CRD{
+				GK:  gk,
+				Def: data,
+			})
+		}
+
 		// write kubeform-provider-p-g-crds.yaml file
 		sort.Slice(outputCRDs, func(i, j int) bool {
 			if outputCRDs[i].GK.Group == outputCRDs[j].GK.Group {
@@ -508,7 +508,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			return outputCRDs[i].GK.Group < outputCRDs[j].GK.Group
 		})
 
-		target := filepath.Join(inputDir, "installer", "crds", fmt.Sprintf("kubeform-provider-%s", p), fmt.Sprintf("%s-crds.yaml", g))
+		target = filepath.Join(inputDir, "installer", "crds", fmt.Sprintf("kubeform-provider-%s", p), fmt.Sprintf("%s-crds.yaml", g))
 		err = os.MkdirAll(filepath.Dir(target), 0755)
 		if err != nil {
 			return err
