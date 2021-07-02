@@ -59,7 +59,6 @@ type LinodeCRDs struct {
 	Stackscript  bool `json:"stackscript"`
 	Token        bool `json:"token"`
 	User         bool `json:"user"`
-	Vlan         bool `json:"vlan"`
 	Volume       bool `json:"volume"`
 }
 

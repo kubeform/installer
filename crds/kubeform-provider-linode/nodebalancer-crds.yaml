@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: linode.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: configs.nodebalancer.linode.kubeform.com
 spec:
   group: nodebalancer.linode.kubeform.com
@@ -188,29 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              algorithm:
-                type: string
-              check:
-                type: string
-              checkAttempts:
-                format: int64
-                type: integer
-              checkBody:
-                type: string
-              checkInterval:
-                format: int64
-                type: integer
-              checkPassive:
-                type: boolean
-              checkPath:
-                type: string
-              checkTimeout:
-                format: int64
-                type: integer
-              cipherSuite:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   algorithm:
@@ -255,78 +233,95 @@ spec:
                     type: integer
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   proxyProtocol:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sslCommonname:
                     type: string
                   sslFingerprint:
                     type: string
                   stickiness:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - nodebalancerID
-                - providerRef
                 type: object
-              nodeStatus:
-                items:
-                  properties:
-                    down:
-                      format: int64
-                      type: integer
-                    up:
-                      format: int64
-                      type: integer
-                  type: object
-                type: array
-              nodebalancerID:
-                format: int64
-                type: integer
-              port:
-                format: int64
-                type: integer
-              protocol:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              proxyProtocol:
-                type: string
+              resource:
+                properties:
+                  algorithm:
+                    type: string
+                  check:
+                    type: string
+                  checkAttempts:
+                    format: int64
+                    type: integer
+                  checkBody:
+                    type: string
+                  checkInterval:
+                    format: int64
+                    type: integer
+                  checkPassive:
+                    type: boolean
+                  checkPath:
+                    type: string
+                  checkTimeout:
+                    format: int64
+                    type: integer
+                  cipherSuite:
+                    type: string
+                  id:
+                    type: string
+                  nodeStatus:
+                    items:
+                      properties:
+                        down:
+                          format: int64
+                          type: integer
+                        up:
+                          format: int64
+                          type: integer
+                      type: object
+                    type: array
+                  nodebalancerID:
+                    format: int64
+                    type: integer
+                  port:
+                    format: int64
+                    type: integer
+                  protocol:
+                    type: string
+                  proxyProtocol:
+                    type: string
+                  sslCommonname:
+                    type: string
+                  sslFingerprint:
+                    type: string
+                  stickiness:
+                    type: string
+                required:
+                - nodebalancerID
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              sslCommonname:
-                type: string
-              sslFingerprint:
-                type: string
-              stickiness:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - nodebalancerID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -373,7 +368,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: linode.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: nodes.nodebalancer.linode.kubeform.com
 spec:
   group: nodebalancer.linode.kubeform.com
@@ -400,13 +396,6 @@ spec:
             type: object
           spec:
             properties:
-              address:
-                type: string
-              configID:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   address:
@@ -423,17 +412,7 @@ spec:
                   nodebalancerID:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   status:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   weight:
                     format: int64
@@ -443,36 +422,52 @@ spec:
                 - configID
                 - label
                 - nodebalancerID
-                - providerRef
                 type: object
-              label:
-                type: string
-              mode:
-                type: string
-              nodebalancerID:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              status:
-                type: string
+              resource:
+                properties:
+                  address:
+                    type: string
+                  configID:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  label:
+                    type: string
+                  mode:
+                    type: string
+                  nodebalancerID:
+                    format: int64
+                    type: integer
+                  status:
+                    type: string
+                  weight:
+                    format: int64
+                    type: integer
+                required:
+                - address
+                - configID
+                - label
+                - nodebalancerID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              weight:
-                format: int64
-                type: integer
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - address
-            - configID
-            - label
-            - nodebalancerID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -519,7 +514,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: linode.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: nodebalancers.nodebalancer.linode.kubeform.com
 spec:
   group: nodebalancer.linode.kubeform.com
@@ -546,19 +542,6 @@ spec:
             type: object
           spec:
             properties:
-              clientConnThrottle:
-                format: int64
-                type: integer
-              created:
-                type: string
-              hostname:
-                type: string
-              id:
-                type: string
-              ipv4:
-                type: string
-              ipv6:
-                type: string
               kubeformOutput:
                 properties:
                   clientConnThrottle:
@@ -576,22 +559,12 @@ spec:
                     type: string
                   label:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   tags:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   transfer:
                     items:
                       properties:
@@ -609,46 +582,68 @@ spec:
                   updated:
                     type: string
                 required:
-                - providerRef
                 - region
                 type: object
-              label:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  clientConnThrottle:
+                    format: int64
+                    type: integer
+                  created:
+                    type: string
+                  hostname:
+                    type: string
+                  id:
+                    type: string
+                  ipv4:
+                    type: string
+                  ipv6:
+                    type: string
+                  label:
+                    type: string
+                  region:
+                    type: string
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  transfer:
+                    items:
+                      properties:
+                        in:
+                          format: double
+                          type: number
+                        out:
+                          format: double
+                          type: number
+                        total:
+                          format: double
+                          type: number
+                      type: object
+                    type: array
+                  updated:
+                    type: string
+                required:
+                - region
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              transfer:
-                items:
-                  properties:
-                    in:
-                      format: double
-                      type: number
-                    out:
-                      format: double
-                      type: number
-                    total:
-                      format: double
-                      type: number
-                  type: object
-                type: array
-              updated:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - region
+            - resource
             type: object
           status:
             properties:

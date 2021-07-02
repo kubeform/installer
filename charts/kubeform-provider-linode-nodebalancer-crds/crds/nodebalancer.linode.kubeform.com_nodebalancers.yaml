@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: linode.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: nodebalancers.nodebalancer.linode.kubeform.com
 spec:
   group: nodebalancer.linode.kubeform.com
@@ -30,19 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              clientConnThrottle:
-                format: int64
-                type: integer
-              created:
-                type: string
-              hostname:
-                type: string
-              id:
-                type: string
-              ipv4:
-                type: string
-              ipv6:
-                type: string
               kubeformOutput:
                 properties:
                   clientConnThrottle:
@@ -60,22 +48,12 @@ spec:
                     type: string
                   label:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   tags:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   transfer:
                     items:
                       properties:
@@ -93,46 +71,68 @@ spec:
                   updated:
                     type: string
                 required:
-                - providerRef
                 - region
                 type: object
-              label:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  clientConnThrottle:
+                    format: int64
+                    type: integer
+                  created:
+                    type: string
+                  hostname:
+                    type: string
+                  id:
+                    type: string
+                  ipv4:
+                    type: string
+                  ipv6:
+                    type: string
+                  label:
+                    type: string
+                  region:
+                    type: string
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  transfer:
+                    items:
+                      properties:
+                        in:
+                          format: double
+                          type: number
+                        out:
+                          format: double
+                          type: number
+                        total:
+                          format: double
+                          type: number
+                      type: object
+                    type: array
+                  updated:
+                    type: string
+                required:
+                - region
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              transfer:
-                items:
-                  properties:
-                    in:
-                      format: double
-                      type: number
-                    out:
-                      format: double
-                      type: number
-                    total:
-                      format: double
-                      type: number
-                  type: object
-                type: array
-              updated:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - region
+            - resource
             type: object
           status:
             properties:
