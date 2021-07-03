@@ -82,6 +82,7 @@ type GoogleCRDs struct {
 	Identity               bool `json:"identity"`
 	Kms                    bool `json:"kms"`
 	Logging                bool `json:"logging"`
+	Memcache               bool `json:"memcache"`
 	Ml                     bool `json:"ml"`
 	Monitoring             bool `json:"monitoring"`
 	Network                bool `json:"network"`
@@ -102,6 +103,7 @@ type GoogleCRDs struct {
 	Storage                bool `json:"storage"`
 	Tags                   bool `json:"tags"`
 	Tpu                    bool `json:"tpu"`
+	Vertex                 bool `json:"vertex"`
 	Vpc                    bool `json:"vpc"`
 	Workflows              bool `json:"workflows"`
 }

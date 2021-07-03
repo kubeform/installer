@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: tagbindings.tags.google.kubeform.com
 spec:
   group: tags.google.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -40,17 +39,7 @@ spec:
                     type: string
                   parent:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tagValue:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -72,47 +61,58 @@ spec:
                     type: object
                 required:
                 - parent
-                - providerRef
                 - tagValue
                 type: object
-              name:
-                type: string
-              parent:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tagValue:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  parent:
+                    type: string
+                  tagValue:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - parent
+                - tagValue
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - parent
             - providerRef
-            - tagValue
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: manageraccesslevels.accesscontext.google.kubeform.com
 spec:
   group: accesscontext.google.kubeform.com
@@ -30,87 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              basic:
-                properties:
-                  combiningFunction:
-                    type: string
-                  conditions:
-                    items:
-                      properties:
-                        devicePolicy:
-                          properties:
-                            allowedDeviceManagementLevels:
-                              items:
-                                type: string
-                              type: array
-                            allowedEncryptionStatuses:
-                              items:
-                                type: string
-                              type: array
-                            osConstraints:
-                              items:
-                                properties:
-                                  minimumVersion:
-                                    type: string
-                                  osType:
-                                    type: string
-                                required:
-                                - osType
-                                type: object
-                              type: array
-                            requireAdminApproval:
-                              type: boolean
-                            requireCorpOwned:
-                              type: boolean
-                            requireScreenLock:
-                              type: boolean
-                          type: object
-                        ipSubnetworks:
-                          items:
-                            type: string
-                          type: array
-                        members:
-                          items:
-                            type: string
-                          type: array
-                        negate:
-                          type: boolean
-                        regions:
-                          items:
-                            type: string
-                          type: array
-                        requiredAccessLevels:
-                          items:
-                            type: string
-                          type: array
-                      type: object
-                    minItems: 1
-                    type: array
-                required:
-                - conditions
-                type: object
-              custom:
-                properties:
-                  expr:
-                    properties:
-                      description:
-                        type: string
-                      expression:
-                        type: string
-                      location:
-                        type: string
-                      title:
-                        type: string
-                    required:
-                    - expression
-                    type: object
-                required:
-                - expr
-                type: object
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   basic:
@@ -137,6 +57,8 @@ spec:
                                         type: string
                                       osType:
                                         type: string
+                                      requireVerifiedChromeOs:
+                                        type: boolean
                                     required:
                                     - osType
                                     type: object
@@ -198,15 +120,124 @@ spec:
                     type: string
                   parent:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  title:
+                    type: string
+                required:
+                - name
+                - parent
+                - title
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  basic:
+                    properties:
+                      combiningFunction:
+                        type: string
+                      conditions:
+                        items:
+                          properties:
+                            devicePolicy:
+                              properties:
+                                allowedDeviceManagementLevels:
+                                  items:
+                                    type: string
+                                  type: array
+                                allowedEncryptionStatuses:
+                                  items:
+                                    type: string
+                                  type: array
+                                osConstraints:
+                                  items:
+                                    properties:
+                                      minimumVersion:
+                                        type: string
+                                      osType:
+                                        type: string
+                                      requireVerifiedChromeOs:
+                                        type: boolean
+                                    required:
+                                    - osType
+                                    type: object
+                                  type: array
+                                requireAdminApproval:
+                                  type: boolean
+                                requireCorpOwned:
+                                  type: boolean
+                                requireScreenLock:
+                                  type: boolean
+                              type: object
+                            ipSubnetworks:
+                              items:
+                                type: string
+                              type: array
+                            members:
+                              items:
+                                type: string
+                              type: array
+                            negate:
+                              type: boolean
+                            regions:
+                              items:
+                                type: string
+                              type: array
+                            requiredAccessLevels:
+                              items:
+                                type: string
+                              type: array
+                          type: object
+                        minItems: 1
+                        type: array
+                    required:
+                    - conditions
+                    type: object
+                  custom:
+                    properties:
+                      expr:
+                        properties:
+                          description:
+                            type: string
+                          expression:
+                            type: string
+                          location:
+                            type: string
+                          title:
+                            type: string
+                        required:
+                        - expression
+                        type: object
+                    required:
+                    - expr
+                    type: object
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  parent:
                     type: string
                   timeouts:
                     properties:
@@ -231,48 +262,21 @@ spec:
                 required:
                 - name
                 - parent
-                - providerRef
                 - title
-                type: object
-              name:
-                type: string
-              parent:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              title:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
-            - parent
             - providerRef
-            - title
+            - resource
             type: object
           status:
             properties:

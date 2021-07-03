@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instances.spanner.google.kubeform.com
 spec:
   group: spanner.google.kubeform.com
@@ -30,18 +31,14 @@ spec:
             type: object
           spec:
             properties:
-              config:
-                type: string
-              displayName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   config:
                     type: string
                   displayName:
                     type: string
+                  forceDestroy:
+                    type: boolean
                   id:
                     type: string
                   labels:
@@ -55,17 +52,7 @@ spec:
                     type: integer
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   state:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -88,53 +75,70 @@ spec:
                 required:
                 - config
                 - displayName
-                - providerRef
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              numNodes:
-                format: int64
-                type: integer
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              state:
-                type: string
+              resource:
+                properties:
+                  config:
+                    type: string
+                  displayName:
+                    type: string
+                  forceDestroy:
+                    type: boolean
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  numNodes:
+                    format: int64
+                    type: integer
+                  project:
+                    type: string
+                  state:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - config
+                - displayName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - config
-            - displayName
             - providerRef
+            - resource
             type: object
           status:
             properties:

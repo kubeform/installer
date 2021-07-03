@@ -3,13 +3,14 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: targetsslproxies.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
   names:
-    kind: TargetSSLProxy
-    listKind: TargetSSLProxyList
+    kind: TargetSslProxy
+    listKind: TargetSslProxyList
     plural: targetsslproxies
     singular: targetsslproxy
   scope: Namespaced
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              backendService:
-                type: string
-              creationTimestamp:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   backendService:
@@ -52,11 +45,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   proxyHeader:
                     type: string
                   proxyID:
@@ -69,11 +57,6 @@ spec:
                       type: string
                     type: array
                   sslPolicy:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -96,59 +79,76 @@ spec:
                 required:
                 - backendService
                 - name
-                - providerRef
                 - sslCertificates
                 type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              proxyHeader:
-                type: string
-              proxyID:
-                format: int64
-                type: integer
-              selfLink:
-                type: string
-              sslCertificates:
-                items:
-                  type: string
-                type: array
-              sslPolicy:
-                type: string
+              resource:
+                properties:
+                  backendService:
+                    type: string
+                  creationTimestamp:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  proxyHeader:
+                    type: string
+                  proxyID:
+                    format: int64
+                    type: integer
+                  selfLink:
+                    type: string
+                  sslCertificates:
+                    items:
+                      type: string
+                    type: array
+                  sslPolicy:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - backendService
+                - name
+                - sslCertificates
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - backendService
-            - name
             - providerRef
-            - sslCertificates
+            - resource
             type: object
           status:
             properties:

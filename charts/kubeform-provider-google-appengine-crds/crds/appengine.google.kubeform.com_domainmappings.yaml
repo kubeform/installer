@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: domainmappings.appengine.google.kubeform.com
 spec:
   group: appengine.google.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              domainName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   domainName:
@@ -46,11 +43,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceRecords:
                     items:
                       properties:
@@ -73,11 +65,6 @@ spec:
                     required:
                     - sslManagementType
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -98,67 +85,80 @@ spec:
                     type: object
                 required:
                 - domainName
-                - providerRef
                 type: object
-              name:
-                type: string
-              overrideStrategy:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceRecords:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    rrdata:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type: array
-              sslSettings:
+              resource:
                 properties:
-                  certificateID:
+                  domainName:
                     type: string
-                  pendingManagedCertificateID:
+                  id:
                     type: string
-                  sslManagementType:
+                  name:
                     type: string
+                  overrideStrategy:
+                    type: string
+                  project:
+                    type: string
+                  resourceRecords:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        rrdata:
+                          type: string
+                        type:
+                          type: string
+                      type: object
+                    type: array
+                  sslSettings:
+                    properties:
+                      certificateID:
+                        type: string
+                      pendingManagedCertificateID:
+                        type: string
+                      sslManagementType:
+                        type: string
+                    required:
+                    - sslManagementType
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - sslManagementType
+                - domainName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - domainName
             - providerRef
+            - resource
             type: object
           status:
             properties:

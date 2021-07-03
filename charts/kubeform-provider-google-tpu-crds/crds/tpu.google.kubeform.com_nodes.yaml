@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: nodes.tpu.google.kubeform.com
 spec:
   group: tpu.google.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              acceleratorType:
-                type: string
-              cidrBlock:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   acceleratorType:
@@ -68,11 +61,6 @@ spec:
                     type: array
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   schedulingConfig:
                     properties:
                       preemptible:
@@ -83,11 +71,6 @@ spec:
                   serviceAccount:
                     type: string
                   tensorflowVersion:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -114,77 +97,94 @@ spec:
                 required:
                 - acceleratorType
                 - name
-                - providerRef
                 - tensorflowVersion
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              network:
-                type: string
-              networkEndpoints:
-                items:
-                  properties:
-                    ipAddress:
-                      type: string
-                    port:
-                      format: int64
-                      type: integer
-                  type: object
-                type: array
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              schedulingConfig:
+              resource:
                 properties:
-                  preemptible:
+                  acceleratorType:
+                    type: string
+                  cidrBlock:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  network:
+                    type: string
+                  networkEndpoints:
+                    items:
+                      properties:
+                        ipAddress:
+                          type: string
+                        port:
+                          format: int64
+                          type: integer
+                      type: object
+                    type: array
+                  project:
+                    type: string
+                  schedulingConfig:
+                    properties:
+                      preemptible:
+                        type: boolean
+                    required:
+                    - preemptible
+                    type: object
+                  serviceAccount:
+                    type: string
+                  tensorflowVersion:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  useServiceNetworking:
                     type: boolean
+                  zone:
+                    type: string
                 required:
-                - preemptible
+                - acceleratorType
+                - name
+                - tensorflowVersion
                 type: object
-              serviceAccount:
-                type: string
-              tensorflowVersion:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              useServiceNetworking:
-                type: boolean
-              zone:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - acceleratorType
-            - name
             - providerRef
-            - tensorflowVersion
+            - resource
             type: object
           status:
             properties:

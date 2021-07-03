@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accessapprovalsettings.organization.google.kubeform.com
 spec:
   group: organization.google.kubeform.com
@@ -30,21 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              enrolledAncestor:
-                type: boolean
-              enrolledServices:
-                items:
-                  properties:
-                    cloudProduct:
-                      type: string
-                    enrollmentLevel:
-                      type: string
-                  required:
-                  - cloudProduct
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   enrolledAncestor:
@@ -71,15 +57,58 @@ spec:
                     type: array
                   organizationID:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - enrolledServices
+                - organizationID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  enrolledAncestor:
+                    type: boolean
+                  enrolledServices:
+                    items:
+                      properties:
+                        cloudProduct:
+                          type: string
+                        enrollmentLevel:
+                          type: string
+                      required:
+                      - cloudProduct
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  notificationEmails:
+                    items:
+                      type: string
+                    maxItems: 50
+                    type: array
+                  organizationID:
                     type: string
                   timeouts:
                     properties:
@@ -102,49 +131,20 @@ spec:
                 required:
                 - enrolledServices
                 - organizationID
-                - providerRef
-                type: object
-              name:
-                type: string
-              notificationEmails:
-                items:
-                  type: string
-                maxItems: 50
-                type: array
-              organizationID:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - enrolledServices
-            - organizationID
             - providerRef
+            - resource
             type: object
           status:
             properties:

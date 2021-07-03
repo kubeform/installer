@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: attestors.binaryauthorization.google.kubeform.com
 spec:
   group: binaryauthorization.google.kubeform.com
@@ -30,37 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              attestationAuthorityNote:
-                properties:
-                  delegationServiceAccountEmail:
-                    type: string
-                  noteReference:
-                    type: string
-                  publicKeys:
-                    items:
-                      properties:
-                        ID:
-                          type: string
-                        asciiArmoredPgpPublicKey:
-                          type: string
-                        comment:
-                          type: string
-                        pkixPublicKey:
-                          properties:
-                            publicKeyPem:
-                              type: string
-                            signatureAlgorithm:
-                              type: string
-                          type: object
-                      type: object
-                    type: array
-                required:
-                - noteReference
-                type: object
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   attestationAuthorityNote:
@@ -98,15 +68,69 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - attestationAuthorityNote
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  attestationAuthorityNote:
+                    properties:
+                      delegationServiceAccountEmail:
+                        type: string
+                      noteReference:
+                        type: string
+                      publicKeys:
+                        items:
+                          properties:
+                            ID:
+                              type: string
+                            asciiArmoredPgpPublicKey:
+                              type: string
+                            comment:
+                              type: string
+                            pkixPublicKey:
+                              properties:
+                                publicKeyPem:
+                                  type: string
+                                signatureAlgorithm:
+                                  type: string
+                              type: object
+                          type: object
+                        type: array
+                    required:
+                    - noteReference
+                    type: object
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  project:
                     type: string
                   timeouts:
                     properties:
@@ -129,44 +153,20 @@ spec:
                 required:
                 - attestationAuthorityNote
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              project:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - attestationAuthorityNote
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -213,7 +213,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: attestoriambindings.binaryauthorization.google.kubeform.com
 spec:
   group: binaryauthorization.google.kubeform.com
@@ -240,24 +241,6 @@ spec:
             type: object
           spec:
             properties:
-              attestor:
-                type: string
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   attestor:
@@ -284,47 +267,64 @@ spec:
                     type: array
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   role:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - attestor
                 - members
-                - providerRef
                 - role
                 type: object
-              members:
-                items:
-                  type: string
-                type: array
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
+              resource:
+                properties:
+                  attestor:
+                    type: string
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  members:
+                    items:
+                      type: string
+                    type: array
+                  project:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - attestor
+                - members
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - attestor
-            - members
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -371,7 +371,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: attestoriammembers.binaryauthorization.google.kubeform.com
 spec:
   group: binaryauthorization.google.kubeform.com
@@ -398,24 +399,6 @@ spec:
             type: object
           spec:
             properties:
-              attestor:
-                type: string
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   attestor:
@@ -440,45 +423,62 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   role:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - attestor
                 - member
-                - providerRef
                 - role
                 type: object
-              member:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
+              resource:
+                properties:
+                  attestor:
+                    type: string
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  member:
+                    type: string
+                  project:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - attestor
+                - member
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - attestor
-            - member
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -525,7 +525,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: attestoriampolicies.binaryauthorization.google.kubeform.com
 spec:
   group: binaryauthorization.google.kubeform.com
@@ -552,12 +553,6 @@ spec:
             type: object
           spec:
             properties:
-              attestor:
-                type: string
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   attestor:
@@ -570,39 +565,44 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - attestor
                 - policyData
-                - providerRef
                 type: object
-              policyData:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  attestor:
+                    type: string
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  policyData:
+                    type: string
+                  project:
+                    type: string
+                required:
+                - attestor
+                - policyData
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - attestor
-            - policyData
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -649,7 +649,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policies.binaryauthorization.google.kubeform.com
 spec:
   group: binaryauthorization.google.kubeform.com
@@ -676,54 +677,6 @@ spec:
             type: object
           spec:
             properties:
-              admissionWhitelistPatterns:
-                items:
-                  properties:
-                    namePattern:
-                      type: string
-                  required:
-                  - namePattern
-                  type: object
-                type: array
-              clusterAdmissionRules:
-                items:
-                  properties:
-                    cluster:
-                      type: string
-                    enforcementMode:
-                      type: string
-                    evaluationMode:
-                      type: string
-                    requireAttestationsBy:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - cluster
-                  - enforcementMode
-                  - evaluationMode
-                  type: object
-                type: array
-              defaultAdmissionRule:
-                properties:
-                  enforcementMode:
-                    type: string
-                  evaluationMode:
-                    type: string
-                  requireAttestationsBy:
-                    items:
-                      type: string
-                    type: array
-                required:
-                - enforcementMode
-                - evaluationMode
-                type: object
-              description:
-                type: string
-              globalPolicyEvaluationMode:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   admissionWhitelistPatterns:
@@ -776,15 +729,83 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - defaultAdmissionRule
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  admissionWhitelistPatterns:
+                    items:
+                      properties:
+                        namePattern:
+                          type: string
+                      required:
+                      - namePattern
+                      type: object
+                    type: array
+                  clusterAdmissionRules:
+                    items:
+                      properties:
+                        cluster:
+                          type: string
+                        enforcementMode:
+                          type: string
+                        evaluationMode:
+                          type: string
+                        requireAttestationsBy:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - cluster
+                      - enforcementMode
+                      - evaluationMode
+                      type: object
+                    type: array
+                  defaultAdmissionRule:
+                    properties:
+                      enforcementMode:
+                        type: string
+                      evaluationMode:
+                        type: string
+                      requireAttestationsBy:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - enforcementMode
+                    - evaluationMode
+                    type: object
+                  description:
+                    type: string
+                  globalPolicyEvaluationMode:
+                    type: string
+                  id:
+                    type: string
+                  project:
                     type: string
                   timeouts:
                     properties:
@@ -806,41 +827,20 @@ spec:
                     type: object
                 required:
                 - defaultAdmissionRule
-                - providerRef
-                type: object
-              project:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - defaultAdmissionRule
             - providerRef
+            - resource
             type: object
           status:
             properties:

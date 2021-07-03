@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: triggers.eventarc.google.kubeform.com
 spec:
   group: eventarc.google.kubeform.com
@@ -30,28 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              createTime:
-                type: string
-              destination:
-                properties:
-                  cloudFunction:
-                    type: string
-                  cloudRunService:
-                    properties:
-                      path:
-                        type: string
-                      region:
-                        type: string
-                      service:
-                        type: string
-                    required:
-                    - service
-                    type: object
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   createTime:
@@ -98,17 +77,7 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceAccount:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -147,80 +116,111 @@ spec:
                 - location
                 - matchingCriteria
                 - name
-                - providerRef
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              location:
-                type: string
-              matchingCriteria:
-                items:
-                  properties:
-                    attribute:
-                      type: string
-                    value:
-                      type: string
-                  required:
-                  - attribute
-                  - value
-                  type: object
-                type: array
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serviceAccount:
-                type: string
+              resource:
+                properties:
+                  createTime:
+                    type: string
+                  destination:
+                    properties:
+                      cloudFunction:
+                        type: string
+                      cloudRunService:
+                        properties:
+                          path:
+                            type: string
+                          region:
+                            type: string
+                          service:
+                            type: string
+                        required:
+                        - service
+                        type: object
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  location:
+                    type: string
+                  matchingCriteria:
+                    items:
+                      properties:
+                        attribute:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - attribute
+                      - value
+                      type: object
+                    type: array
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  serviceAccount:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  transport:
+                    properties:
+                      pubsub:
+                        properties:
+                          subscription:
+                            type: string
+                          topic:
+                            type: string
+                        type: object
+                    type: object
+                  uid:
+                    type: string
+                  updateTime:
+                    type: string
+                required:
+                - destination
+                - location
+                - matchingCriteria
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              transport:
-                properties:
-                  pubsub:
-                    properties:
-                      subscription:
-                        type: string
-                      topic:
-                        type: string
-                    type: object
-                type: object
-              uid:
-                type: string
-              updateTime:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - destination
-            - location
-            - matchingCriteria
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

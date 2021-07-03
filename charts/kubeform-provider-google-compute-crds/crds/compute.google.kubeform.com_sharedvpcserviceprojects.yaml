@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: sharedvpcserviceprojects.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
@@ -30,27 +31,13 @@ spec:
             type: object
           spec:
             properties:
-              hostProject:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   hostProject:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceProject:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -72,7 +59,6 @@ spec:
                     type: object
                 required:
                 - hostProject
-                - providerRef
                 - serviceProject
                 type: object
               providerRef:
@@ -80,35 +66,49 @@ spec:
                   name:
                     type: string
                 type: object
-              serviceProject:
-                type: string
+              resource:
+                properties:
+                  hostProject:
+                    type: string
+                  id:
+                    type: string
+                  serviceProject:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - hostProject
+                - serviceProject
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - hostProject
             - providerRef
-            - serviceProject
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: metricdescriptors.monitoring.google.kubeform.com
 spec:
   group: monitoring.google.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              displayName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
@@ -76,15 +71,81 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                  unit:
+                    type: string
+                  valueType:
+                    type: string
+                required:
+                - description
+                - displayName
+                - metricKind
+                - type
+                - valueType
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  description:
+                    type: string
+                  displayName:
+                    type: string
+                  id:
+                    type: string
+                  labels:
+                    items:
+                      properties:
+                        description:
+                          type: string
+                        key:
+                          type: string
+                        valueType:
+                          type: string
+                      required:
+                      - key
+                      type: object
+                    type: array
+                  launchStage:
+                    type: string
+                  metadata:
+                    properties:
+                      ingestDelay:
+                        type: string
+                      samplePeriod:
                         type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  metricKind:
+                    type: string
+                  monitoredResourceTypes:
+                    items:
+                      type: string
+                    type: array
+                  name:
+                    type: string
+                  project:
                     type: string
                   timeouts:
                     properties:
@@ -114,83 +175,22 @@ spec:
                 - description
                 - displayName
                 - metricKind
-                - providerRef
                 - type
                 - valueType
-                type: object
-              labels:
-                items:
-                  properties:
-                    description:
-                      type: string
-                    key:
-                      type: string
-                    valueType:
-                      type: string
-                  required:
-                  - key
-                  type: object
-                type: array
-              launchStage:
-                type: string
-              metadata:
-                properties:
-                  ingestDelay:
-                    type: string
-                  samplePeriod:
-                    type: string
-                type: object
-              metricKind:
-                type: string
-              monitoredResourceTypes:
-                items:
-                  type: string
-                type: array
-              name:
-                type: string
-              project:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
-                type: string
-              unit:
-                type: string
-              valueType:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - description
-            - displayName
-            - metricKind
             - providerRef
-            - type
-            - valueType
+            - resource
             type: object
           status:
             properties:

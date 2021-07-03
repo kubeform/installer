@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: nodegroups.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
@@ -30,23 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              autoscalingPolicy:
-                properties:
-                  maxNodes:
-                    format: int64
-                    type: integer
-                  minNodes:
-                    format: int64
-                    type: integer
-                  mode:
-                    type: string
-                type: object
-              creationTimestamp:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   autoscalingPolicy:
@@ -66,6 +50,9 @@ spec:
                     type: string
                   id:
                     type: string
+                  initialSize:
+                    format: int64
+                    type: integer
                   maintenancePolicy:
                     type: string
                   maintenanceWindow:
@@ -81,21 +68,11 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selfLink:
                     type: string
                   size:
                     format: int64
                     type: integer
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -118,63 +95,90 @@ spec:
                     type: string
                 required:
                 - nodeTemplate
-                - providerRef
-                - size
                 type: object
-              maintenancePolicy:
-                type: string
-              maintenanceWindow:
-                properties:
-                  startTime:
-                    type: string
-                required:
-                - startTime
-                type: object
-              name:
-                type: string
-              nodeTemplate:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selfLink:
-                type: string
-              size:
-                format: int64
-                type: integer
+              resource:
+                properties:
+                  autoscalingPolicy:
+                    properties:
+                      maxNodes:
+                        format: int64
+                        type: integer
+                      minNodes:
+                        format: int64
+                        type: integer
+                      mode:
+                        type: string
+                    type: object
+                  creationTimestamp:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  initialSize:
+                    format: int64
+                    type: integer
+                  maintenancePolicy:
+                    type: string
+                  maintenanceWindow:
+                    properties:
+                      startTime:
+                        type: string
+                    required:
+                    - startTime
+                    type: object
+                  name:
+                    type: string
+                  nodeTemplate:
+                    type: string
+                  project:
+                    type: string
+                  selfLink:
+                    type: string
+                  size:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  zone:
+                    type: string
+                required:
+                - nodeTemplate
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              zone:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - nodeTemplate
             - providerRef
-            - size
+            - resource
             type: object
           status:
             properties:

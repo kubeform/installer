@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: metrics.logging.google.kubeform.com
 spec:
   group: logging.google.kubeform.com
@@ -30,49 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              bucketOptions:
-                properties:
-                  explicitBuckets:
-                    properties:
-                      bounds:
-                        items:
-                          format: double
-                          type: number
-                        type: array
-                    required:
-                    - bounds
-                    type: object
-                  exponentialBuckets:
-                    properties:
-                      growthFactor:
-                        format: double
-                        type: number
-                      numFiniteBuckets:
-                        format: int64
-                        type: integer
-                      scale:
-                        format: double
-                        type: number
-                    type: object
-                  linearBuckets:
-                    properties:
-                      numFiniteBuckets:
-                        format: int64
-                        type: integer
-                      offset:
-                        format: double
-                        type: number
-                      width:
-                        format: int64
-                        type: integer
-                    type: object
-                type: object
-              description:
-                type: string
-              filter:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bucketOptions:
@@ -153,15 +111,115 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  valueExtractor:
+                    type: string
+                required:
+                - filter
+                - metricDescriptor
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  bucketOptions:
+                    properties:
+                      explicitBuckets:
+                        properties:
+                          bounds:
+                            items:
+                              format: double
+                              type: number
+                            type: array
+                        required:
+                        - bounds
+                        type: object
+                      exponentialBuckets:
+                        properties:
+                          growthFactor:
+                            format: double
+                            type: number
+                          numFiniteBuckets:
+                            format: int64
+                            type: integer
+                          scale:
+                            format: double
+                            type: number
+                        type: object
+                      linearBuckets:
+                        properties:
+                          numFiniteBuckets:
+                            format: int64
+                            type: integer
+                          offset:
+                            format: double
+                            type: number
+                          width:
+                            format: int64
+                            type: integer
+                        type: object
+                    type: object
+                  description:
+                    type: string
+                  filter:
+                    type: string
+                  id:
+                    type: string
+                  labelExtractors:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  metricDescriptor:
+                    properties:
+                      displayName:
+                        type: string
+                      labels:
+                        items:
+                          properties:
+                            description:
+                              type: string
+                            key:
+                              type: string
+                            valueType:
+                              type: string
+                          required:
+                          - key
+                          type: object
+                        type: array
+                      metricKind:
+                        type: string
+                      unit:
+                        type: string
+                      valueType:
+                        type: string
+                    required:
+                    - metricKind
+                    - valueType
+                    type: object
+                  name:
+                    type: string
+                  project:
                     type: string
                   timeouts:
                     properties:
@@ -187,78 +245,20 @@ spec:
                 - filter
                 - metricDescriptor
                 - name
-                - providerRef
-                type: object
-              labelExtractors:
-                additionalProperties:
-                  type: string
-                type: object
-              metricDescriptor:
-                properties:
-                  displayName:
-                    type: string
-                  labels:
-                    items:
-                      properties:
-                        description:
-                          type: string
-                        key:
-                          type: string
-                        valueType:
-                          type: string
-                      required:
-                      - key
-                      type: object
-                    type: array
-                  metricKind:
-                    type: string
-                  unit:
-                    type: string
-                  valueType:
-                    type: string
-                required:
-                - metricKind
-                - valueType
-                type: object
-              name:
-                type: string
-              project:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              valueExtractor:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - filter
-            - metricDescriptor
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

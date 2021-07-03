@@ -82,6 +82,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 | crds.identity               | If true, installs the kubeform-provider-google-identity-crds chart               | `false`                                                      |
 | crds.kms                    | If true, installs the kubeform-provider-google-kms-crds chart                    | `false`                                                      |
 | crds.logging                | If true, installs the kubeform-provider-google-logging-crds chart                | `false`                                                      |
+| crds.memcache               | If true, installs the kubeform-provider-google-memcache-crds chart               | `false`                                                      |
 | crds.ml                     | If true, installs the kubeform-provider-google-ml-crds chart                     | `false`                                                      |
 | crds.monitoring             | If true, installs the kubeform-provider-google-monitoring-crds chart             | `false`                                                      |
 | crds.network                | If true, installs the kubeform-provider-google-network-crds chart                | `false`                                                      |
@@ -102,6 +103,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 | crds.storage                | If true, installs the kubeform-provider-google-storage-crds chart                | `false`                                                      |
 | crds.tags                   | If true, installs the kubeform-provider-google-tags-crds chart                   | `false`                                                      |
 | crds.tpu                    | If true, installs the kubeform-provider-google-tpu-crds chart                    | `false`                                                      |
+| crds.vertex                 | If true, installs the kubeform-provider-google-vertex-crds chart                 | `false`                                                      |
 | crds.vpc                    | If true, installs the kubeform-provider-google-vpc-crds chart                    | `false`                                                      |
 | crds.workflows              | If true, installs the kubeform-provider-google-workflows-crds chart              | `false`                                                      |
 

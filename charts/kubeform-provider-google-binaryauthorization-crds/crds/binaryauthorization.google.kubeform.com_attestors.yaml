@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: attestors.binaryauthorization.google.kubeform.com
 spec:
   group: binaryauthorization.google.kubeform.com
@@ -30,37 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              attestationAuthorityNote:
-                properties:
-                  delegationServiceAccountEmail:
-                    type: string
-                  noteReference:
-                    type: string
-                  publicKeys:
-                    items:
-                      properties:
-                        ID:
-                          type: string
-                        asciiArmoredPgpPublicKey:
-                          type: string
-                        comment:
-                          type: string
-                        pkixPublicKey:
-                          properties:
-                            publicKeyPem:
-                              type: string
-                            signatureAlgorithm:
-                              type: string
-                          type: object
-                      type: object
-                    type: array
-                required:
-                - noteReference
-                type: object
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   attestationAuthorityNote:
@@ -98,15 +68,69 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - attestationAuthorityNote
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  attestationAuthorityNote:
+                    properties:
+                      delegationServiceAccountEmail:
+                        type: string
+                      noteReference:
+                        type: string
+                      publicKeys:
+                        items:
+                          properties:
+                            ID:
+                              type: string
+                            asciiArmoredPgpPublicKey:
+                              type: string
+                            comment:
+                              type: string
+                            pkixPublicKey:
+                              properties:
+                                publicKeyPem:
+                                  type: string
+                                signatureAlgorithm:
+                                  type: string
+                              type: object
+                          type: object
+                        type: array
+                    required:
+                    - noteReference
+                    type: object
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  project:
                     type: string
                   timeouts:
                     properties:
@@ -129,44 +153,20 @@ spec:
                 required:
                 - attestationAuthorityNote
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              project:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - attestationAuthorityNote
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

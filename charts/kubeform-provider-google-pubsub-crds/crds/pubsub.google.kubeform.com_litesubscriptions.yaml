@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: litesubscriptions.pubsub.google.kubeform.com
 spec:
   group: pubsub.google.kubeform.com
@@ -30,15 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              deliveryConfig:
-                properties:
-                  deliveryRequirement:
-                    type: string
-                required:
-                - deliveryRequirement
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   deliveryConfig:
@@ -54,17 +46,7 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -90,51 +72,69 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 - topic
                 type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  deliveryConfig:
+                    properties:
+                      deliveryRequirement:
+                        type: string
+                    required:
+                    - deliveryRequirement
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  topic:
+                    type: string
+                  zone:
+                    type: string
+                required:
+                - name
+                - topic
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              topic:
-                type: string
-              zone:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - topic
+            - resource
             type: object
           status:
             properties:

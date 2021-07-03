@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: foldersinks.logging.google.kubeform.com
 spec:
   group: logging.google.kubeform.com
@@ -30,43 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              bigqueryOptions:
-                properties:
-                  usePartitionedTables:
-                    type: boolean
-                required:
-                - usePartitionedTables
-                type: object
-              description:
-                type: string
-              destination:
-                type: string
-              disabled:
-                type: boolean
-              exclusions:
-                items:
-                  properties:
-                    description:
-                      type: string
-                    disabled:
-                      type: boolean
-                    filter:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - filter
-                  - name
-                  type: object
-                type: array
-              filter:
-                type: string
-              folder:
-                type: string
-              id:
-                type: string
-              includeChildren:
-                type: boolean
               kubeformOutput:
                 properties:
                   bigqueryOptions:
@@ -108,15 +72,58 @@ spec:
                     type: boolean
                   name:
                     type: string
-                  providerRef:
+                  writerIdentity:
+                    type: string
+                required:
+                - destination
+                - folder
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  bigqueryOptions:
                     properties:
-                      name:
-                        type: string
+                      usePartitionedTables:
+                        type: boolean
+                    required:
+                    - usePartitionedTables
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  description:
+                    type: string
+                  destination:
+                    type: string
+                  disabled:
+                    type: boolean
+                  exclusions:
+                    items:
+                      properties:
+                        description:
+                          type: string
+                        disabled:
+                          type: boolean
+                        filter:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - filter
+                      - name
+                      type: object
+                    type: array
+                  filter:
+                    type: string
+                  folder:
+                    type: string
+                  id:
+                    type: string
+                  includeChildren:
+                    type: boolean
+                  name:
                     type: string
                   writerIdentity:
                     type: string
@@ -124,27 +131,20 @@ spec:
                 - destination
                 - folder
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              writerIdentity:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - destination
-            - folder
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

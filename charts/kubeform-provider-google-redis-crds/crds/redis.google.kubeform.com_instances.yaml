@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instances.redis.google.kubeform.com
 spec:
   group: redis.google.kubeform.com
@@ -30,24 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              alternativeLocationID:
-                type: string
-              authEnabled:
-                type: boolean
-              authorizedNetwork:
-                type: string
-              connectMode:
-                type: string
-              createTime:
-                type: string
-              currentLocationID:
-                type: string
-              displayName:
-                type: string
-              host:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   alternativeLocationID:
@@ -86,11 +69,6 @@ spec:
                     type: integer
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   redisConfigs:
                     additionalProperties:
                       type: string
@@ -101,16 +79,21 @@ spec:
                     type: string
                   reservedIPRange:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  serverCaCerts:
+                    items:
+                      properties:
+                        cert:
+                          type: string
+                        createTime:
+                          type: string
+                        expireTime:
+                          type: string
+                        serialNumber:
+                          type: string
+                        sha1Fingerprint:
+                          type: string
+                      type: object
+                    type: array
                   tier:
                     type: string
                   timeouts:
@@ -131,44 +114,106 @@ spec:
                         format: int64
                         type: integer
                     type: object
+                  transitEncryptionMode:
+                    type: string
                 required:
                 - memorySizeGb
                 - name
-                - providerRef
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              locationID:
-                type: string
-              memorySizeGb:
-                format: int64
-                type: integer
-              name:
-                type: string
-              persistenceIamIdentity:
-                type: string
-              port:
-                format: int64
-                type: integer
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              redisConfigs:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  alternativeLocationID:
+                    type: string
+                  authEnabled:
+                    type: boolean
+                  authorizedNetwork:
+                    type: string
+                  connectMode:
+                    type: string
+                  createTime:
+                    type: string
+                  currentLocationID:
+                    type: string
+                  displayName:
+                    type: string
+                  host:
+                    type: string
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  locationID:
+                    type: string
+                  memorySizeGb:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  persistenceIamIdentity:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  project:
+                    type: string
+                  redisConfigs:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  redisVersion:
+                    type: string
+                  region:
+                    type: string
+                  reservedIPRange:
+                    type: string
+                  serverCaCerts:
+                    items:
+                      properties:
+                        cert:
+                          type: string
+                        createTime:
+                          type: string
+                        expireTime:
+                          type: string
+                        serialNumber:
+                          type: string
+                        sha1Fingerprint:
+                          type: string
+                      type: object
+                    type: array
+                  tier:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  transitEncryptionMode:
+                    type: string
+                required:
+                - memorySizeGb
+                - name
                 type: object
-              redisVersion:
-                type: string
-              region:
-                type: string
-              reservedIPRange:
-                type: string
               secretRef:
                 properties:
                   name:
@@ -179,30 +224,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              tier:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - memorySizeGb
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

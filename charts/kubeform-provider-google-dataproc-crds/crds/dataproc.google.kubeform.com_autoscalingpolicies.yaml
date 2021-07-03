@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: autoscalingpolicies.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -30,36 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              basicAlgorithm:
-                properties:
-                  cooldownPeriod:
-                    type: string
-                  yarnConfig:
-                    properties:
-                      gracefulDecommissionTimeout:
-                        type: string
-                      scaleDownFactor:
-                        format: double
-                        type: number
-                      scaleDownMinWorkerFraction:
-                        format: double
-                        type: number
-                      scaleUpFactor:
-                        format: double
-                        type: number
-                      scaleUpMinWorkerFraction:
-                        format: double
-                        type: number
-                    required:
-                    - gracefulDecommissionTimeout
-                    - scaleDownFactor
-                    - scaleUpFactor
-                    type: object
-                required:
-                - yarnConfig
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   basicAlgorithm:
@@ -100,11 +71,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   secondaryWorkerConfig:
                     properties:
                       maxInstances:
@@ -117,11 +83,6 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -156,73 +117,112 @@ spec:
                     type: object
                 required:
                 - policyID
-                - providerRef
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              policyID:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              secondaryWorkerConfig:
+              resource:
                 properties:
-                  maxInstances:
-                    format: int64
-                    type: integer
-                  minInstances:
-                    format: int64
-                    type: integer
-                  weight:
-                    format: int64
-                    type: integer
+                  basicAlgorithm:
+                    properties:
+                      cooldownPeriod:
+                        type: string
+                      yarnConfig:
+                        properties:
+                          gracefulDecommissionTimeout:
+                            type: string
+                          scaleDownFactor:
+                            format: double
+                            type: number
+                          scaleDownMinWorkerFraction:
+                            format: double
+                            type: number
+                          scaleUpFactor:
+                            format: double
+                            type: number
+                          scaleUpMinWorkerFraction:
+                            format: double
+                            type: number
+                        required:
+                        - gracefulDecommissionTimeout
+                        - scaleDownFactor
+                        - scaleUpFactor
+                        type: object
+                    required:
+                    - yarnConfig
+                    type: object
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  policyID:
+                    type: string
+                  project:
+                    type: string
+                  secondaryWorkerConfig:
+                    properties:
+                      maxInstances:
+                        format: int64
+                        type: integer
+                      minInstances:
+                        format: int64
+                        type: integer
+                      weight:
+                        format: int64
+                        type: integer
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  workerConfig:
+                    properties:
+                      maxInstances:
+                        format: int64
+                        type: integer
+                      minInstances:
+                        format: int64
+                        type: integer
+                      weight:
+                        format: int64
+                        type: integer
+                    required:
+                    - maxInstances
+                    type: object
+                required:
+                - policyID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              workerConfig:
-                properties:
-                  maxInstances:
-                    format: int64
-                    type: integer
-                  minInstances:
-                    format: int64
-                    type: integer
-                  weight:
-                    format: int64
-                    type: integer
-                required:
-                - maxInstances
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - policyID
             - providerRef
+            - resource
             type: object
           status:
             properties:

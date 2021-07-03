@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: backendbuckets.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
@@ -30,34 +31,49 @@ spec:
             type: object
           spec:
             properties:
-              bucketName:
-                type: string
-              cdnPolicy:
-                properties:
-                  signedURLCacheMaxAgeSec:
-                    format: int64
-                    type: integer
-                type: object
-              creationTimestamp:
-                type: string
-              description:
-                type: string
-              enableCdn:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bucketName:
                     type: string
                   cdnPolicy:
                     properties:
+                      cacheMode:
+                        type: string
+                      clientTtl:
+                        format: int64
+                        type: integer
+                      defaultTtl:
+                        format: int64
+                        type: integer
+                      maxTtl:
+                        format: int64
+                        type: integer
+                      negativeCaching:
+                        type: boolean
+                      negativeCachingPolicy:
+                        items:
+                          properties:
+                            code:
+                              format: int64
+                              type: integer
+                            ttl:
+                              format: int64
+                              type: integer
+                          type: object
+                        type: array
+                      serveWhileStale:
+                        format: int64
+                        type: integer
                       signedURLCacheMaxAgeSec:
                         format: int64
                         type: integer
                     type: object
                   creationTimestamp:
                     type: string
+                  customResponseHeaders:
+                    items:
+                      type: string
+                    type: array
                   description:
                     type: string
                   enableCdn:
@@ -68,17 +84,7 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selfLink:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -101,46 +107,102 @@ spec:
                 required:
                 - bucketName
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selfLink:
-                type: string
+              resource:
+                properties:
+                  bucketName:
+                    type: string
+                  cdnPolicy:
+                    properties:
+                      cacheMode:
+                        type: string
+                      clientTtl:
+                        format: int64
+                        type: integer
+                      defaultTtl:
+                        format: int64
+                        type: integer
+                      maxTtl:
+                        format: int64
+                        type: integer
+                      negativeCaching:
+                        type: boolean
+                      negativeCachingPolicy:
+                        items:
+                          properties:
+                            code:
+                              format: int64
+                              type: integer
+                            ttl:
+                              format: int64
+                              type: integer
+                          type: object
+                        type: array
+                      serveWhileStale:
+                        format: int64
+                        type: integer
+                      signedURLCacheMaxAgeSec:
+                        format: int64
+                        type: integer
+                    type: object
+                  creationTimestamp:
+                    type: string
+                  customResponseHeaders:
+                    items:
+                      type: string
+                    type: array
+                  description:
+                    type: string
+                  enableCdn:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  selfLink:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - bucketName
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucketName
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

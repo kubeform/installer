@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: servicesplittraffics.appengine.google.kubeform.com
 spec:
   group: appengine.google.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -40,11 +39,6 @@ spec:
                     type: boolean
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   service:
                     type: string
                   split:
@@ -58,11 +52,6 @@ spec:
                     required:
                     - allocations
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -82,59 +71,70 @@ spec:
                         type: integer
                     type: object
                 required:
-                - providerRef
                 - service
                 - split
                 type: object
-              migrateTraffic:
-                type: boolean
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              service:
-                type: string
-              split:
+              resource:
                 properties:
-                  allocations:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  shardBy:
+                  id:
                     type: string
+                  migrateTraffic:
+                    type: boolean
+                  project:
+                    type: string
+                  service:
+                    type: string
+                  split:
+                    properties:
+                      allocations:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      shardBy:
+                        type: string
+                    required:
+                    - allocations
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - allocations
+                - service
+                - split
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - service
-            - split
+            - resource
             type: object
           status:
             properties:

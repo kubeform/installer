@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: iamauditconfigs.project.google.kubeform.com
 spec:
   group: project.google.kubeform.com
@@ -30,23 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              auditLogConfig:
-                items:
-                  properties:
-                    exemptedMembers:
-                      items:
-                        type: string
-                      type: array
-                    logType:
-                      type: string
-                  required:
-                  - logType
-                  type: object
-                type: array
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   auditLogConfig:
@@ -68,41 +52,57 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   service:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - auditLogConfig
-                - providerRef
                 - service
                 type: object
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              service:
-                type: string
+              resource:
+                properties:
+                  auditLogConfig:
+                    items:
+                      properties:
+                        exemptedMembers:
+                          items:
+                            type: string
+                          type: array
+                        logType:
+                          type: string
+                      required:
+                      - logType
+                      type: object
+                    type: array
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  project:
+                    type: string
+                  service:
+                    type: string
+                required:
+                - auditLogConfig
+                - service
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - auditLogConfig
             - providerRef
-            - service
+            - resource
             type: object
           status:
             properties:

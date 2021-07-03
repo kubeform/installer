@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instancetemplates.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
@@ -30,81 +31,16 @@ spec:
             type: object
           spec:
             properties:
-              canIPForward:
-                type: boolean
-              confidentialInstanceConfig:
-                properties:
-                  enableConfidentialCompute:
-                    type: boolean
-                required:
-                - enableConfidentialCompute
-                type: object
-              description:
-                type: string
-              disk:
-                items:
-                  properties:
-                    autoDelete:
-                      type: boolean
-                    boot:
-                      type: boolean
-                    deviceName:
-                      type: string
-                    diskEncryptionKey:
-                      properties:
-                        kmsKeySelfLink:
-                          type: string
-                      required:
-                      - kmsKeySelfLink
-                      type: object
-                    diskName:
-                      type: string
-                    diskSizeGb:
-                      format: int64
-                      type: integer
-                    diskType:
-                      type: string
-                    interface:
-                      type: string
-                    labels:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    mode:
-                      type: string
-                    resourcePolicies:
-                      items:
-                        type: string
-                      type: array
-                    source:
-                      type: string
-                    sourceImage:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type: array
-              enableDisplay:
-                type: boolean
-              guestAccelerator:
-                items:
-                  properties:
-                    count:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - count
-                  - type
-                  type: object
-                type: array
-              id:
-                type: string
-              instanceDescription:
-                type: string
               kubeformOutput:
                 properties:
+                  advancedMachineFeatures:
+                    properties:
+                      enableNestedVirtualization:
+                        type: boolean
+                      threadsPerCore:
+                        format: int64
+                        type: integer
+                    type: object
                   canIPForward:
                     type: boolean
                   confidentialInstanceConfig:
@@ -239,13 +175,27 @@ spec:
                     type: array
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
+                  reservationAffinity:
+                    properties:
+                      specificReservation:
+                        properties:
+                          key:
+                            type: string
+                          values:
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - key
+                        - values
+                        type: object
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
                   scheduling:
                     properties:
                       automaticRestart:
@@ -303,10 +253,254 @@ spec:
                     type: array
                   tagsFingerprint:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - disk
+                - machineType
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  advancedMachineFeatures:
+                    properties:
+                      enableNestedVirtualization:
+                        type: boolean
+                      threadsPerCore:
+                        format: int64
+                        type: integer
+                    type: object
+                  canIPForward:
+                    type: boolean
+                  confidentialInstanceConfig:
+                    properties:
+                      enableConfidentialCompute:
+                        type: boolean
+                    required:
+                    - enableConfidentialCompute
+                    type: object
+                  description:
+                    type: string
+                  disk:
+                    items:
+                      properties:
+                        autoDelete:
+                          type: boolean
+                        boot:
+                          type: boolean
+                        deviceName:
+                          type: string
+                        diskEncryptionKey:
+                          properties:
+                            kmsKeySelfLink:
+                              type: string
+                          required:
+                          - kmsKeySelfLink
+                          type: object
+                        diskName:
+                          type: string
+                        diskSizeGb:
+                          format: int64
+                          type: integer
+                        diskType:
+                          type: string
+                        interface:
+                          type: string
+                        labels:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        mode:
+                          type: string
+                        resourcePolicies:
+                          items:
+                            type: string
+                          type: array
+                        source:
+                          type: string
+                        sourceImage:
+                          type: string
+                        type:
+                          type: string
+                      type: object
+                    type: array
+                  enableDisplay:
+                    type: boolean
+                  guestAccelerator:
+                    items:
+                      properties:
+                        count:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - count
+                      - type
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  instanceDescription:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  machineType:
+                    type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  metadataFingerprint:
+                    type: string
+                  metadataStartupScript:
+                    type: string
+                  minCPUPlatform:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  networkInterface:
+                    items:
+                      properties:
+                        accessConfig:
+                          items:
+                            properties:
+                              natIP:
+                                type: string
+                              networkTier:
+                                type: string
+                              publicPtrDomainName:
+                                type: string
+                            type: object
+                          type: array
+                        aliasIPRange:
+                          items:
+                            properties:
+                              ipCIDRRange:
+                                type: string
+                              subnetworkRangeName:
+                                type: string
+                            required:
+                            - ipCIDRRange
+                            type: object
+                          type: array
+                        name:
+                          type: string
+                        network:
+                          type: string
+                        networkIP:
+                          type: string
+                        nicType:
+                          type: string
+                        subnetwork:
+                          type: string
+                        subnetworkProject:
+                          type: string
+                      type: object
+                    type: array
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  reservationAffinity:
+                    properties:
+                      specificReservation:
+                        properties:
+                          key:
+                            type: string
+                          values:
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - key
+                        - values
+                        type: object
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  scheduling:
+                    properties:
+                      automaticRestart:
+                        type: boolean
+                      minNodeCpus:
+                        format: int64
+                        type: integer
+                      nodeAffinities:
+                        items:
+                          properties:
+                            key:
+                              type: string
+                            operator:
+                              type: string
+                            values:
+                              items:
+                                type: string
+                              type: array
+                          required:
+                          - key
+                          - operator
+                          - values
+                          type: object
+                        type: array
+                      onHostMaintenance:
+                        type: string
+                      preemptible:
+                        type: boolean
+                    type: object
+                  selfLink:
+                    type: string
+                  serviceAccount:
+                    properties:
+                      email:
+                        type: string
+                      scopes:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - scopes
+                    type: object
+                  shieldedInstanceConfig:
+                    properties:
+                      enableIntegrityMonitoring:
+                        type: boolean
+                      enableSecureBoot:
+                        type: boolean
+                      enableVtpm:
+                        type: boolean
+                    type: object
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  tagsFingerprint:
                     type: string
                   timeouts:
                     properties:
@@ -329,160 +523,20 @@ spec:
                 required:
                 - disk
                 - machineType
-                - providerRef
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              machineType:
-                type: string
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              metadataFingerprint:
-                type: string
-              metadataStartupScript:
-                type: string
-              minCPUPlatform:
-                type: string
-              name:
-                type: string
-              namePrefix:
-                type: string
-              networkInterface:
-                items:
-                  properties:
-                    accessConfig:
-                      items:
-                        properties:
-                          natIP:
-                            type: string
-                          networkTier:
-                            type: string
-                          publicPtrDomainName:
-                            type: string
-                        type: object
-                      type: array
-                    aliasIPRange:
-                      items:
-                        properties:
-                          ipCIDRRange:
-                            type: string
-                          subnetworkRangeName:
-                            type: string
-                        required:
-                        - ipCIDRRange
-                        type: object
-                      type: array
-                    name:
-                      type: string
-                    network:
-                      type: string
-                    networkIP:
-                      type: string
-                    nicType:
-                      type: string
-                    subnetwork:
-                      type: string
-                    subnetworkProject:
-                      type: string
-                  type: object
-                type: array
-              project:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              region:
-                type: string
-              scheduling:
-                properties:
-                  automaticRestart:
-                    type: boolean
-                  minNodeCpus:
-                    format: int64
-                    type: integer
-                  nodeAffinities:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          type: string
-                        values:
-                          items:
-                            type: string
-                          type: array
-                      required:
-                      - key
-                      - operator
-                      - values
-                      type: object
-                    type: array
-                  onHostMaintenance:
-                    type: string
-                  preemptible:
-                    type: boolean
-                type: object
-              selfLink:
-                type: string
-              serviceAccount:
-                properties:
-                  email:
-                    type: string
-                  scopes:
-                    items:
-                      type: string
-                    type: array
-                required:
-                - scopes
-                type: object
-              shieldedInstanceConfig:
-                properties:
-                  enableIntegrityMonitoring:
-                    type: boolean
-                  enableSecureBoot:
-                    type: boolean
-                  enableVtpm:
-                    type: boolean
-                type: object
-              tags:
-                items:
-                  type: string
-                type: array
-              tagsFingerprint:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - disk
-            - machineType
             - providerRef
+            - resource
             type: object
           status:
             properties:

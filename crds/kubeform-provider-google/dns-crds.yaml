@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: managedzones.dns.google.kubeform.com
 spec:
   group: dns.google.kubeform.com
@@ -30,53 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              dnsName:
-                type: string
-              dnssecConfig:
-                properties:
-                  defaultKeySpecs:
-                    items:
-                      properties:
-                        algorithm:
-                          type: string
-                        keyLength:
-                          format: int64
-                          type: integer
-                        keyType:
-                          type: string
-                        kind:
-                          type: string
-                      type: object
-                    type: array
-                  kind:
-                    type: string
-                  nonExistence:
-                    type: string
-                  state:
-                    type: string
-                type: object
-              forceDestroy:
-                type: boolean
-              forwardingConfig:
-                properties:
-                  targetNameServers:
-                    items:
-                      properties:
-                        forwardingPath:
-                          type: string
-                        ipv4Address:
-                          type: string
-                      required:
-                      - ipv4Address
-                      type: object
-                    type: array
-                required:
-                - targetNameServers
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
@@ -164,15 +118,121 @@ spec:
                     type: object
                   project:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  visibility:
+                    type: string
+                required:
+                - dnsName
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  description:
+                    type: string
+                  dnsName:
+                    type: string
+                  dnssecConfig:
+                    properties:
+                      defaultKeySpecs:
+                        items:
+                          properties:
+                            algorithm:
+                              type: string
+                            keyLength:
+                              format: int64
+                              type: integer
+                            keyType:
+                              type: string
+                            kind:
+                              type: string
+                          type: object
+                        type: array
+                      kind:
+                        type: string
+                      nonExistence:
+                        type: string
+                      state:
                         type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  forceDestroy:
+                    type: boolean
+                  forwardingConfig:
+                    properties:
+                      targetNameServers:
+                        items:
+                          properties:
+                            forwardingPath:
+                              type: string
+                            ipv4Address:
+                              type: string
+                          required:
+                          - ipv4Address
+                          type: object
+                        type: array
+                    required:
+                    - targetNameServers
+                    type: object
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  nameServers:
+                    items:
+                      type: string
+                    type: array
+                  peeringConfig:
+                    properties:
+                      targetNetwork:
+                        properties:
+                          networkURL:
+                            type: string
+                        required:
+                        - networkURL
+                        type: object
+                    required:
+                    - targetNetwork
+                    type: object
+                  privateVisibilityConfig:
+                    properties:
+                      networks:
+                        items:
+                          properties:
+                            networkURL:
+                              type: string
+                          required:
+                          - networkURL
+                          type: object
+                        type: array
+                    required:
+                    - networks
+                    type: object
+                  project:
                     type: string
                   timeouts:
                     properties:
@@ -197,80 +257,20 @@ spec:
                 required:
                 - dnsName
                 - name
-                - providerRef
-                type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              nameServers:
-                items:
-                  type: string
-                type: array
-              peeringConfig:
-                properties:
-                  targetNetwork:
-                    properties:
-                      networkURL:
-                        type: string
-                    required:
-                    - networkURL
-                    type: object
-                required:
-                - targetNetwork
-                type: object
-              privateVisibilityConfig:
-                properties:
-                  networks:
-                    items:
-                      properties:
-                        networkURL:
-                          type: string
-                      required:
-                      - networkURL
-                      type: object
-                    type: array
-                required:
-                - networks
-                type: object
-              project:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              visibility:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - dnsName
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -317,7 +317,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policies.dns.google.kubeform.com
 spec:
   group: dns.google.kubeform.com
@@ -344,30 +345,6 @@ spec:
             type: object
           spec:
             properties:
-              alternativeNameServerConfig:
-                properties:
-                  targetNameServers:
-                    items:
-                      properties:
-                        forwardingPath:
-                          type: string
-                        ipv4Address:
-                          type: string
-                      required:
-                      - ipv4Address
-                      type: object
-                    type: array
-                required:
-                - targetNameServers
-                type: object
-              description:
-                type: string
-              enableInboundForwarding:
-                type: boolean
-              enableLogging:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   alternativeNameServerConfig:
@@ -407,15 +384,70 @@ spec:
                     type: array
                   project:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  alternativeNameServerConfig:
+                    properties:
+                      targetNameServers:
+                        items:
+                          properties:
+                            forwardingPath:
+                              type: string
+                            ipv4Address:
+                              type: string
+                          required:
+                          - ipv4Address
+                          type: object
+                        type: array
+                    required:
+                    - targetNameServers
+                    type: object
+                  description:
+                    type: string
+                  enableInboundForwarding:
+                    type: boolean
+                  enableLogging:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  networks:
+                    items:
+                      properties:
+                        networkURL:
+                          type: string
+                      required:
+                      - networkURL
+                      type: object
+                    type: array
+                  project:
                     type: string
                   timeouts:
                     properties:
@@ -437,52 +469,20 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              networks:
-                items:
-                  properties:
-                    networkURL:
-                      type: string
-                  required:
-                  - networkURL
-                  type: object
-                type: array
-              project:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -529,7 +529,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: recordsets.dns.google.kubeform.com
 spec:
   group: dns.google.kubeform.com
@@ -556,8 +557,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -568,20 +567,10 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rrdatas:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -608,57 +597,68 @@ spec:
                 required:
                 - managedZone
                 - name
-                - providerRef
                 - type
                 type: object
-              managedZone:
-                type: string
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              rrdatas:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  id:
+                    type: string
+                  managedZone:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  rrdatas:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  ttl:
+                    format: int64
+                    type: integer
+                  type:
+                    type: string
+                required:
+                - managedZone
+                - name
+                - type
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              ttl:
-                format: int64
-                type: integer
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - managedZone
-            - name
             - providerRef
-            - type
+            - resource
             type: object
           status:
             properties:

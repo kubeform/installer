@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: directorydomains.active.google.kubeform.com
 spec:
   group: active.google.kubeform.com
@@ -30,18 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              admin:
-                type: string
-              authorizedNetworks:
-                items:
-                  type: string
-                type: array
-              domainName:
-                type: string
-              fqdn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   admin:
@@ -68,17 +57,7 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   reservedIPRange:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -101,56 +80,77 @@ spec:
                 required:
                 - domainName
                 - locations
-                - providerRef
                 - reservedIPRange
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              locations:
-                items:
-                  type: string
-                type: array
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              reservedIPRange:
-                type: string
+              resource:
+                properties:
+                  admin:
+                    type: string
+                  authorizedNetworks:
+                    items:
+                      type: string
+                    type: array
+                  domainName:
+                    type: string
+                  fqdn:
+                    type: string
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  locations:
+                    items:
+                      type: string
+                    type: array
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  reservedIPRange:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - domainName
+                - locations
+                - reservedIPRange
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - domainName
-            - locations
             - providerRef
-            - reservedIPRange
+            - resource
             type: object
           status:
             properties:
@@ -197,7 +197,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: directorydomaintrusts.active.google.kubeform.com
 spec:
   group: active.google.kubeform.com
@@ -224,10 +225,6 @@ spec:
             type: object
           spec:
             properties:
-              domain:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   domain:
@@ -236,16 +233,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selectiveAuthentication:
                     type: boolean
                   targetDNSIPAddresses:
@@ -253,11 +240,6 @@ spec:
                       type: string
                     type: array
                   targetDomainName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -283,66 +265,79 @@ spec:
                     type: string
                 required:
                 - domain
-                - providerRef
                 - targetDNSIPAddresses
                 - targetDomainName
                 - trustDirection
                 - trustType
                 type: object
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  domain:
+                    type: string
+                  id:
+                    type: string
+                  project:
+                    type: string
+                  selectiveAuthentication:
+                    type: boolean
+                  targetDNSIPAddresses:
+                    items:
+                      type: string
+                    type: array
+                  targetDomainName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  trustDirection:
+                    type: string
+                  trustType:
+                    type: string
+                required:
+                - domain
+                - targetDNSIPAddresses
+                - targetDomainName
+                - trustDirection
+                - trustType
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selectiveAuthentication:
-                type: boolean
-              targetDNSIPAddresses:
-                items:
-                  type: string
-                type: array
-              targetDomainName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              trustDirection:
-                type: string
-              trustType:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - domain
             - providerRef
-            - targetDNSIPAddresses
-            - targetDomainName
-            - trustDirection
-            - trustType
+            - resource
             type: object
           status:
             properties:

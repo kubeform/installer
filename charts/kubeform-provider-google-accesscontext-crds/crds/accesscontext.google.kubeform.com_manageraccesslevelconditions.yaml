@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: manageraccesslevelconditions.accesscontext.google.kubeform.com
 spec:
   group: accesscontext.google.kubeform.com
@@ -30,42 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accessLevel:
-                type: string
-              devicePolicy:
-                properties:
-                  allowedDeviceManagementLevels:
-                    items:
-                      type: string
-                    type: array
-                  allowedEncryptionStatuses:
-                    items:
-                      type: string
-                    type: array
-                  osConstraints:
-                    items:
-                      properties:
-                        minimumVersion:
-                          type: string
-                        osType:
-                          type: string
-                      required:
-                      - osType
-                      type: object
-                    type: array
-                  requireAdminApproval:
-                    type: boolean
-                  requireCorpOwned:
-                    type: boolean
-                  requireScreenLock:
-                    type: boolean
-                type: object
-              id:
-                type: string
-              ipSubnetworks:
-                items:
-                  type: string
-                type: array
               kubeformOutput:
                 properties:
                   accessLevel:
@@ -110,11 +75,6 @@ spec:
                     type: array
                   negate:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   regions:
                     items:
                       type: string
@@ -123,11 +83,6 @@ spec:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -148,53 +103,98 @@ spec:
                     type: object
                 required:
                 - accessLevel
-                - providerRef
                 type: object
-              members:
-                items:
-                  type: string
-                type: array
-              negate:
-                type: boolean
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              regions:
-                items:
-                  type: string
-                type: array
-              requiredAccessLevels:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  accessLevel:
+                    type: string
+                  devicePolicy:
+                    properties:
+                      allowedDeviceManagementLevels:
+                        items:
+                          type: string
+                        type: array
+                      allowedEncryptionStatuses:
+                        items:
+                          type: string
+                        type: array
+                      osConstraints:
+                        items:
+                          properties:
+                            minimumVersion:
+                              type: string
+                            osType:
+                              type: string
+                          required:
+                          - osType
+                          type: object
+                        type: array
+                      requireAdminApproval:
+                        type: boolean
+                      requireCorpOwned:
+                        type: boolean
+                      requireScreenLock:
+                        type: boolean
+                    type: object
+                  id:
+                    type: string
+                  ipSubnetworks:
+                    items:
+                      type: string
+                    type: array
+                  members:
+                    items:
+                      type: string
+                    type: array
+                  negate:
+                    type: boolean
+                  regions:
+                    items:
+                      type: string
+                    type: array
+                  requiredAccessLevels:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - accessLevel
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - accessLevel
             - providerRef
+            - resource
             type: object
           status:
             properties:
