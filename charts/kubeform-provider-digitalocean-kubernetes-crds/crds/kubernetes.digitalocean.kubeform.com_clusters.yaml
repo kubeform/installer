@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusters.kubernetes.digitalocean.kubeform.com
 spec:
   group: kubernetes.digitalocean.kubeform.com
@@ -30,18 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              autoUpgrade:
-                type: boolean
-              clusterSubnet:
-                type: string
-              createdAt:
-                type: string
-              endpoint:
-                type: string
-              id:
-                type: string
-              ipv4Address:
-                type: string
               kubeformOutput:
                 properties:
                   autoUpgrade:
@@ -56,6 +45,15 @@ spec:
                     type: string
                   ipv4Address:
                     type: string
+                  maintenancePolicy:
+                    properties:
+                      day:
+                        type: string
+                      duration:
+                        type: string
+                      startTime:
+                        type: string
+                    type: object
                   name:
                     type: string
                   nodePool:
@@ -124,18 +122,8 @@ spec:
                     - name
                     - size
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceSubnet:
                     type: string
                   status:
@@ -146,129 +134,196 @@ spec:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                   updatedAt:
+                    type: string
+                  urn:
                     type: string
                   version:
                     type: string
                   vpcUUID:
                     type: string
                 required:
+                - name
                 - nodePool
-                - providerRef
                 - region
                 - version
-                type: object
-              name:
-                type: string
-              nodePool:
-                properties:
-                  ID:
-                    type: string
-                  actualNodeCount:
-                    format: int64
-                    type: integer
-                  autoScale:
-                    type: boolean
-                  labels:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  maxNodes:
-                    format: int64
-                    type: integer
-                  minNodes:
-                    format: int64
-                    type: integer
-                  name:
-                    type: string
-                  nodeCount:
-                    format: int64
-                    type: integer
-                  nodes:
-                    items:
-                      properties:
-                        ID:
-                          type: string
-                        createdAt:
-                          type: string
-                        dropletID:
-                          type: string
-                        name:
-                          type: string
-                        status:
-                          type: string
-                        updatedAt:
-                          type: string
-                      type: object
-                    type: array
-                  size:
-                    type: string
-                  tags:
-                    items:
-                      type: string
-                    type: array
-                  taint:
-                    items:
-                      properties:
-                        effect:
-                          type: string
-                        key:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - effect
-                      - key
-                      - value
-                      type: object
-                    type: array
-                required:
-                - name
-                - size
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  autoUpgrade:
+                    type: boolean
+                  clusterSubnet:
+                    type: string
+                  createdAt:
+                    type: string
+                  endpoint:
+                    type: string
+                  id:
+                    type: string
+                  ipv4Address:
+                    type: string
+                  maintenancePolicy:
+                    properties:
+                      day:
+                        type: string
+                      duration:
+                        type: string
+                      startTime:
+                        type: string
+                    type: object
+                  name:
+                    type: string
+                  nodePool:
+                    properties:
+                      ID:
+                        type: string
+                      actualNodeCount:
+                        format: int64
+                        type: integer
+                      autoScale:
+                        type: boolean
+                      labels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      maxNodes:
+                        format: int64
+                        type: integer
+                      minNodes:
+                        format: int64
+                        type: integer
+                      name:
+                        type: string
+                      nodeCount:
+                        format: int64
+                        type: integer
+                      nodes:
+                        items:
+                          properties:
+                            ID:
+                              type: string
+                            createdAt:
+                              type: string
+                            dropletID:
+                              type: string
+                            name:
+                              type: string
+                            status:
+                              type: string
+                            updatedAt:
+                              type: string
+                          type: object
+                        type: array
+                      size:
+                        type: string
+                      tags:
+                        items:
+                          type: string
+                        type: array
+                      taint:
+                        items:
+                          properties:
+                            effect:
+                              type: string
+                            key:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - effect
+                          - key
+                          - value
+                          type: object
+                        type: array
+                    required:
+                    - name
+                    - size
+                    type: object
+                  region:
+                    type: string
+                  serviceSubnet:
+                    type: string
+                  status:
+                    type: string
+                  surgeUpgrade:
+                    type: boolean
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  updatedAt:
+                    type: string
+                  urn:
+                    type: string
+                  version:
+                    type: string
+                  vpcUUID:
+                    type: string
+                required:
+                - name
+                - nodePool
+                - region
+                - version
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serviceSubnet:
-                type: string
-              status:
-                type: string
-              surgeUpgrade:
-                type: boolean
-              tags:
-                items:
-                  type: string
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              updatedAt:
-                type: string
-              version:
-                type: string
-              vpcUUID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - nodePool
             - providerRef
-            - region
-            - version
+            - resource
             type: object
           status:
             properties:

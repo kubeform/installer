@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: nodepools.kubernetes.digitalocean.kubeform.com
 spec:
   group: kubernetes.digitalocean.kubeform.com
@@ -30,15 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              actualNodeCount:
-                format: int64
-                type: integer
-              autoScale:
-                type: boolean
-              clusterID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   actualNodeCount:
@@ -82,11 +74,6 @@ spec:
                           type: string
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   size:
                     type: string
                   tags:
@@ -108,85 +95,134 @@ spec:
                       - value
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
                 - clusterID
                 - name
-                - providerRef
                 - size
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              maxNodes:
-                format: int64
-                type: integer
-              minNodes:
-                format: int64
-                type: integer
-              name:
-                type: string
-              nodeCount:
-                format: int64
-                type: integer
-              nodes:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    createdAt:
-                      type: string
-                    dropletID:
-                      type: string
-                    name:
-                      type: string
-                    status:
-                      type: string
-                    updatedAt:
-                      type: string
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              size:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
-              taint:
-                items:
-                  properties:
-                    effect:
+              resource:
+                properties:
+                  actualNodeCount:
+                    format: int64
+                    type: integer
+                  autoScale:
+                    type: boolean
+                  clusterID:
+                    type: string
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
                       type: string
-                    key:
+                    type: object
+                  maxNodes:
+                    format: int64
+                    type: integer
+                  minNodes:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  nodeCount:
+                    format: int64
+                    type: integer
+                  nodes:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        createdAt:
+                          type: string
+                        dropletID:
+                          type: string
+                        name:
+                          type: string
+                        status:
+                          type: string
+                        updatedAt:
+                          type: string
+                      type: object
+                    type: array
+                  size:
+                    type: string
+                  tags:
+                    items:
                       type: string
-                    value:
-                      type: string
-                  required:
-                  - effect
-                  - key
-                  - value
-                  type: object
-                type: array
+                    type: array
+                  taint:
+                    items:
+                      properties:
+                        effect:
+                          type: string
+                        key:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - effect
+                      - key
+                      - value
+                      type: object
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterID
+                - name
+                - size
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterID
-            - name
             - providerRef
-            - size
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: snapshots.volume.digitalocean.kubeform.com
 spec:
   group: volume.digitalocean.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              createdAt:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   createdAt:
@@ -45,11 +42,6 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   regions:
                     items:
                       type: string
@@ -61,50 +53,58 @@ spec:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   volumeID:
                     type: string
                 required:
                 - name
-                - providerRef
                 - volumeID
                 type: object
-              minDiskSize:
-                format: int64
-                type: integer
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              regions:
-                items:
-                  type: string
-                type: array
-              size:
-                format: double
-                type: number
-              tags:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  createdAt:
+                    type: string
+                  id:
+                    type: string
+                  minDiskSize:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  regions:
+                    items:
+                      type: string
+                    type: array
+                  size:
+                    format: double
+                    type: number
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  volumeID:
+                    type: string
+                required:
+                - name
+                - volumeID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              volumeID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - volumeID
+            - resource
             type: object
           status:
             properties:

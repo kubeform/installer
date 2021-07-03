@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: floatingips.floatingip.digitalocean.kubeform.com
 spec:
   group: floatingip.digitalocean.kubeform.com
@@ -30,13 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              dropletID:
-                format: int64
-                type: integer
-              id:
-                type: string
-              ipAddress:
-                type: string
               kubeformOutput:
                 properties:
                   dropletID:
@@ -46,22 +40,11 @@ spec:
                     type: string
                   ipAddress:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   urn:
                     type: string
                 required:
-                - providerRef
                 - region
                 type: object
               providerRef:
@@ -69,18 +52,35 @@ spec:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  dropletID:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  ipAddress:
+                    type: string
+                  region:
+                    type: string
+                  urn:
+                    type: string
+                required:
+                - region
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              urn:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - region
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: containerregistries.containerregistry.digitalocean.kubeform.com
 spec:
   group: containerregistry.digitalocean.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              endpoint:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   endpoint:
@@ -42,45 +39,48 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serverURL:
                     type: string
                   subscriptionTierSlug:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - name
-                - providerRef
                 - subscriptionTierSlug
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serverURL:
-                type: string
-              subscriptionTierSlug:
-                type: string
+              resource:
+                properties:
+                  endpoint:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  serverURL:
+                    type: string
+                  subscriptionTierSlug:
+                    type: string
+                required:
+                - name
+                - subscriptionTierSlug
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - subscriptionTierSlug
+            - resource
             type: object
           status:
             properties:
@@ -127,7 +127,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dockercredentials.containerregistry.digitalocean.kubeform.com
 spec:
   group: containerregistry.digitalocean.kubeform.com
@@ -154,13 +155,6 @@ spec:
             type: object
           spec:
             properties:
-              credentialExpirationTime:
-                type: string
-              expirySeconds:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   credentialExpirationTime:
@@ -170,27 +164,11 @@ spec:
                     type: integer
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registryName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   write:
                     type: boolean
                 required:
-                - providerRef
                 - registryName
                 type: object
               providerRef:
@@ -198,8 +176,22 @@ spec:
                   name:
                     type: string
                 type: object
-              registryName:
-                type: string
+              resource:
+                properties:
+                  credentialExpirationTime:
+                    type: string
+                  expirySeconds:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  registryName:
+                    type: string
+                  write:
+                    type: boolean
+                required:
+                - registryName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -210,11 +202,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              write:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - registryName
+            - resource
             type: object
           status:
             properties:
