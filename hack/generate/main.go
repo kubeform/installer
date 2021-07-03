@@ -453,6 +453,39 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 				if err != nil {
 					return err
 				}
+				if rel == "Chart.yaml" {
+					if _, e2 := os.Stat(target); !os.IsNotExist(e2) {
+						// keep original version, appversion
+
+						var existing map[string]interface{}
+						data, err := ioutil.ReadFile(target)
+						if err != nil {
+							return err
+						}
+						err = yaml.Unmarshal(data, &existing)
+						if err != nil {
+							return err
+						}
+
+						var nu map[string]interface{}
+						err = yaml.Unmarshal(buf.Bytes(), &nu)
+						if err != nil {
+							return err
+						}
+						if v, ok := existing["version"]; ok && v.(string) != "" {
+							nu["version"] = v
+						}
+						if v, ok := existing["appVersion"]; ok && v.(string) != "" {
+							nu["appVersion"] = v
+						}
+						data, err = yaml.Marshal(nu)
+						if err != nil {
+							return err
+						}
+						buf.Reset()
+						buf.Write(data)
+					}
+				}
 				return ioutil.WriteFile(target, buf.Bytes(), 0644)
 			}
 		})

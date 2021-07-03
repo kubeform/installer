@@ -40,24 +40,4 @@ $ helm delete kubeform-provider-aws-apprunner-crds -n kubeform
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
-## Configuration
 
-The following table lists the configurable parameters of the `kubeform-provider-aws-apprunner-crds` chart and their default values.
-
-|  Parameter   | Description | Default  |
-|--------------|-------------|----------|
-| operator.tag |             | `v0.1.0` |
-
-
-Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
-
-```console
-$ helm install kubeform-provider-aws-apprunner-crds appscode/kubeform-provider-aws-apprunner-crds -n kubeform --set operator.tag=v0.1.0
-```
-
-Alternatively, a YAML file that specifies the values for the parameters can be provided while
-installing the chart. For example:
-
-```console
-$ helm install kubeform-provider-aws-apprunner-crds appscode/kubeform-provider-aws-apprunner-crds -n kubeform --values values.yaml
-```
