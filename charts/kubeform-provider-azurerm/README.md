@@ -172,7 +172,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
 
 ```console
-$ helm install kubeform-provider-azurerm appscode/kubeform-provider-azurerm -n kubeform --set kubeform-provider={"operator":{"tag":"v0.3.0"},"provider":{"name":"azurerm"}}
+$ helm install kubeform-provider-azurerm appscode/kubeform-provider-azurerm -n kubeform --set global.registry=kubeform
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while
