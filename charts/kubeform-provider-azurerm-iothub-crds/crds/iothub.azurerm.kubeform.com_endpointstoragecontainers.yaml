@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointstoragecontainers.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -30,19 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              batchFrequencyInSeconds:
-                format: int64
-                type: integer
-              containerName:
-                type: string
-              encoding:
-                type: string
-              fileNameFormat:
-                type: string
-              id:
-                type: string
-              iothubName:
-                type: string
               kubeformOutput:
                 properties:
                   batchFrequencyInSeconds:
@@ -63,22 +51,7 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -102,21 +75,59 @@ spec:
                 - containerName
                 - iothubName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              maxChunkSizeInBytes:
-                format: int64
-                type: integer
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  batchFrequencyInSeconds:
+                    format: int64
+                    type: integer
+                  containerName:
+                    type: string
+                  encoding:
+                    type: string
+                  fileNameFormat:
+                    type: string
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  maxChunkSizeInBytes:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - containerName
+                - iothubName
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -127,30 +138,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - containerName
-            - iothubName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

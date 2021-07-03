@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: serviceplans.app.azurerm.kubeform.com
 spec:
   group: app.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              appServiceEnvironmentID:
-                type: string
-              id:
-                type: string
-              isXenon:
-                type: boolean
-              kind:
-                type: string
               kubeformOutput:
                 properties:
                   appServiceEnvironmentID:
@@ -60,11 +53,6 @@ spec:
                     type: string
                   perSiteScaling:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   reserved:
                     type: boolean
                   resourceGroupName:
@@ -86,11 +74,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -112,77 +95,94 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - sku
                 type: object
-              location:
-                type: string
-              maximumElasticWorkerCount:
-                format: int64
-                type: integer
-              maximumNumberOfWorkers:
-                format: int64
-                type: integer
-              name:
-                type: string
-              perSiteScaling:
-                type: boolean
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              reserved:
-                type: boolean
-              resourceGroupName:
-                type: string
-              sku:
+              resource:
                 properties:
-                  capacity:
+                  appServiceEnvironmentID:
+                    type: string
+                  id:
+                    type: string
+                  isXenon:
+                    type: boolean
+                  kind:
+                    type: string
+                  location:
+                    type: string
+                  maximumElasticWorkerCount:
                     format: int64
                     type: integer
-                  size:
+                  maximumNumberOfWorkers:
+                    format: int64
+                    type: integer
+                  name:
                     type: string
-                  tier:
+                  perSiteScaling:
+                    type: boolean
+                  reserved:
+                    type: boolean
+                  resourceGroupName:
                     type: string
+                  sku:
+                    properties:
+                      capacity:
+                        format: int64
+                        type: integer
+                      size:
+                        type: string
+                      tier:
+                        type: string
+                    required:
+                    - size
+                    - tier
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - size
-                - tier
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - location
+                - name
+                - resourceGroupName
+                - sku
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - sku
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: assetfilters.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -30,13 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              assetID:
-                type: string
-              firstQualityBitrate:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   assetID:
@@ -68,16 +62,6 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -117,80 +101,96 @@ spec:
                 required:
                 - assetID
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              presentationTimeRange:
-                properties:
-                  endInUnits:
-                    format: int64
-                    type: integer
-                  forceEnd:
-                    type: boolean
-                  liveBackoffInUnits:
-                    format: int64
-                    type: integer
-                  presentationWindowInUnits:
-                    format: int64
-                    type: integer
-                  startInUnits:
-                    format: int64
-                    type: integer
-                  unitTimescaleInMiliseconds:
-                    format: int64
-                    type: integer
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  assetID:
+                    type: string
+                  firstQualityBitrate:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  presentationTimeRange:
+                    properties:
+                      endInUnits:
+                        format: int64
+                        type: integer
+                      forceEnd:
+                        type: boolean
+                      liveBackoffInUnits:
+                        format: int64
+                        type: integer
+                      presentationWindowInUnits:
+                        format: int64
+                        type: integer
+                      startInUnits:
+                        format: int64
+                        type: integer
+                      unitTimescaleInMiliseconds:
+                        format: int64
+                        type: integer
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  trackSelection:
+                    items:
+                      properties:
+                        condition:
+                          items:
+                            properties:
+                              operation:
+                                type: string
+                              property:
+                                type: string
+                              value:
+                                type: string
+                            type: object
+                          type: array
+                      required:
+                      - condition
+                      type: object
+                    type: array
+                required:
+                - assetID
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              trackSelection:
-                items:
-                  properties:
-                    condition:
-                      items:
-                        properties:
-                          operation:
-                            type: string
-                          property:
-                            type: string
-                          value:
-                            type: string
-                        type: object
-                      type: array
-                  required:
-                  - condition
-                  type: object
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - assetID
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

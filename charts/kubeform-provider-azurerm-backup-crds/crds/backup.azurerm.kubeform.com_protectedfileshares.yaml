@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: protectedfileshares.backup.azurerm.kubeform.com
 spec:
   group: backup.azurerm.kubeform.com
@@ -30,21 +31,12 @@ spec:
             type: object
           spec:
             properties:
-              backupPolicyID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   backupPolicyID:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   recoveryVaultName:
                     type: string
                   resourceGroupName:
@@ -52,11 +44,6 @@ spec:
                   sourceFileShareName:
                     type: string
                   sourceStorageAccountID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -78,7 +65,6 @@ spec:
                     type: object
                 required:
                 - backupPolicyID
-                - providerRef
                 - recoveryVaultName
                 - resourceGroupName
                 - sourceFileShareName
@@ -89,44 +75,58 @@ spec:
                   name:
                     type: string
                 type: object
-              recoveryVaultName:
-                type: string
-              resourceGroupName:
-                type: string
-              sourceFileShareName:
-                type: string
-              sourceStorageAccountID:
-                type: string
+              resource:
+                properties:
+                  backupPolicyID:
+                    type: string
+                  id:
+                    type: string
+                  recoveryVaultName:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  sourceFileShareName:
+                    type: string
+                  sourceStorageAccountID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - backupPolicyID
+                - recoveryVaultName
+                - resourceGroupName
+                - sourceFileShareName
+                - sourceStorageAccountID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - backupPolicyID
             - providerRef
-            - recoveryVaultName
-            - resourceGroupName
-            - sourceFileShareName
-            - sourceStorageAccountID
+            - resource
             type: object
           status:
             properties:

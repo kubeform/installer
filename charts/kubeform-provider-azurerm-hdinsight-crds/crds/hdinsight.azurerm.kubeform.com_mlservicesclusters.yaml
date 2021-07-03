@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: mlservicesclusters.hdinsight.azurerm.kubeform.com
 spec:
   group: hdinsight.azurerm.kubeform.com
@@ -30,23 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterVersion:
-                type: string
-              edgeSSHEndpoint:
-                type: string
-              gateway:
-                properties:
-                  enabled:
-                    type: boolean
-                  username:
-                    type: string
-                required:
-                - username
-                type: object
-              httpsEndpoint:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterVersion:
@@ -70,11 +54,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   roles:
@@ -166,11 +145,6 @@ spec:
                     type: object
                   rstudio:
                     type: boolean
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sshEndpoint:
                     type: string
                   storageAccount:
@@ -189,11 +163,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   tier:
                     type: string
                   timeouts:
@@ -221,172 +190,198 @@ spec:
                 - gateway
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - roles
                 - rstudio
                 - tier
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              roles:
+              resource:
                 properties:
-                  edgeNode:
+                  clusterVersion:
+                    type: string
+                  edgeSSHEndpoint:
+                    type: string
+                  gateway:
                     properties:
-                      sshKeys:
-                        items:
-                          type: string
-                        type: array
-                      subnetID:
-                        type: string
+                      enabled:
+                        type: boolean
                       username:
-                        type: string
-                      virtualNetworkID:
-                        type: string
-                      vmSize:
                         type: string
                     required:
                     - username
-                    - vmSize
                     type: object
-                  headNode:
+                  httpsEndpoint:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  roles:
                     properties:
-                      sshKeys:
-                        items:
-                          type: string
-                        type: array
-                      subnetID:
-                        type: string
-                      username:
-                        type: string
-                      virtualNetworkID:
-                        type: string
-                      vmSize:
-                        type: string
+                      edgeNode:
+                        properties:
+                          sshKeys:
+                            items:
+                              type: string
+                            type: array
+                          subnetID:
+                            type: string
+                          username:
+                            type: string
+                          virtualNetworkID:
+                            type: string
+                          vmSize:
+                            type: string
+                        required:
+                        - username
+                        - vmSize
+                        type: object
+                      headNode:
+                        properties:
+                          sshKeys:
+                            items:
+                              type: string
+                            type: array
+                          subnetID:
+                            type: string
+                          username:
+                            type: string
+                          virtualNetworkID:
+                            type: string
+                          vmSize:
+                            type: string
+                        required:
+                        - username
+                        - vmSize
+                        type: object
+                      workerNode:
+                        properties:
+                          minInstanceCount:
+                            format: int64
+                            type: integer
+                          sshKeys:
+                            items:
+                              type: string
+                            type: array
+                          subnetID:
+                            type: string
+                          targetInstanceCount:
+                            format: int64
+                            type: integer
+                          username:
+                            type: string
+                          virtualNetworkID:
+                            type: string
+                          vmSize:
+                            type: string
+                        required:
+                        - targetInstanceCount
+                        - username
+                        - vmSize
+                        type: object
+                      zookeeperNode:
+                        properties:
+                          sshKeys:
+                            items:
+                              type: string
+                            type: array
+                          subnetID:
+                            type: string
+                          username:
+                            type: string
+                          virtualNetworkID:
+                            type: string
+                          vmSize:
+                            type: string
+                        required:
+                        - username
+                        - vmSize
+                        type: object
                     required:
-                    - username
-                    - vmSize
+                    - edgeNode
+                    - headNode
+                    - workerNode
+                    - zookeeperNode
                     type: object
-                  workerNode:
+                  rstudio:
+                    type: boolean
+                  sshEndpoint:
+                    type: string
+                  storageAccount:
+                    items:
+                      properties:
+                        isDefault:
+                          type: boolean
+                        storageContainerID:
+                          type: string
+                      required:
+                      - isDefault
+                      - storageContainerID
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tier:
+                    type: string
+                  timeouts:
                     properties:
-                      minInstanceCount:
+                      create:
                         format: int64
                         type: integer
-                      sshKeys:
-                        items:
-                          type: string
-                        type: array
-                      subnetID:
-                        type: string
-                      targetInstanceCount:
+                      default:
                         format: int64
                         type: integer
-                      username:
-                        type: string
-                      virtualNetworkID:
-                        type: string
-                      vmSize:
-                        type: string
-                    required:
-                    - targetInstanceCount
-                    - username
-                    - vmSize
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  zookeeperNode:
-                    properties:
-                      sshKeys:
-                        items:
-                          type: string
-                        type: array
-                      subnetID:
-                        type: string
-                      username:
-                        type: string
-                      virtualNetworkID:
-                        type: string
-                      vmSize:
-                        type: string
-                    required:
-                    - username
-                    - vmSize
-                    type: object
+                  tlsMinVersion:
+                    type: string
                 required:
-                - edgeNode
-                - headNode
-                - workerNode
-                - zookeeperNode
+                - clusterVersion
+                - gateway
+                - location
+                - name
+                - resourceGroupName
+                - roles
+                - rstudio
+                - tier
                 type: object
-              rstudio:
-                type: boolean
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              sshEndpoint:
-                type: string
-              storageAccount:
-                items:
-                  properties:
-                    isDefault:
-                      type: boolean
-                    storageContainerID:
-                      type: string
-                  required:
-                  - isDefault
-                  - storageContainerID
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              tier:
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              tlsMinVersion:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - clusterVersion
-            - gateway
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - roles
-            - rstudio
-            - tier
+            - resource
             type: object
           status:
             properties:

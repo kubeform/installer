@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dataexportrules.loganalytics.azurerm.kubeform.com
 spec:
   group: loganalytics.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              destinationResourceID:
-                type: string
-              enabled:
-                type: boolean
-              exportRuleID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   destinationResourceID:
@@ -50,11 +43,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   tableNames:
@@ -62,11 +50,6 @@ spec:
                       type: string
                     minItems: 1
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -90,57 +73,74 @@ spec:
                 required:
                 - destinationResourceID
                 - name
-                - providerRef
                 - resourceGroupName
                 - tableNames
                 - workspaceResourceID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              tableNames:
-                items:
-                  type: string
-                minItems: 1
-                type: array
+              resource:
+                properties:
+                  destinationResourceID:
+                    type: string
+                  enabled:
+                    type: boolean
+                  exportRuleID:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  tableNames:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  workspaceResourceID:
+                    type: string
+                required:
+                - destinationResourceID
+                - name
+                - resourceGroupName
+                - tableNames
+                - workspaceResourceID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              workspaceResourceID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - destinationResourceID
-            - name
             - providerRef
-            - resourceGroupName
-            - tableNames
-            - workspaceResourceID
+            - resource
             type: object
           status:
             properties:

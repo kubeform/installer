@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: assignments.role.azurerm.kubeform.com
 spec:
   group: role.azurerm.kubeform.com
@@ -30,19 +31,13 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                type: string
-              conditionVersion:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
                     type: string
                   conditionVersion:
+                    type: string
+                  delegatedManagedIdentityResourceID:
                     type: string
                   description:
                     type: string
@@ -54,11 +49,6 @@ spec:
                     type: string
                   principalType:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roleDefinitionID:
                     type: string
                   roleDefinitionName:
@@ -67,11 +57,6 @@ spec:
                     type: string
                   skipServicePrincipalAadCheck:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -92,55 +77,74 @@ spec:
                     type: object
                 required:
                 - principalID
-                - providerRef
                 - scope
                 type: object
-              name:
-                type: string
-              principalID:
-                type: string
-              principalType:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              roleDefinitionID:
-                type: string
-              roleDefinitionName:
-                type: string
-              scope:
-                type: string
-              skipServicePrincipalAadCheck:
-                type: boolean
+              resource:
+                properties:
+                  condition:
+                    type: string
+                  conditionVersion:
+                    type: string
+                  delegatedManagedIdentityResourceID:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  principalID:
+                    type: string
+                  principalType:
+                    type: string
+                  roleDefinitionID:
+                    type: string
+                  roleDefinitionName:
+                    type: string
+                  scope:
+                    type: string
+                  skipServicePrincipalAadCheck:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - principalID
+                - scope
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - principalID
             - providerRef
-            - scope
+            - resource
             type: object
           status:
             properties:

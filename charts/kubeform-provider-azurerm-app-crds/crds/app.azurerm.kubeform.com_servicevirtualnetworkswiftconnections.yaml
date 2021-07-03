@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: servicevirtualnetworkswiftconnections.app.azurerm.kubeform.com
 spec:
   group: app.azurerm.kubeform.com
@@ -30,27 +31,13 @@ spec:
             type: object
           spec:
             properties:
-              appServiceID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   appServiceID:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   subnetID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -72,7 +59,6 @@ spec:
                     type: object
                 required:
                 - appServiceID
-                - providerRef
                 - subnetID
                 type: object
               providerRef:
@@ -80,35 +66,49 @@ spec:
                   name:
                     type: string
                 type: object
-              subnetID:
-                type: string
+              resource:
+                properties:
+                  appServiceID:
+                    type: string
+                  id:
+                    type: string
+                  subnetID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - appServiceID
+                - subnetID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - appServiceID
             - providerRef
-            - subnetID
+            - resource
             type: object
           status:
             properties:

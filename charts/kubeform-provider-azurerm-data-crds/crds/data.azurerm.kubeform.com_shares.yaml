@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: shares.data.azurerm.kubeform.com
 spec:
   group: data.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              kind:
-                type: string
               kubeformOutput:
                 properties:
                   accountID:
@@ -50,11 +43,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   snapshotSchedule:
                     properties:
                       name:
@@ -68,11 +56,6 @@ spec:
                     - recurrence
                     - startTime
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   terms:
                     type: string
                   timeouts:
@@ -97,58 +80,75 @@ spec:
                 - accountID
                 - kind
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              snapshotSchedule:
+              resource:
                 properties:
+                  accountID:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  kind:
+                    type: string
                   name:
                     type: string
-                  recurrence:
+                  snapshotSchedule:
+                    properties:
+                      name:
+                        type: string
+                      recurrence:
+                        type: string
+                      startTime:
+                        type: string
+                    required:
+                    - name
+                    - recurrence
+                    - startTime
+                    type: object
+                  terms:
                     type: string
-                  startTime:
-                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
+                - accountID
+                - kind
                 - name
-                - recurrence
-                - startTime
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              terms:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - accountID
-            - kind
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: topics.servicebus.azurerm.kubeform.com
 spec:
   group: servicebus.azurerm.kubeform.com
@@ -30,20 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              autoDeleteOnIdle:
-                type: string
-              defaultMessageTtl:
-                type: string
-              duplicateDetectionHistoryTimeWindow:
-                type: string
-              enableBatchedOperations:
-                type: boolean
-              enableExpress:
-                type: boolean
-              enablePartitioning:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   autoDeleteOnIdle:
@@ -67,11 +54,6 @@ spec:
                     type: string
                   namespaceName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requiresDuplicateDetection:
                     type: boolean
                   resourceGroupName:
@@ -80,11 +62,6 @@ spec:
                     type: string
                   supportOrdering:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -106,57 +83,80 @@ spec:
                 required:
                 - name
                 - namespaceName
-                - providerRef
                 - resourceGroupName
                 type: object
-              maxSizeInMegabytes:
-                format: int64
-                type: integer
-              name:
-                type: string
-              namespaceName:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requiresDuplicateDetection:
-                type: boolean
-              resourceGroupName:
-                type: string
-              status:
-                type: string
-              supportOrdering:
-                type: boolean
+              resource:
+                properties:
+                  autoDeleteOnIdle:
+                    type: string
+                  defaultMessageTtl:
+                    type: string
+                  duplicateDetectionHistoryTimeWindow:
+                    type: string
+                  enableBatchedOperations:
+                    type: boolean
+                  enableExpress:
+                    type: boolean
+                  enablePartitioning:
+                    type: boolean
+                  id:
+                    type: string
+                  maxSizeInMegabytes:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  namespaceName:
+                    type: string
+                  requiresDuplicateDetection:
+                    type: boolean
+                  resourceGroupName:
+                    type: string
+                  status:
+                    type: string
+                  supportOrdering:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - namespaceName
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
-            - namespaceName
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

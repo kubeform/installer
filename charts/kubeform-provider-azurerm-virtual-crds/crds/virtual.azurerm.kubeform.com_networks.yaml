@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: networks.virtual.azurerm.kubeform.com
 spec:
   group: virtual.azurerm.kubeform.com
@@ -30,31 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              addressSpace:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              bgpCommunity:
-                type: string
-              ddosProtectionPlan:
-                properties:
-                  ID:
-                    type: string
-                  enable:
-                    type: boolean
-                required:
-                - ID
-                - enable
-                type: object
-              dnsServers:
-                items:
-                  type: string
-                type: array
-              guid:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   addressSpace:
@@ -86,11 +62,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   subnet:
@@ -113,11 +84,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -142,71 +108,105 @@ spec:
                 - addressSpace
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              subnet:
-                items:
-                  properties:
-                    ID:
+              resource:
+                properties:
+                  addressSpace:
+                    items:
                       type: string
-                    addressPrefix:
+                    minItems: 1
+                    type: array
+                  bgpCommunity:
+                    type: string
+                  ddosProtectionPlan:
+                    properties:
+                      ID:
+                        type: string
+                      enable:
+                        type: boolean
+                    required:
+                    - ID
+                    - enable
+                    type: object
+                  dnsServers:
+                    items:
                       type: string
-                    name:
+                    type: array
+                  guid:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  subnet:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        addressPrefix:
+                          type: string
+                        name:
+                          type: string
+                        securityGroup:
+                          type: string
+                      required:
+                      - addressPrefix
+                      - name
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
                       type: string
-                    securityGroup:
-                      type: string
-                  required:
-                  - addressPrefix
-                  - name
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vmProtectionEnabled:
+                    type: boolean
+                required:
+                - addressSpace
+                - location
+                - name
+                - resourceGroupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vmProtectionEnabled:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - addressSpace
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

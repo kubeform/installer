@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: kafkaclusters.hdinsight.azurerm.kubeform.com
 spec:
   group: hdinsight.azurerm.kubeform.com
@@ -30,32 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterVersion:
-                type: string
-              componentVersion:
-                properties:
-                  kafka:
-                    type: string
-                required:
-                - kafka
-                type: object
-              encryptionInTransitEnabled:
-                type: boolean
-              gateway:
-                properties:
-                  enabled:
-                    type: boolean
-                  username:
-                    type: string
-                required:
-                - username
-                type: object
-              httpsEndpoint:
-                type: string
-              id:
-                type: string
-              kafkaRestProxyEndpoint:
-                type: string
               kubeformOutput:
                 properties:
                   clusterVersion:
@@ -137,11 +112,6 @@ spec:
                     type: object
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   restProxy:
@@ -241,10 +211,256 @@ spec:
                     - workerNode
                     - zookeeperNode
                     type: object
-                  secretRef:
+                  sshEndpoint:
+                    type: string
+                  storageAccount:
+                    items:
+                      properties:
+                        isDefault:
+                          type: boolean
+                        storageContainerID:
+                          type: string
+                      required:
+                      - isDefault
+                      - storageContainerID
+                      type: object
+                    type: array
+                  storageAccountGen2:
                     properties:
-                      name:
+                      filesystemID:
                         type: string
+                      isDefault:
+                        type: boolean
+                      managedIdentityResourceID:
+                        type: string
+                      storageResourceID:
+                        type: string
+                    required:
+                    - filesystemID
+                    - isDefault
+                    - managedIdentityResourceID
+                    - storageResourceID
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tier:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  tlsMinVersion:
+                    type: string
+                required:
+                - clusterVersion
+                - componentVersion
+                - gateway
+                - location
+                - name
+                - resourceGroupName
+                - roles
+                - tier
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  clusterVersion:
+                    type: string
+                  componentVersion:
+                    properties:
+                      kafka:
+                        type: string
+                    required:
+                    - kafka
+                    type: object
+                  encryptionInTransitEnabled:
+                    type: boolean
+                  gateway:
+                    properties:
+                      enabled:
+                        type: boolean
+                      username:
+                        type: string
+                    required:
+                    - username
+                    type: object
+                  httpsEndpoint:
+                    type: string
+                  id:
+                    type: string
+                  kafkaRestProxyEndpoint:
+                    type: string
+                  location:
+                    type: string
+                  metastores:
+                    properties:
+                      ambari:
+                        properties:
+                          databaseName:
+                            type: string
+                          server:
+                            type: string
+                          username:
+                            type: string
+                        required:
+                        - databaseName
+                        - server
+                        - username
+                        type: object
+                      hive:
+                        properties:
+                          databaseName:
+                            type: string
+                          server:
+                            type: string
+                          username:
+                            type: string
+                        required:
+                        - databaseName
+                        - server
+                        - username
+                        type: object
+                      oozie:
+                        properties:
+                          databaseName:
+                            type: string
+                          server:
+                            type: string
+                          username:
+                            type: string
+                        required:
+                        - databaseName
+                        - server
+                        - username
+                        type: object
+                    type: object
+                  monitor:
+                    properties:
+                      logAnalyticsWorkspaceID:
+                        type: string
+                    required:
+                    - logAnalyticsWorkspaceID
+                    type: object
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  restProxy:
+                    properties:
+                      securityGroupID:
+                        type: string
+                    required:
+                    - securityGroupID
+                    type: object
+                  roles:
+                    properties:
+                      headNode:
+                        properties:
+                          sshKeys:
+                            items:
+                              type: string
+                            type: array
+                          subnetID:
+                            type: string
+                          username:
+                            type: string
+                          virtualNetworkID:
+                            type: string
+                          vmSize:
+                            type: string
+                        required:
+                        - username
+                        - vmSize
+                        type: object
+                      kafkaManagementNode:
+                        properties:
+                          sshKeys:
+                            items:
+                              type: string
+                            type: array
+                          subnetID:
+                            type: string
+                          username:
+                            type: string
+                          virtualNetworkID:
+                            type: string
+                          vmSize:
+                            type: string
+                        required:
+                        - username
+                        - vmSize
+                        type: object
+                      workerNode:
+                        properties:
+                          minInstanceCount:
+                            format: int64
+                            type: integer
+                          numberOfDisksPerNode:
+                            format: int64
+                            type: integer
+                          sshKeys:
+                            items:
+                              type: string
+                            type: array
+                          subnetID:
+                            type: string
+                          targetInstanceCount:
+                            format: int64
+                            type: integer
+                          username:
+                            type: string
+                          virtualNetworkID:
+                            type: string
+                          vmSize:
+                            type: string
+                        required:
+                        - numberOfDisksPerNode
+                        - targetInstanceCount
+                        - username
+                        - vmSize
+                        type: object
+                      zookeeperNode:
+                        properties:
+                          sshKeys:
+                            items:
+                              type: string
+                            type: array
+                          subnetID:
+                            type: string
+                          username:
+                            type: string
+                          virtualNetworkID:
+                            type: string
+                          vmSize:
+                            type: string
+                        required:
+                        - username
+                        - vmSize
+                        type: object
+                    required:
+                    - headNode
+                    - workerNode
+                    - zookeeperNode
                     type: object
                   sshEndpoint:
                     type: string
@@ -280,11 +496,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   tier:
                     type: string
                   timeouts:
@@ -313,244 +524,28 @@ spec:
                 - gateway
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - roles
                 - tier
-                type: object
-              location:
-                type: string
-              metastores:
-                properties:
-                  ambari:
-                    properties:
-                      databaseName:
-                        type: string
-                      server:
-                        type: string
-                      username:
-                        type: string
-                    required:
-                    - databaseName
-                    - server
-                    - username
-                    type: object
-                  hive:
-                    properties:
-                      databaseName:
-                        type: string
-                      server:
-                        type: string
-                      username:
-                        type: string
-                    required:
-                    - databaseName
-                    - server
-                    - username
-                    type: object
-                  oozie:
-                    properties:
-                      databaseName:
-                        type: string
-                      server:
-                        type: string
-                      username:
-                        type: string
-                    required:
-                    - databaseName
-                    - server
-                    - username
-                    type: object
-                type: object
-              monitor:
-                properties:
-                  logAnalyticsWorkspaceID:
-                    type: string
-                required:
-                - logAnalyticsWorkspaceID
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              resourceGroupName:
-                type: string
-              restProxy:
-                properties:
-                  securityGroupID:
-                    type: string
-                required:
-                - securityGroupID
-                type: object
-              roles:
-                properties:
-                  headNode:
-                    properties:
-                      sshKeys:
-                        items:
-                          type: string
-                        type: array
-                      subnetID:
-                        type: string
-                      username:
-                        type: string
-                      virtualNetworkID:
-                        type: string
-                      vmSize:
-                        type: string
-                    required:
-                    - username
-                    - vmSize
-                    type: object
-                  kafkaManagementNode:
-                    properties:
-                      sshKeys:
-                        items:
-                          type: string
-                        type: array
-                      subnetID:
-                        type: string
-                      username:
-                        type: string
-                      virtualNetworkID:
-                        type: string
-                      vmSize:
-                        type: string
-                    required:
-                    - username
-                    - vmSize
-                    type: object
-                  workerNode:
-                    properties:
-                      minInstanceCount:
-                        format: int64
-                        type: integer
-                      numberOfDisksPerNode:
-                        format: int64
-                        type: integer
-                      sshKeys:
-                        items:
-                          type: string
-                        type: array
-                      subnetID:
-                        type: string
-                      targetInstanceCount:
-                        format: int64
-                        type: integer
-                      username:
-                        type: string
-                      virtualNetworkID:
-                        type: string
-                      vmSize:
-                        type: string
-                    required:
-                    - numberOfDisksPerNode
-                    - targetInstanceCount
-                    - username
-                    - vmSize
-                    type: object
-                  zookeeperNode:
-                    properties:
-                      sshKeys:
-                        items:
-                          type: string
-                        type: array
-                      subnetID:
-                        type: string
-                      username:
-                        type: string
-                      virtualNetworkID:
-                        type: string
-                      vmSize:
-                        type: string
-                    required:
-                    - username
-                    - vmSize
-                    type: object
-                required:
-                - headNode
-                - workerNode
-                - zookeeperNode
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              sshEndpoint:
-                type: string
-              storageAccount:
-                items:
-                  properties:
-                    isDefault:
-                      type: boolean
-                    storageContainerID:
-                      type: string
-                  required:
-                  - isDefault
-                  - storageContainerID
-                  type: object
-                type: array
-              storageAccountGen2:
-                properties:
-                  filesystemID:
-                    type: string
-                  isDefault:
-                    type: boolean
-                  managedIdentityResourceID:
-                    type: string
-                  storageResourceID:
-                    type: string
-                required:
-                - filesystemID
-                - isDefault
-                - managedIdentityResourceID
-                - storageResourceID
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              tier:
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              tlsMinVersion:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - clusterVersion
-            - componentVersion
-            - gateway
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - roles
-            - tier
+            - resource
             type: object
           status:
             properties:

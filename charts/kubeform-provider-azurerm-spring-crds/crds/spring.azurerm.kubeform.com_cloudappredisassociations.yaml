@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudappredisassociations.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -30,19 +31,12 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   redisAccessKey:
                     type: string
                   redisCacheID:
@@ -51,11 +45,6 @@ spec:
                     type: string
                   sslEnabled:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -76,55 +65,66 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - redisAccessKey
                 - redisCacheID
                 - springCloudAppID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              redisAccessKey:
-                type: string
-              redisCacheID:
-                type: string
-              springCloudAppID:
-                type: string
-              sslEnabled:
-                type: boolean
+              resource:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  redisAccessKey:
+                    type: string
+                  redisCacheID:
+                    type: string
+                  springCloudAppID:
+                    type: string
+                  sslEnabled:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - redisAccessKey
+                - redisCacheID
+                - springCloudAppID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - redisAccessKey
-            - redisCacheID
-            - springCloudAppID
+            - resource
             type: object
           status:
             properties:

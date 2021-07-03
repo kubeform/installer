@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: channeldirectlines.bot.azurerm.kubeform.com
 spec:
   group: bot.azurerm.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              botName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   botName:
@@ -42,18 +39,8 @@ spec:
                     type: string
                   location:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   site:
                     items:
                       properties:
@@ -77,11 +64,6 @@ spec:
                       - name
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -103,76 +85,89 @@ spec:
                 required:
                 - botName
                 - location
-                - providerRef
                 - resourceGroupName
                 - site
                 type: object
-              location:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  botName:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  site:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        enabled:
+                          type: boolean
+                        enhancedAuthenticationEnabled:
+                          type: boolean
+                        name:
+                          type: string
+                        trustedOrigins:
+                          items:
+                            type: string
+                          type: array
+                        v1Allowed:
+                          type: boolean
+                        v3Allowed:
+                          type: boolean
+                      required:
+                      - name
+                      type: object
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - botName
+                - location
+                - resourceGroupName
+                - site
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              site:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    enabled:
-                      type: boolean
-                    enhancedAuthenticationEnabled:
-                      type: boolean
-                    name:
-                      type: string
-                    trustedOrigins:
-                      items:
-                        type: string
-                      type: array
-                    v1Allowed:
-                      type: boolean
-                    v3Allowed:
-                      type: boolean
-                  required:
-                  - name
-                  type: object
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - botName
-            - location
             - providerRef
-            - resourceGroupName
-            - site
+            - resource
             type: object
           status:
             properties:
@@ -219,7 +214,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: channelemails.bot.azurerm.kubeform.com
 spec:
   group: bot.azurerm.kubeform.com
@@ -246,12 +242,6 @@ spec:
             type: object
           spec:
             properties:
-              botName:
-                type: string
-              emailAddress:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   botName:
@@ -262,22 +252,7 @@ spec:
                     type: string
                   location:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -301,18 +276,49 @@ spec:
                 - botName
                 - emailAddress
                 - location
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  botName:
+                    type: string
+                  emailAddress:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - botName
+                - emailAddress
+                - location
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -323,30 +329,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - botName
-            - emailAddress
-            - location
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -393,7 +383,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: channelmsteams.bot.azurerm.kubeform.com
 spec:
   group: bot.azurerm.kubeform.com
@@ -420,14 +411,6 @@ spec:
             type: object
           spec:
             properties:
-              botName:
-                type: string
-              callingWebHook:
-                type: string
-              enableCalling:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   botName:
@@ -440,17 +423,7 @@ spec:
                     type: string
                   location:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -473,46 +446,63 @@ spec:
                 required:
                 - botName
                 - location
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  botName:
+                    type: string
+                  callingWebHook:
+                    type: string
+                  enableCalling:
+                    type: boolean
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - botName
+                - location
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - botName
-            - location
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -559,7 +549,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: channelslacks.bot.azurerm.kubeform.com
 spec:
   group: bot.azurerm.kubeform.com
@@ -586,12 +577,6 @@ spec:
             type: object
           spec:
             properties:
-              botName:
-                type: string
-              clientID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   botName:
@@ -604,22 +589,7 @@ spec:
                     type: string
                   location:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -643,20 +613,51 @@ spec:
                 - botName
                 - clientID
                 - location
-                - providerRef
                 - resourceGroupName
                 type: object
-              landingPageURL:
-                type: string
-              location:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  botName:
+                    type: string
+                  clientID:
+                    type: string
+                  id:
+                    type: string
+                  landingPageURL:
+                    type: string
+                  location:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - botName
+                - clientID
+                - location
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -667,30 +668,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - botName
-            - clientID
-            - location
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -737,7 +722,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: channelsregistrations.bot.azurerm.kubeform.com
 spec:
   group: bot.azurerm.kubeform.com
@@ -764,16 +750,6 @@ spec:
             type: object
           spec:
             properties:
-              developerAppInsightsApplicationID:
-                type: string
-              developerAppInsightsKey:
-                type: string
-              displayName:
-                type: string
-              endpoint:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   developerAppInsightsApplicationID:
@@ -792,29 +768,14 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sku:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -837,64 +798,83 @@ spec:
                 - location
                 - microsoftAppID
                 - name
-                - providerRef
                 - resourceGroupName
                 - sku
                 type: object
-              location:
-                type: string
-              microsoftAppID:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  developerAppInsightsApplicationID:
+                    type: string
+                  developerAppInsightsKey:
+                    type: string
+                  displayName:
+                    type: string
+                  endpoint:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  microsoftAppID:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  sku:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - microsoftAppID
+                - name
+                - resourceGroupName
+                - sku
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              sku:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - microsoftAppID
-            - name
             - providerRef
-            - resourceGroupName
-            - sku
+            - resource
             type: object
           status:
             properties:
@@ -941,7 +921,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: connections.bot.azurerm.kubeform.com
 spec:
   group: bot.azurerm.kubeform.com
@@ -968,12 +949,6 @@ spec:
             type: object
           spec:
             properties:
-              botName:
-                type: string
-              clientID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   botName:
@@ -990,31 +965,16 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   scopes:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceProviderName:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1038,69 +998,84 @@ spec:
                 - clientID
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - serviceProviderName
-                type: object
-              location:
-                type: string
-              name:
-                type: string
-              parameters:
-                additionalProperties:
-                  type: string
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              scopes:
-                type: string
+              resource:
+                properties:
+                  botName:
+                    type: string
+                  clientID:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  parameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  scopes:
+                    type: string
+                  serviceProviderName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - botName
+                - clientID
+                - location
+                - name
+                - resourceGroupName
+                - serviceProviderName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              serviceProviderName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - botName
-            - clientID
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - serviceProviderName
+            - resource
             type: object
           status:
             properties:
@@ -1147,7 +1122,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: webapps.bot.azurerm.kubeform.com
 spec:
   group: bot.azurerm.kubeform.com
@@ -1174,16 +1150,6 @@ spec:
             type: object
           spec:
             properties:
-              developerAppInsightsApplicationID:
-                type: string
-              developerAppInsightsKey:
-                type: string
-              displayName:
-                type: string
-              endpoint:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   developerAppInsightsApplicationID:
@@ -1206,29 +1172,14 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sku:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1251,68 +1202,87 @@ spec:
                 - location
                 - microsoftAppID
                 - name
-                - providerRef
                 - resourceGroupName
                 - sku
                 type: object
-              location:
-                type: string
-              luisAppIDS:
-                items:
-                  type: string
-                type: array
-              microsoftAppID:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  developerAppInsightsApplicationID:
+                    type: string
+                  developerAppInsightsKey:
+                    type: string
+                  displayName:
+                    type: string
+                  endpoint:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  luisAppIDS:
+                    items:
+                      type: string
+                    type: array
+                  microsoftAppID:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  sku:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - microsoftAppID
+                - name
+                - resourceGroupName
+                - sku
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              sku:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - microsoftAppID
-            - name
             - providerRef
-            - resourceGroupName
-            - sku
+            - resource
             type: object
           status:
             properties:

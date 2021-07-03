@@ -125,6 +125,7 @@ type AzurermCRDs struct {
 	Packet            bool `json:"packet"`
 	Point             bool `json:"point"`
 	Policy            bool `json:"policy"`
+	Portal            bool `json:"portal"`
 	Postgresql        bool `json:"postgresql"`
 	Powerbi           bool `json:"powerbi"`
 	Private           bool `json:"private"`

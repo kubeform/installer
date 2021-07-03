@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: hubconnections.virtual.azurerm.kubeform.com
 spec:
   group: virtual.azurerm.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              hubToVitualNetworkTrafficAllowed:
-                type: boolean
-              id:
-                type: string
-              internetSecurityEnabled:
-                type: boolean
               kubeformOutput:
                 properties:
                   hubToVitualNetworkTrafficAllowed:
@@ -46,11 +41,6 @@ spec:
                     type: boolean
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   remoteVirtualNetworkID:
                     type: string
                   routing:
@@ -82,11 +72,6 @@ spec:
                           type: object
                         type: array
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -111,80 +96,95 @@ spec:
                     type: boolean
                 required:
                 - name
-                - providerRef
                 - remoteVirtualNetworkID
                 - virtualHubID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              remoteVirtualNetworkID:
-                type: string
-              routing:
+              resource:
                 properties:
-                  associatedRouteTableID:
+                  hubToVitualNetworkTrafficAllowed:
+                    type: boolean
+                  id:
                     type: string
-                  propagatedRouteTable:
+                  internetSecurityEnabled:
+                    type: boolean
+                  name:
+                    type: string
+                  remoteVirtualNetworkID:
+                    type: string
+                  routing:
                     properties:
-                      labels:
+                      associatedRouteTableID:
+                        type: string
+                      propagatedRouteTable:
+                        properties:
+                          labels:
+                            items:
+                              type: string
+                            type: array
+                          routeTableIDS:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      staticVnetRoute:
                         items:
-                          type: string
-                        type: array
-                      routeTableIDS:
-                        items:
-                          type: string
+                          properties:
+                            addressPrefixes:
+                              items:
+                                type: string
+                              type: array
+                            name:
+                              type: string
+                            nextHopIPAddress:
+                              type: string
+                          type: object
                         type: array
                     type: object
-                  staticVnetRoute:
-                    items:
-                      properties:
-                        addressPrefixes:
-                          items:
-                            type: string
-                          type: array
-                        name:
-                          type: string
-                        nextHopIPAddress:
-                          type: string
-                      type: object
-                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualHubID:
+                    type: string
+                  vitualNetworkToHubGatewaysTrafficAllowed:
+                    type: boolean
+                required:
+                - name
+                - remoteVirtualNetworkID
+                - virtualHubID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualHubID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              vitualNetworkToHubGatewaysTrafficAllowed:
-                type: boolean
             required:
-            - name
             - providerRef
-            - remoteVirtualNetworkID
-            - virtualHubID
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: fabricmeshapplications.service.azurerm.kubeform.com
 spec:
   group: service.azurerm.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -40,11 +39,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   service:
@@ -106,11 +100,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -132,109 +121,120 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - service
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              service:
-                items:
-                  properties:
-                    codePackage:
-                      items:
-                        properties:
-                          imageName:
-                            type: string
-                          name:
-                            type: string
-                          resources:
+              resource:
+                properties:
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  service:
+                    items:
+                      properties:
+                        codePackage:
+                          items:
                             properties:
-                              limits:
+                              imageName:
+                                type: string
+                              name:
+                                type: string
+                              resources:
                                 properties:
-                                  cpu:
-                                    format: double
-                                    type: number
-                                  memory:
-                                    format: double
-                                    type: number
+                                  limits:
+                                    properties:
+                                      cpu:
+                                        format: double
+                                        type: number
+                                      memory:
+                                        format: double
+                                        type: number
+                                    required:
+                                    - cpu
+                                    - memory
+                                    type: object
+                                  requests:
+                                    properties:
+                                      cpu:
+                                        format: double
+                                        type: number
+                                      memory:
+                                        format: double
+                                        type: number
+                                    required:
+                                    - cpu
+                                    - memory
+                                    type: object
                                 required:
-                                - cpu
-                                - memory
-                                type: object
-                              requests:
-                                properties:
-                                  cpu:
-                                    format: double
-                                    type: number
-                                  memory:
-                                    format: double
-                                    type: number
-                                required:
-                                - cpu
-                                - memory
+                                - requests
                                 type: object
                             required:
-                            - requests
+                            - imageName
+                            - name
+                            - resources
                             type: object
-                        required:
-                        - imageName
-                        - name
-                        - resources
-                        type: object
-                      type: array
-                    name:
+                          type: array
+                        name:
+                          type: string
+                        osType:
+                          type: string
+                      required:
+                      - codePackage
+                      - name
+                      - osType
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
                       type: string
-                    osType:
-                      type: string
-                  required:
-                  - codePackage
-                  - name
-                  - osType
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - name
+                - resourceGroupName
+                - service
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - service
+            - resource
             type: object
           status:
             properties:

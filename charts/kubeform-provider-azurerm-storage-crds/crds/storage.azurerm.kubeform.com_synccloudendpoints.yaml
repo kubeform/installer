@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: synccloudendpoints.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              fileShareName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   fileShareName:
@@ -42,21 +39,11 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   storageAccountID:
                     type: string
                   storageAccountTenantID:
                     type: string
                   storageSyncGroupID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -79,52 +66,65 @@ spec:
                 required:
                 - fileShareName
                 - name
-                - providerRef
                 - storageAccountID
                 - storageSyncGroupID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              storageAccountID:
-                type: string
-              storageAccountTenantID:
-                type: string
-              storageSyncGroupID:
-                type: string
+              resource:
+                properties:
+                  fileShareName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  storageAccountID:
+                    type: string
+                  storageAccountTenantID:
+                    type: string
+                  storageSyncGroupID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - fileShareName
+                - name
+                - storageAccountID
+                - storageSyncGroupID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - fileShareName
-            - name
             - providerRef
-            - storageAccountID
-            - storageSyncGroupID
+            - resource
             type: object
           status:
             properties:

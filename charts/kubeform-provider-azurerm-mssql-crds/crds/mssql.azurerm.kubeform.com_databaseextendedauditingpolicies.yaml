@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: databaseextendedauditingpolicies.mssql.azurerm.kubeform.com
 spec:
   group: mssql.azurerm.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              databaseID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   databaseID:
@@ -42,27 +39,12 @@ spec:
                     type: string
                   logMonitoringEnabled:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   retentionInDays:
                     format: int64
                     type: integer
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   storageAccountAccessKeyIsSecondary:
                     type: boolean
                   storageEndpoint:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -84,53 +66,66 @@ spec:
                     type: object
                 required:
                 - databaseID
-                - providerRef
                 type: object
-              logMonitoringEnabled:
-                type: boolean
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              retentionInDays:
-                format: int64
-                type: integer
+              resource:
+                properties:
+                  databaseID:
+                    type: string
+                  id:
+                    type: string
+                  logMonitoringEnabled:
+                    type: boolean
+                  retentionInDays:
+                    format: int64
+                    type: integer
+                  storageAccountAccessKeyIsSecondary:
+                    type: boolean
+                  storageEndpoint:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - databaseID
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              storageAccountAccessKeyIsSecondary:
-                type: boolean
-              storageEndpoint:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - databaseID
             - providerRef
+            - resource
             type: object
           status:
             properties:

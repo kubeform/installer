@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: providers.custom.azurerm.kubeform.com
 spec:
   group: custom.azurerm.kubeform.com
@@ -30,20 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              action:
-                items:
-                  properties:
-                    endpoint:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - endpoint
-                  - name
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   action:
@@ -64,11 +51,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   resourceType:
@@ -89,11 +71,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -124,75 +101,98 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              resourceType:
-                items:
-                  properties:
-                    endpoint:
+              resource:
+                properties:
+                  action:
+                    items:
+                      properties:
+                        endpoint:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - endpoint
+                      - name
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  resourceType:
+                    items:
+                      properties:
+                        endpoint:
+                          type: string
+                        name:
+                          type: string
+                        routingType:
+                          type: string
+                      required:
+                      - endpoint
+                      - name
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
                       type: string
-                    name:
-                      type: string
-                    routingType:
-                      type: string
-                  required:
-                  - endpoint
-                  - name
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  validation:
+                    items:
+                      properties:
+                        specification:
+                          type: string
+                      required:
+                      - specification
+                      type: object
+                    type: array
+                required:
+                - location
+                - name
+                - resourceGroupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              validation:
-                items:
-                  properties:
-                    specification:
-                      type: string
-                  required:
-                  - specification
-                  type: object
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

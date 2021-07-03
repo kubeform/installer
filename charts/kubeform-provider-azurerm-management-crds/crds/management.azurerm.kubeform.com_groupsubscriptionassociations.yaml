@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: groupsubscriptionassociations.management.azurerm.kubeform.com
 spec:
   group: management.azurerm.kubeform.com
@@ -30,25 +31,13 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   managementGroupID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   subscriptionID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -70,45 +59,56 @@ spec:
                     type: object
                 required:
                 - managementGroupID
-                - providerRef
                 - subscriptionID
                 type: object
-              managementGroupID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              subscriptionID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  managementGroupID:
+                    type: string
+                  subscriptionID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - managementGroupID
+                - subscriptionID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - managementGroupID
             - providerRef
-            - subscriptionID
+            - resource
             type: object
           status:
             properties:

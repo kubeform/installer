@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accesspolicies.keyvault.azurerm.kubeform.com
 spec:
   group: keyvault.azurerm.kubeform.com
@@ -30,20 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              applicationID:
-                type: string
-              certificatePermissions:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
-              keyPermissions:
-                items:
-                  type: string
-                type: array
-              keyVaultID:
-                type: string
               kubeformOutput:
                 properties:
                   applicationID:
@@ -62,11 +49,6 @@ spec:
                     type: string
                   objectID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   secretPermissions:
                     items:
                       type: string
@@ -76,11 +58,6 @@ spec:
                       type: string
                     type: array
                   tenantID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -103,54 +80,77 @@ spec:
                 required:
                 - keyVaultID
                 - objectID
-                - providerRef
                 - tenantID
                 type: object
-              objectID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              secretPermissions:
-                items:
-                  type: string
-                type: array
-              storagePermissions:
-                items:
-                  type: string
-                type: array
-              tenantID:
-                type: string
+              resource:
+                properties:
+                  applicationID:
+                    type: string
+                  certificatePermissions:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  keyPermissions:
+                    items:
+                      type: string
+                    type: array
+                  keyVaultID:
+                    type: string
+                  objectID:
+                    type: string
+                  secretPermissions:
+                    items:
+                      type: string
+                    type: array
+                  storagePermissions:
+                    items:
+                      type: string
+                    type: array
+                  tenantID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - keyVaultID
+                - objectID
+                - tenantID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - keyVaultID
-            - objectID
             - providerRef
-            - tenantID
+            - resource
             type: object
           status:
             properties:

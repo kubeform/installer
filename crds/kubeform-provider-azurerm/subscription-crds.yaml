@@ -161,15 +161,16 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
-  name: subscriptions.subscription.azurerm.kubeform.com
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: policyassignments.subscription.azurerm.kubeform.com
 spec:
   group: subscription.azurerm.kubeform.com
   names:
-    kind: Subscription
-    listKind: SubscriptionList
-    plural: subscriptions
-    singular: subscription
+    kind: PolicyAssignment
+    listKind: PolicyAssignmentList
+    plural: policyassignments
+    singular: policyassignment
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -188,39 +189,40 @@ spec:
             type: object
           spec:
             properties:
-              alias:
-                type: string
-              billingScopeID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
-                  alias:
+                  description:
                     type: string
-                  billingScopeID:
+                  displayName:
                     type: string
+                  enforce:
+                    type: boolean
                   id:
                     type: string
-                  providerRef:
+                  identity:
                     properties:
-                      name:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
                         type: string
                     type: object
-                  subscriptionID:
+                  location:
                     type: string
-                  subscriptionName:
+                  metadata:
                     type: string
-                  tags:
-                    additionalProperties:
+                  name:
+                    type: string
+                  notScopes:
+                    items:
                       type: string
-                    type: object
-                  tenantID:
+                    type: array
+                  parameters:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  policyDefinitionID:
+                    type: string
+                  subscriptionID:
                     type: string
                   timeouts:
                     properties:
@@ -240,55 +242,87 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  workload:
-                    type: string
                 required:
-                - providerRef
-                - subscriptionName
+                - name
+                - policyDefinitionID
+                - subscriptionID
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              subscriptionID:
-                type: string
-              subscriptionName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  description:
+                    type: string
+                  displayName:
+                    type: string
+                  enforce:
+                    type: boolean
+                  id:
+                    type: string
+                  identity:
+                    properties:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                  location:
+                    type: string
+                  metadata:
+                    type: string
+                  name:
+                    type: string
+                  notScopes:
+                    items:
+                      type: string
+                    type: array
+                  parameters:
+                    type: string
+                  policyDefinitionID:
+                    type: string
+                  subscriptionID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - policyDefinitionID
+                - subscriptionID
                 type: object
-              tenantID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              workload:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - subscriptionName
+            - resource
             type: object
           status:
             properties:
@@ -335,7 +369,182 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: subscriptions.subscription.azurerm.kubeform.com
+spec:
+  group: subscription.azurerm.kubeform.com
+  names:
+    kind: Subscription
+    listKind: SubscriptionList
+    plural: subscriptions
+    singular: subscription
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  alias:
+                    type: string
+                  billingScopeID:
+                    type: string
+                  id:
+                    type: string
+                  subscriptionID:
+                    type: string
+                  subscriptionName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tenantID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  workload:
+                    type: string
+                required:
+                - subscriptionName
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  alias:
+                    type: string
+                  billingScopeID:
+                    type: string
+                  id:
+                    type: string
+                  subscriptionID:
+                    type: string
+                  subscriptionName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tenantID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  workload:
+                    type: string
+                required:
+                - subscriptionName
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: templatedeployments.subscription.azurerm.kubeform.com
 spec:
   group: subscription.azurerm.kubeform.com
@@ -362,10 +571,6 @@ spec:
             type: object
           spec:
             properties:
-              debugLevel:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   debugLevel:
@@ -380,11 +585,6 @@ spec:
                     type: string
                   parametersContent:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
@@ -392,11 +592,6 @@ spec:
                   templateContent:
                     type: string
                   templateSpecVersionID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -419,56 +614,69 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              outputContent:
-                type: string
-              parametersContent:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  debugLevel:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  outputContent:
+                    type: string
+                  parametersContent:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  templateContent:
+                    type: string
+                  templateSpecVersionID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - name
                 type: object
-              templateContent:
-                type: string
-              templateSpecVersionID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

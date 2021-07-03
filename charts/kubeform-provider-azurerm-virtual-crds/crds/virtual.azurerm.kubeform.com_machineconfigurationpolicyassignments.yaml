@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: machineconfigurationpolicyassignments.virtual.azurerm.kubeform.com
 spec:
   group: virtual.azurerm.kubeform.com
@@ -30,29 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              configuration:
-                properties:
-                  name:
-                    type: string
-                  parameter:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - name
-                      - value
-                      type: object
-                    type: array
-                  version:
-                    type: string
-                required:
-                - name
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   configuration:
@@ -82,15 +60,65 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualMachineID:
+                    type: string
+                required:
+                - configuration
+                - location
+                - name
+                - virtualMachineID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  configuration:
                     properties:
                       name:
                         type: string
+                      parameter:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - name
+                          - value
+                          type: object
+                        type: array
+                      version:
+                        type: string
+                    required:
+                    - name
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
                     type: string
                   timeouts:
                     properties:
@@ -116,49 +144,21 @@ spec:
                 - configuration
                 - location
                 - name
-                - providerRef
                 - virtualMachineID
-                type: object
-              location:
-                type: string
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualMachineID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - configuration
-            - location
-            - name
             - providerRef
-            - virtualMachineID
+            - resource
             type: object
           status:
             properties:

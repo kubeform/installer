@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: modules.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -59,17 +56,7 @@ spec:
                     type: object
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -93,64 +80,77 @@ spec:
                 - automationAccountName
                 - moduleLink
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              moduleLink:
-                properties:
-                  hash:
-                    properties:
-                      algorithm:
-                        type: string
-                      value:
-                        type: string
-                    required:
-                    - algorithm
-                    - value
-                    type: object
-                  uri:
-                    type: string
-                required:
-                - uri
-                type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  id:
+                    type: string
+                  moduleLink:
+                    properties:
+                      hash:
+                        properties:
+                          algorithm:
+                            type: string
+                          value:
+                            type: string
+                        required:
+                        - algorithm
+                        - value
+                        type: object
+                      uri:
+                        type: string
+                    required:
+                    - uri
+                    type: object
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - automationAccountName
+                - moduleLink
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - moduleLink
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

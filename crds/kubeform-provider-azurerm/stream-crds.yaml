@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsfunctionjavascriptudfs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -188,18 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              input:
-                items:
-                  properties:
-                    type:
-                      type: string
-                  required:
-                  - type
-                  type: object
-                minItems: 1
-                type: array
               kubeformOutput:
                 properties:
                   id:
@@ -223,21 +212,11 @@ spec:
                     required:
                     - type
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   script:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -261,62 +240,83 @@ spec:
                 - input
                 - name
                 - output
-                - providerRef
                 - resourceGroupName
                 - script
                 - streamAnalyticsJobName
-                type: object
-              name:
-                type: string
-              output:
-                properties:
-                  type:
-                    type: string
-                required:
-                - type
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              script:
-                type: string
-              streamAnalyticsJobName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  input:
+                    items:
+                      properties:
+                        type:
+                          type: string
+                      required:
+                      - type
+                      type: object
+                    minItems: 1
+                    type: array
+                  name:
+                    type: string
+                  output:
+                    properties:
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  script:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - input
+                - name
+                - output
+                - resourceGroupName
+                - script
+                - streamAnalyticsJobName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - input
-            - name
-            - output
             - providerRef
-            - resourceGroupName
-            - script
-            - streamAnalyticsJobName
+            - resource
             type: object
           status:
             properties:
@@ -363,7 +363,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsjobs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -390,22 +391,6 @@ spec:
             type: object
           spec:
             properties:
-              compatibilityLevel:
-                type: string
-              dataLocale:
-                type: string
-              eventsLateArrivalMaxDelayInSeconds:
-                format: int64
-                type: integer
-              eventsOutOfOrderMaxDelayInSeconds:
-                format: int64
-                type: integer
-              eventsOutOfOrderPolicy:
-                type: string
-              id:
-                type: string
-              jobID:
-                type: string
               kubeformOutput:
                 properties:
                   compatibilityLevel:
@@ -422,6 +407,17 @@ spec:
                     type: string
                   id:
                     type: string
+                  identity:
+                    properties:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
                   jobID:
                     type: string
                   location:
@@ -430,11 +426,6 @@ spec:
                     type: string
                   outputErrorPolicy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   streamingUnits:
@@ -444,11 +435,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -472,63 +458,99 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - streamingUnits
                 - transformationQuery
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              outputErrorPolicy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              streamingUnits:
-                format: int64
-                type: integer
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  compatibilityLevel:
+                    type: string
+                  dataLocale:
+                    type: string
+                  eventsLateArrivalMaxDelayInSeconds:
+                    format: int64
+                    type: integer
+                  eventsOutOfOrderMaxDelayInSeconds:
+                    format: int64
+                    type: integer
+                  eventsOutOfOrderPolicy:
+                    type: string
+                  id:
+                    type: string
+                  identity:
+                    properties:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  jobID:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  outputErrorPolicy:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  streamingUnits:
+                    format: int64
+                    type: integer
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  transformationQuery:
+                    type: string
+                required:
+                - location
+                - name
+                - resourceGroupName
+                - streamingUnits
+                - transformationQuery
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              transformationQuery:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - streamingUnits
-            - transformationQuery
+            - resource
             type: object
           status:
             properties:
@@ -575,7 +597,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsoutputblobs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -602,10 +625,6 @@ spec:
             type: object
           spec:
             properties:
-              dateFormat:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dateFormat:
@@ -616,18 +635,8 @@ spec:
                     type: string
                   pathPattern:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serialization:
                     properties:
                       encoding:
@@ -646,11 +655,6 @@ spec:
                   storageContainerName:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeFormat:
                     type: string
@@ -676,7 +680,6 @@ spec:
                 - dateFormat
                 - name
                 - pathPattern
-                - providerRef
                 - resourceGroupName
                 - serialization
                 - storageAccountName
@@ -684,77 +687,91 @@ spec:
                 - streamAnalyticsJobName
                 - timeFormat
                 type: object
-              name:
-                type: string
-              pathPattern:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  dateFormat:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  pathPattern:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serialization:
+                    properties:
+                      encoding:
+                        type: string
+                      fieldDelimiter:
+                        type: string
+                      format:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  storageAccountName:
+                    type: string
+                  storageContainerName:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeFormat:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - dateFormat
+                - name
+                - pathPattern
+                - resourceGroupName
+                - serialization
+                - storageAccountName
+                - storageContainerName
+                - streamAnalyticsJobName
+                - timeFormat
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serialization:
-                properties:
-                  encoding:
-                    type: string
-                  fieldDelimiter:
-                    type: string
-                  format:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              storageAccountName:
-                type: string
-              storageContainerName:
-                type: string
-              streamAnalyticsJobName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeFormat:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - dateFormat
-            - name
-            - pathPattern
             - providerRef
-            - resourceGroupName
-            - serialization
-            - storageAccountName
-            - storageContainerName
-            - streamAnalyticsJobName
-            - timeFormat
+            - resource
             type: object
           status:
             properties:
@@ -801,7 +818,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsoutputeventhubs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -828,10 +846,6 @@ spec:
             type: object
           spec:
             properties:
-              eventhubName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   eventhubName:
@@ -840,18 +854,8 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serialization:
                     properties:
                       encoding:
@@ -870,11 +874,6 @@ spec:
                   sharedAccessPolicyName:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -897,78 +896,91 @@ spec:
                 required:
                 - eventhubName
                 - name
-                - providerRef
                 - resourceGroupName
                 - serialization
                 - servicebusNamespace
                 - sharedAccessPolicyName
                 - streamAnalyticsJobName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  eventhubName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serialization:
+                    properties:
+                      encoding:
+                        type: string
+                      fieldDelimiter:
+                        type: string
+                      format:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  servicebusNamespace:
+                    type: string
+                  sharedAccessPolicyName:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - eventhubName
+                - name
+                - resourceGroupName
+                - serialization
+                - servicebusNamespace
+                - sharedAccessPolicyName
+                - streamAnalyticsJobName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serialization:
-                properties:
-                  encoding:
-                    type: string
-                  fieldDelimiter:
-                    type: string
-                  format:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              servicebusNamespace:
-                type: string
-              sharedAccessPolicyName:
-                type: string
-              streamAnalyticsJobName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - eventhubName
-            - name
             - providerRef
-            - resourceGroupName
-            - serialization
-            - servicebusNamespace
-            - sharedAccessPolicyName
-            - streamAnalyticsJobName
+            - resource
             type: object
           status:
             properties:
@@ -1015,7 +1027,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsoutputmssqls.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -1042,10 +1055,6 @@ spec:
             type: object
           spec:
             properties:
-              database:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   database:
@@ -1054,28 +1063,13 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   server:
                     type: string
                   streamAnalyticsJobName:
                     type: string
                   table:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1100,67 +1094,80 @@ spec:
                 required:
                 - database
                 - name
-                - providerRef
                 - resourceGroupName
                 - server
                 - streamAnalyticsJobName
                 - table
                 - user
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  database:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  server:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  table:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  user:
+                    type: string
+                required:
+                - database
+                - name
+                - resourceGroupName
+                - server
+                - streamAnalyticsJobName
+                - table
+                - user
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              server:
-                type: string
-              streamAnalyticsJobName:
-                type: string
-              table:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              user:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - database
-            - name
             - providerRef
-            - resourceGroupName
-            - server
-            - streamAnalyticsJobName
-            - table
-            - user
+            - resource
             type: object
           status:
             properties:
@@ -1207,7 +1214,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsoutputservicebusqueues.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -1234,28 +1242,16 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   queueName:
                     type: string
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serialization:
                     properties:
                       encoding:
@@ -1274,11 +1270,6 @@ spec:
                   sharedAccessPolicyName:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1300,7 +1291,6 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - queueName
                 - resourceGroupName
                 - serialization
@@ -1308,73 +1298,85 @@ spec:
                 - sharedAccessPolicyName
                 - streamAnalyticsJobName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              queueName:
-                type: string
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  queueName:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serialization:
+                    properties:
+                      encoding:
+                        type: string
+                      fieldDelimiter:
+                        type: string
+                      format:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  servicebusNamespace:
+                    type: string
+                  sharedAccessPolicyName:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - queueName
+                - resourceGroupName
+                - serialization
+                - servicebusNamespace
+                - sharedAccessPolicyName
+                - streamAnalyticsJobName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serialization:
-                properties:
-                  encoding:
-                    type: string
-                  fieldDelimiter:
-                    type: string
-                  format:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              servicebusNamespace:
-                type: string
-              sharedAccessPolicyName:
-                type: string
-              streamAnalyticsJobName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - queueName
-            - resourceGroupName
-            - serialization
-            - servicebusNamespace
-            - sharedAccessPolicyName
-            - streamAnalyticsJobName
+            - resource
             type: object
           status:
             properties:
@@ -1421,7 +1423,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsoutputservicebustopics.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -1448,26 +1451,14 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serialization:
                     properties:
                       encoding:
@@ -1486,11 +1477,6 @@ spec:
                   sharedAccessPolicyName:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1514,7 +1500,6 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 - resourceGroupName
                 - serialization
                 - servicebusNamespace
@@ -1522,73 +1507,85 @@ spec:
                 - streamAnalyticsJobName
                 - topicName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serialization:
+                    properties:
+                      encoding:
+                        type: string
+                      fieldDelimiter:
+                        type: string
+                      format:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  servicebusNamespace:
+                    type: string
+                  sharedAccessPolicyName:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  topicName:
+                    type: string
+                required:
+                - name
+                - resourceGroupName
+                - serialization
+                - servicebusNamespace
+                - sharedAccessPolicyName
+                - streamAnalyticsJobName
+                - topicName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serialization:
-                properties:
-                  encoding:
-                    type: string
-                  fieldDelimiter:
-                    type: string
-                  format:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              servicebusNamespace:
-                type: string
-              sharedAccessPolicyName:
-                type: string
-              streamAnalyticsJobName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              topicName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - resourceGroupName
-            - serialization
-            - servicebusNamespace
-            - sharedAccessPolicyName
-            - streamAnalyticsJobName
-            - topicName
+            - resource
             type: object
           status:
             properties:
@@ -1635,7 +1632,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsreferenceinputblobs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -1662,10 +1660,6 @@ spec:
             type: object
           spec:
             properties:
-              dateFormat:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dateFormat:
@@ -1676,18 +1670,8 @@ spec:
                     type: string
                   pathPattern:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serialization:
                     properties:
                       encoding:
@@ -1704,11 +1688,6 @@ spec:
                   storageContainerName:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeFormat:
                     type: string
@@ -1734,7 +1713,6 @@ spec:
                 - dateFormat
                 - name
                 - pathPattern
-                - providerRef
                 - resourceGroupName
                 - serialization
                 - storageAccountName
@@ -1742,75 +1720,89 @@ spec:
                 - streamAnalyticsJobName
                 - timeFormat
                 type: object
-              name:
-                type: string
-              pathPattern:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  dateFormat:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  pathPattern:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serialization:
+                    properties:
+                      encoding:
+                        type: string
+                      fieldDelimiter:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  storageAccountName:
+                    type: string
+                  storageContainerName:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeFormat:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - dateFormat
+                - name
+                - pathPattern
+                - resourceGroupName
+                - serialization
+                - storageAccountName
+                - storageContainerName
+                - streamAnalyticsJobName
+                - timeFormat
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serialization:
-                properties:
-                  encoding:
-                    type: string
-                  fieldDelimiter:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              storageAccountName:
-                type: string
-              storageContainerName:
-                type: string
-              streamAnalyticsJobName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeFormat:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - dateFormat
-            - name
-            - pathPattern
             - providerRef
-            - resourceGroupName
-            - serialization
-            - storageAccountName
-            - storageContainerName
-            - streamAnalyticsJobName
-            - timeFormat
+            - resource
             type: object
           status:
             properties:
@@ -1857,7 +1849,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsstreaminputblobs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -1884,10 +1877,6 @@ spec:
             type: object
           spec:
             properties:
-              dateFormat:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dateFormat:
@@ -1898,18 +1887,8 @@ spec:
                     type: string
                   pathPattern:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serialization:
                     properties:
                       encoding:
@@ -1926,11 +1905,6 @@ spec:
                   storageContainerName:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeFormat:
                     type: string
@@ -1956,7 +1930,6 @@ spec:
                 - dateFormat
                 - name
                 - pathPattern
-                - providerRef
                 - resourceGroupName
                 - serialization
                 - storageAccountName
@@ -1964,75 +1937,89 @@ spec:
                 - streamAnalyticsJobName
                 - timeFormat
                 type: object
-              name:
-                type: string
-              pathPattern:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  dateFormat:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  pathPattern:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serialization:
+                    properties:
+                      encoding:
+                        type: string
+                      fieldDelimiter:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  storageAccountName:
+                    type: string
+                  storageContainerName:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeFormat:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - dateFormat
+                - name
+                - pathPattern
+                - resourceGroupName
+                - serialization
+                - storageAccountName
+                - storageContainerName
+                - streamAnalyticsJobName
+                - timeFormat
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serialization:
-                properties:
-                  encoding:
-                    type: string
-                  fieldDelimiter:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              storageAccountName:
-                type: string
-              storageContainerName:
-                type: string
-              streamAnalyticsJobName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeFormat:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - dateFormat
-            - name
-            - pathPattern
             - providerRef
-            - resourceGroupName
-            - serialization
-            - storageAccountName
-            - storageContainerName
-            - streamAnalyticsJobName
-            - timeFormat
+            - resource
             type: object
           status:
             properties:
@@ -2079,7 +2066,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsstreaminputeventhubs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -2106,12 +2094,6 @@ spec:
             type: object
           spec:
             properties:
-              eventhubConsumerGroupName:
-                type: string
-              eventhubName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   eventhubConsumerGroupName:
@@ -2122,18 +2104,8 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serialization:
                     properties:
                       encoding:
@@ -2150,11 +2122,6 @@ spec:
                   sharedAccessPolicyName:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2178,77 +2145,92 @@ spec:
                 - eventhubConsumerGroupName
                 - eventhubName
                 - name
-                - providerRef
                 - resourceGroupName
                 - serialization
                 - servicebusNamespace
                 - sharedAccessPolicyName
                 - streamAnalyticsJobName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  eventhubConsumerGroupName:
+                    type: string
+                  eventhubName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serialization:
+                    properties:
+                      encoding:
+                        type: string
+                      fieldDelimiter:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  servicebusNamespace:
+                    type: string
+                  sharedAccessPolicyName:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - eventhubConsumerGroupName
+                - eventhubName
+                - name
+                - resourceGroupName
+                - serialization
+                - servicebusNamespace
+                - sharedAccessPolicyName
+                - streamAnalyticsJobName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serialization:
-                properties:
-                  encoding:
-                    type: string
-                  fieldDelimiter:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              servicebusNamespace:
-                type: string
-              sharedAccessPolicyName:
-                type: string
-              streamAnalyticsJobName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - eventhubConsumerGroupName
-            - eventhubName
-            - name
             - providerRef
-            - resourceGroupName
-            - serialization
-            - servicebusNamespace
-            - sharedAccessPolicyName
-            - streamAnalyticsJobName
+            - resource
             type: object
           status:
             properties:
@@ -2295,7 +2277,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsstreaminputiothubs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -2322,14 +2305,6 @@ spec:
             type: object
           spec:
             properties:
-              endpoint:
-                type: string
-              eventhubConsumerGroupName:
-                type: string
-              id:
-                type: string
-              iothubNamespace:
-                type: string
               kubeformOutput:
                 properties:
                   endpoint:
@@ -2342,18 +2317,8 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serialization:
                     properties:
                       encoding:
@@ -2368,11 +2333,6 @@ spec:
                   sharedAccessPolicyName:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2397,74 +2357,91 @@ spec:
                 - eventhubConsumerGroupName
                 - iothubNamespace
                 - name
-                - providerRef
                 - resourceGroupName
                 - serialization
                 - sharedAccessPolicyName
                 - streamAnalyticsJobName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  endpoint:
+                    type: string
+                  eventhubConsumerGroupName:
+                    type: string
+                  id:
+                    type: string
+                  iothubNamespace:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serialization:
+                    properties:
+                      encoding:
+                        type: string
+                      fieldDelimiter:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  sharedAccessPolicyName:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - endpoint
+                - eventhubConsumerGroupName
+                - iothubNamespace
+                - name
+                - resourceGroupName
+                - serialization
+                - sharedAccessPolicyName
+                - streamAnalyticsJobName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serialization:
-                properties:
-                  encoding:
-                    type: string
-                  fieldDelimiter:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              sharedAccessPolicyName:
-                type: string
-              streamAnalyticsJobName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - endpoint
-            - eventhubConsumerGroupName
-            - iothubNamespace
-            - name
             - providerRef
-            - resourceGroupName
-            - serialization
-            - sharedAccessPolicyName
-            - streamAnalyticsJobName
+            - resource
             type: object
           status:
             properties:

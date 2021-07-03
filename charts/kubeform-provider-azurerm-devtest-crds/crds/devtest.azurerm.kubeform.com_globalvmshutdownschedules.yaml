@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: globalvmshutdownschedules.devtest.azurerm.kubeform.com
 spec:
   group: devtest.azurerm.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              dailyRecurrenceTime:
-                type: string
-              enabled:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dailyRecurrenceTime:
@@ -58,20 +53,10 @@ spec:
                     required:
                     - enabled
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -98,67 +83,82 @@ spec:
                 - dailyRecurrenceTime
                 - location
                 - notificationSettings
-                - providerRef
                 - timezone
                 - virtualMachineID
-                type: object
-              location:
-                type: string
-              notificationSettings:
-                properties:
-                  enabled:
-                    type: boolean
-                  timeInMinutes:
-                    format: int64
-                    type: integer
-                  webhookURL:
-                    type: string
-                required:
-                - enabled
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  dailyRecurrenceTime:
+                    type: string
+                  enabled:
+                    type: boolean
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  notificationSettings:
+                    properties:
+                      enabled:
+                        type: boolean
+                      timeInMinutes:
+                        format: int64
+                        type: integer
+                      webhookURL:
+                        type: string
+                    required:
+                    - enabled
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  timezone:
+                    type: string
+                  virtualMachineID:
+                    type: string
+                required:
+                - dailyRecurrenceTime
+                - location
+                - notificationSettings
+                - timezone
+                - virtualMachineID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              timezone:
-                type: string
-              virtualMachineID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - dailyRecurrenceTime
-            - location
-            - notificationSettings
             - providerRef
-            - timezone
-            - virtualMachineID
+            - resource
             type: object
           status:
             properties:

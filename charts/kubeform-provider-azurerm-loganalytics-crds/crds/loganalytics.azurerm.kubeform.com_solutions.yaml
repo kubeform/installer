@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: solutions.loganalytics.azurerm.kubeform.com
 spec:
   group: loganalytics.azurerm.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -52,11 +51,6 @@ spec:
                     - product
                     - publisher
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   solutionName:
@@ -65,11 +59,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -95,76 +84,87 @@ spec:
                 required:
                 - location
                 - plan
-                - providerRef
                 - resourceGroupName
                 - solutionName
                 - workspaceName
                 - workspaceResourceID
-                type: object
-              location:
-                type: string
-              plan:
-                properties:
-                  name:
-                    type: string
-                  product:
-                    type: string
-                  promotionCode:
-                    type: string
-                  publisher:
-                    type: string
-                required:
-                - product
-                - publisher
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              solutionName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  plan:
+                    properties:
+                      name:
+                        type: string
+                      product:
+                        type: string
+                      promotionCode:
+                        type: string
+                      publisher:
+                        type: string
+                    required:
+                    - product
+                    - publisher
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  solutionName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  workspaceName:
+                    type: string
+                  workspaceResourceID:
+                    type: string
+                required:
+                - location
+                - plan
+                - resourceGroupName
+                - solutionName
+                - workspaceName
+                - workspaceResourceID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              workspaceName:
-                type: string
-              workspaceResourceID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - location
-            - plan
             - providerRef
-            - resourceGroupName
-            - solutionName
-            - workspaceName
-            - workspaceResourceID
+            - resource
             type: object
           status:
             properties:

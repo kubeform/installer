@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: assets.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              alternateID:
-                type: string
-              container:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   alternateID:
@@ -52,19 +45,9 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   storageAccountName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -87,50 +70,67 @@ spec:
                 required:
                 - mediaServicesAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              mediaServicesAccountName:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              storageAccountName:
-                type: string
+              resource:
+                properties:
+                  alternateID:
+                    type: string
+                  container:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  mediaServicesAccountName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  storageAccountName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - mediaServicesAccountName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - mediaServicesAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -177,7 +177,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: assetfilters.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -204,13 +205,6 @@ spec:
             type: object
           spec:
             properties:
-              assetID:
-                type: string
-              firstQualityBitrate:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   assetID:
@@ -242,16 +236,6 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -291,80 +275,96 @@ spec:
                 required:
                 - assetID
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              presentationTimeRange:
-                properties:
-                  endInUnits:
-                    format: int64
-                    type: integer
-                  forceEnd:
-                    type: boolean
-                  liveBackoffInUnits:
-                    format: int64
-                    type: integer
-                  presentationWindowInUnits:
-                    format: int64
-                    type: integer
-                  startInUnits:
-                    format: int64
-                    type: integer
-                  unitTimescaleInMiliseconds:
-                    format: int64
-                    type: integer
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  assetID:
+                    type: string
+                  firstQualityBitrate:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  presentationTimeRange:
+                    properties:
+                      endInUnits:
+                        format: int64
+                        type: integer
+                      forceEnd:
+                        type: boolean
+                      liveBackoffInUnits:
+                        format: int64
+                        type: integer
+                      presentationWindowInUnits:
+                        format: int64
+                        type: integer
+                      startInUnits:
+                        format: int64
+                        type: integer
+                      unitTimescaleInMiliseconds:
+                        format: int64
+                        type: integer
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  trackSelection:
+                    items:
+                      properties:
+                        condition:
+                          items:
+                            properties:
+                              operation:
+                                type: string
+                              property:
+                                type: string
+                              value:
+                                type: string
+                            type: object
+                          type: array
+                      required:
+                      - condition
+                      type: object
+                    type: array
+                required:
+                - assetID
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              trackSelection:
-                items:
-                  properties:
-                    condition:
-                      items:
-                        properties:
-                          operation:
-                            type: string
-                          property:
-                            type: string
-                          value:
-                            type: string
-                        type: object
-                      type: array
-                  required:
-                  - condition
-                  type: object
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - assetID
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -411,7 +411,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: contentkeypolicies.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -438,10 +439,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
@@ -559,22 +556,7 @@ spec:
                       type: object
                     minItems: 1
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -598,127 +580,156 @@ spec:
                 - mediaServicesAccountName
                 - name
                 - policyOption
-                - providerRef
                 - resourceGroupName
                 type: object
-              mediaServicesAccountName:
-                type: string
-              name:
-                type: string
-              policyOption:
-                items:
-                  properties:
-                    clearKeyConfigurationEnabled:
-                      type: boolean
-                    fairplayConfiguration:
-                      properties:
-                        offlineRentalConfiguration:
-                          properties:
-                            playbackDurationSeconds:
-                              format: int64
-                              type: integer
-                            storageDurationSeconds:
-                              format: int64
-                              type: integer
-                          type: object
-                        rentalAndLeaseKeyType:
-                          type: string
-                        rentalDurationSeconds:
-                          format: int64
-                          type: integer
-                      type: object
-                    name:
-                      type: string
-                    openRestrictionEnabled:
-                      type: boolean
-                    playreadyConfigurationLicense:
-                      items:
-                        properties:
-                          allowTestDevices:
-                            type: boolean
-                          beginDate:
-                            type: string
-                          contentKeyLocationFromHeaderEnabled:
-                            type: boolean
-                          contentKeyLocationFromKeyID:
-                            type: string
-                          contentType:
-                            type: string
-                          expirationDate:
-                            type: string
-                          licenseType:
-                            type: string
-                          playRight:
-                            properties:
-                              agcAndColorStripeRestriction:
-                                format: int64
-                                type: integer
-                              allowPassingVideoContentToUnknownOutput:
-                                type: string
-                              analogVideoOpl:
-                                format: int64
-                                type: integer
-                              compressedDigitalAudioOpl:
-                                format: int64
-                                type: integer
-                              digitalVideoOnlyContentRestriction:
-                                type: boolean
-                              firstPlayExpiration:
-                                type: string
-                              imageConstraintForAnalogComponentVideoRestriction:
-                                type: boolean
-                              imageConstraintForAnalogComputerMonitorRestriction:
-                                type: boolean
-                              scmsRestriction:
-                                format: int64
-                                type: integer
-                              uncompressedDigitalAudioOpl:
-                                format: int64
-                                type: integer
-                              uncompressedDigitalVideoOpl:
-                                format: int64
-                                type: integer
-                            type: object
-                          relativeBeginDate:
-                            type: string
-                          relativeExpirationDate:
-                            type: string
-                        type: object
-                      type: array
-                    tokenRestriction:
-                      properties:
-                        audience:
-                          type: string
-                        issuer:
-                          type: string
-                        openIDConnectDiscoveryDocument:
-                          type: string
-                        requiredClaim:
-                          items:
-                            properties:
-                              type:
-                                type: string
-                              value:
-                                type: string
-                            type: object
-                          type: array
-                        tokenType:
-                          type: string
-                      type: object
-                    widevineConfigurationTemplate:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                minItems: 1
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  mediaServicesAccountName:
+                    type: string
+                  name:
+                    type: string
+                  policyOption:
+                    items:
+                      properties:
+                        clearKeyConfigurationEnabled:
+                          type: boolean
+                        fairplayConfiguration:
+                          properties:
+                            offlineRentalConfiguration:
+                              properties:
+                                playbackDurationSeconds:
+                                  format: int64
+                                  type: integer
+                                storageDurationSeconds:
+                                  format: int64
+                                  type: integer
+                              type: object
+                            rentalAndLeaseKeyType:
+                              type: string
+                            rentalDurationSeconds:
+                              format: int64
+                              type: integer
+                          type: object
+                        name:
+                          type: string
+                        openRestrictionEnabled:
+                          type: boolean
+                        playreadyConfigurationLicense:
+                          items:
+                            properties:
+                              allowTestDevices:
+                                type: boolean
+                              beginDate:
+                                type: string
+                              contentKeyLocationFromHeaderEnabled:
+                                type: boolean
+                              contentKeyLocationFromKeyID:
+                                type: string
+                              contentType:
+                                type: string
+                              expirationDate:
+                                type: string
+                              licenseType:
+                                type: string
+                              playRight:
+                                properties:
+                                  agcAndColorStripeRestriction:
+                                    format: int64
+                                    type: integer
+                                  allowPassingVideoContentToUnknownOutput:
+                                    type: string
+                                  analogVideoOpl:
+                                    format: int64
+                                    type: integer
+                                  compressedDigitalAudioOpl:
+                                    format: int64
+                                    type: integer
+                                  digitalVideoOnlyContentRestriction:
+                                    type: boolean
+                                  firstPlayExpiration:
+                                    type: string
+                                  imageConstraintForAnalogComponentVideoRestriction:
+                                    type: boolean
+                                  imageConstraintForAnalogComputerMonitorRestriction:
+                                    type: boolean
+                                  scmsRestriction:
+                                    format: int64
+                                    type: integer
+                                  uncompressedDigitalAudioOpl:
+                                    format: int64
+                                    type: integer
+                                  uncompressedDigitalVideoOpl:
+                                    format: int64
+                                    type: integer
+                                type: object
+                              relativeBeginDate:
+                                type: string
+                              relativeExpirationDate:
+                                type: string
+                            type: object
+                          type: array
+                        tokenRestriction:
+                          properties:
+                            audience:
+                              type: string
+                            issuer:
+                              type: string
+                            openIDConnectDiscoveryDocument:
+                              type: string
+                            requiredClaim:
+                              items:
+                                properties:
+                                  type:
+                                    type: string
+                                  value:
+                                    type: string
+                                type: object
+                              type: array
+                            tokenType:
+                              type: string
+                          type: object
+                        widevineConfigurationTemplate:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    minItems: 1
+                    type: array
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - mediaServicesAccountName
+                - name
+                - policyOption
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -729,30 +740,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - mediaServicesAccountName
-            - name
-            - policyOption
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -799,7 +794,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: jobs.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -826,19 +822,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              id:
-                type: string
-              inputAsset:
-                properties:
-                  label:
-                    type: string
-                  name:
-                    type: string
-                required:
-                - name
-                type: object
               kubeformOutput:
                 properties:
                   description:
@@ -872,17 +855,7 @@ spec:
                     type: array
                   priority:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -909,68 +882,90 @@ spec:
                 - mediaServicesAccountName
                 - name
                 - outputAsset
-                - providerRef
                 - resourceGroupName
                 - transformName
                 type: object
-              mediaServicesAccountName:
-                type: string
-              name:
-                type: string
-              outputAsset:
-                items:
-                  properties:
-                    label:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                minItems: 1
-                type: array
-              priority:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  inputAsset:
+                    properties:
+                      label:
+                        type: string
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  mediaServicesAccountName:
+                    type: string
+                  name:
+                    type: string
+                  outputAsset:
+                    items:
+                      properties:
+                        label:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    minItems: 1
+                    type: array
+                  priority:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  transformName:
+                    type: string
+                required:
+                - inputAsset
+                - mediaServicesAccountName
+                - name
+                - outputAsset
+                - resourceGroupName
+                - transformName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              transformName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - inputAsset
-            - mediaServicesAccountName
-            - name
-            - outputAsset
             - providerRef
-            - resourceGroupName
-            - transformName
+            - resource
             type: object
           status:
             properties:
@@ -1017,7 +1012,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: liveevents.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -1044,62 +1040,6 @@ spec:
             type: object
           spec:
             properties:
-              autoStartEnabled:
-                type: boolean
-              crossSiteAccessPolicy:
-                properties:
-                  clientAccessPolicy:
-                    type: string
-                  crossDomainPolicy:
-                    type: string
-                type: object
-              description:
-                type: string
-              encoding:
-                properties:
-                  keyFrameInterval:
-                    type: string
-                  presetName:
-                    type: string
-                  stretchMode:
-                    type: string
-                  type:
-                    type: string
-                type: object
-              hostnamePrefix:
-                type: string
-              id:
-                type: string
-              input:
-                properties:
-                  accessToken:
-                    type: string
-                  endpoint:
-                    items:
-                      properties:
-                        protocol:
-                          type: string
-                        url:
-                          type: string
-                      type: object
-                    type: array
-                  ipAccessControlAllow:
-                    items:
-                      properties:
-                        address:
-                          type: string
-                        name:
-                          type: string
-                        subnetPrefixLength:
-                          format: int64
-                          type: integer
-                      type: object
-                    type: array
-                  keyFrameIntervalDuration:
-                    type: string
-                  streamingProtocol:
-                    type: string
-                type: object
               kubeformOutput:
                 properties:
                   autoStartEnabled:
@@ -1194,22 +1134,12 @@ spec:
                       streamingPolicyName:
                         type: string
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1239,92 +1169,157 @@ spec:
                 - location
                 - mediaServicesAccountName
                 - name
-                - providerRef
                 - resourceGroupName
-                type: object
-              location:
-                type: string
-              mediaServicesAccountName:
-                type: string
-              name:
-                type: string
-              preview:
-                properties:
-                  alternativeMediaID:
-                    type: string
-                  endpoint:
-                    items:
-                      properties:
-                        protocol:
-                          type: string
-                        url:
-                          type: string
-                      type: object
-                    type: array
-                  ipAccessControlAllow:
-                    items:
-                      properties:
-                        address:
-                          type: string
-                        name:
-                          type: string
-                        subnetPrefixLength:
-                          format: int64
-                          type: integer
-                      type: object
-                    type: array
-                  previewLocator:
-                    type: string
-                  streamingPolicyName:
-                    type: string
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  autoStartEnabled:
+                    type: boolean
+                  crossSiteAccessPolicy:
+                    properties:
+                      clientAccessPolicy:
+                        type: string
+                      crossDomainPolicy:
+                        type: string
+                    type: object
+                  description:
+                    type: string
+                  encoding:
+                    properties:
+                      keyFrameInterval:
+                        type: string
+                      presetName:
+                        type: string
+                      stretchMode:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                  hostnamePrefix:
+                    type: string
+                  id:
+                    type: string
+                  input:
+                    properties:
+                      accessToken:
+                        type: string
+                      endpoint:
+                        items:
+                          properties:
+                            protocol:
+                              type: string
+                            url:
+                              type: string
+                          type: object
+                        type: array
+                      ipAccessControlAllow:
+                        items:
+                          properties:
+                            address:
+                              type: string
+                            name:
+                              type: string
+                            subnetPrefixLength:
+                              format: int64
+                              type: integer
+                          type: object
+                        type: array
+                      keyFrameIntervalDuration:
+                        type: string
+                      streamingProtocol:
+                        type: string
+                    type: object
+                  location:
+                    type: string
+                  mediaServicesAccountName:
+                    type: string
+                  name:
+                    type: string
+                  preview:
+                    properties:
+                      alternativeMediaID:
+                        type: string
+                      endpoint:
+                        items:
+                          properties:
+                            protocol:
+                              type: string
+                            url:
+                              type: string
+                          type: object
+                        type: array
+                      ipAccessControlAllow:
+                        items:
+                          properties:
+                            address:
+                              type: string
+                            name:
+                              type: string
+                            subnetPrefixLength:
+                              format: int64
+                              type: integer
+                          type: object
+                        type: array
+                      previewLocator:
+                        type: string
+                      streamingPolicyName:
+                        type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  transcriptionLanguages:
+                    items:
+                      type: string
+                    type: array
+                  useStaticHostname:
+                    type: boolean
+                required:
+                - input
+                - location
+                - mediaServicesAccountName
+                - name
+                - resourceGroupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              transcriptionLanguages:
-                items:
-                  type: string
-                type: array
-              useStaticHostname:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - input
-            - location
-            - mediaServicesAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1371,7 +1366,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: liveeventoutputs.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -1398,17 +1394,6 @@ spec:
             type: object
           spec:
             properties:
-              archiveWindowDuration:
-                type: string
-              assetName:
-                type: string
-              description:
-                type: string
-              hlsFragmentsPerTsSegment:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   archiveWindowDuration:
@@ -1431,16 +1416,6 @@ spec:
                   outputSNAPTimeInSeconds:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1464,51 +1439,71 @@ spec:
                 - assetName
                 - liveEventID
                 - name
-                - providerRef
                 type: object
-              liveEventID:
-                type: string
-              manifestName:
-                type: string
-              name:
-                type: string
-              outputSNAPTimeInSeconds:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  archiveWindowDuration:
+                    type: string
+                  assetName:
+                    type: string
+                  description:
+                    type: string
+                  hlsFragmentsPerTsSegment:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  liveEventID:
+                    type: string
+                  manifestName:
+                    type: string
+                  name:
+                    type: string
+                  outputSNAPTimeInSeconds:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - archiveWindowDuration
+                - assetName
+                - liveEventID
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - archiveWindowDuration
-            - assetName
-            - liveEventID
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1555,7 +1550,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: servicesaccounts.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -1582,26 +1578,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              identity:
-                properties:
-                  principalID:
-                    type: string
-                  tenantID:
-                    type: string
-                  type:
-                    type: string
-                type: object
-              keyDeliveryAccessControl:
-                properties:
-                  defaultAction:
-                    type: string
-                  ipAllowList:
-                    items:
-                      type: string
-                    type: array
-                type: object
               kubeformOutput:
                 properties:
                   id:
@@ -1628,11 +1604,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   storageAccount:
@@ -1652,11 +1623,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1678,67 +1644,96 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - storageAccount
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              storageAccount:
-                items:
-                  properties:
-                    ID:
+              resource:
+                properties:
+                  id:
+                    type: string
+                  identity:
+                    properties:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                  keyDeliveryAccessControl:
+                    properties:
+                      defaultAction:
+                        type: string
+                      ipAllowList:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  storageAccount:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        isPrimary:
+                          type: boolean
+                      required:
+                      - ID
+                      type: object
+                    type: array
+                  storageAuthenticationType:
+                    type: string
+                  tags:
+                    additionalProperties:
                       type: string
-                    isPrimary:
-                      type: boolean
-                  required:
-                  - ID
-                  type: object
-                type: array
-              storageAuthenticationType:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - name
+                - resourceGroupName
+                - storageAccount
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - storageAccount
+            - resource
             type: object
           status:
             properties:
@@ -1785,7 +1780,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: streamingendpoints.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -1812,57 +1808,6 @@ spec:
             type: object
           spec:
             properties:
-              accessControl:
-                properties:
-                  akamaiSignatureHeaderAuthenticationKey:
-                    items:
-                      properties:
-                        base64Key:
-                          type: string
-                        expiration:
-                          type: string
-                        identifier:
-                          type: string
-                      type: object
-                    type: array
-                  ipAllow:
-                    items:
-                      properties:
-                        address:
-                          type: string
-                        name:
-                          type: string
-                        subnetPrefixLength:
-                          format: int64
-                          type: integer
-                      type: object
-                    type: array
-                type: object
-              autoStartEnabled:
-                type: boolean
-              cdnEnabled:
-                type: boolean
-              cdnProfile:
-                type: string
-              cdnProvider:
-                type: string
-              crossSiteAccessPolicy:
-                properties:
-                  clientAccessPolicy:
-                    type: string
-                  crossDomainPolicy:
-                    type: string
-                type: object
-              customHostNames:
-                items:
-                  type: string
-                type: array
-              description:
-                type: string
-              hostName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accessControl:
@@ -1925,11 +1870,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   scaleUnits:
@@ -1939,11 +1879,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1966,63 +1901,123 @@ spec:
                 - location
                 - mediaServicesAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 - scaleUnits
                 type: object
-              location:
-                type: string
-              maxCacheAgeSeconds:
-                format: int64
-                type: integer
-              mediaServicesAccountName:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              scaleUnits:
-                format: int64
-                type: integer
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  accessControl:
+                    properties:
+                      akamaiSignatureHeaderAuthenticationKey:
+                        items:
+                          properties:
+                            base64Key:
+                              type: string
+                            expiration:
+                              type: string
+                            identifier:
+                              type: string
+                          type: object
+                        type: array
+                      ipAllow:
+                        items:
+                          properties:
+                            address:
+                              type: string
+                            name:
+                              type: string
+                            subnetPrefixLength:
+                              format: int64
+                              type: integer
+                          type: object
+                        type: array
+                    type: object
+                  autoStartEnabled:
+                    type: boolean
+                  cdnEnabled:
+                    type: boolean
+                  cdnProfile:
+                    type: string
+                  cdnProvider:
+                    type: string
+                  crossSiteAccessPolicy:
+                    properties:
+                      clientAccessPolicy:
+                        type: string
+                      crossDomainPolicy:
+                        type: string
+                    type: object
+                  customHostNames:
+                    items:
+                      type: string
+                    type: array
+                  description:
+                    type: string
+                  hostName:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  maxCacheAgeSeconds:
+                    format: int64
+                    type: integer
+                  mediaServicesAccountName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  scaleUnits:
+                    format: int64
+                    type: integer
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - mediaServicesAccountName
+                - name
+                - resourceGroupName
+                - scaleUnits
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - mediaServicesAccountName
-            - name
             - providerRef
-            - resourceGroupName
-            - scaleUnits
+            - resource
             type: object
           status:
             properties:
@@ -2069,7 +2064,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: streaminglocators.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -2096,31 +2092,6 @@ spec:
             type: object
           spec:
             properties:
-              alternativeMediaID:
-                type: string
-              assetName:
-                type: string
-              contentKey:
-                items:
-                  properties:
-                    contentKeyID:
-                      type: string
-                    labelReferenceInStreamingPolicy:
-                      type: string
-                    policyName:
-                      type: string
-                    type:
-                      type: string
-                    value:
-                      type: string
-                  type: object
-                type: array
-              defaultContentKeyPolicyName:
-                type: string
-              endTime:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   alternativeMediaID:
@@ -2152,11 +2123,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   startTime:
@@ -2164,11 +2130,6 @@ spec:
                   streamingLocatorID:
                     type: string
                   streamingPolicyName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2192,57 +2153,91 @@ spec:
                 - assetName
                 - mediaServicesAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 - streamingPolicyName
                 type: object
-              mediaServicesAccountName:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              startTime:
-                type: string
-              streamingLocatorID:
-                type: string
-              streamingPolicyName:
-                type: string
+              resource:
+                properties:
+                  alternativeMediaID:
+                    type: string
+                  assetName:
+                    type: string
+                  contentKey:
+                    items:
+                      properties:
+                        contentKeyID:
+                          type: string
+                        labelReferenceInStreamingPolicy:
+                          type: string
+                        policyName:
+                          type: string
+                        type:
+                          type: string
+                        value:
+                          type: string
+                      type: object
+                    type: array
+                  defaultContentKeyPolicyName:
+                    type: string
+                  endTime:
+                    type: string
+                  id:
+                    type: string
+                  mediaServicesAccountName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  startTime:
+                    type: string
+                  streamingLocatorID:
+                    type: string
+                  streamingPolicyName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - assetName
+                - mediaServicesAccountName
+                - name
+                - resourceGroupName
+                - streamingPolicyName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - assetName
-            - mediaServicesAccountName
-            - name
             - providerRef
-            - resourceGroupName
-            - streamingPolicyName
+            - resource
             type: object
           status:
             properties:
@@ -2289,7 +2284,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: streamingpolicies.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -2316,68 +2312,6 @@ spec:
             type: object
           spec:
             properties:
-              commonEncryptionCbcs:
-                properties:
-                  defaultContentKey:
-                    properties:
-                      label:
-                        type: string
-                      policyName:
-                        type: string
-                    type: object
-                  drmFairplay:
-                    properties:
-                      allowPersistentLicense:
-                        type: boolean
-                      customLicenseAcquisitionURLTemplate:
-                        type: string
-                    type: object
-                  enabledProtocols:
-                    properties:
-                      dash:
-                        type: boolean
-                      download:
-                        type: boolean
-                      hls:
-                        type: boolean
-                      smoothStreaming:
-                        type: boolean
-                    type: object
-                type: object
-              commonEncryptionCenc:
-                properties:
-                  defaultContentKey:
-                    properties:
-                      label:
-                        type: string
-                      policyName:
-                        type: string
-                    type: object
-                  drmPlayready:
-                    properties:
-                      customAttributes:
-                        type: string
-                      customLicenseAcquisitionURLTemplate:
-                        type: string
-                    type: object
-                  drmWidevineCustomLicenseAcquisitionURLTemplate:
-                    type: string
-                  enabledProtocols:
-                    properties:
-                      dash:
-                        type: boolean
-                      download:
-                        type: boolean
-                      hls:
-                        type: boolean
-                      smoothStreaming:
-                        type: boolean
-                    type: object
-                type: object
-              defaultContentKeyPolicyName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   commonEncryptionCbcs:
@@ -2457,17 +2391,7 @@ spec:
                       smoothStreaming:
                         type: boolean
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2490,59 +2414,130 @@ spec:
                 required:
                 - mediaServicesAccountName
                 - name
-                - providerRef
                 - resourceGroupName
-                type: object
-              mediaServicesAccountName:
-                type: string
-              name:
-                type: string
-              noEncryptionEnabledProtocols:
-                properties:
-                  dash:
-                    type: boolean
-                  download:
-                    type: boolean
-                  hls:
-                    type: boolean
-                  smoothStreaming:
-                    type: boolean
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  commonEncryptionCbcs:
+                    properties:
+                      defaultContentKey:
+                        properties:
+                          label:
+                            type: string
+                          policyName:
+                            type: string
+                        type: object
+                      drmFairplay:
+                        properties:
+                          allowPersistentLicense:
+                            type: boolean
+                          customLicenseAcquisitionURLTemplate:
+                            type: string
+                        type: object
+                      enabledProtocols:
+                        properties:
+                          dash:
+                            type: boolean
+                          download:
+                            type: boolean
+                          hls:
+                            type: boolean
+                          smoothStreaming:
+                            type: boolean
+                        type: object
+                    type: object
+                  commonEncryptionCenc:
+                    properties:
+                      defaultContentKey:
+                        properties:
+                          label:
+                            type: string
+                          policyName:
+                            type: string
+                        type: object
+                      drmPlayready:
+                        properties:
+                          customAttributes:
+                            type: string
+                          customLicenseAcquisitionURLTemplate:
+                            type: string
+                        type: object
+                      drmWidevineCustomLicenseAcquisitionURLTemplate:
+                        type: string
+                      enabledProtocols:
+                        properties:
+                          dash:
+                            type: boolean
+                          download:
+                            type: boolean
+                          hls:
+                            type: boolean
+                          smoothStreaming:
+                            type: boolean
+                        type: object
+                    type: object
+                  defaultContentKeyPolicyName:
+                    type: string
+                  id:
+                    type: string
+                  mediaServicesAccountName:
+                    type: string
+                  name:
+                    type: string
+                  noEncryptionEnabledProtocols:
+                    properties:
+                      dash:
+                        type: boolean
+                      download:
+                        type: boolean
+                      hls:
+                        type: boolean
+                      smoothStreaming:
+                        type: boolean
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - mediaServicesAccountName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - mediaServicesAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -2589,7 +2584,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: transforms.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -2616,10 +2612,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
@@ -2666,17 +2658,7 @@ spec:
                       type: object
                     minItems: 1
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2699,84 +2681,97 @@ spec:
                 required:
                 - mediaServicesAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              mediaServicesAccountName:
-                type: string
-              name:
-                type: string
-              output:
-                items:
-                  properties:
-                    audioAnalyzerPreset:
-                      properties:
-                        audioAnalysisMode:
-                          type: string
-                        audioLanguage:
-                          type: string
-                      type: object
-                    builtinPreset:
-                      properties:
-                        presetName:
-                          type: string
-                      type: object
-                    faceDetectorPreset:
-                      properties:
-                        analysisResolution:
-                          type: string
-                      type: object
-                    onErrorAction:
-                      type: string
-                    relativePriority:
-                      type: string
-                    videoAnalyzerPreset:
-                      properties:
-                        audioAnalysisMode:
-                          type: string
-                        audioLanguage:
-                          type: string
-                        insightsType:
-                          type: string
-                      type: object
-                  type: object
-                minItems: 1
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  mediaServicesAccountName:
+                    type: string
+                  name:
+                    type: string
+                  output:
+                    items:
+                      properties:
+                        audioAnalyzerPreset:
+                          properties:
+                            audioAnalysisMode:
+                              type: string
+                            audioLanguage:
+                              type: string
+                          type: object
+                        builtinPreset:
+                          properties:
+                            presetName:
+                              type: string
+                          type: object
+                        faceDetectorPreset:
+                          properties:
+                            analysisResolution:
+                              type: string
+                          type: object
+                        onErrorAction:
+                          type: string
+                        relativePriority:
+                          type: string
+                        videoAnalyzerPreset:
+                          properties:
+                            audioAnalysisMode:
+                              type: string
+                            audioLanguage:
+                              type: string
+                            insightsType:
+                              type: string
+                          type: object
+                      type: object
+                    minItems: 1
+                    type: array
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - mediaServicesAccountName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - mediaServicesAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

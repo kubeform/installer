@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: nodepools.kubernetescluster.azurerm.kubeform.com
 spec:
   group: kubernetescluster.azurerm.kubeform.com
@@ -30,20 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              availabilityZones:
-                items:
-                  type: string
-                type: array
-              enableAutoScaling:
-                type: boolean
-              enableHostEncryption:
-                type: boolean
-              enableNodePublicIP:
-                type: boolean
-              evictionPolicy:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   availabilityZones:
@@ -58,10 +45,143 @@ spec:
                     type: boolean
                   evictionPolicy:
                     type: string
+                  fipsEnabled:
+                    type: boolean
                   id:
+                    type: string
+                  kubeletConfig:
+                    properties:
+                      allowedUnsafeSysctls:
+                        items:
+                          type: string
+                        type: array
+                      containerLogMaxLine:
+                        format: int64
+                        type: integer
+                      containerLogMaxSizeMb:
+                        format: int64
+                        type: integer
+                      cpuCfsQuotaEnabled:
+                        type: boolean
+                      cpuCfsQuotaPeriod:
+                        type: string
+                      cpuManagerPolicy:
+                        type: string
+                      imageGcHighThreshold:
+                        format: int64
+                        type: integer
+                      imageGcLowThreshold:
+                        format: int64
+                        type: integer
+                      podMaxPid:
+                        format: int64
+                        type: integer
+                      topologyManagerPolicy:
+                        type: string
+                    type: object
+                  kubeletDiskType:
                     type: string
                   kubernetesClusterID:
                     type: string
+                  linuxOsConfig:
+                    properties:
+                      swapFileSizeMb:
+                        format: int64
+                        type: integer
+                      sysctlConfig:
+                        properties:
+                          fsAioMaxNr:
+                            format: int64
+                            type: integer
+                          fsFileMax:
+                            format: int64
+                            type: integer
+                          fsInotifyMaxUserWatches:
+                            format: int64
+                            type: integer
+                          fsNrOpen:
+                            format: int64
+                            type: integer
+                          kernelThreadsMax:
+                            format: int64
+                            type: integer
+                          netCoreNetdevMaxBacklog:
+                            format: int64
+                            type: integer
+                          netCoreOptmemMax:
+                            format: int64
+                            type: integer
+                          netCoreRmemDefault:
+                            format: int64
+                            type: integer
+                          netCoreRmemMax:
+                            format: int64
+                            type: integer
+                          netCoreSomaxconn:
+                            format: int64
+                            type: integer
+                          netCoreWmemDefault:
+                            format: int64
+                            type: integer
+                          netCoreWmemMax:
+                            format: int64
+                            type: integer
+                          netIpv4IPLocalPortRangeMax:
+                            format: int64
+                            type: integer
+                          netIpv4IPLocalPortRangeMin:
+                            format: int64
+                            type: integer
+                          netIpv4NeighDefaultGcThresh1:
+                            format: int64
+                            type: integer
+                          netIpv4NeighDefaultGcThresh2:
+                            format: int64
+                            type: integer
+                          netIpv4NeighDefaultGcThresh3:
+                            format: int64
+                            type: integer
+                          netIpv4TcpFinTimeout:
+                            format: int64
+                            type: integer
+                          netIpv4TcpKeepaliveIntvl:
+                            format: int64
+                            type: integer
+                          netIpv4TcpKeepaliveProbes:
+                            format: int64
+                            type: integer
+                          netIpv4TcpKeepaliveTime:
+                            format: int64
+                            type: integer
+                          netIpv4TcpMaxSYNBacklog:
+                            format: int64
+                            type: integer
+                          netIpv4TcpMaxTwBuckets:
+                            format: int64
+                            type: integer
+                          netIpv4TcpTwReuse:
+                            type: boolean
+                          netNetfilterNfConntrackBuckets:
+                            format: int64
+                            type: integer
+                          netNetfilterNfConntrackMax:
+                            format: int64
+                            type: integer
+                          vmMaxMapCount:
+                            format: int64
+                            type: integer
+                          vmSwappiness:
+                            format: int64
+                            type: integer
+                          vmVfsCachePressure:
+                            format: int64
+                            type: integer
+                        type: object
+                      transparentHugePageDefrag:
+                        type: string
+                      transparentHugePageEnabled:
+                        type: string
+                    type: object
                   maxCount:
                     format: int64
                     type: integer
@@ -82,6 +202,8 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
+                  nodePublicIPPrefixID:
+                    type: string
                   nodeTaints:
                     items:
                       type: string
@@ -97,11 +219,6 @@ spec:
                     type: string
                   priority:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   proximityPlacementGroupID:
                     type: string
                   spotMaxPrice:
@@ -111,11 +228,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -148,99 +260,257 @@ spec:
                 required:
                 - kubernetesClusterID
                 - name
-                - providerRef
                 - vmSize
                 type: object
-              kubernetesClusterID:
-                type: string
-              maxCount:
-                format: int64
-                type: integer
-              maxPods:
-                format: int64
-                type: integer
-              minCount:
-                format: int64
-                type: integer
-              mode:
-                type: string
-              name:
-                type: string
-              nodeCount:
-                format: int64
-                type: integer
-              nodeLabels:
-                additionalProperties:
-                  type: string
-                type: object
-              nodeTaints:
-                items:
-                  type: string
-                type: array
-              orchestratorVersion:
-                type: string
-              osDiskSizeGb:
-                format: int64
-                type: integer
-              osDiskType:
-                type: string
-              osType:
-                type: string
-              priority:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              proximityPlacementGroupID:
-                type: string
-              spotMaxPrice:
-                format: double
-                type: number
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  availabilityZones:
+                    items:
+                      type: string
+                    type: array
+                  enableAutoScaling:
+                    type: boolean
+                  enableHostEncryption:
+                    type: boolean
+                  enableNodePublicIP:
+                    type: boolean
+                  evictionPolicy:
+                    type: string
+                  fipsEnabled:
+                    type: boolean
+                  id:
+                    type: string
+                  kubeletConfig:
+                    properties:
+                      allowedUnsafeSysctls:
+                        items:
+                          type: string
+                        type: array
+                      containerLogMaxLine:
+                        format: int64
+                        type: integer
+                      containerLogMaxSizeMb:
+                        format: int64
+                        type: integer
+                      cpuCfsQuotaEnabled:
+                        type: boolean
+                      cpuCfsQuotaPeriod:
+                        type: string
+                      cpuManagerPolicy:
+                        type: string
+                      imageGcHighThreshold:
+                        format: int64
+                        type: integer
+                      imageGcLowThreshold:
+                        format: int64
+                        type: integer
+                      podMaxPid:
+                        format: int64
+                        type: integer
+                      topologyManagerPolicy:
+                        type: string
+                    type: object
+                  kubeletDiskType:
+                    type: string
+                  kubernetesClusterID:
+                    type: string
+                  linuxOsConfig:
+                    properties:
+                      swapFileSizeMb:
+                        format: int64
+                        type: integer
+                      sysctlConfig:
+                        properties:
+                          fsAioMaxNr:
+                            format: int64
+                            type: integer
+                          fsFileMax:
+                            format: int64
+                            type: integer
+                          fsInotifyMaxUserWatches:
+                            format: int64
+                            type: integer
+                          fsNrOpen:
+                            format: int64
+                            type: integer
+                          kernelThreadsMax:
+                            format: int64
+                            type: integer
+                          netCoreNetdevMaxBacklog:
+                            format: int64
+                            type: integer
+                          netCoreOptmemMax:
+                            format: int64
+                            type: integer
+                          netCoreRmemDefault:
+                            format: int64
+                            type: integer
+                          netCoreRmemMax:
+                            format: int64
+                            type: integer
+                          netCoreSomaxconn:
+                            format: int64
+                            type: integer
+                          netCoreWmemDefault:
+                            format: int64
+                            type: integer
+                          netCoreWmemMax:
+                            format: int64
+                            type: integer
+                          netIpv4IPLocalPortRangeMax:
+                            format: int64
+                            type: integer
+                          netIpv4IPLocalPortRangeMin:
+                            format: int64
+                            type: integer
+                          netIpv4NeighDefaultGcThresh1:
+                            format: int64
+                            type: integer
+                          netIpv4NeighDefaultGcThresh2:
+                            format: int64
+                            type: integer
+                          netIpv4NeighDefaultGcThresh3:
+                            format: int64
+                            type: integer
+                          netIpv4TcpFinTimeout:
+                            format: int64
+                            type: integer
+                          netIpv4TcpKeepaliveIntvl:
+                            format: int64
+                            type: integer
+                          netIpv4TcpKeepaliveProbes:
+                            format: int64
+                            type: integer
+                          netIpv4TcpKeepaliveTime:
+                            format: int64
+                            type: integer
+                          netIpv4TcpMaxSYNBacklog:
+                            format: int64
+                            type: integer
+                          netIpv4TcpMaxTwBuckets:
+                            format: int64
+                            type: integer
+                          netIpv4TcpTwReuse:
+                            type: boolean
+                          netNetfilterNfConntrackBuckets:
+                            format: int64
+                            type: integer
+                          netNetfilterNfConntrackMax:
+                            format: int64
+                            type: integer
+                          vmMaxMapCount:
+                            format: int64
+                            type: integer
+                          vmSwappiness:
+                            format: int64
+                            type: integer
+                          vmVfsCachePressure:
+                            format: int64
+                            type: integer
+                        type: object
+                      transparentHugePageDefrag:
+                        type: string
+                      transparentHugePageEnabled:
+                        type: string
+                    type: object
+                  maxCount:
+                    format: int64
+                    type: integer
+                  maxPods:
+                    format: int64
+                    type: integer
+                  minCount:
+                    format: int64
+                    type: integer
+                  mode:
+                    type: string
+                  name:
+                    type: string
+                  nodeCount:
+                    format: int64
+                    type: integer
+                  nodeLabels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  nodePublicIPPrefixID:
+                    type: string
+                  nodeTaints:
+                    items:
+                      type: string
+                    type: array
+                  orchestratorVersion:
+                    type: string
+                  osDiskSizeGb:
+                    format: int64
+                    type: integer
+                  osDiskType:
+                    type: string
+                  osType:
+                    type: string
+                  priority:
+                    type: string
+                  proximityPlacementGroupID:
+                    type: string
+                  spotMaxPrice:
+                    format: double
+                    type: number
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  upgradeSettings:
+                    properties:
+                      maxSurge:
+                        type: string
+                    required:
+                    - maxSurge
+                    type: object
+                  vmSize:
+                    type: string
+                  vnetSubnetID:
+                    type: string
+                required:
+                - kubernetesClusterID
+                - name
+                - vmSize
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              upgradeSettings:
-                properties:
-                  maxSurge:
-                    type: string
-                required:
-                - maxSurge
-                type: object
-              vmSize:
-                type: string
-              vnetSubnetID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - kubernetesClusterID
-            - name
             - providerRef
-            - vmSize
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clustercustomermanagedkeys.loganalytics.azurerm.kubeform.com
 spec:
   group: loganalytics.azurerm.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              keyVaultKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -41,16 +38,6 @@ spec:
                   keyVaultKeyID:
                     type: string
                   logAnalyticsClusterID:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -73,42 +60,55 @@ spec:
                 required:
                 - keyVaultKeyID
                 - logAnalyticsClusterID
-                - providerRef
                 type: object
-              logAnalyticsClusterID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  keyVaultKeyID:
+                    type: string
+                  logAnalyticsClusterID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - keyVaultKeyID
+                - logAnalyticsClusterID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - keyVaultKeyID
-            - logAnalyticsClusterID
             - providerRef
+            - resource
             type: object
           status:
             properties:

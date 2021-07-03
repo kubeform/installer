@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsfunctionjavascriptudfs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -30,18 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              input:
-                items:
-                  properties:
-                    type:
-                      type: string
-                  required:
-                  - type
-                  type: object
-                minItems: 1
-                type: array
               kubeformOutput:
                 properties:
                   id:
@@ -65,21 +54,11 @@ spec:
                     required:
                     - type
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   script:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -103,62 +82,83 @@ spec:
                 - input
                 - name
                 - output
-                - providerRef
                 - resourceGroupName
                 - script
                 - streamAnalyticsJobName
-                type: object
-              name:
-                type: string
-              output:
-                properties:
-                  type:
-                    type: string
-                required:
-                - type
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              script:
-                type: string
-              streamAnalyticsJobName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  input:
+                    items:
+                      properties:
+                        type:
+                          type: string
+                      required:
+                      - type
+                      type: object
+                    minItems: 1
+                    type: array
+                  name:
+                    type: string
+                  output:
+                    properties:
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  script:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - input
+                - name
+                - output
+                - resourceGroupName
+                - script
+                - streamAnalyticsJobName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - input
-            - name
-            - output
             - providerRef
-            - resourceGroupName
-            - script
-            - streamAnalyticsJobName
+            - resource
             type: object
           status:
             properties:

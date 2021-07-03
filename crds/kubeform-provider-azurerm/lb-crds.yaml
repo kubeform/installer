@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: backendaddresspools.lb.azurerm.kubeform.com
 spec:
   group: lb.azurerm.kubeform.com
@@ -30,28 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              backendAddress:
-                items:
-                  properties:
-                    ipAddress:
-                      type: string
-                    name:
-                      type: string
-                    virtualNetworkID:
-                      type: string
-                  required:
-                  - ipAddress
-                  - name
-                  - virtualNetworkID
-                  type: object
-                minItems: 1
-                type: array
-              backendIPConfigurations:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   backendAddress:
@@ -88,17 +67,7 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -121,54 +90,85 @@ spec:
                 required:
                 - loadbalancerID
                 - name
-                - providerRef
                 type: object
-              loadBalancingRules:
-                items:
-                  type: string
-                type: array
-              loadbalancerID:
-                type: string
-              name:
-                type: string
-              outboundRules:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  backendAddress:
+                    items:
+                      properties:
+                        ipAddress:
+                          type: string
+                        name:
+                          type: string
+                        virtualNetworkID:
+                          type: string
+                      required:
+                      - ipAddress
+                      - name
+                      - virtualNetworkID
+                      type: object
+                    minItems: 1
+                    type: array
+                  backendIPConfigurations:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  loadBalancingRules:
+                    items:
+                      type: string
+                    type: array
+                  loadbalancerID:
+                    type: string
+                  name:
+                    type: string
+                  outboundRules:
+                    items:
+                      type: string
+                    type: array
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - loadbalancerID
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - loadbalancerID
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -215,7 +215,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: backendaddresspooladdresses.lb.azurerm.kubeform.com
 spec:
   group: lb.azurerm.kubeform.com
@@ -242,12 +243,6 @@ spec:
             type: object
           spec:
             properties:
-              backendAddressPoolID:
-                type: string
-              id:
-                type: string
-              ipAddress:
-                type: string
               kubeformOutput:
                 properties:
                   backendAddressPoolID:
@@ -257,16 +252,6 @@ spec:
                   ipAddress:
                     type: string
                   name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -292,47 +277,62 @@ spec:
                 - backendAddressPoolID
                 - ipAddress
                 - name
-                - providerRef
                 - virtualNetworkID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  backendAddressPoolID:
+                    type: string
+                  id:
+                    type: string
+                  ipAddress:
+                    type: string
+                  name:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualNetworkID:
+                    type: string
+                required:
+                - backendAddressPoolID
+                - ipAddress
+                - name
+                - virtualNetworkID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualNetworkID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - backendAddressPoolID
-            - ipAddress
-            - name
             - providerRef
-            - virtualNetworkID
+            - resource
             type: object
           status:
             properties:
@@ -379,7 +379,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: lbs.lb.azurerm.kubeform.com
 spec:
   group: lb.azurerm.kubeform.com
@@ -406,54 +407,14 @@ spec:
             type: object
           spec:
             properties:
-              frontendIPConfiguration:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    inboundNATRules:
-                      items:
-                        type: string
-                      type: array
-                    loadBalancerRules:
-                      items:
-                        type: string
-                      type: array
-                    name:
-                      type: string
-                    outboundRules:
-                      items:
-                        type: string
-                      type: array
-                    privateIPAddress:
-                      type: string
-                    privateIPAddressAllocation:
-                      type: string
-                    privateIPAddressVersion:
-                      type: string
-                    publicIPAddressID:
-                      type: string
-                    publicIPPrefixID:
-                      type: string
-                    subnetID:
-                      type: string
-                    zones:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - name
-                  type: object
-                minItems: 1
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   frontendIPConfiguration:
                     items:
                       properties:
                         ID:
+                          type: string
+                        availabilityZone:
                           type: string
                         inboundNATRules:
                           items:
@@ -502,11 +463,6 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   sku:
@@ -515,11 +471,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -541,60 +492,113 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              privateIPAddress:
-                type: string
-              privateIPAddresses:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              sku:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  frontendIPConfiguration:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        availabilityZone:
+                          type: string
+                        inboundNATRules:
+                          items:
+                            type: string
+                          type: array
+                        loadBalancerRules:
+                          items:
+                            type: string
+                          type: array
+                        name:
+                          type: string
+                        outboundRules:
+                          items:
+                            type: string
+                          type: array
+                        privateIPAddress:
+                          type: string
+                        privateIPAddressAllocation:
+                          type: string
+                        privateIPAddressVersion:
+                          type: string
+                        publicIPAddressID:
+                          type: string
+                        publicIPPrefixID:
+                          type: string
+                        subnetID:
+                          type: string
+                        zones:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - name
+                      type: object
+                    minItems: 1
+                    type: array
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  privateIPAddress:
+                    type: string
+                  privateIPAddresses:
+                    items:
+                      type: string
+                    type: array
+                  resourceGroupName:
+                    type: string
+                  sku:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - name
+                - resourceGroupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -641,7 +645,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: natpools.lb.azurerm.kubeform.com
 spec:
   group: lb.azurerm.kubeform.com
@@ -668,21 +673,6 @@ spec:
             type: object
           spec:
             properties:
-              backendPort:
-                format: int64
-                type: integer
-              frontendIPConfigurationID:
-                type: string
-              frontendIPConfigurationName:
-                type: string
-              frontendPortEnd:
-                format: int64
-                type: integer
-              frontendPortStart:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   backendPort:
@@ -706,17 +696,7 @@ spec:
                     type: string
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -744,55 +724,79 @@ spec:
                 - loadbalancerID
                 - name
                 - protocol
-                - providerRef
                 - resourceGroupName
                 type: object
-              loadbalancerID:
-                type: string
-              name:
-                type: string
-              protocol:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  backendPort:
+                    format: int64
+                    type: integer
+                  frontendIPConfigurationID:
+                    type: string
+                  frontendIPConfigurationName:
+                    type: string
+                  frontendPortEnd:
+                    format: int64
+                    type: integer
+                  frontendPortStart:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  loadbalancerID:
+                    type: string
+                  name:
+                    type: string
+                  protocol:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - backendPort
+                - frontendIPConfigurationName
+                - frontendPortEnd
+                - frontendPortStart
+                - loadbalancerID
+                - name
+                - protocol
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - backendPort
-            - frontendIPConfigurationName
-            - frontendPortEnd
-            - frontendPortStart
-            - loadbalancerID
-            - name
-            - protocol
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -839,7 +843,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: natrules.lb.azurerm.kubeform.com
 spec:
   group: lb.azurerm.kubeform.com
@@ -866,27 +871,6 @@ spec:
             type: object
           spec:
             properties:
-              backendIPConfigurationID:
-                type: string
-              backendPort:
-                format: int64
-                type: integer
-              enableFloatingIP:
-                type: boolean
-              enableTcpReset:
-                type: boolean
-              frontendIPConfigurationID:
-                type: string
-              frontendIPConfigurationName:
-                type: string
-              frontendPort:
-                format: int64
-                type: integer
-              id:
-                type: string
-              idleTimeoutInMinutes:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   backendIPConfigurationID:
@@ -916,17 +900,7 @@ spec:
                     type: string
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -953,54 +927,84 @@ spec:
                 - loadbalancerID
                 - name
                 - protocol
-                - providerRef
                 - resourceGroupName
                 type: object
-              loadbalancerID:
-                type: string
-              name:
-                type: string
-              protocol:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  backendIPConfigurationID:
+                    type: string
+                  backendPort:
+                    format: int64
+                    type: integer
+                  enableFloatingIP:
+                    type: boolean
+                  enableTcpReset:
+                    type: boolean
+                  frontendIPConfigurationID:
+                    type: string
+                  frontendIPConfigurationName:
+                    type: string
+                  frontendPort:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  idleTimeoutInMinutes:
+                    format: int64
+                    type: integer
+                  loadbalancerID:
+                    type: string
+                  name:
+                    type: string
+                  protocol:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - backendPort
+                - frontendIPConfigurationName
+                - frontendPort
+                - loadbalancerID
+                - name
+                - protocol
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - backendPort
-            - frontendIPConfigurationName
-            - frontendPort
-            - loadbalancerID
-            - name
-            - protocol
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1047,7 +1051,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: outboundrules.lb.azurerm.kubeform.com
 spec:
   group: lb.azurerm.kubeform.com
@@ -1074,30 +1079,6 @@ spec:
             type: object
           spec:
             properties:
-              allocatedOutboundPorts:
-                format: int64
-                type: integer
-              backendAddressPoolID:
-                type: string
-              enableTcpReset:
-                type: boolean
-              frontendIPConfiguration:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                minItems: 1
-                type: array
-              id:
-                type: string
-              idleTimeoutInMinutes:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   allocatedOutboundPorts:
@@ -1130,17 +1111,7 @@ spec:
                     type: string
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1165,52 +1136,85 @@ spec:
                 - loadbalancerID
                 - name
                 - protocol
-                - providerRef
                 - resourceGroupName
                 type: object
-              loadbalancerID:
-                type: string
-              name:
-                type: string
-              protocol:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  allocatedOutboundPorts:
+                    format: int64
+                    type: integer
+                  backendAddressPoolID:
+                    type: string
+                  enableTcpReset:
+                    type: boolean
+                  frontendIPConfiguration:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    minItems: 1
+                    type: array
+                  id:
+                    type: string
+                  idleTimeoutInMinutes:
+                    format: int64
+                    type: integer
+                  loadbalancerID:
+                    type: string
+                  name:
+                    type: string
+                  protocol:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - backendAddressPoolID
+                - loadbalancerID
+                - name
+                - protocol
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - backendAddressPoolID
-            - loadbalancerID
-            - name
-            - protocol
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1257,7 +1261,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: probes.lb.azurerm.kubeform.com
 spec:
   group: lb.azurerm.kubeform.com
@@ -1284,11 +1289,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              intervalInSeconds:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   id:
@@ -1312,19 +1312,9 @@ spec:
                     type: integer
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requestPath:
                     type: string
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1348,63 +1338,77 @@ spec:
                 - loadbalancerID
                 - name
                 - port
-                - providerRef
                 - resourceGroupName
                 type: object
-              loadBalancerRules:
-                items:
-                  type: string
-                type: array
-              loadbalancerID:
-                type: string
-              name:
-                type: string
-              numberOfProbes:
-                format: int64
-                type: integer
-              port:
-                format: int64
-                type: integer
-              protocol:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requestPath:
-                type: string
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  intervalInSeconds:
+                    format: int64
+                    type: integer
+                  loadBalancerRules:
+                    items:
+                      type: string
+                    type: array
+                  loadbalancerID:
+                    type: string
+                  name:
+                    type: string
+                  numberOfProbes:
+                    format: int64
+                    type: integer
+                  port:
+                    format: int64
+                    type: integer
+                  protocol:
+                    type: string
+                  requestPath:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - loadbalancerID
+                - name
+                - port
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - loadbalancerID
-            - name
-            - port
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1451,7 +1455,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: rules.lb.azurerm.kubeform.com
 spec:
   group: lb.azurerm.kubeform.com
@@ -1478,29 +1483,6 @@ spec:
             type: object
           spec:
             properties:
-              backendAddressPoolID:
-                type: string
-              backendPort:
-                format: int64
-                type: integer
-              disableOutboundSnat:
-                type: boolean
-              enableFloatingIP:
-                type: boolean
-              enableTcpReset:
-                type: boolean
-              frontendIPConfigurationID:
-                type: string
-              frontendIPConfigurationName:
-                type: string
-              frontendPort:
-                format: int64
-                type: integer
-              id:
-                type: string
-              idleTimeoutInMinutes:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   backendAddressPoolID:
@@ -1536,17 +1518,7 @@ spec:
                     type: string
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1573,58 +1545,90 @@ spec:
                 - loadbalancerID
                 - name
                 - protocol
-                - providerRef
                 - resourceGroupName
                 type: object
-              loadDistribution:
-                type: string
-              loadbalancerID:
-                type: string
-              name:
-                type: string
-              probeID:
-                type: string
-              protocol:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  backendAddressPoolID:
+                    type: string
+                  backendPort:
+                    format: int64
+                    type: integer
+                  disableOutboundSnat:
+                    type: boolean
+                  enableFloatingIP:
+                    type: boolean
+                  enableTcpReset:
+                    type: boolean
+                  frontendIPConfigurationID:
+                    type: string
+                  frontendIPConfigurationName:
+                    type: string
+                  frontendPort:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  idleTimeoutInMinutes:
+                    format: int64
+                    type: integer
+                  loadDistribution:
+                    type: string
+                  loadbalancerID:
+                    type: string
+                  name:
+                    type: string
+                  probeID:
+                    type: string
+                  protocol:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - backendPort
+                - frontendIPConfigurationName
+                - frontendPort
+                - loadbalancerID
+                - name
+                - protocol
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - backendPort
-            - frontendIPConfigurationName
-            - frontendPort
-            - loadbalancerID
-            - name
-            - protocol
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

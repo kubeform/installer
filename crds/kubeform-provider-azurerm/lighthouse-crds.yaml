@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: assignments.lighthouse.azurerm.kubeform.com
 spec:
   group: lighthouse.azurerm.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -40,17 +39,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   scope:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -72,47 +61,58 @@ spec:
                     type: object
                 required:
                 - lighthouseDefinitionID
-                - providerRef
                 - scope
                 type: object
-              lighthouseDefinitionID:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              scope:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  lighthouseDefinitionID:
+                    type: string
+                  name:
+                    type: string
+                  scope:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - lighthouseDefinitionID
+                - scope
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - lighthouseDefinitionID
             - providerRef
-            - scope
+            - resource
             type: object
           status:
             properties:
@@ -159,7 +159,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: definitions.lighthouse.azurerm.kubeform.com
 spec:
   group: lighthouse.azurerm.kubeform.com
@@ -186,29 +187,6 @@ spec:
             type: object
           spec:
             properties:
-              authorization:
-                items:
-                  properties:
-                    delegatedRoleDefinitionIDS:
-                      items:
-                        type: string
-                      type: array
-                    principalDisplayName:
-                      type: string
-                    principalID:
-                      type: string
-                    roleDefinitionID:
-                      type: string
-                  required:
-                  - principalID
-                  - roleDefinitionID
-                  type: object
-                minItems: 1
-                type: array
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   authorization:
@@ -240,17 +218,23 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
+                  plan:
                     properties:
                       name:
                         type: string
+                      product:
+                        type: string
+                      publisher:
+                        type: string
+                      version:
+                        type: string
+                    required:
+                    - name
+                    - product
+                    - publisher
+                    - version
                     type: object
                   scope:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -274,51 +258,99 @@ spec:
                 - authorization
                 - managingTenantID
                 - name
-                - providerRef
                 - scope
                 type: object
-              lighthouseDefinitionID:
-                type: string
-              managingTenantID:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              scope:
-                type: string
+              resource:
+                properties:
+                  authorization:
+                    items:
+                      properties:
+                        delegatedRoleDefinitionIDS:
+                          items:
+                            type: string
+                          type: array
+                        principalDisplayName:
+                          type: string
+                        principalID:
+                          type: string
+                        roleDefinitionID:
+                          type: string
+                      required:
+                      - principalID
+                      - roleDefinitionID
+                      type: object
+                    minItems: 1
+                    type: array
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  lighthouseDefinitionID:
+                    type: string
+                  managingTenantID:
+                    type: string
+                  name:
+                    type: string
+                  plan:
+                    properties:
+                      name:
+                        type: string
+                      product:
+                        type: string
+                      publisher:
+                        type: string
+                      version:
+                        type: string
+                    required:
+                    - name
+                    - product
+                    - publisher
+                    - version
+                    type: object
+                  scope:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - authorization
+                - managingTenantID
+                - name
+                - scope
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - authorization
-            - managingTenantID
-            - name
             - providerRef
-            - scope
+            - resource
             type: object
           status:
             properties:

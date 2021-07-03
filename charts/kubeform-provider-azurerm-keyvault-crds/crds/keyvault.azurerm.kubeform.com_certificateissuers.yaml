@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: certificateissuers.keyvault.azurerm.kubeform.com
 spec:
   group: keyvault.azurerm.kubeform.com
@@ -30,27 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              admin:
-                items:
-                  properties:
-                    emailAddress:
-                      type: string
-                    firstName:
-                      type: string
-                    lastName:
-                      type: string
-                    phone:
-                      type: string
-                  required:
-                  - emailAddress
-                  type: object
-                type: array
-              id:
-                type: string
-              keyVaultID:
-                type: string
               kubeformOutput:
                 properties:
                   accountID:
@@ -80,20 +60,62 @@ spec:
                     type: string
                   providerName:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - keyVaultID
+                - name
+                - providerName
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  accountID:
+                    type: string
+                  admin:
+                    items:
+                      properties:
+                        emailAddress:
+                          type: string
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        phone:
+                          type: string
+                      required:
+                      - emailAddress
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  keyVaultID:
+                    type: string
+                  name:
+                    type: string
+                  orgID:
+                    type: string
+                  providerName:
                     type: string
                   timeouts:
                     properties:
@@ -117,18 +139,6 @@ spec:
                 - keyVaultID
                 - name
                 - providerName
-                - providerRef
-                type: object
-              name:
-                type: string
-              orgID:
-                type: string
-              providerName:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               secretRef:
                 properties:
@@ -140,29 +150,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - keyVaultID
-            - name
-            - providerName
             - providerRef
+            - resource
             type: object
           status:
             properties:

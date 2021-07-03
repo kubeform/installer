@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: certificates.batch.azurerm.kubeform.com
 spec:
   group: batch.azurerm.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accountName:
-                type: string
-              format:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accountName:
@@ -46,24 +41,9 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicData:
                     type: string
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   thumbprint:
                     type: string
@@ -90,22 +70,58 @@ spec:
                 required:
                 - accountName
                 - format
-                - providerRef
                 - resourceGroupName
                 - thumbprint
                 - thumbprintAlgorithm
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicData:
-                type: string
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  accountName:
+                    type: string
+                  format:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  publicData:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  thumbprint:
+                    type: string
+                  thumbprintAlgorithm:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - accountName
+                - format
+                - resourceGroupName
+                - thumbprint
+                - thumbprintAlgorithm
+                type: object
               secretRef:
                 properties:
                   name:
@@ -116,35 +132,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              thumbprint:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              thumbprintAlgorithm:
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - accountName
-            - format
             - providerRef
-            - resourceGroupName
-            - thumbprint
-            - thumbprintAlgorithm
+            - resource
             type: object
           status:
             properties:

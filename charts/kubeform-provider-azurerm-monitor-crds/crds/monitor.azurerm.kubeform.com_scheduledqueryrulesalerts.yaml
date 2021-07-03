@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: scheduledqueryrulesalerts.monitor.azurerm.kubeform.com
 spec:
   group: monitor.azurerm.kubeform.com
@@ -30,35 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              action:
-                properties:
-                  actionGroup:
-                    items:
-                      type: string
-                    type: array
-                  customWebhookPayload:
-                    type: string
-                  emailSubject:
-                    type: string
-                required:
-                - actionGroup
-                type: object
-              authorizedResourceIDS:
-                items:
-                  type: string
-                maxItems: 100
-                type: array
-              dataSourceID:
-                type: string
-              description:
-                type: string
-              enabled:
-                type: boolean
-              frequency:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   action:
@@ -94,11 +66,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   query:
                     type: string
                   queryType:
@@ -112,11 +79,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   throttling:
                     format: int64
                     type: integer
@@ -175,102 +137,140 @@ spec:
                 - frequency
                 - location
                 - name
-                - providerRef
                 - query
                 - resourceGroupName
                 - timeWindow
                 - trigger
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              query:
-                type: string
-              queryType:
-                type: string
-              resourceGroupName:
-                type: string
-              severity:
-                format: int64
-                type: integer
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              throttling:
-                format: int64
-                type: integer
-              timeWindow:
-                format: int64
-                type: integer
-              timeouts:
+              resource:
                 properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              trigger:
-                properties:
-                  metricTrigger:
+                  action:
                     properties:
-                      metricColumn:
+                      actionGroup:
+                        items:
+                          type: string
+                        type: array
+                      customWebhookPayload:
                         type: string
-                      metricTriggerType:
+                      emailSubject:
                         type: string
+                    required:
+                    - actionGroup
+                    type: object
+                  authorizedResourceIDS:
+                    items:
+                      type: string
+                    maxItems: 100
+                    type: array
+                  dataSourceID:
+                    type: string
+                  description:
+                    type: string
+                  enabled:
+                    type: boolean
+                  frequency:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  query:
+                    type: string
+                  queryType:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  severity:
+                    format: int64
+                    type: integer
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  throttling:
+                    format: int64
+                    type: integer
+                  timeWindow:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  trigger:
+                    properties:
+                      metricTrigger:
+                        properties:
+                          metricColumn:
+                            type: string
+                          metricTriggerType:
+                            type: string
+                          operator:
+                            type: string
+                          threshold:
+                            format: double
+                            type: number
+                        required:
+                        - metricColumn
+                        - metricTriggerType
+                        - operator
+                        - threshold
+                        type: object
                       operator:
                         type: string
                       threshold:
                         format: double
                         type: number
                     required:
-                    - metricColumn
-                    - metricTriggerType
                     - operator
                     - threshold
                     type: object
-                  operator:
-                    type: string
-                  threshold:
-                    format: double
-                    type: number
                 required:
-                - operator
-                - threshold
+                - action
+                - dataSourceID
+                - frequency
+                - location
+                - name
+                - query
+                - resourceGroupName
+                - timeWindow
+                - trigger
                 type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - action
-            - dataSourceID
-            - frequency
-            - location
-            - name
             - providerRef
-            - query
-            - resourceGroupName
-            - timeWindow
-            - trigger
+            - resource
             type: object
           status:
             properties:

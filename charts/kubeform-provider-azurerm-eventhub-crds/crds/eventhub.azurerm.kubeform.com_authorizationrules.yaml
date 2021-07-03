@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: authorizationrules.eventhub.azurerm.kubeform.com
 spec:
   group: eventhub.azurerm.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              eventhubName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   eventhubName:
@@ -48,25 +45,10 @@ spec:
                     type: string
                   namespaceName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   send:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -89,60 +71,73 @@ spec:
                 - eventhubName
                 - name
                 - namespaceName
-                - providerRef
                 - resourceGroupName
                 type: object
-              listen:
-                type: boolean
-              manage:
-                type: boolean
-              name:
-                type: string
-              namespaceName:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  eventhubName:
+                    type: string
+                  id:
+                    type: string
+                  listen:
+                    type: boolean
+                  manage:
+                    type: boolean
+                  name:
+                    type: string
+                  namespaceName:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  send:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - eventhubName
+                - name
+                - namespaceName
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              send:
-                type: boolean
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - eventhubName
-            - name
-            - namespaceName
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

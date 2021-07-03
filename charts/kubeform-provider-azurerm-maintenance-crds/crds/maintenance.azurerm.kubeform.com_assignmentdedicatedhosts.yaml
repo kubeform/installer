@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: assignmentdedicatedhosts.maintenance.azurerm.kubeform.com
 spec:
   group: maintenance.azurerm.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              dedicatedHostID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dedicatedHostID:
@@ -43,16 +40,6 @@ spec:
                   location:
                     type: string
                   maintenanceConfigurationID:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -76,45 +63,58 @@ spec:
                 - dedicatedHostID
                 - location
                 - maintenanceConfigurationID
-                - providerRef
                 type: object
-              location:
-                type: string
-              maintenanceConfigurationID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  dedicatedHostID:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  maintenanceConfigurationID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - dedicatedHostID
+                - location
+                - maintenanceConfigurationID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - dedicatedHostID
-            - location
-            - maintenanceConfigurationID
             - providerRef
+            - resource
             type: object
           status:
             properties:

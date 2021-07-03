@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: apischemas.apimanagement.azurerm.kubeform.com
 spec:
   group: apimanagement.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiManagementName:
-                type: string
-              apiName:
-                type: string
-              contentType:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiManagementName:
@@ -48,19 +41,9 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   schemaID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -86,7 +69,6 @@ spec:
                 - apiManagementName
                 - apiName
                 - contentType
-                - providerRef
                 - resourceGroupName
                 - schemaID
                 - value
@@ -96,43 +78,61 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              schemaID:
-                type: string
+              resource:
+                properties:
+                  apiManagementName:
+                    type: string
+                  apiName:
+                    type: string
+                  contentType:
+                    type: string
+                  id:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  schemaID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  value:
+                    type: string
+                required:
+                - apiManagementName
+                - apiName
+                - contentType
+                - resourceGroupName
+                - schemaID
+                - value
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              value:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - apiManagementName
-            - apiName
-            - contentType
             - providerRef
-            - resourceGroupName
-            - schemaID
-            - value
+            - resource
             type: object
           status:
             properties:

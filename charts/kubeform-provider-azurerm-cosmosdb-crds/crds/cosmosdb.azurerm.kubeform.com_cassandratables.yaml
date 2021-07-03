@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cassandratables.cosmosdb.azurerm.kubeform.com
 spec:
   group: cosmosdb.azurerm.kubeform.com
@@ -30,22 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              analyticalStorageTtl:
-                format: int64
-                type: integer
-              autoscaleSettings:
-                properties:
-                  maxThroughput:
-                    format: int64
-                    type: integer
-                type: object
-              cassandraKeyspaceID:
-                type: string
-              defaultTtl:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   analyticalStorageTtl:
@@ -66,11 +51,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   schema:
                     properties:
                       clusterKey:
@@ -111,11 +91,6 @@ spec:
                     - column
                     - partitionKey
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   throughput:
                     format: int64
                     type: integer
@@ -140,87 +115,112 @@ spec:
                 required:
                 - cassandraKeyspaceID
                 - name
-                - providerRef
                 - schema
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              schema:
+              resource:
                 properties:
-                  clusterKey:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        orderBy:
-                          type: string
-                      required:
-                      - name
-                      - orderBy
-                      type: object
-                    type: array
-                  column:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                      - name
-                      - type
-                      type: object
-                    minItems: 1
-                    type: array
-                  partitionKey:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                      required:
-                      - name
-                      type: object
-                    type: array
+                  analyticalStorageTtl:
+                    format: int64
+                    type: integer
+                  autoscaleSettings:
+                    properties:
+                      maxThroughput:
+                        format: int64
+                        type: integer
+                    type: object
+                  cassandraKeyspaceID:
+                    type: string
+                  defaultTtl:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  schema:
+                    properties:
+                      clusterKey:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            orderBy:
+                              type: string
+                          required:
+                          - name
+                          - orderBy
+                          type: object
+                        type: array
+                      column:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            type:
+                              type: string
+                          required:
+                          - name
+                          - type
+                          type: object
+                        minItems: 1
+                        type: array
+                      partitionKey:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        type: array
+                    required:
+                    - column
+                    - partitionKey
+                    type: object
+                  throughput:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - column
-                - partitionKey
+                - cassandraKeyspaceID
+                - name
+                - schema
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              throughput:
-                format: int64
-                type: integer
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cassandraKeyspaceID
-            - name
             - providerRef
-            - schema
+            - resource
             type: object
           status:
             properties:

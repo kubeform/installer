@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: analyticsoutputeventhubs.stream.azurerm.kubeform.com
 spec:
   group: stream.azurerm.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              eventhubName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   eventhubName:
@@ -42,18 +39,8 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serialization:
                     properties:
                       encoding:
@@ -72,11 +59,6 @@ spec:
                   sharedAccessPolicyName:
                     type: string
                   streamAnalyticsJobName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -99,78 +81,91 @@ spec:
                 required:
                 - eventhubName
                 - name
-                - providerRef
                 - resourceGroupName
                 - serialization
                 - servicebusNamespace
                 - sharedAccessPolicyName
                 - streamAnalyticsJobName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  eventhubName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serialization:
+                    properties:
+                      encoding:
+                        type: string
+                      fieldDelimiter:
+                        type: string
+                      format:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  servicebusNamespace:
+                    type: string
+                  sharedAccessPolicyName:
+                    type: string
+                  streamAnalyticsJobName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - eventhubName
+                - name
+                - resourceGroupName
+                - serialization
+                - servicebusNamespace
+                - sharedAccessPolicyName
+                - streamAnalyticsJobName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serialization:
-                properties:
-                  encoding:
-                    type: string
-                  fieldDelimiter:
-                    type: string
-                  format:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              servicebusNamespace:
-                type: string
-              sharedAccessPolicyName:
-                type: string
-              streamAnalyticsJobName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - eventhubName
-            - name
             - providerRef
-            - resourceGroupName
-            - serialization
-            - servicebusNamespace
-            - sharedAccessPolicyName
-            - streamAnalyticsJobName
+            - resource
             type: object
           status:
             properties:

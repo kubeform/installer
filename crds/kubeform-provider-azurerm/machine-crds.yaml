@@ -3,15 +3,16 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
-  name: learninginferenceclusters.machine.azurerm.kubeform.com
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: learningcomputeclusters.machine.azurerm.kubeform.com
 spec:
   group: machine.azurerm.kubeform.com
   names:
-    kind: LearningInferenceCluster
-    listKind: LearningInferenceClusterList
-    plural: learninginferenceclusters
-    singular: learninginferencecluster
+    kind: LearningComputeCluster
+    listKind: LearningComputeClusterList
+    plural: learningcomputeclusters
+    singular: learningcomputecluster
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -30,51 +31,50 @@ spec:
             type: object
           spec:
             properties:
-              clusterPurpose:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
-                  clusterPurpose:
-                    type: string
                   description:
                     type: string
                   id:
                     type: string
-                  kubernetesClusterID:
-                    type: string
+                  identity:
+                    properties:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
                   location:
                     type: string
                   machineLearningWorkspaceID:
                     type: string
                   name:
                     type: string
-                  providerRef:
+                  scaleSettings:
                     properties:
-                      name:
+                      maxNodeCount:
+                        format: int64
+                        type: integer
+                      minNodeCount:
+                        format: int64
+                        type: integer
+                      scaleDownNodesAfterIdleDuration:
                         type: string
+                    required:
+                    - maxNodeCount
+                    - minNodeCount
+                    - scaleDownNodesAfterIdleDuration
                     type: object
-                  ssl:
-                    properties:
-                      cert:
-                        type: string
-                      cname:
-                        type: string
-                      key:
-                        type: string
-                    type: object
+                  subnetResourceID:
+                    type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -93,68 +93,112 @@ spec:
                         format: int64
                         type: integer
                     type: object
+                  vmPriority:
+                    type: string
+                  vmSize:
+                    type: string
                 required:
-                - kubernetesClusterID
+                - identity
                 - location
                 - machineLearningWorkspaceID
                 - name
-                - providerRef
+                - scaleSettings
+                - vmPriority
+                - vmSize
                 type: object
-              kubernetesClusterID:
-                type: string
-              location:
-                type: string
-              machineLearningWorkspaceID:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              ssl:
+              resource:
                 properties:
-                  cert:
+                  description:
                     type: string
-                  cname:
+                  id:
                     type: string
-                  key:
+                  identity:
+                    properties:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  location:
                     type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                  machineLearningWorkspaceID:
+                    type: string
+                  name:
+                    type: string
+                  scaleSettings:
+                    properties:
+                      maxNodeCount:
+                        format: int64
+                        type: integer
+                      minNodeCount:
+                        format: int64
+                        type: integer
+                      scaleDownNodesAfterIdleDuration:
+                        type: string
+                    required:
+                    - maxNodeCount
+                    - minNodeCount
+                    - scaleDownNodesAfterIdleDuration
+                    type: object
+                  subnetResourceID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vmPriority:
+                    type: string
+                  vmSize:
+                    type: string
+                required:
+                - identity
+                - location
+                - machineLearningWorkspaceID
+                - name
+                - scaleSettings
+                - vmPriority
+                - vmSize
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - kubernetesClusterID
-            - location
-            - machineLearningWorkspaceID
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -201,7 +245,214 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: learninginferenceclusters.machine.azurerm.kubeform.com
+spec:
+  group: machine.azurerm.kubeform.com
+  names:
+    kind: LearningInferenceCluster
+    listKind: LearningInferenceClusterList
+    plural: learninginferenceclusters
+    singular: learninginferencecluster
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  clusterPurpose:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  kubernetesClusterID:
+                    type: string
+                  location:
+                    type: string
+                  machineLearningWorkspaceID:
+                    type: string
+                  name:
+                    type: string
+                  ssl:
+                    properties:
+                      cert:
+                        type: string
+                      cname:
+                        type: string
+                      key:
+                        type: string
+                      leafDomainLabel:
+                        type: string
+                      overwriteExistingDomain:
+                        type: boolean
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - kubernetesClusterID
+                - location
+                - machineLearningWorkspaceID
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  clusterPurpose:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  kubernetesClusterID:
+                    type: string
+                  location:
+                    type: string
+                  machineLearningWorkspaceID:
+                    type: string
+                  name:
+                    type: string
+                  ssl:
+                    properties:
+                      cert:
+                        type: string
+                      cname:
+                        type: string
+                      key:
+                        type: string
+                      leafDomainLabel:
+                        type: string
+                      overwriteExistingDomain:
+                        type: boolean
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - kubernetesClusterID
+                - location
+                - machineLearningWorkspaceID
+                - name
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: learningworkspaces.machine.azurerm.kubeform.com
 spec:
   group: machine.azurerm.kubeform.com
@@ -228,31 +479,6 @@ spec:
             type: object
           spec:
             properties:
-              applicationInsightsID:
-                type: string
-              containerRegistryID:
-                type: string
-              description:
-                type: string
-              friendlyName:
-                type: string
-              highBusinessImpact:
-                type: boolean
-              id:
-                type: string
-              identity:
-                properties:
-                  principalID:
-                    type: string
-                  tenantID:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              keyVaultID:
-                type: string
               kubeformOutput:
                 properties:
                   applicationInsightsID:
@@ -284,11 +510,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   skuName:
@@ -299,11 +520,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -328,61 +544,95 @@ spec:
                 - keyVaultID
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - storageAccountID
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              skuName:
-                type: string
-              storageAccountID:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  applicationInsightsID:
+                    type: string
+                  containerRegistryID:
+                    type: string
+                  description:
+                    type: string
+                  friendlyName:
+                    type: string
+                  highBusinessImpact:
+                    type: boolean
+                  id:
+                    type: string
+                  identity:
+                    properties:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  keyVaultID:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  skuName:
+                    type: string
+                  storageAccountID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - applicationInsightsID
+                - identity
+                - keyVaultID
+                - location
+                - name
+                - resourceGroupName
+                - storageAccountID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - applicationInsightsID
-            - identity
-            - keyVaultID
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - storageAccountID
+            - resource
             type: object
           status:
             properties:

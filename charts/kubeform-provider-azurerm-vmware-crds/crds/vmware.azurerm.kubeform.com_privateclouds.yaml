@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: privateclouds.vmware.azurerm.kubeform.com
 spec:
   group: vmware.azurerm.kubeform.com
@@ -30,25 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              circuit:
-                items:
-                  properties:
-                    expressRouteID:
-                      type: string
-                    expressRoutePrivatePeeringID:
-                      type: string
-                    primarySubnetCIDR:
-                      type: string
-                    secondarySubnetCIDR:
-                      type: string
-                  type: object
-                type: array
-              hcxCloudManagerEndpoint:
-                type: string
-              id:
-                type: string
-              internetConnectionEnabled:
-                type: boolean
               kubeformOutput:
                 properties:
                   circuit:
@@ -97,31 +79,16 @@ spec:
                     type: string
                   nsxtManagerEndpoint:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   provisioningSubnetCIDR:
                     type: string
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   skuName:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -151,94 +118,122 @@ spec:
                 - managementCluster
                 - name
                 - networkSubnetCIDR
-                - providerRef
                 - resourceGroupName
                 - skuName
                 type: object
-              location:
-                type: string
-              managementCluster:
-                properties:
-                  ID:
-                    format: int64
-                    type: integer
-                  hosts:
-                    items:
-                      type: string
-                    type: array
-                  size:
-                    format: int64
-                    type: integer
-                required:
-                - size
-                type: object
-              managementSubnetCIDR:
-                type: string
-              name:
-                type: string
-              networkSubnetCIDR:
-                type: string
-              nsxtCertificateThumbprint:
-                type: string
-              nsxtManagerEndpoint:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              provisioningSubnetCIDR:
-                type: string
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  circuit:
+                    items:
+                      properties:
+                        expressRouteID:
+                          type: string
+                        expressRoutePrivatePeeringID:
+                          type: string
+                        primarySubnetCIDR:
+                          type: string
+                        secondarySubnetCIDR:
+                          type: string
+                      type: object
+                    type: array
+                  hcxCloudManagerEndpoint:
+                    type: string
+                  id:
+                    type: string
+                  internetConnectionEnabled:
+                    type: boolean
+                  location:
+                    type: string
+                  managementCluster:
+                    properties:
+                      ID:
+                        format: int64
+                        type: integer
+                      hosts:
+                        items:
+                          type: string
+                        type: array
+                      size:
+                        format: int64
+                        type: integer
+                    required:
+                    - size
+                    type: object
+                  managementSubnetCIDR:
+                    type: string
+                  name:
+                    type: string
+                  networkSubnetCIDR:
+                    type: string
+                  nsxtCertificateThumbprint:
+                    type: string
+                  nsxtManagerEndpoint:
+                    type: string
+                  provisioningSubnetCIDR:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  skuName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vcenterCertificateThumbprint:
+                    type: string
+                  vcsaEndpoint:
+                    type: string
+                  vmotionSubnetCIDR:
+                    type: string
+                required:
+                - location
+                - managementCluster
+                - name
+                - networkSubnetCIDR
+                - resourceGroupName
+                - skuName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              skuName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vcenterCertificateThumbprint:
-                type: string
-              vcsaEndpoint:
-                type: string
-              vmotionSubnetCIDR:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - location
-            - managementCluster
-            - name
-            - networkSubnetCIDR
             - providerRef
-            - resourceGroupName
-            - skuName
+            - resource
             type: object
           status:
             properties:

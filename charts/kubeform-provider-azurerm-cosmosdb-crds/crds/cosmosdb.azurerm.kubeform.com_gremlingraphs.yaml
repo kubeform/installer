@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: gremlingraphs.cosmosdb.azurerm.kubeform.com
 spec:
   group: cosmosdb.azurerm.kubeform.com
@@ -30,51 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accountName:
-                type: string
-              autoscaleSettings:
-                properties:
-                  maxThroughput:
-                    format: int64
-                    type: integer
-                type: object
-              conflictResolutionPolicy:
-                properties:
-                  conflictResolutionPath:
-                    type: string
-                  conflictResolutionProcedure:
-                    type: string
-                  mode:
-                    type: string
-                required:
-                - mode
-                type: object
-              databaseName:
-                type: string
-              defaultTtl:
-                format: int64
-                type: integer
-              id:
-                type: string
-              indexPolicy:
-                items:
-                  properties:
-                    automatic:
-                      type: boolean
-                    excludedPaths:
-                      items:
-                        type: string
-                      type: array
-                    includedPaths:
-                      items:
-                        type: string
-                      type: array
-                    indexingMode:
-                      type: string
-                  required:
-                  - indexingMode
-                  type: object
-                type: array
               kubeformOutput:
                 properties:
                   accountName:
@@ -104,39 +60,63 @@ spec:
                   id:
                     type: string
                   indexPolicy:
-                    items:
-                      properties:
-                        automatic:
-                          type: boolean
-                        excludedPaths:
-                          items:
-                            type: string
-                          type: array
-                        includedPaths:
-                          items:
-                            type: string
-                          type: array
-                        indexingMode:
+                    properties:
+                      automatic:
+                        type: boolean
+                      compositeIndex:
+                        items:
+                          properties:
+                            index:
+                              items:
+                                properties:
+                                  order:
+                                    type: string
+                                  path:
+                                    type: string
+                                required:
+                                - order
+                                - path
+                                type: object
+                              minItems: 1
+                              type: array
+                          required:
+                          - index
+                          type: object
+                        type: array
+                      excludedPaths:
+                        items:
                           type: string
-                      required:
-                      - indexingMode
-                      type: object
-                    type: array
+                        type: array
+                      includedPaths:
+                        items:
+                          type: string
+                        type: array
+                      indexingMode:
+                        type: string
+                      spatialIndex:
+                        items:
+                          properties:
+                            path:
+                              type: string
+                            types:
+                              items:
+                                type: string
+                              type: array
+                          required:
+                          - path
+                          type: object
+                        type: array
+                    required:
+                    - indexingMode
+                    type: object
                   name:
                     type: string
                   partitionKeyPath:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
+                  partitionKeyVersion:
+                    format: int64
+                    type: integer
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   throughput:
                     format: int64
@@ -173,68 +153,154 @@ spec:
                 required:
                 - accountName
                 - databaseName
-                - indexPolicy
                 - name
                 - partitionKeyPath
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
-              partitionKeyPath:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  accountName:
+                    type: string
+                  autoscaleSettings:
+                    properties:
+                      maxThroughput:
+                        format: int64
+                        type: integer
+                    type: object
+                  conflictResolutionPolicy:
+                    properties:
+                      conflictResolutionPath:
+                        type: string
+                      conflictResolutionProcedure:
+                        type: string
+                      mode:
+                        type: string
+                    required:
+                    - mode
+                    type: object
+                  databaseName:
+                    type: string
+                  defaultTtl:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  indexPolicy:
+                    properties:
+                      automatic:
+                        type: boolean
+                      compositeIndex:
+                        items:
+                          properties:
+                            index:
+                              items:
+                                properties:
+                                  order:
+                                    type: string
+                                  path:
+                                    type: string
+                                required:
+                                - order
+                                - path
+                                type: object
+                              minItems: 1
+                              type: array
+                          required:
+                          - index
+                          type: object
+                        type: array
+                      excludedPaths:
+                        items:
+                          type: string
+                        type: array
+                      includedPaths:
+                        items:
+                          type: string
+                        type: array
+                      indexingMode:
+                        type: string
+                      spatialIndex:
+                        items:
+                          properties:
+                            path:
+                              type: string
+                            types:
+                              items:
+                                type: string
+                              type: array
+                          required:
+                          - path
+                          type: object
+                        type: array
+                    required:
+                    - indexingMode
+                    type: object
+                  name:
+                    type: string
+                  partitionKeyPath:
+                    type: string
+                  partitionKeyVersion:
+                    format: int64
+                    type: integer
+                  resourceGroupName:
+                    type: string
+                  throughput:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  uniqueKey:
+                    items:
+                      properties:
+                        paths:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - paths
+                      type: object
+                    type: array
+                required:
+                - accountName
+                - databaseName
+                - name
+                - partitionKeyPath
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              throughput:
-                format: int64
-                type: integer
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              uniqueKey:
-                items:
-                  properties:
-                    paths:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - paths
-                  type: object
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - accountName
-            - databaseName
-            - indexPolicy
-            - name
-            - partitionKeyPath
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
