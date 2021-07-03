@@ -265,7 +265,7 @@ chart-contents-%:
 		yq w -i ./charts/$*/Chart.yaml appVersion --tag '!!str' $(APP_VERSION);      \
 	fi
 	@if [ -n "$(APP_VERSION)" ] && [[ ! "$*" =~ "-crds" ]]; then                   \
-	  yq w -i ./charts/$*/values.yaml operator.tag --tag '!!str' $(APP_VERSION);   \
+	  yq w -i ./charts/$*/values.yaml kubeform-provider.operator.tag --tag '!!str' $(APP_VERSION);   \
 	fi
 
 fmt: $(BUILD_DIRS)
@@ -374,7 +374,6 @@ ct: $(BUILD_DIRS)
 	    $(CHART_TEST_IMAGE)                                     \
 	    /bin/sh -c "                                            \
 	        kubectl delete crds --selector=app.kubernetes.io/part-of=kubeform.com;  \
-	        ./hack/scripts/update-chart-dependencies.sh;                            \
 	        ct $(CT_COMMAND) --debug --validate-maintainers=false $(CT_ARGS)        \
 	    "
 

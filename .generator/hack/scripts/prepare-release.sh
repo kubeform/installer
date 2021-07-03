@@ -36,7 +36,7 @@ for p in "${providers[@]}"; do
 
     echo
     echo "checking out https://github.com/kubeform/provider-${p}-api.git ${!ctrl_tag}"
-    cd $input_dir || exit
+    cd "$input_dir" || exit
     git clone --no-tags --no-recurse-submodules --depth=1 "https://github.com/kubeform/provider-${p}-api.git"
     cd "provider-${p}-api" || exit
     git checkout "${!ctrl_tag}"
@@ -62,6 +62,8 @@ if [ -z "${TAG}" ]; then
     exit 1
 fi
 
+export CHART_VERSION=${TAG}
+
 echo
 cmd="make chart-kubeform-provider"
 echo "$cmd"
@@ -75,10 +77,12 @@ for p in "${providers[@]}"; do
         echo "${ctrl_tag} env var is not set"
         exit 1
     fi
-    export CHART_VERSION=${TAG}
     export APP_VERSION="${!ctrl_tag}"
 
-    echo "make chart-kubeform-provider-${p}"
+    echo
+    cmd="make chart-kubeform-provider-${p}"
+    echo "$cmd"
+    $cmd
     for crd in $(find "$input_dir/provider-${p}-api/apis" -maxdepth 1 -mindepth 1 -type d -printf '%f '); do
         cmd="make chart-kubeform-provider-${p}-${crd}-crds"
         echo "$cmd"
