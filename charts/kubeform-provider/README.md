@@ -1,6 +1,6 @@
-# Kubeform Controller
+# Kubeform Provider
 
-[Kubeform Controller by AppsCode](https://github.com/kubeform) - Provision cloud resources using Kubernetes CRDs & Terraform
+[Kubeform Provider by AppsCode](https://github.com/kubeform) - Provision cloud resources using Kubernetes CRDs & Terraform
 
 ## TL;DR;
 
