@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: groups.resourcegroups.aws.kubeform.com
 spec:
   group: resourcegroups.aws.kubeform.com
@@ -188,12 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -204,11 +199,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceQuery:
                     properties:
                       query:
@@ -222,45 +212,63 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 - resourceQuery
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceQuery:
+              resource:
                 properties:
-                  query:
+                  arn:
                     type: string
-                  type:
+                  description:
                     type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceQuery:
+                    properties:
+                      query:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - query
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
-                - query
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - name
+                - resourceQuery
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - resourceQuery
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: webacls.wafregional.aws.kubeform.com
 spec:
   group: wafregional.aws.kubeform.com
@@ -30,17 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              defaultAction:
-                properties:
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -81,11 +71,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rule:
                     items:
                       properties:
@@ -119,92 +104,115 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - defaultAction
                 - metricName
                 - name
-                - providerRef
                 type: object
-              loggingConfiguration:
-                properties:
-                  logDestination:
-                    type: string
-                  redactedFields:
-                    properties:
-                      fieldToMatch:
-                        items:
-                          properties:
-                            data:
-                              type: string
-                            type:
-                              type: string
-                          required:
-                          - type
-                          type: object
-                        type: array
-                    required:
-                    - fieldToMatch
-                    type: object
-                required:
-                - logDestination
-                type: object
-              metricName:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              rule:
-                items:
-                  properties:
-                    action:
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  defaultAction:
+                    properties:
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  id:
+                    type: string
+                  loggingConfiguration:
+                    properties:
+                      logDestination:
+                        type: string
+                      redactedFields:
+                        properties:
+                          fieldToMatch:
+                            items:
+                              properties:
+                                data:
+                                  type: string
+                                type:
+                                  type: string
+                              required:
+                              - type
+                              type: object
+                            type: array
+                        required:
+                        - fieldToMatch
+                        type: object
+                    required:
+                    - logDestination
+                    type: object
+                  metricName:
+                    type: string
+                  name:
+                    type: string
+                  rule:
+                    items:
                       properties:
+                        action:
+                          properties:
+                            type:
+                              type: string
+                          required:
+                          - type
+                          type: object
+                        overrideAction:
+                          properties:
+                            type:
+                              type: string
+                          required:
+                          - type
+                          type: object
+                        priority:
+                          format: int64
+                          type: integer
+                        ruleID:
+                          type: string
                         type:
                           type: string
                       required:
-                      - type
+                      - priority
+                      - ruleID
                       type: object
-                    overrideAction:
-                      properties:
-                        type:
-                          type: string
-                      required:
-                      - type
-                      type: object
-                    priority:
-                      format: int64
-                      type: integer
-                    ruleID:
+                    type: array
+                  tags:
+                    additionalProperties:
                       type: string
-                    type:
+                    type: object
+                  tagsAll:
+                    additionalProperties:
                       type: string
-                  required:
-                  - priority
-                  - ruleID
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                required:
+                - defaultAction
+                - metricName
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - defaultAction
-            - metricName
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

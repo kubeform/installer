@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accounts.organizations.aws.kubeform.com
 spec:
   group: organizations.aws.kubeform.com
@@ -188,18 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              email:
-                type: string
-              iamUserAccessToBilling:
-                type: string
-              id:
-                type: string
-              joinedMethod:
-                type: string
-              joinedTimestamp:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -218,11 +207,6 @@ spec:
                     type: string
                   parentID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roleName:
                     type: string
                   status:
@@ -231,42 +215,66 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - email
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              parentID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              roleName:
-                type: string
-              status:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  email:
+                    type: string
+                  iamUserAccessToBilling:
+                    type: string
+                  id:
+                    type: string
+                  joinedMethod:
+                    type: string
+                  joinedTimestamp:
+                    type: string
+                  name:
+                    type: string
+                  parentID:
+                    type: string
+                  roleName:
+                    type: string
+                  status:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - email
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - email
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -313,7 +321,152 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: delegatedadministrators.organizations.aws.kubeform.com
+spec:
+  group: organizations.aws.kubeform.com
+  names:
+    kind: DelegatedAdministrator
+    listKind: DelegatedAdministratorList
+    plural: delegatedadministrators
+    singular: delegatedadministrator
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  accountID:
+                    type: string
+                  arn:
+                    type: string
+                  delegationEnabledDate:
+                    type: string
+                  email:
+                    type: string
+                  id:
+                    type: string
+                  joinedMethod:
+                    type: string
+                  joinedTimestamp:
+                    type: string
+                  name:
+                    type: string
+                  servicePrincipal:
+                    type: string
+                  status:
+                    type: string
+                required:
+                - accountID
+                - servicePrincipal
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  accountID:
+                    type: string
+                  arn:
+                    type: string
+                  delegationEnabledDate:
+                    type: string
+                  email:
+                    type: string
+                  id:
+                    type: string
+                  joinedMethod:
+                    type: string
+                  joinedTimestamp:
+                    type: string
+                  name:
+                    type: string
+                  servicePrincipal:
+                    type: string
+                  status:
+                    type: string
+                required:
+                - accountID
+                - servicePrincipal
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: organizations.organizations.aws.kubeform.com
 spec:
   group: organizations.aws.kubeform.com
@@ -340,35 +493,6 @@ spec:
             type: object
           spec:
             properties:
-              accounts:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    arn:
-                      type: string
-                    email:
-                      type: string
-                    name:
-                      type: string
-                    status:
-                      type: string
-                  type: object
-                type: array
-              arn:
-                type: string
-              awsServiceAccessPrincipals:
-                items:
-                  type: string
-                type: array
-              enabledPolicyTypes:
-                items:
-                  type: string
-                type: array
-              featureSet:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accounts:
@@ -421,11 +545,6 @@ spec:
                           type: string
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roots:
                     items:
                       properties:
@@ -446,67 +565,98 @@ spec:
                           type: array
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
                 type: object
-              masterAccountArn:
-                type: string
-              masterAccountEmail:
-                type: string
-              masterAccountID:
-                type: string
-              nonMasterAccounts:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    arn:
-                      type: string
-                    email:
-                      type: string
-                    name:
-                      type: string
-                    status:
-                      type: string
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              roots:
-                items:
-                  properties:
-                    ID:
+              resource:
+                properties:
+                  accounts:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        arn:
+                          type: string
+                        email:
+                          type: string
+                        name:
+                          type: string
+                        status:
+                          type: string
+                      type: object
+                    type: array
+                  arn:
+                    type: string
+                  awsServiceAccessPrincipals:
+                    items:
                       type: string
-                    arn:
+                    type: array
+                  enabledPolicyTypes:
+                    items:
                       type: string
-                    name:
-                      type: string
-                    policyTypes:
-                      items:
-                        properties:
-                          status:
-                            type: string
-                          type:
-                            type: string
-                        type: object
-                      type: array
-                  type: object
-                type: array
+                    type: array
+                  featureSet:
+                    type: string
+                  id:
+                    type: string
+                  masterAccountArn:
+                    type: string
+                  masterAccountEmail:
+                    type: string
+                  masterAccountID:
+                    type: string
+                  nonMasterAccounts:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        arn:
+                          type: string
+                        email:
+                          type: string
+                        name:
+                          type: string
+                        status:
+                          type: string
+                      type: object
+                    type: array
+                  roots:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        arn:
+                          type: string
+                        name:
+                          type: string
+                        policyTypes:
+                          items:
+                            properties:
+                              status:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                      type: object
+                    type: array
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -553,7 +703,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: organizationalunits.organizations.aws.kubeform.com
 spec:
   group: organizations.aws.kubeform.com
@@ -580,23 +731,6 @@ spec:
             type: object
           spec:
             properties:
-              accounts:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    arn:
-                      type: string
-                    email:
-                      type: string
-                    name:
-                      type: string
-                  type: object
-                type: array
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accounts:
@@ -620,39 +754,71 @@ spec:
                     type: string
                   parentID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
+                  tags:
+                    additionalProperties:
+                      type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
                 - parentID
-                - providerRef
                 type: object
-              name:
-                type: string
-              parentID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  accounts:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        arn:
+                          type: string
+                        email:
+                          type: string
+                        name:
+                          type: string
+                      type: object
+                    type: array
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  parentID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - name
+                - parentID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
-            - parentID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -699,7 +865,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policies.organizations.aws.kubeform.com
 spec:
   group: organizations.aws.kubeform.com
@@ -726,14 +893,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              content:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -746,49 +905,64 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   type:
                     type: string
                 required:
                 - content
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  content:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  type:
+                    type: string
+                required:
+                - content
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - content
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -835,7 +1009,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policyattachments.organizations.aws.kubeform.com
 spec:
   group: organizations.aws.kubeform.com
@@ -862,49 +1037,48 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   policyID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   targetID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - policyID
-                - providerRef
                 - targetID
                 type: object
-              policyID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              targetID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  policyID:
+                    type: string
+                  targetID:
+                    type: string
+                required:
+                - policyID
+                - targetID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - policyID
             - providerRef
-            - targetID
+            - resource
             type: object
           status:
             properties:

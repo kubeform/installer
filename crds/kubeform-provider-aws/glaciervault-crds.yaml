@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: glaciervaults.glaciervault.aws.kubeform.com
 spec:
   group: glaciervault.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accessPolicy:
-                type: string
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accessPolicy:
@@ -60,57 +55,70 @@ spec:
                     - events
                     - snsTopic
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
-                type: object
-              location:
-                type: string
-              name:
-                type: string
-              notification:
-                properties:
-                  events:
-                    items:
-                      type: string
-                    type: array
-                  snsTopic:
-                    type: string
-                required:
-                - events
-                - snsTopic
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  accessPolicy:
+                    type: string
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  notification:
+                    properties:
+                      events:
+                        items:
+                          type: string
+                        type: array
+                      snsTopic:
+                        type: string
+                    required:
+                    - events
+                    - snsTopic
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -157,7 +165,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: locks.glaciervault.aws.kubeform.com
 spec:
   group: glaciervault.aws.kubeform.com
@@ -184,12 +193,6 @@ spec:
             type: object
           spec:
             properties:
-              completeLock:
-                type: boolean
-              id:
-                type: string
-              ignoreDeletionError:
-                type: boolean
               kubeformOutput:
                 properties:
                   completeLock:
@@ -200,43 +203,48 @@ spec:
                     type: boolean
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  vaultName:
+                    type: string
+                required:
+                - completeLock
+                - policy
+                - vaultName
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  completeLock:
+                    type: boolean
+                  id:
+                    type: string
+                  ignoreDeletionError:
+                    type: boolean
+                  policy:
                     type: string
                   vaultName:
                     type: string
                 required:
                 - completeLock
                 - policy
-                - providerRef
                 - vaultName
-                type: object
-              policy:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vaultName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - completeLock
-            - policy
             - providerRef
-            - vaultName
+            - resource
             type: object
           status:
             properties:

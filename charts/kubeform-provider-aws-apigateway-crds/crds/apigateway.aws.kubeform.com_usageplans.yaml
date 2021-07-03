@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: usageplans.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -30,24 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiStages:
-                items:
-                  properties:
-                    apiID:
-                      type: string
-                    stage:
-                      type: string
-                  required:
-                  - apiID
-                  - stage
-                  type: object
-                type: array
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiStages:
@@ -72,11 +55,6 @@ spec:
                     type: string
                   productCode:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   quotaSettings:
                     properties:
                       limit:
@@ -95,11 +73,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   throttleSettings:
                     properties:
                       burstLimit:
@@ -111,52 +88,83 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              productCode:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              quotaSettings:
+              resource:
                 properties:
-                  limit:
-                    format: int64
-                    type: integer
-                  offset:
-                    format: int64
-                    type: integer
-                  period:
+                  apiStages:
+                    items:
+                      properties:
+                        apiID:
+                          type: string
+                        stage:
+                          type: string
+                      required:
+                      - apiID
+                      - stage
+                      type: object
+                    type: array
+                  arn:
                     type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  productCode:
+                    type: string
+                  quotaSettings:
+                    properties:
+                      limit:
+                        format: int64
+                        type: integer
+                      offset:
+                        format: int64
+                        type: integer
+                      period:
+                        type: string
+                    required:
+                    - limit
+                    - period
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  throttleSettings:
+                    properties:
+                      burstLimit:
+                        format: int64
+                        type: integer
+                      rateLimit:
+                        format: double
+                        type: number
+                    type: object
                 required:
-                - limit
-                - period
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              throttleSettings:
-                properties:
-                  burstLimit:
-                    format: int64
-                    type: integer
-                  rateLimit:
-                    format: double
-                    type: number
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

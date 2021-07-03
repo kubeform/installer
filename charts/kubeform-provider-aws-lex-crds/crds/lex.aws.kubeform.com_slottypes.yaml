@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: slottypes.lex.aws.kubeform.com
 spec:
   group: lex.aws.kubeform.com
@@ -30,32 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              checksum:
-                type: string
-              createVersion:
-                type: boolean
-              createdDate:
-                type: string
-              description:
-                type: string
-              enumerationValue:
-                items:
-                  properties:
-                    synonyms:
-                      items:
-                        type: string
-                      minItems: 1
-                      type: array
-                    value:
-                      type: string
-                  required:
-                  - value
-                  type: object
-                maxItems: 10000
-                minItems: 1
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   checksum:
@@ -88,15 +63,68 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  valueSelectionStrategy:
+                    type: string
+                  version:
+                    type: string
+                required:
+                - enumerationValue
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  checksum:
+                    type: string
+                  createVersion:
+                    type: boolean
+                  createdDate:
+                    type: string
+                  description:
+                    type: string
+                  enumerationValue:
+                    items:
+                      properties:
+                        synonyms:
+                          items:
+                            type: string
+                          minItems: 1
+                          type: array
+                        value:
+                          type: string
+                      required:
+                      - value
+                      type: object
+                    maxItems: 10000
+                    minItems: 1
+                    type: array
+                  id:
+                    type: string
+                  lastUpdatedDate:
+                    type: string
+                  name:
                     type: string
                   timeouts:
                     properties:
@@ -123,48 +151,20 @@ spec:
                 required:
                 - enumerationValue
                 - name
-                - providerRef
-                type: object
-              lastUpdatedDate:
-                type: string
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              valueSelectionStrategy:
-                type: string
-              version:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - enumerationValue
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

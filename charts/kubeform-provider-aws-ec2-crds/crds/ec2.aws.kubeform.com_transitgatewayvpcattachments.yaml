@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: transitgatewayvpcattachments.ec2.aws.kubeform.com
 spec:
   group: ec2.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              applianceModeSupport:
-                type: string
-              dnsSupport:
-                type: string
-              id:
-                type: string
-              ipv6Support:
-                type: string
               kubeformOutput:
                 properties:
                   applianceModeSupport:
@@ -48,11 +41,6 @@ spec:
                     type: string
                   ipv6Support:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   subnetIDS:
                     items:
                       type: string
@@ -62,11 +50,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   transitGatewayDefaultRouteTableAssociation:
                     type: boolean
                   transitGatewayDefaultRouteTablePropagation:
@@ -78,7 +65,6 @@ spec:
                   vpcOwnerID:
                     type: string
                 required:
-                - providerRef
                 - subnetIDS
                 - transitGatewayID
                 - vpcID
@@ -88,35 +74,57 @@ spec:
                   name:
                     type: string
                 type: object
-              subnetIDS:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  applianceModeSupport:
+                    type: string
+                  dnsSupport:
+                    type: string
+                  id:
+                    type: string
+                  ipv6Support:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  transitGatewayDefaultRouteTableAssociation:
+                    type: boolean
+                  transitGatewayDefaultRouteTablePropagation:
+                    type: boolean
+                  transitGatewayID:
+                    type: string
+                  vpcID:
+                    type: string
+                  vpcOwnerID:
+                    type: string
+                required:
+                - subnetIDS
+                - transitGatewayID
+                - vpcID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              transitGatewayDefaultRouteTableAssociation:
-                type: boolean
-              transitGatewayDefaultRouteTablePropagation:
-                type: boolean
-              transitGatewayID:
-                type: string
-              vpcID:
-                type: string
-              vpcOwnerID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - subnetIDS
-            - transitGatewayID
-            - vpcID
+            - resource
             type: object
           status:
             properties:

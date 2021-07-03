@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: certificates.acmpca.aws.kubeform.com
 spec:
   group: acmpca.aws.kubeform.com
@@ -30,18 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              certificate:
-                type: string
-              certificateAuthorityArn:
-                type: string
-              certificateChain:
-                type: string
-              certificateSigningRequest:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -56,19 +45,9 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   signingAlgorithm:
                     type: string
                   templateArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   validity:
                     properties:
@@ -83,7 +62,6 @@ spec:
                 required:
                 - certificateAuthorityArn
                 - certificateSigningRequest
-                - providerRef
                 - signingAlgorithm
                 - validity
                 type: object
@@ -92,31 +70,53 @@ spec:
                   name:
                     type: string
                 type: object
-              signingAlgorithm:
-                type: string
-              templateArn:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  certificate:
+                    type: string
+                  certificateAuthorityArn:
+                    type: string
+                  certificateChain:
+                    type: string
+                  certificateSigningRequest:
+                    type: string
+                  id:
+                    type: string
+                  signingAlgorithm:
+                    type: string
+                  templateArn:
+                    type: string
+                  validity:
+                    properties:
+                      type:
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - type
+                    - value
+                    type: object
+                required:
+                - certificateAuthorityArn
+                - certificateSigningRequest
+                - signingAlgorithm
+                - validity
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              validity:
-                properties:
-                  type:
-                    type: string
-                  value:
-                    type: string
-                required:
-                - type
-                - value
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - certificateAuthorityArn
-            - certificateSigningRequest
             - providerRef
-            - signingAlgorithm
-            - validity
+            - resource
             type: object
           status:
             properties:
@@ -163,7 +163,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: certificateauthorities.acmpca.aws.kubeform.com
 spec:
   group: acmpca.aws.kubeform.com
@@ -190,58 +191,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              certificate:
-                type: string
-              certificateAuthorityConfiguration:
-                properties:
-                  keyAlgorithm:
-                    type: string
-                  signingAlgorithm:
-                    type: string
-                  subject:
-                    properties:
-                      commonName:
-                        type: string
-                      country:
-                        type: string
-                      distinguishedNameQualifier:
-                        type: string
-                      generationQualifier:
-                        type: string
-                      givenName:
-                        type: string
-                      initials:
-                        type: string
-                      locality:
-                        type: string
-                      organization:
-                        type: string
-                      organizationalUnit:
-                        type: string
-                      pseudonym:
-                        type: string
-                      state:
-                        type: string
-                      surname:
-                        type: string
-                      title:
-                        type: string
-                    type: object
-                required:
-                - keyAlgorithm
-                - signingAlgorithm
-                - subject
-                type: object
-              certificateChain:
-                type: string
-              certificateSigningRequest:
-                type: string
-              enabled:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -303,11 +252,6 @@ spec:
                   permanentDeletionTimeInDays:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   revocationConfiguration:
                     properties:
                       crlConfiguration:
@@ -321,6 +265,8 @@ spec:
                             type: integer
                           s3BucketName:
                             type: string
+                          s3ObjectACL:
+                            type: string
                         required:
                         - expirationInDays
                         type: object
@@ -333,11 +279,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -360,73 +305,140 @@ spec:
                     type: string
                 required:
                 - certificateAuthorityConfiguration
-                - providerRef
                 type: object
-              notAfter:
-                type: string
-              notBefore:
-                type: string
-              permanentDeletionTimeInDays:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              revocationConfiguration:
+              resource:
                 properties:
-                  crlConfiguration:
+                  arn:
+                    type: string
+                  certificate:
+                    type: string
+                  certificateAuthorityConfiguration:
                     properties:
-                      customCname:
+                      keyAlgorithm:
                         type: string
-                      enabled:
-                        type: boolean
-                      expirationInDays:
+                      signingAlgorithm:
+                        type: string
+                      subject:
+                        properties:
+                          commonName:
+                            type: string
+                          country:
+                            type: string
+                          distinguishedNameQualifier:
+                            type: string
+                          generationQualifier:
+                            type: string
+                          givenName:
+                            type: string
+                          initials:
+                            type: string
+                          locality:
+                            type: string
+                          organization:
+                            type: string
+                          organizationalUnit:
+                            type: string
+                          pseudonym:
+                            type: string
+                          state:
+                            type: string
+                          surname:
+                            type: string
+                          title:
+                            type: string
+                        type: object
+                    required:
+                    - keyAlgorithm
+                    - signingAlgorithm
+                    - subject
+                    type: object
+                  certificateChain:
+                    type: string
+                  certificateSigningRequest:
+                    type: string
+                  enabled:
+                    type: boolean
+                  id:
+                    type: string
+                  notAfter:
+                    type: string
+                  notBefore:
+                    type: string
+                  permanentDeletionTimeInDays:
+                    format: int64
+                    type: integer
+                  revocationConfiguration:
+                    properties:
+                      crlConfiguration:
+                        properties:
+                          customCname:
+                            type: string
+                          enabled:
+                            type: boolean
+                          expirationInDays:
+                            format: int64
+                            type: integer
+                          s3BucketName:
+                            type: string
+                          s3ObjectACL:
+                            type: string
+                        required:
+                        - expirationInDays
+                        type: object
+                    type: object
+                  serial:
+                    type: string
+                  status:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
                         format: int64
                         type: integer
-                      s3BucketName:
-                        type: string
-                    required:
-                    - expirationInDays
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                type: object
-              serial:
-                type: string
-              status:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+                  type:
+                    type: string
+                required:
+                - certificateAuthorityConfiguration
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - certificateAuthorityConfiguration
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -473,7 +485,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: certificateauthoritycertificates.acmpca.aws.kubeform.com
 spec:
   group: acmpca.aws.kubeform.com
@@ -500,14 +513,6 @@ spec:
             type: object
           spec:
             properties:
-              certificate:
-                type: string
-              certificateAuthorityArn:
-                type: string
-              certificateChain:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   certificate:
@@ -518,35 +523,42 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - certificate
                 - certificateAuthorityArn
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  certificate:
+                    type: string
+                  certificateAuthorityArn:
+                    type: string
+                  certificateChain:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - certificate
+                - certificateAuthorityArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - certificate
-            - certificateAuthorityArn
             - providerRef
+            - resource
             type: object
           status:
             properties:

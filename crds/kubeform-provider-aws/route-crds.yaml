@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: routes.route.aws.kubeform.com
 spec:
   group: route.aws.kubeform.com
@@ -188,24 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              carrierGatewayID:
-                type: string
-              destinationCIDRBlock:
-                type: string
-              destinationIpv6CIDRBlock:
-                type: string
-              destinationPrefixListID:
-                type: string
-              egressOnlyGatewayID:
-                type: string
-              gatewayID:
-                type: string
-              id:
-                type: string
-              instanceID:
-                type: string
-              instanceOwnerID:
-                type: string
               kubeformOutput:
                 properties:
                   carrierGatewayID:
@@ -234,19 +217,9 @@ spec:
                     type: string
                   origin:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   routeTableID:
                     type: string
                   state:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -273,58 +246,85 @@ spec:
                   vpcPeeringConnectionID:
                     type: string
                 required:
-                - providerRef
                 - routeTableID
                 type: object
-              localGatewayID:
-                type: string
-              natGatewayID:
-                type: string
-              networkInterfaceID:
-                type: string
-              origin:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              routeTableID:
-                type: string
-              state:
-                type: string
+              resource:
+                properties:
+                  carrierGatewayID:
+                    type: string
+                  destinationCIDRBlock:
+                    type: string
+                  destinationIpv6CIDRBlock:
+                    type: string
+                  destinationPrefixListID:
+                    type: string
+                  egressOnlyGatewayID:
+                    type: string
+                  gatewayID:
+                    type: string
+                  id:
+                    type: string
+                  instanceID:
+                    type: string
+                  instanceOwnerID:
+                    type: string
+                  localGatewayID:
+                    type: string
+                  natGatewayID:
+                    type: string
+                  networkInterfaceID:
+                    type: string
+                  origin:
+                    type: string
+                  routeTableID:
+                    type: string
+                  state:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  transitGatewayID:
+                    type: string
+                  vpcEndpointID:
+                    type: string
+                  vpcPeeringConnectionID:
+                    type: string
+                required:
+                - routeTableID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              transitGatewayID:
-                type: string
-              vpcEndpointID:
-                type: string
-              vpcPeeringConnectionID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - routeTableID
+            - resource
             type: object
           status:
             properties:
@@ -371,7 +371,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: tables.route.aws.kubeform.com
 spec:
   group: route.aws.kubeform.com
@@ -398,10 +399,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -414,11 +411,6 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   route:
                     items:
                       properties:
@@ -454,73 +446,89 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   vpcID:
                     type: string
                 required:
-                - providerRef
                 - vpcID
                 type: object
-              ownerID:
-                type: string
-              propagatingVgws:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              route:
-                items:
-                  properties:
-                    carrierGatewayID:
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  ownerID:
+                    type: string
+                  propagatingVgws:
+                    items:
                       type: string
-                    cidrBlock:
+                    type: array
+                  route:
+                    items:
+                      properties:
+                        carrierGatewayID:
+                          type: string
+                        cidrBlock:
+                          type: string
+                        destinationPrefixListID:
+                          type: string
+                        egressOnlyGatewayID:
+                          type: string
+                        gatewayID:
+                          type: string
+                        instanceID:
+                          type: string
+                        ipv6CIDRBlock:
+                          type: string
+                        localGatewayID:
+                          type: string
+                        natGatewayID:
+                          type: string
+                        networkInterfaceID:
+                          type: string
+                        transitGatewayID:
+                          type: string
+                        vpcEndpointID:
+                          type: string
+                        vpcPeeringConnectionID:
+                          type: string
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
                       type: string
-                    destinationPrefixListID:
+                    type: object
+                  tagsAll:
+                    additionalProperties:
                       type: string
-                    egressOnlyGatewayID:
-                      type: string
-                    gatewayID:
-                      type: string
-                    instanceID:
-                      type: string
-                    ipv6CIDRBlock:
-                      type: string
-                    localGatewayID:
-                      type: string
-                    natGatewayID:
-                      type: string
-                    networkInterfaceID:
-                      type: string
-                    transitGatewayID:
-                      type: string
-                    vpcEndpointID:
-                      type: string
-                    vpcPeeringConnectionID:
-                      type: string
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                  vpcID:
+                    type: string
+                required:
+                - vpcID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - vpcID
+            - resource
             type: object
           status:
             properties:
@@ -567,7 +575,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: tableassociations.route.aws.kubeform.com
 spec:
   group: route.aws.kubeform.com
@@ -594,32 +603,17 @@ spec:
             type: object
           spec:
             properties:
-              gatewayID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   gatewayID:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   routeTableID:
                     type: string
                   subnetID:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - routeTableID
                 type: object
               providerRef:
@@ -627,18 +621,32 @@ spec:
                   name:
                     type: string
                 type: object
-              routeTableID:
-                type: string
-              subnetID:
-                type: string
+              resource:
+                properties:
+                  gatewayID:
+                    type: string
+                  id:
+                    type: string
+                  routeTableID:
+                    type: string
+                  subnetID:
+                    type: string
+                required:
+                - routeTableID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - routeTableID
+            - resource
             type: object
           status:
             properties:

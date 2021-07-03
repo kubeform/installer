@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: taskdefinitions.ecs.aws.kubeform.com
 spec:
   group: ecs.aws.kubeform.com
@@ -30,32 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              containerDefinitions:
-                type: string
-              cpu:
-                type: string
-              executionRoleArn:
-                type: string
-              family:
-                type: string
-              id:
-                type: string
-              inferenceAccelerator:
-                items:
-                  properties:
-                    deviceName:
-                      type: string
-                    deviceType:
-                      type: string
-                  required:
-                  - deviceName
-                  - deviceType
-                  type: object
-                type: array
-              ipcMode:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -64,6 +39,14 @@ spec:
                     type: string
                   cpu:
                     type: string
+                  ephemeralStorage:
+                    properties:
+                      sizeInGib:
+                        format: int64
+                        type: integer
+                    required:
+                    - sizeInGib
+                    type: object
                   executionRoleArn:
                     type: string
                   family:
@@ -102,11 +85,6 @@ spec:
                       type: object
                     maxItems: 10
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   proxyConfiguration:
                     properties:
                       containerName:
@@ -131,12 +109,11 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   taskRoleArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   volume:
                     items:
@@ -179,6 +156,27 @@ spec:
                           required:
                           - fileSystemID
                           type: object
+                        fsxWindowsFileServerVolumeConfiguration:
+                          properties:
+                            authorizationConfig:
+                              properties:
+                                credentialsParameter:
+                                  type: string
+                                domain:
+                                  type: string
+                              required:
+                              - credentialsParameter
+                              - domain
+                              type: object
+                            fileSystemID:
+                              type: string
+                            rootDirectory:
+                              type: string
+                          required:
+                          - authorizationConfig
+                          - fileSystemID
+                          - rootDirectory
+                          type: object
                         hostPath:
                           type: string
                         name:
@@ -190,115 +188,183 @@ spec:
                 required:
                 - containerDefinitions
                 - family
-                - providerRef
                 type: object
-              memory:
-                type: string
-              networkMode:
-                type: string
-              pidMode:
-                type: string
-              placementConstraints:
-                items:
-                  properties:
-                    expression:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - type
-                  type: object
-                maxItems: 10
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              proxyConfiguration:
+              resource:
                 properties:
-                  containerName:
+                  arn:
                     type: string
-                  properties:
+                  containerDefinitions:
+                    type: string
+                  cpu:
+                    type: string
+                  ephemeralStorage:
+                    properties:
+                      sizeInGib:
+                        format: int64
+                        type: integer
+                    required:
+                    - sizeInGib
+                    type: object
+                  executionRoleArn:
+                    type: string
+                  family:
+                    type: string
+                  id:
+                    type: string
+                  inferenceAccelerator:
+                    items:
+                      properties:
+                        deviceName:
+                          type: string
+                        deviceType:
+                          type: string
+                      required:
+                      - deviceName
+                      - deviceType
+                      type: object
+                    type: array
+                  ipcMode:
+                    type: string
+                  memory:
+                    type: string
+                  networkMode:
+                    type: string
+                  pidMode:
+                    type: string
+                  placementConstraints:
+                    items:
+                      properties:
+                        expression:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                      - type
+                      type: object
+                    maxItems: 10
+                    type: array
+                  proxyConfiguration:
+                    properties:
+                      containerName:
+                        type: string
+                      properties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      type:
+                        type: string
+                    required:
+                    - containerName
+                    type: object
+                  requiresCompatibilities:
+                    items:
+                      type: string
+                    type: array
+                  revision:
+                    format: int64
+                    type: integer
+                  tags:
                     additionalProperties:
                       type: string
                     type: object
-                  type:
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  taskRoleArn:
                     type: string
+                  volume:
+                    items:
+                      properties:
+                        dockerVolumeConfiguration:
+                          properties:
+                            autoprovision:
+                              type: boolean
+                            driver:
+                              type: string
+                            driverOpts:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            labels:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            scope:
+                              type: string
+                          type: object
+                        efsVolumeConfiguration:
+                          properties:
+                            authorizationConfig:
+                              properties:
+                                accessPointID:
+                                  type: string
+                                iam:
+                                  type: string
+                              type: object
+                            fileSystemID:
+                              type: string
+                            rootDirectory:
+                              type: string
+                            transitEncryption:
+                              type: string
+                            transitEncryptionPort:
+                              format: int64
+                              type: integer
+                          required:
+                          - fileSystemID
+                          type: object
+                        fsxWindowsFileServerVolumeConfiguration:
+                          properties:
+                            authorizationConfig:
+                              properties:
+                                credentialsParameter:
+                                  type: string
+                                domain:
+                                  type: string
+                              required:
+                              - credentialsParameter
+                              - domain
+                              type: object
+                            fileSystemID:
+                              type: string
+                            rootDirectory:
+                              type: string
+                          required:
+                          - authorizationConfig
+                          - fileSystemID
+                          - rootDirectory
+                          type: object
+                        hostPath:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    type: array
                 required:
-                - containerName
+                - containerDefinitions
+                - family
                 type: object
-              requiresCompatibilities:
-                items:
-                  type: string
-                type: array
-              revision:
-                format: int64
-                type: integer
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              taskRoleArn:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              volume:
-                items:
-                  properties:
-                    dockerVolumeConfiguration:
-                      properties:
-                        autoprovision:
-                          type: boolean
-                        driver:
-                          type: string
-                        driverOpts:
-                          additionalProperties:
-                            type: string
-                          type: object
-                        labels:
-                          additionalProperties:
-                            type: string
-                          type: object
-                        scope:
-                          type: string
-                      type: object
-                    efsVolumeConfiguration:
-                      properties:
-                        authorizationConfig:
-                          properties:
-                            accessPointID:
-                              type: string
-                            iam:
-                              type: string
-                          type: object
-                        fileSystemID:
-                          type: string
-                        rootDirectory:
-                          type: string
-                        transitEncryption:
-                          type: string
-                        transitEncryptionPort:
-                          format: int64
-                          type: integer
-                      required:
-                      - fileSystemID
-                      type: object
-                    hostPath:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - containerDefinitions
-            - family
             - providerRef
+            - resource
             type: object
           status:
             properties:

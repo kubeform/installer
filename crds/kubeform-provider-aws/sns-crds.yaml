@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: platformapplications.sns.aws.kubeform.com
 spec:
   group: sns.aws.kubeform.com
@@ -188,20 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              eventDeliveryFailureTopicArn:
-                type: string
-              eventEndpointCreatedTopicArn:
-                type: string
-              eventEndpointDeletedTopicArn:
-                type: string
-              eventEndpointUpdatedTopicArn:
-                type: string
-              failureFeedbackRoleArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -222,57 +209,65 @@ spec:
                     type: string
                   platform:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   successFeedbackRoleArn:
                     type: string
                   successFeedbackSampleRate:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - name
                 - platform
-                - providerRef
                 type: object
-              name:
-                type: string
-              platform:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  eventDeliveryFailureTopicArn:
+                    type: string
+                  eventEndpointCreatedTopicArn:
+                    type: string
+                  eventEndpointDeletedTopicArn:
+                    type: string
+                  eventEndpointUpdatedTopicArn:
+                    type: string
+                  failureFeedbackRoleArn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  platform:
+                    type: string
+                  successFeedbackRoleArn:
+                    type: string
+                  successFeedbackSampleRate:
+                    type: string
+                required:
+                - name
+                - platform
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              successFeedbackRoleArn:
-                type: string
-              successFeedbackSampleRate:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
-            - platform
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -319,7 +314,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: smspreferences.sns.aws.kubeform.com
 spec:
   group: sns.aws.kubeform.com
@@ -346,16 +342,6 @@ spec:
             type: object
           spec:
             properties:
-              defaultSenderID:
-                type: string
-              defaultSmsType:
-                type: string
-              deliveryStatusIamRoleArn:
-                type: string
-              deliveryStatusSuccessSamplingRate:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   defaultSenderID:
@@ -370,26 +356,29 @@ spec:
                     type: string
                   monthlySpendLimit:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   usageReportS3Bucket:
                     type: string
-                required:
-                - providerRef
                 type: object
-              monthlySpendLimit:
-                type: string
               providerRef:
                 properties:
                   name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  defaultSenderID:
+                    type: string
+                  defaultSmsType:
+                    type: string
+                  deliveryStatusIamRoleArn:
+                    type: string
+                  deliveryStatusSuccessSamplingRate:
+                    type: string
+                  id:
+                    type: string
+                  monthlySpendLimit:
+                    type: string
+                  usageReportS3Bucket:
                     type: string
                 type: object
               terminationPolicy:
@@ -397,10 +386,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              usageReportS3Bucket:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -447,7 +440,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: topics.sns.aws.kubeform.com
 spec:
   group: sns.aws.kubeform.com
@@ -474,34 +468,6 @@ spec:
             type: object
           spec:
             properties:
-              applicationFailureFeedbackRoleArn:
-                type: string
-              applicationSuccessFeedbackRoleArn:
-                type: string
-              applicationSuccessFeedbackSampleRate:
-                format: int64
-                type: integer
-              arn:
-                type: string
-              contentBasedDeduplication:
-                type: boolean
-              deliveryPolicy:
-                type: string
-              displayName:
-                type: string
-              fifoTopic:
-                type: boolean
-              httpFailureFeedbackRoleArn:
-                type: string
-              httpSuccessFeedbackRoleArn:
-                type: string
-              httpSuccessFeedbackSampleRate:
-                format: int64
-                type: integer
-              id:
-                type: string
-              kmsMasterKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   applicationFailureFeedbackRoleArn:
@@ -521,6 +487,13 @@ spec:
                     type: string
                   fifoTopic:
                     type: boolean
+                  firehoseFailureFeedbackRoleArn:
+                    type: string
+                  firehoseSuccessFeedbackRoleArn:
+                    type: string
+                  firehoseSuccessFeedbackSampleRate:
+                    format: int64
+                    type: integer
                   httpFailureFeedbackRoleArn:
                     type: string
                   httpSuccessFeedbackRoleArn:
@@ -543,13 +516,10 @@ spec:
                     type: string
                   namePrefix:
                     type: string
+                  owner:
+                    type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sqsFailureFeedbackRoleArn:
                     type: string
                   sqsSuccessFeedbackRoleArn:
@@ -561,50 +531,97 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
-              lambdaFailureFeedbackRoleArn:
-                type: string
-              lambdaSuccessFeedbackRoleArn:
-                type: string
-              lambdaSuccessFeedbackSampleRate:
-                format: int64
-                type: integer
-              name:
-                type: string
-              namePrefix:
-                type: string
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              sqsFailureFeedbackRoleArn:
-                type: string
-              sqsSuccessFeedbackRoleArn:
-                type: string
-              sqsSuccessFeedbackSampleRate:
-                format: int64
-                type: integer
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  applicationFailureFeedbackRoleArn:
+                    type: string
+                  applicationSuccessFeedbackRoleArn:
+                    type: string
+                  applicationSuccessFeedbackSampleRate:
+                    format: int64
+                    type: integer
+                  arn:
+                    type: string
+                  contentBasedDeduplication:
+                    type: boolean
+                  deliveryPolicy:
+                    type: string
+                  displayName:
+                    type: string
+                  fifoTopic:
+                    type: boolean
+                  firehoseFailureFeedbackRoleArn:
+                    type: string
+                  firehoseSuccessFeedbackRoleArn:
+                    type: string
+                  firehoseSuccessFeedbackSampleRate:
+                    format: int64
+                    type: integer
+                  httpFailureFeedbackRoleArn:
+                    type: string
+                  httpSuccessFeedbackRoleArn:
+                    type: string
+                  httpSuccessFeedbackSampleRate:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  kmsMasterKeyID:
+                    type: string
+                  lambdaFailureFeedbackRoleArn:
+                    type: string
+                  lambdaSuccessFeedbackRoleArn:
+                    type: string
+                  lambdaSuccessFeedbackSampleRate:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  owner:
+                    type: string
+                  policy:
+                    type: string
+                  sqsFailureFeedbackRoleArn:
+                    type: string
+                  sqsSuccessFeedbackRoleArn:
+                    type: string
+                  sqsSuccessFeedbackSampleRate:
+                    format: int64
+                    type: integer
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -651,7 +668,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: topicpolicies.sns.aws.kubeform.com
 spec:
   group: sns.aws.kubeform.com
@@ -678,49 +696,52 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
                     type: string
                   id:
                     type: string
-                  policy:
+                  owner:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  policy:
                     type: string
                 required:
                 - arn
                 - policy
-                - providerRef
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  owner:
+                    type: string
+                  policy:
+                    type: string
+                required:
+                - arn
+                - policy
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - arn
-            - policy
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -767,7 +788,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: topicsubscriptions.sns.aws.kubeform.com
 spec:
   group: sns.aws.kubeform.com
@@ -794,23 +816,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              confirmationTimeoutInMinutes:
-                format: int64
-                type: integer
-              confirmationWasAuthenticated:
-                type: boolean
-              deliveryPolicy:
-                type: string
-              endpoint:
-                type: string
-              endpointAutoConfirms:
-                type: boolean
-              filterPolicy:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -836,59 +841,75 @@ spec:
                     type: boolean
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rawMessageDelivery:
                     type: boolean
                   redrivePolicy:
                     type: string
                   subscriptionRoleArn:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  topicArn:
+                    type: string
+                required:
+                - endpoint
+                - protocol
+                - topicArn
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  confirmationTimeoutInMinutes:
+                    format: int64
+                    type: integer
+                  confirmationWasAuthenticated:
+                    type: boolean
+                  deliveryPolicy:
+                    type: string
+                  endpoint:
+                    type: string
+                  endpointAutoConfirms:
+                    type: boolean
+                  filterPolicy:
+                    type: string
+                  id:
+                    type: string
+                  ownerID:
+                    type: string
+                  pendingConfirmation:
+                    type: boolean
+                  protocol:
+                    type: string
+                  rawMessageDelivery:
+                    type: boolean
+                  redrivePolicy:
+                    type: string
+                  subscriptionRoleArn:
                     type: string
                   topicArn:
                     type: string
                 required:
                 - endpoint
                 - protocol
-                - providerRef
                 - topicArn
                 type: object
-              ownerID:
-                type: string
-              pendingConfirmation:
-                type: boolean
-              protocol:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rawMessageDelivery:
-                type: boolean
-              redrivePolicy:
-                type: string
-              subscriptionRoleArn:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              topicArn:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - endpoint
-            - protocol
             - providerRef
-            - topicArn
+            - resource
             type: object
           status:
             properties:

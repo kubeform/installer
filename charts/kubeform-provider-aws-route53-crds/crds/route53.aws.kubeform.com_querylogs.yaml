@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: querylogs.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -30,31 +31,16 @@ spec:
             type: object
           spec:
             properties:
-              cloudwatchLogGroupArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   cloudwatchLogGroupArn:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   zoneID:
                     type: string
                 required:
                 - cloudwatchLogGroupArn
-                - providerRef
                 - zoneID
                 type: object
               providerRef:
@@ -62,17 +48,31 @@ spec:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  cloudwatchLogGroupArn:
+                    type: string
+                  id:
+                    type: string
+                  zoneID:
+                    type: string
+                required:
+                - cloudwatchLogGroupArn
+                - zoneID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              zoneID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - cloudwatchLogGroupArn
             - providerRef
-            - zoneID
+            - resource
             type: object
           status:
             properties:

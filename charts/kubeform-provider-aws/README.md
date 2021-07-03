@@ -52,11 +52,13 @@ The following table lists the configurable parameters of the `kubeform-provider-
 | crds.acmpca                          | If true, installs the kubeform-provider-aws-acmpca-crds chart                          | `false`                                                   |
 | crds.alb                             | If true, installs the kubeform-provider-aws-alb-crds chart                             | `false`                                                   |
 | crds.ami                             | If true, installs the kubeform-provider-aws-ami-crds chart                             | `false`                                                   |
+| crds.amplify                         | If true, installs the kubeform-provider-aws-amplify-crds chart                         | `false`                                                   |
 | crds.apigateway                      | If true, installs the kubeform-provider-aws-apigateway-crds chart                      | `false`                                                   |
 | crds.apigatewayv2                    | If true, installs the kubeform-provider-aws-apigatewayv2-crds chart                    | `false`                                                   |
 | crds.app                             | If true, installs the kubeform-provider-aws-app-crds chart                             | `false`                                                   |
 | crds.appautoscaling                  | If true, installs the kubeform-provider-aws-appautoscaling-crds chart                  | `false`                                                   |
 | crds.appmesh                         | If true, installs the kubeform-provider-aws-appmesh-crds chart                         | `false`                                                   |
+| crds.apprunner                       | If true, installs the kubeform-provider-aws-apprunner-crds chart                       | `false`                                                   |
 | crds.appsync                         | If true, installs the kubeform-provider-aws-appsync-crds chart                         | `false`                                                   |
 | crds.athena                          | If true, installs the kubeform-provider-aws-athena-crds chart                          | `false`                                                   |
 | crds.autoscaling                     | If true, installs the kubeform-provider-aws-autoscaling-crds chart                     | `false`                                                   |
@@ -66,6 +68,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 | crds.budgets                         | If true, installs the kubeform-provider-aws-budgets-crds chart                         | `false`                                                   |
 | crds.cloud9                          | If true, installs the kubeform-provider-aws-cloud9-crds chart                          | `false`                                                   |
 | crds.cloudformationstack             | If true, installs the kubeform-provider-aws-cloudformationstack-crds chart             | `false`                                                   |
+| crds.cloudformationtype              | If true, installs the kubeform-provider-aws-cloudformationtype-crds chart              | `false`                                                   |
 | crds.cloudfront                      | If true, installs the kubeform-provider-aws-cloudfront-crds chart                      | `false`                                                   |
 | crds.cloudhsmv2                      | If true, installs the kubeform-provider-aws-cloudhsmv2-crds chart                      | `false`                                                   |
 | crds.cloudtrail                      | If true, installs the kubeform-provider-aws-cloudtrail-crds chart                      | `false`                                                   |
@@ -135,6 +138,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 | crds.lightsail                       | If true, installs the kubeform-provider-aws-lightsail-crds chart                       | `false`                                                   |
 | crds.loadbalancer                    | If true, installs the kubeform-provider-aws-loadbalancer-crds chart                    | `false`                                                   |
 | crds.macie                           | If true, installs the kubeform-provider-aws-macie-crds chart                           | `false`                                                   |
+| crds.macie2                          | If true, installs the kubeform-provider-aws-macie2-crds chart                          | `false`                                                   |
 | crds.main                            | If true, installs the kubeform-provider-aws-main-crds chart                            | `false`                                                   |
 | crds.media                           | If true, installs the kubeform-provider-aws-media-crds chart                           | `false`                                                   |
 | crds.mq                              | If true, installs the kubeform-provider-aws-mq-crds chart                              | `false`                                                   |
@@ -162,6 +166,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 | crds.s3control                       | If true, installs the kubeform-provider-aws-s3control-crds chart                       | `false`                                                   |
 | crds.s3outposts                      | If true, installs the kubeform-provider-aws-s3outposts-crds chart                      | `false`                                                   |
 | crds.sagemaker                       | If true, installs the kubeform-provider-aws-sagemaker-crds chart                       | `false`                                                   |
+| crds.schemas                         | If true, installs the kubeform-provider-aws-schemas-crds chart                         | `false`                                                   |
 | crds.secretsmanager                  | If true, installs the kubeform-provider-aws-secretsmanager-crds chart                  | `false`                                                   |
 | crds.security                        | If true, installs the kubeform-provider-aws-security-crds chart                        | `false`                                                   |
 | crds.securityhub                     | If true, installs the kubeform-provider-aws-securityhub-crds chart                     | `false`                                                   |
@@ -184,6 +189,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 | crds.subnet                          | If true, installs the kubeform-provider-aws-subnet-crds chart                          | `false`                                                   |
 | crds.swf                             | If true, installs the kubeform-provider-aws-swf-crds chart                             | `false`                                                   |
 | crds.synthetics                      | If true, installs the kubeform-provider-aws-synthetics-crds chart                      | `false`                                                   |
+| crds.timestreamwrite                 | If true, installs the kubeform-provider-aws-timestreamwrite-crds chart                 | `false`                                                   |
 | crds.transfer                        | If true, installs the kubeform-provider-aws-transfer-crds chart                        | `false`                                                   |
 | crds.volume                          | If true, installs the kubeform-provider-aws-volume-crds chart                          | `false`                                                   |
 | crds.vpc                             | If true, installs the kubeform-provider-aws-vpc-crds chart                             | `false`                                                   |

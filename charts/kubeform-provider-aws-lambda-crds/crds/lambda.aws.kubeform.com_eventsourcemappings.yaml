@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: eventsourcemappings.lambda.aws.kubeform.com
 spec:
   group: lambda.aws.kubeform.com
@@ -30,31 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              batchSize:
-                format: int64
-                type: integer
-              bisectBatchOnFunctionError:
-                type: boolean
-              destinationConfig:
-                properties:
-                  onFailure:
-                    properties:
-                      destinationArn:
-                        type: string
-                    required:
-                    - destinationArn
-                    type: object
-                type: object
-              enabled:
-                type: boolean
-              eventSourceArn:
-                type: string
-              functionArn:
-                type: string
-              functionName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   batchSize:
@@ -80,6 +56,10 @@ spec:
                     type: string
                   functionName:
                     type: string
+                  functionResponseTypes:
+                    items:
+                      type: string
+                    type: array
                   id:
                     type: string
                   lastModified:
@@ -98,11 +78,32 @@ spec:
                   parallelizationFactor:
                     format: int64
                     type: integer
-                  providerRef:
+                  queues:
+                    items:
+                      type: string
+                    type: array
+                  selfManagedEventSource:
                     properties:
-                      name:
-                        type: string
+                      endpoints:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    required:
+                    - endpoints
                     type: object
+                  sourceAccessConfiguration:
+                    items:
+                      properties:
+                        type:
+                          type: string
+                        uri:
+                          type: string
+                      required:
+                      - type
+                      - uri
+                      type: object
+                    maxItems: 22
+                    type: array
                   startingPosition:
                     type: string
                   startingPositionTimestamp:
@@ -111,66 +112,129 @@ spec:
                     type: string
                   stateTransitionReason:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   topics:
                     items:
                       type: string
                     type: array
+                  tumblingWindowInSeconds:
+                    format: int64
+                    type: integer
                   uuid:
                     type: string
                 required:
-                - eventSourceArn
                 - functionName
-                - providerRef
                 type: object
-              lastModified:
-                type: string
-              lastProcessingResult:
-                type: string
-              maximumBatchingWindowInSeconds:
-                format: int64
-                type: integer
-              maximumRecordAgeInSeconds:
-                format: int64
-                type: integer
-              maximumRetryAttempts:
-                format: int64
-                type: integer
-              parallelizationFactor:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              startingPosition:
-                type: string
-              startingPositionTimestamp:
-                type: string
-              state:
-                type: string
-              stateTransitionReason:
-                type: string
+              resource:
+                properties:
+                  batchSize:
+                    format: int64
+                    type: integer
+                  bisectBatchOnFunctionError:
+                    type: boolean
+                  destinationConfig:
+                    properties:
+                      onFailure:
+                        properties:
+                          destinationArn:
+                            type: string
+                        required:
+                        - destinationArn
+                        type: object
+                    type: object
+                  enabled:
+                    type: boolean
+                  eventSourceArn:
+                    type: string
+                  functionArn:
+                    type: string
+                  functionName:
+                    type: string
+                  functionResponseTypes:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  lastModified:
+                    type: string
+                  lastProcessingResult:
+                    type: string
+                  maximumBatchingWindowInSeconds:
+                    format: int64
+                    type: integer
+                  maximumRecordAgeInSeconds:
+                    format: int64
+                    type: integer
+                  maximumRetryAttempts:
+                    format: int64
+                    type: integer
+                  parallelizationFactor:
+                    format: int64
+                    type: integer
+                  queues:
+                    items:
+                      type: string
+                    type: array
+                  selfManagedEventSource:
+                    properties:
+                      endpoints:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    required:
+                    - endpoints
+                    type: object
+                  sourceAccessConfiguration:
+                    items:
+                      properties:
+                        type:
+                          type: string
+                        uri:
+                          type: string
+                      required:
+                      - type
+                      - uri
+                      type: object
+                    maxItems: 22
+                    type: array
+                  startingPosition:
+                    type: string
+                  startingPositionTimestamp:
+                    type: string
+                  state:
+                    type: string
+                  stateTransitionReason:
+                    type: string
+                  topics:
+                    items:
+                      type: string
+                    type: array
+                  tumblingWindowInSeconds:
+                    format: int64
+                    type: integer
+                  uuid:
+                    type: string
+                required:
+                - functionName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              topics:
-                items:
-                  type: string
-                type: array
-              uuid:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - eventSourceArn
-            - functionName
             - providerRef
+            - resource
             type: object
           status:
             properties:

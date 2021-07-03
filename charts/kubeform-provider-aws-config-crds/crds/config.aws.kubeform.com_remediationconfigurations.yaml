@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: remediationconfigurations.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              configRuleName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -58,11 +53,6 @@ spec:
                       type: object
                     maxItems: 25
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceType:
                     type: string
                   targetID:
@@ -71,54 +61,64 @@ spec:
                     type: string
                   targetVersion:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - configRuleName
-                - providerRef
                 - targetID
                 - targetType
                 type: object
-              parameter:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    resourceValue:
-                      type: string
-                    staticValue:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                maxItems: 25
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceType:
-                type: string
-              targetID:
-                type: string
-              targetType:
-                type: string
-              targetVersion:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  configRuleName:
+                    type: string
+                  id:
+                    type: string
+                  parameter:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        resourceValue:
+                          type: string
+                        staticValue:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    maxItems: 25
+                    type: array
+                  resourceType:
+                    type: string
+                  targetID:
+                    type: string
+                  targetType:
+                    type: string
+                  targetVersion:
+                    type: string
+                required:
+                - configRuleName
+                - targetID
+                - targetType
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - configRuleName
             - providerRef
-            - targetID
-            - targetType
+            - resource
             type: object
           status:
             properties:

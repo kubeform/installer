@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: eventpermissions.cloudwatch.aws.kubeform.com
 spec:
   group: cloudwatch.aws.kubeform.com
@@ -30,25 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              action:
-                type: string
-              condition:
-                properties:
-                  key:
-                    type: string
-                  type:
-                    type: string
-                  value:
-                    type: string
-                required:
-                - key
-                - type
-                - value
-                type: object
-              eventBusName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   action:
@@ -72,41 +54,59 @@ spec:
                     type: string
                   principal:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   statementID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - principal
-                - providerRef
                 - statementID
                 type: object
-              principal:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              statementID:
-                type: string
+              resource:
+                properties:
+                  action:
+                    type: string
+                  condition:
+                    properties:
+                      key:
+                        type: string
+                      type:
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - key
+                    - type
+                    - value
+                    type: object
+                  eventBusName:
+                    type: string
+                  id:
+                    type: string
+                  principal:
+                    type: string
+                  statementID:
+                    type: string
+                required:
+                - principal
+                - statementID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - principal
             - providerRef
-            - statementID
+            - resource
             type: object
           status:
             properties:

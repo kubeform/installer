@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: codepipelines.codepipeline.aws.kubeform.com
 spec:
   group: codepipeline.aws.kubeform.com
@@ -30,34 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              artifactStore:
-                items:
-                  properties:
-                    encryptionKey:
-                      properties:
-                        ID:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                      - ID
-                      - type
-                      type: object
-                    location:
-                      type: string
-                    region:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - location
-                  - type
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -90,11 +63,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roleArn:
                     type: string
                   stage:
@@ -154,95 +122,135 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - artifactStore
                 - name
-                - providerRef
                 - roleArn
                 - stage
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              roleArn:
-                type: string
-              stage:
-                items:
-                  properties:
-                    action:
-                      items:
-                        properties:
-                          category:
-                            type: string
-                          configuration:
-                            additionalProperties:
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  artifactStore:
+                    items:
+                      properties:
+                        encryptionKey:
+                          properties:
+                            ID:
                               type: string
+                            type:
+                              type: string
+                          required:
+                          - ID
+                          - type
+                          type: object
+                        location:
+                          type: string
+                        region:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                      - location
+                      - type
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  roleArn:
+                    type: string
+                  stage:
+                    items:
+                      properties:
+                        action:
+                          items:
+                            properties:
+                              category:
+                                type: string
+                              configuration:
+                                additionalProperties:
+                                  type: string
+                                type: object
+                              inputArtifacts:
+                                items:
+                                  type: string
+                                type: array
+                              name:
+                                type: string
+                              namespace:
+                                type: string
+                              outputArtifacts:
+                                items:
+                                  type: string
+                                type: array
+                              owner:
+                                type: string
+                              provider:
+                                type: string
+                              region:
+                                type: string
+                              roleArn:
+                                type: string
+                              runOrder:
+                                format: int64
+                                type: integer
+                              version:
+                                type: string
+                            required:
+                            - category
+                            - name
+                            - owner
+                            - provider
+                            - version
                             type: object
-                          inputArtifacts:
-                            items:
-                              type: string
-                            type: array
-                          name:
-                            type: string
-                          namespace:
-                            type: string
-                          outputArtifacts:
-                            items:
-                              type: string
-                            type: array
-                          owner:
-                            type: string
-                          provider:
-                            type: string
-                          region:
-                            type: string
-                          roleArn:
-                            type: string
-                          runOrder:
-                            format: int64
-                            type: integer
-                          version:
-                            type: string
-                        required:
-                        - category
-                        - name
-                        - owner
-                        - provider
-                        - version
-                        type: object
-                      type: array
-                    name:
+                          type: array
+                        name:
+                          type: string
+                      required:
+                      - action
+                      - name
+                      type: object
+                    minItems: 2
+                    type: array
+                  tags:
+                    additionalProperties:
                       type: string
-                  required:
-                  - action
-                  - name
-                  type: object
-                minItems: 2
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - artifactStore
+                - name
+                - roleArn
+                - stage
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - artifactStore
-            - name
             - providerRef
-            - roleArn
-            - stage
+            - resource
             type: object
           status:
             properties:
@@ -289,7 +297,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: webhooks.codepipeline.aws.kubeform.com
 spec:
   group: codepipeline.aws.kubeform.com
@@ -316,28 +325,6 @@ spec:
             type: object
           spec:
             properties:
-              authentication:
-                type: string
-              authenticationConfiguration:
-                properties:
-                  allowedIPRange:
-                    type: string
-                type: object
-              filter:
-                items:
-                  properties:
-                    jsonPath:
-                      type: string
-                    matchEquals:
-                      type: string
-                  required:
-                  - jsonPath
-                  - matchEquals
-                  type: object
-                minItems: 1
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   authentication:
@@ -364,17 +351,11 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
                     additionalProperties:
                       type: string
                     type: object
@@ -382,10 +363,57 @@ spec:
                     type: string
                   targetPipeline:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  url:
+                    type: string
+                required:
+                - authentication
+                - filter
+                - name
+                - targetAction
+                - targetPipeline
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  authentication:
+                    type: string
+                  authenticationConfiguration:
+                    properties:
+                      allowedIPRange:
+                        type: string
+                    type: object
+                  filter:
+                    items:
+                      properties:
+                        jsonPath:
+                          type: string
+                        matchEquals:
+                          type: string
+                      required:
+                      - jsonPath
+                      - matchEquals
+                      type: object
+                    minItems: 1
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  targetAction:
+                    type: string
+                  targetPipeline:
                     type: string
                   url:
                     type: string
@@ -393,44 +421,27 @@ spec:
                 - authentication
                 - filter
                 - name
-                - providerRef
                 - targetAction
                 - targetPipeline
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              targetAction:
-                type: string
-              targetPipeline:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              url:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - authentication
-            - filter
-            - name
             - providerRef
-            - targetAction
-            - targetPipeline
+            - resource
             type: object
           status:
             properties:

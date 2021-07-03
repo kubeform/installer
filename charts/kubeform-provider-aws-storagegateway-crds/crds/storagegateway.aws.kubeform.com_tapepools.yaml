@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: tapepools.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -42,11 +39,6 @@ spec:
                     type: string
                   poolName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   retentionLockTimeInDays:
                     format: int64
                     type: integer
@@ -58,43 +50,59 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - poolName
-                - providerRef
                 - storageClass
                 type: object
-              poolName:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              retentionLockTimeInDays:
-                format: int64
-                type: integer
-              retentionLockType:
-                type: string
-              storageClass:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  poolName:
+                    type: string
+                  retentionLockTimeInDays:
+                    format: int64
+                    type: integer
+                  retentionLockType:
+                    type: string
+                  storageClass:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - poolName
+                - storageClass
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - poolName
             - providerRef
-            - storageClass
+            - resource
             type: object
           status:
             properties:

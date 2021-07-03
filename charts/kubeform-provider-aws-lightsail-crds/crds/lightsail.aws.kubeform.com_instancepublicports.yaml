@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instancepublicports.lightsail.aws.kubeform.com
 spec:
   group: lightsail.aws.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              instanceName:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -62,57 +59,60 @@ spec:
                       type: object
                     minItems: 1
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - instanceName
                 - portInfo
-                - providerRef
                 type: object
-              portInfo:
-                items:
-                  properties:
-                    cidrs:
-                      items:
-                        type: string
-                      type: array
-                    fromPort:
-                      format: int64
-                      type: integer
-                    protocol:
-                      type: string
-                    toPort:
-                      format: int64
-                      type: integer
-                  required:
-                  - fromPort
-                  - protocol
-                  - toPort
-                  type: object
-                minItems: 1
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  instanceName:
+                    type: string
+                  portInfo:
+                    items:
+                      properties:
+                        cidrs:
+                          items:
+                            type: string
+                          type: array
+                        fromPort:
+                          format: int64
+                          type: integer
+                        protocol:
+                          type: string
+                        toPort:
+                          format: int64
+                          type: integer
+                      required:
+                      - fromPort
+                      - protocol
+                      - toPort
+                      type: object
+                    minItems: 1
+                    type: array
+                required:
+                - instanceName
+                - portInfo
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - instanceName
-            - portInfo
             - providerRef
+            - resource
             type: object
           status:
             properties:

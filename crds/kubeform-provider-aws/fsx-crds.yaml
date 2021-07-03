@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: lustrefilesystems.fsx.aws.kubeform.com
 spec:
   group: fsx.aws.kubeform.com
@@ -30,34 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoImportPolicy:
-                type: string
-              automaticBackupRetentionDays:
-                format: int64
-                type: integer
-              copyTagsToBackups:
-                type: boolean
-              dailyAutomaticBackupStartTime:
-                type: string
-              deploymentType:
-                type: string
-              dnsName:
-                type: string
-              driveCacheType:
-                type: string
-              exportPath:
-                type: string
-              id:
-                type: string
-              importPath:
-                type: string
-              importedFileChunkSize:
-                format: int64
-                type: integer
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -70,6 +43,8 @@ spec:
                   copyTagsToBackups:
                     type: boolean
                   dailyAutomaticBackupStartTime:
+                    type: string
+                  dataCompressionType:
                     type: string
                   deploymentType:
                     type: string
@@ -99,11 +74,6 @@ spec:
                   perUnitStorageThroughput:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroupIDS:
                     items:
                       type: string
@@ -122,11 +92,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -150,75 +119,118 @@ spec:
                   weeklyMaintenanceStartTime:
                     type: string
                 required:
-                - providerRef
                 - storageCapacity
                 - subnetIDS
                 type: object
-              mountName:
-                type: string
-              networkInterfaceIDS:
-                items:
-                  type: string
-                type: array
-              ownerID:
-                type: string
-              perUnitStorageThroughput:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              securityGroupIDS:
-                items:
-                  type: string
-                maxItems: 50
-                type: array
-              storageCapacity:
-                format: int64
-                type: integer
-              storageType:
-                type: string
-              subnetIDS:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoImportPolicy:
+                    type: string
+                  automaticBackupRetentionDays:
+                    format: int64
+                    type: integer
+                  copyTagsToBackups:
+                    type: boolean
+                  dailyAutomaticBackupStartTime:
+                    type: string
+                  dataCompressionType:
+                    type: string
+                  deploymentType:
+                    type: string
+                  dnsName:
+                    type: string
+                  driveCacheType:
+                    type: string
+                  exportPath:
+                    type: string
+                  id:
+                    type: string
+                  importPath:
+                    type: string
+                  importedFileChunkSize:
+                    format: int64
+                    type: integer
+                  kmsKeyID:
+                    type: string
+                  mountName:
+                    type: string
+                  networkInterfaceIDS:
+                    items:
+                      type: string
+                    type: array
+                  ownerID:
+                    type: string
+                  perUnitStorageThroughput:
+                    format: int64
+                    type: integer
+                  securityGroupIDS:
+                    items:
+                      type: string
+                    maxItems: 50
+                    type: array
+                  storageCapacity:
+                    format: int64
+                    type: integer
+                  storageType:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                  weeklyMaintenanceStartTime:
+                    type: string
+                required:
+                - storageCapacity
+                - subnetIDS
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcID:
-                type: string
-              weeklyMaintenanceStartTime:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - storageCapacity
-            - subnetIDS
+            - resource
             type: object
           status:
             properties:
@@ -265,7 +277,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: windowsfilesystems.fsx.aws.kubeform.com
 spec:
   group: fsx.aws.kubeform.com
@@ -292,25 +305,6 @@ spec:
             type: object
           spec:
             properties:
-              activeDirectoryID:
-                type: string
-              arn:
-                type: string
-              automaticBackupRetentionDays:
-                format: int64
-                type: integer
-              copyTagsToBackups:
-                type: boolean
-              dailyAutomaticBackupStartTime:
-                type: string
-              deploymentType:
-                type: string
-              dnsName:
-                type: string
-              id:
-                type: string
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   activeDirectoryID:
@@ -342,18 +336,8 @@ spec:
                     type: string
                   preferredSubnetID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   remoteAdministrationEndpoint:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroupIDS:
                     items:
                       type: string
@@ -396,11 +380,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   throughputCapacity:
                     format: int64
                     type: integer
@@ -427,110 +410,142 @@ spec:
                   weeklyMaintenanceStartTime:
                     type: string
                 required:
-                - providerRef
                 - storageCapacity
                 - subnetIDS
                 - throughputCapacity
                 type: object
-              networkInterfaceIDS:
-                items:
-                  type: string
-                type: array
-              ownerID:
-                type: string
-              preferredFileServerIP:
-                type: string
-              preferredSubnetID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              remoteAdministrationEndpoint:
-                type: string
+              resource:
+                properties:
+                  activeDirectoryID:
+                    type: string
+                  arn:
+                    type: string
+                  automaticBackupRetentionDays:
+                    format: int64
+                    type: integer
+                  copyTagsToBackups:
+                    type: boolean
+                  dailyAutomaticBackupStartTime:
+                    type: string
+                  deploymentType:
+                    type: string
+                  dnsName:
+                    type: string
+                  id:
+                    type: string
+                  kmsKeyID:
+                    type: string
+                  networkInterfaceIDS:
+                    items:
+                      type: string
+                    type: array
+                  ownerID:
+                    type: string
+                  preferredFileServerIP:
+                    type: string
+                  preferredSubnetID:
+                    type: string
+                  remoteAdministrationEndpoint:
+                    type: string
+                  securityGroupIDS:
+                    items:
+                      type: string
+                    maxItems: 50
+                    type: array
+                  selfManagedActiveDirectory:
+                    properties:
+                      dnsIPS:
+                        items:
+                          type: string
+                        maxItems: 2
+                        minItems: 1
+                        type: array
+                      domainName:
+                        type: string
+                      fileSystemAdministratorsGroup:
+                        type: string
+                      organizationalUnitDistinguishedName:
+                        type: string
+                      username:
+                        type: string
+                    required:
+                    - dnsIPS
+                    - domainName
+                    - username
+                    type: object
+                  skipFinalBackup:
+                    type: boolean
+                  storageCapacity:
+                    format: int64
+                    type: integer
+                  storageType:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  throughputCapacity:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                  weeklyMaintenanceStartTime:
+                    type: string
+                required:
+                - storageCapacity
+                - subnetIDS
+                - throughputCapacity
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              securityGroupIDS:
-                items:
-                  type: string
-                maxItems: 50
-                type: array
-              selfManagedActiveDirectory:
-                properties:
-                  dnsIPS:
-                    items:
-                      type: string
-                    maxItems: 2
-                    minItems: 1
-                    type: array
-                  domainName:
-                    type: string
-                  fileSystemAdministratorsGroup:
-                    type: string
-                  organizationalUnitDistinguishedName:
-                    type: string
-                  username:
-                    type: string
-                required:
-                - dnsIPS
-                - domainName
-                - username
-                type: object
-              skipFinalBackup:
-                type: boolean
-              storageCapacity:
-                format: int64
-                type: integer
-              storageType:
-                type: string
-              subnetIDS:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              throughputCapacity:
-                format: int64
-                type: integer
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcID:
-                type: string
-              weeklyMaintenanceStartTime:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - storageCapacity
-            - subnetIDS
-            - throughputCapacity
+            - resource
             type: object
           status:
             properties:

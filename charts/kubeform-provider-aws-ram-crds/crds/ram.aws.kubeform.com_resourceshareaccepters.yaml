@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resourceshareaccepters.ram.aws.kubeform.com
 spec:
   group: ram.aws.kubeform.com
@@ -30,21 +31,12 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              invitationArn:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   invitationArn:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   receiverAccountID:
                     type: string
                   resources:
@@ -60,11 +52,6 @@ spec:
                   shareName:
                     type: string
                   status:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -85,7 +72,6 @@ spec:
                         type: integer
                     type: object
                 required:
-                - providerRef
                 - shareArn
                 type: object
               providerRef:
@@ -93,48 +79,62 @@ spec:
                   name:
                     type: string
                 type: object
-              receiverAccountID:
-                type: string
-              resources:
-                items:
-                  type: string
-                type: array
-              senderAccountID:
-                type: string
-              shareArn:
-                type: string
-              shareID:
-                type: string
-              shareName:
-                type: string
-              status:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  invitationArn:
+                    type: string
+                  receiverAccountID:
+                    type: string
+                  resources:
+                    items:
+                      type: string
+                    type: array
+                  senderAccountID:
+                    type: string
+                  shareArn:
+                    type: string
+                  shareID:
+                    type: string
+                  shareName:
+                    type: string
+                  status:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - shareArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - shareArn
+            - resource
             type: object
           status:
             properties:

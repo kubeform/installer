@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policies.fms.aws.kubeform.com
 spec:
   group: fms.aws.kubeform.com
@@ -30,36 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              deleteAllPolicyResources:
-                type: boolean
-              excludeMap:
-                properties:
-                  account:
-                    items:
-                      type: string
-                    type: array
-                  orgunit:
-                    items:
-                      type: string
-                    type: array
-                type: object
-              excludeResourceTags:
-                type: boolean
-              id:
-                type: string
-              includeMap:
-                properties:
-                  account:
-                    items:
-                      type: string
-                    type: array
-                  orgunit:
-                    items:
-                      type: string
-                    type: array
-                type: object
               kubeformOutput:
                 properties:
                   arn:
@@ -96,11 +67,6 @@ spec:
                     type: string
                   policyUpdateToken:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   remediationEnabled:
                     type: boolean
                   resourceTags:
@@ -122,57 +88,91 @@ spec:
                     required:
                     - type
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - excludeResourceTags
                 - name
-                - providerRef
                 - securityServicePolicyData
                 type: object
-              name:
-                type: string
-              policyUpdateToken:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              remediationEnabled:
-                type: boolean
-              resourceTags:
-                additionalProperties:
-                  type: string
-                type: object
-              resourceType:
-                type: string
-              resourceTypeList:
-                items:
-                  type: string
-                type: array
-              securityServicePolicyData:
+              resource:
                 properties:
-                  managedServiceData:
+                  arn:
                     type: string
-                  type:
+                  deleteAllPolicyResources:
+                    type: boolean
+                  excludeMap:
+                    properties:
+                      account:
+                        items:
+                          type: string
+                        type: array
+                      orgunit:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  excludeResourceTags:
+                    type: boolean
+                  id:
                     type: string
+                  includeMap:
+                    properties:
+                      account:
+                        items:
+                          type: string
+                        type: array
+                      orgunit:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  name:
+                    type: string
+                  policyUpdateToken:
+                    type: string
+                  remediationEnabled:
+                    type: boolean
+                  resourceTags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  resourceType:
+                    type: string
+                  resourceTypeList:
+                    items:
+                      type: string
+                    type: array
+                  securityServicePolicyData:
+                    properties:
+                      managedServiceData:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
                 required:
-                - type
+                - excludeResourceTags
+                - name
+                - securityServicePolicyData
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - excludeResourceTags
-            - name
             - providerRef
-            - securityServicePolicyData
+            - resource
             type: object
           status:
             properties:

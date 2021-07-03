@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: encryptionconfigs.xray.aws.kubeform.com
 spec:
   group: xray.aws.kubeform.com
@@ -188,30 +189,15 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              keyID:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   keyID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   type:
                     type: string
                 required:
-                - providerRef
                 - type
                 type: object
               providerRef:
@@ -219,16 +205,30 @@ spec:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  keyID:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - type
+            - resource
             type: object
           status:
             properties:
@@ -275,7 +275,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: groups.xray.aws.kubeform.com
 spec:
   group: xray.aws.kubeform.com
@@ -302,14 +303,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              filterExpression:
-                type: string
-              groupName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -320,43 +313,58 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - filterExpression
                 - groupName
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  filterExpression:
+                    type: string
+                  groupName:
+                    type: string
+                  id:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - filterExpression
+                - groupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - filterExpression
-            - groupName
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -403,7 +411,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: samplingrules.xray.aws.kubeform.com
 spec:
   group: xray.aws.kubeform.com
@@ -430,21 +439,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              attributes:
-                additionalProperties:
-                  type: string
-                type: object
-              fixedRate:
-                format: double
-                type: number
-              host:
-                type: string
-              httpMethod:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -465,11 +459,6 @@ spec:
                   priority:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   reservoirSize:
                     format: int64
                     type: integer
@@ -485,11 +474,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   urlPath:
                     type: string
                   version:
@@ -500,7 +488,6 @@ spec:
                 - host
                 - httpMethod
                 - priority
-                - providerRef
                 - reservoirSize
                 - resourceArn
                 - serviceName
@@ -508,51 +495,80 @@ spec:
                 - urlPath
                 - version
                 type: object
-              priority:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              reservoirSize:
-                format: int64
-                type: integer
-              resourceArn:
-                type: string
-              ruleName:
-                type: string
-              serviceName:
-                type: string
-              serviceType:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  attributes:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  fixedRate:
+                    format: double
+                    type: number
+                  host:
+                    type: string
+                  httpMethod:
+                    type: string
+                  id:
+                    type: string
+                  priority:
+                    format: int64
+                    type: integer
+                  reservoirSize:
+                    format: int64
+                    type: integer
+                  resourceArn:
+                    type: string
+                  ruleName:
+                    type: string
+                  serviceName:
+                    type: string
+                  serviceType:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  urlPath:
+                    type: string
+                  version:
+                    format: int64
+                    type: integer
+                required:
+                - fixedRate
+                - host
+                - httpMethod
+                - priority
+                - reservoirSize
+                - resourceArn
+                - serviceName
+                - serviceType
+                - urlPath
+                - version
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              urlPath:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              version:
-                format: int64
-                type: integer
             required:
-            - fixedRate
-            - host
-            - httpMethod
-            - priority
             - providerRef
-            - reservoirSize
-            - resourceArn
-            - serviceName
-            - serviceType
-            - urlPath
-            - version
+            - resource
             type: object
           status:
             properties:

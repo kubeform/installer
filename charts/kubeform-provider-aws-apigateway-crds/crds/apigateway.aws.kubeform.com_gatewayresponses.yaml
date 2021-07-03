@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: gatewayresponses.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -30,17 +31,10 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   responseParameters:
                     additionalProperties:
                       type: string
@@ -55,13 +49,7 @@ spec:
                     type: string
                   statusCode:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - responseType
                 - restAPIID
                 type: object
@@ -70,29 +58,41 @@ spec:
                   name:
                     type: string
                 type: object
-              responseParameters:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  responseParameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  responseTemplates:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  responseType:
+                    type: string
+                  restAPIID:
+                    type: string
+                  statusCode:
+                    type: string
+                required:
+                - responseType
+                - restAPIID
                 type: object
-              responseTemplates:
-                additionalProperties:
-                  type: string
-                type: object
-              responseType:
-                type: string
-              restAPIID:
-                type: string
-              statusCode:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - responseType
-            - restAPIID
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: repositories.codeartifact.aws.kubeform.com
 spec:
   group: codeartifact.aws.kubeform.com
@@ -30,29 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              administratorAccount:
-                type: string
-              arn:
-                type: string
-              description:
-                type: string
-              domain:
-                type: string
-              domainOwner:
-                type: string
-              externalConnections:
-                properties:
-                  externalConnectionName:
-                    type: string
-                  packageFormat:
-                    type: string
-                  status:
-                    type: string
-                required:
-                - externalConnectionName
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   administratorAccount:
@@ -78,22 +56,16 @@ spec:
                     type: object
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   repository:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   upstream:
                     items:
                       properties:
@@ -106,7 +78,6 @@ spec:
                     type: array
                 required:
                 - domain
-                - providerRef
                 - repository
                 type: object
               providerRef:
@@ -114,31 +85,68 @@ spec:
                   name:
                     type: string
                 type: object
-              repository:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  administratorAccount:
+                    type: string
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  domain:
+                    type: string
+                  domainOwner:
+                    type: string
+                  externalConnections:
+                    properties:
+                      externalConnectionName:
+                        type: string
+                      packageFormat:
+                        type: string
+                      status:
+                        type: string
+                    required:
+                    - externalConnectionName
+                    type: object
+                  id:
+                    type: string
+                  repository:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  upstream:
+                    items:
+                      properties:
+                        repositoryName:
+                          type: string
+                      required:
+                      - repositoryName
+                      type: object
+                    minItems: 1
+                    type: array
+                required:
+                - domain
+                - repository
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              upstream:
-                items:
-                  properties:
-                    repositoryName:
-                      type: string
-                  required:
-                  - repositoryName
-                  type: object
-                minItems: 1
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - domain
             - providerRef
-            - repository
+            - resource
             type: object
           status:
             properties:

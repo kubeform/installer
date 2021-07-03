@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: classifiers.glue.aws.kubeform.com
 spec:
   group: glue.aws.kubeform.com
@@ -30,44 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              csvClassifier:
-                properties:
-                  allowSingleColumn:
-                    type: boolean
-                  containsHeader:
-                    type: string
-                  delimiter:
-                    type: string
-                  disableValueTrimming:
-                    type: boolean
-                  header:
-                    items:
-                      type: string
-                    type: array
-                  quoteSymbol:
-                    type: string
-                type: object
-              grokClassifier:
-                properties:
-                  classification:
-                    type: string
-                  customPatterns:
-                    type: string
-                  grokPattern:
-                    type: string
-                required:
-                - classification
-                - grokPattern
-                type: object
-              id:
-                type: string
-              jsonClassifier:
-                properties:
-                  jsonPath:
-                    type: string
-                required:
-                - jsonPath
-                type: object
               kubeformOutput:
                 properties:
                   csvClassifier:
@@ -110,15 +73,65 @@ spec:
                     type: object
                   name:
                     type: string
-                  providerRef:
+                  xmlClassifier:
                     properties:
-                      name:
+                      classification:
+                        type: string
+                      rowTag:
+                        type: string
+                    required:
+                    - classification
+                    - rowTag
+                    type: object
+                required:
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  csvClassifier:
+                    properties:
+                      allowSingleColumn:
+                        type: boolean
+                      containsHeader:
+                        type: string
+                      delimiter:
+                        type: string
+                      disableValueTrimming:
+                        type: boolean
+                      header:
+                        items:
+                          type: string
+                        type: array
+                      quoteSymbol:
                         type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  grokClassifier:
+                    properties:
+                      classification:
+                        type: string
+                      customPatterns:
+                        type: string
+                      grokPattern:
+                        type: string
+                    required:
+                    - classification
+                    - grokPattern
+                    type: object
+                  id:
+                    type: string
+                  jsonClassifier:
+                    properties:
+                      jsonPath:
+                        type: string
+                    required:
+                    - jsonPath
+                    type: object
+                  name:
                     type: string
                   xmlClassifier:
                     properties:
@@ -132,33 +145,20 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              xmlClassifier:
-                properties:
-                  classification:
-                    type: string
-                  rowTag:
-                    type: string
-                required:
-                - classification
-                - rowTag
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

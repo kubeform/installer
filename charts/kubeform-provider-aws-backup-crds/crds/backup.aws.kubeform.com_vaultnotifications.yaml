@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: vaultnotifications.backup.aws.kubeform.com
 spec:
   group: backup.aws.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              backupVaultArn:
-                type: string
-              backupVaultEvents:
-                items:
-                  type: string
-                type: array
-              backupVaultName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   backupVaultArn:
@@ -52,22 +43,11 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   snsTopicArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - backupVaultEvents
                 - backupVaultName
-                - providerRef
                 - snsTopicArn
                 type: object
               providerRef:
@@ -75,18 +55,38 @@ spec:
                   name:
                     type: string
                 type: object
-              snsTopicArn:
-                type: string
+              resource:
+                properties:
+                  backupVaultArn:
+                    type: string
+                  backupVaultEvents:
+                    items:
+                      type: string
+                    type: array
+                  backupVaultName:
+                    type: string
+                  id:
+                    type: string
+                  snsTopicArn:
+                    type: string
+                required:
+                - backupVaultEvents
+                - backupVaultName
+                - snsTopicArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - backupVaultEvents
-            - backupVaultName
             - providerRef
-            - snsTopicArn
+            - resource
             type: object
           status:
             properties:

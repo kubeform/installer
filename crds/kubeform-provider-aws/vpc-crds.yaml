@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dhcpoptions.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -188,16 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              domainName:
-                type: string
-              domainNameServers:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -222,51 +213,66 @@ spec:
                     type: array
                   ownerID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
-              netbiosNameServers:
-                items:
-                  type: string
-                type: array
-              netbiosNodeType:
-                type: string
-              ntpServers:
-                items:
-                  type: string
-                type: array
-              ownerID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  domainName:
+                    type: string
+                  domainNameServers:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  netbiosNameServers:
+                    items:
+                      type: string
+                    type: array
+                  netbiosNodeType:
+                    type: string
+                  ntpServers:
+                    items:
+                      type: string
+                    type: array
+                  ownerID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -313,7 +319,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dhcpoptionsassociations.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -340,31 +347,16 @@ spec:
             type: object
           spec:
             properties:
-              dhcpOptionsID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dhcpOptionsID:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   vpcID:
                     type: string
                 required:
                 - dhcpOptionsID
-                - providerRef
                 - vpcID
                 type: object
               providerRef:
@@ -372,17 +364,31 @@ spec:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  dhcpOptionsID:
+                    type: string
+                  id:
+                    type: string
+                  vpcID:
+                    type: string
+                required:
+                - dhcpOptionsID
+                - vpcID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - dhcpOptionsID
             - providerRef
-            - vpcID
+            - resource
             type: object
           status:
             properties:
@@ -429,7 +435,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpoints.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -456,25 +463,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoAccept:
-                type: boolean
-              cidrBlocks:
-                items:
-                  type: string
-                type: array
-              dnsEntry:
-                items:
-                  properties:
-                    dnsName:
-                      type: string
-                    hostedZoneID:
-                      type: string
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -508,11 +496,6 @@ spec:
                     type: string
                   privateDNSEnabled:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requesterManaged:
                     type: boolean
                   routeTableIDS:
@@ -535,11 +518,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -563,80 +545,112 @@ spec:
                   vpcID:
                     type: string
                 required:
-                - providerRef
                 - serviceName
                 - vpcID
                 type: object
-              networkInterfaceIDS:
-                items:
-                  type: string
-                type: array
-              ownerID:
-                type: string
-              policy:
-                type: string
-              prefixListID:
-                type: string
-              privateDNSEnabled:
-                type: boolean
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requesterManaged:
-                type: boolean
-              routeTableIDS:
-                items:
-                  type: string
-                type: array
-              securityGroupIDS:
-                items:
-                  type: string
-                type: array
-              serviceName:
-                type: string
-              state:
-                type: string
-              subnetIDS:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoAccept:
+                    type: boolean
+                  cidrBlocks:
+                    items:
+                      type: string
+                    type: array
+                  dnsEntry:
+                    items:
+                      properties:
+                        dnsName:
+                          type: string
+                        hostedZoneID:
+                          type: string
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  networkInterfaceIDS:
+                    items:
+                      type: string
+                    type: array
+                  ownerID:
+                    type: string
+                  policy:
+                    type: string
+                  prefixListID:
+                    type: string
+                  privateDNSEnabled:
+                    type: boolean
+                  requesterManaged:
+                    type: boolean
+                  routeTableIDS:
+                    items:
+                      type: string
+                    type: array
+                  securityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  serviceName:
+                    type: string
+                  state:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcEndpointType:
+                    type: string
+                  vpcID:
+                    type: string
+                required:
+                - serviceName
+                - vpcID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcEndpointType:
-                type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - serviceName
-            - vpcID
+            - resource
             type: object
           status:
             properties:
@@ -683,7 +697,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointconnectionnotifications.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -710,15 +725,6 @@ spec:
             type: object
           spec:
             properties:
-              connectionEvents:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              connectionNotificationArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   connectionEvents:
@@ -732,17 +738,7 @@ spec:
                     type: string
                   notificationType:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   state:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   vpcEndpointID:
                     type: string
@@ -751,30 +747,48 @@ spec:
                 required:
                 - connectionEvents
                 - connectionNotificationArn
-                - providerRef
                 type: object
-              notificationType:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              state:
-                type: string
+              resource:
+                properties:
+                  connectionEvents:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  connectionNotificationArn:
+                    type: string
+                  id:
+                    type: string
+                  notificationType:
+                    type: string
+                  state:
+                    type: string
+                  vpcEndpointID:
+                    type: string
+                  vpcEndpointServiceID:
+                    type: string
+                required:
+                - connectionEvents
+                - connectionNotificationArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcEndpointID:
-                type: string
-              vpcEndpointServiceID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - connectionEvents
-            - connectionNotificationArn
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -821,7 +835,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointroutetableassociations.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -848,28 +863,15 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   routeTableID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   vpcEndpointID:
                     type: string
                 required:
-                - providerRef
                 - routeTableID
                 - vpcEndpointID
                 type: object
@@ -878,19 +880,31 @@ spec:
                   name:
                     type: string
                 type: object
-              routeTableID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  routeTableID:
+                    type: string
+                  vpcEndpointID:
+                    type: string
+                required:
+                - routeTableID
+                - vpcEndpointID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcEndpointID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - routeTableID
-            - vpcEndpointID
+            - resource
             type: object
           status:
             properties:
@@ -937,7 +951,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointservices.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -964,29 +979,6 @@ spec:
             type: object
           spec:
             properties:
-              acceptanceRequired:
-                type: boolean
-              allowedPrincipals:
-                items:
-                  type: string
-                type: array
-              arn:
-                type: string
-              availabilityZones:
-                items:
-                  type: string
-                type: array
-              baseEndpointDNSNames:
-                items:
-                  type: string
-                type: array
-              gatewayLoadBalancerArns:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   acceptanceRequired:
@@ -1034,11 +1026,6 @@ spec:
                           type: string
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceName:
                     type: string
                   serviceType:
@@ -1049,60 +1036,95 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - acceptanceRequired
-                - providerRef
                 type: object
-              managesVpcEndpoints:
-                type: boolean
-              networkLoadBalancerArns:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              privateDNSName:
-                type: string
-              privateDNSNameConfiguration:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    state:
-                      type: string
-                    type:
-                      type: string
-                    value:
-                      type: string
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serviceName:
-                type: string
-              serviceType:
-                type: string
-              state:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  acceptanceRequired:
+                    type: boolean
+                  allowedPrincipals:
+                    items:
+                      type: string
+                    type: array
+                  arn:
+                    type: string
+                  availabilityZones:
+                    items:
+                      type: string
+                    type: array
+                  baseEndpointDNSNames:
+                    items:
+                      type: string
+                    type: array
+                  gatewayLoadBalancerArns:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  id:
+                    type: string
+                  managesVpcEndpoints:
+                    type: boolean
+                  networkLoadBalancerArns:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  privateDNSName:
+                    type: string
+                  privateDNSNameConfiguration:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        state:
+                          type: string
+                        type:
+                          type: string
+                        value:
+                          type: string
+                      type: object
+                    type: array
+                  serviceName:
+                    type: string
+                  serviceType:
+                    type: string
+                  state:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - acceptanceRequired
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - acceptanceRequired
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1149,7 +1171,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointserviceallowedprincipals.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -1176,49 +1199,48 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   principalArn:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  vpcEndpointServiceID:
+                    type: string
+                required:
+                - principalArn
+                - vpcEndpointServiceID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  principalArn:
                     type: string
                   vpcEndpointServiceID:
                     type: string
                 required:
                 - principalArn
-                - providerRef
                 - vpcEndpointServiceID
-                type: object
-              principalArn:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcEndpointServiceID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - principalArn
             - providerRef
-            - vpcEndpointServiceID
+            - resource
             type: object
           status:
             properties:
@@ -1265,7 +1287,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointsubnetassociations.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -1292,23 +1315,11 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   subnetID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1331,7 +1342,6 @@ spec:
                   vpcEndpointID:
                     type: string
                 required:
-                - providerRef
                 - subnetID
                 - vpcEndpointID
                 type: object
@@ -1340,37 +1350,49 @@ spec:
                   name:
                     type: string
                 type: object
-              subnetID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  subnetID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcEndpointID:
+                    type: string
+                required:
+                - subnetID
+                - vpcEndpointID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcEndpointID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - subnetID
-            - vpcEndpointID
+            - resource
             type: object
           status:
             properties:
@@ -1417,7 +1439,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: ipv4cidrblockassociations.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -1444,25 +1467,11 @@ spec:
             type: object
           spec:
             properties:
-              cidrBlock:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   cidrBlock:
                     type: string
                   id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1486,7 +1495,6 @@ spec:
                     type: string
                 required:
                 - cidrBlock
-                - providerRef
                 - vpcID
                 type: object
               providerRef:
@@ -1494,35 +1502,49 @@ spec:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  cidrBlock:
+                    type: string
+                  id:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                required:
+                - cidrBlock
+                - vpcID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - cidrBlock
             - providerRef
-            - vpcID
+            - resource
             type: object
           status:
             properties:
@@ -1569,7 +1591,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: peeringconnections.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -1596,21 +1619,6 @@ spec:
             type: object
           spec:
             properties:
-              acceptStatus:
-                type: string
-              accepter:
-                properties:
-                  allowClassicLinkToRemoteVpc:
-                    type: boolean
-                  allowRemoteVpcDNSResolution:
-                    type: boolean
-                  allowVpcToRemoteClassicLink:
-                    type: boolean
-                type: object
-              autoAccept:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   acceptStatus:
@@ -1634,11 +1642,6 @@ spec:
                     type: string
                   peerVpcID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requester:
                     properties:
                       allowClassicLinkToRemoteVpc:
@@ -1652,11 +1655,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -1679,62 +1681,90 @@ spec:
                     type: string
                 required:
                 - peerVpcID
-                - providerRef
                 - vpcID
                 type: object
-              peerOwnerID:
-                type: string
-              peerRegion:
-                type: string
-              peerVpcID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requester:
+              resource:
                 properties:
-                  allowClassicLinkToRemoteVpc:
+                  acceptStatus:
+                    type: string
+                  accepter:
+                    properties:
+                      allowClassicLinkToRemoteVpc:
+                        type: boolean
+                      allowRemoteVpcDNSResolution:
+                        type: boolean
+                      allowVpcToRemoteClassicLink:
+                        type: boolean
+                    type: object
+                  autoAccept:
                     type: boolean
-                  allowRemoteVpcDNSResolution:
-                    type: boolean
-                  allowVpcToRemoteClassicLink:
-                    type: boolean
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                  id:
+                    type: string
+                  peerOwnerID:
+                    type: string
+                  peerRegion:
+                    type: string
+                  peerVpcID:
+                    type: string
+                  requester:
+                    properties:
+                      allowClassicLinkToRemoteVpc:
+                        type: boolean
+                      allowRemoteVpcDNSResolution:
+                        type: boolean
+                      allowVpcToRemoteClassicLink:
+                        type: boolean
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                required:
+                - peerVpcID
+                - vpcID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - peerVpcID
             - providerRef
-            - vpcID
+            - resource
             type: object
           status:
             properties:
@@ -1781,7 +1811,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: peeringconnectionaccepters.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -1808,21 +1839,6 @@ spec:
             type: object
           spec:
             properties:
-              acceptStatus:
-                type: string
-              accepter:
-                properties:
-                  allowClassicLinkToRemoteVpc:
-                    type: boolean
-                  allowRemoteVpcDNSResolution:
-                    type: boolean
-                  allowVpcToRemoteClassicLink:
-                    type: boolean
-                type: object
-              autoAccept:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   acceptStatus:
@@ -1846,11 +1862,6 @@ spec:
                     type: string
                   peerVpcID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requester:
                     properties:
                       allowClassicLinkToRemoteVpc:
@@ -1864,55 +1875,82 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   vpcID:
                     type: string
                   vpcPeeringConnectionID:
                     type: string
                 required:
-                - providerRef
                 - vpcPeeringConnectionID
                 type: object
-              peerOwnerID:
-                type: string
-              peerRegion:
-                type: string
-              peerVpcID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requester:
+              resource:
                 properties:
-                  allowClassicLinkToRemoteVpc:
+                  acceptStatus:
+                    type: string
+                  accepter:
+                    properties:
+                      allowClassicLinkToRemoteVpc:
+                        type: boolean
+                      allowRemoteVpcDNSResolution:
+                        type: boolean
+                      allowVpcToRemoteClassicLink:
+                        type: boolean
+                    type: object
+                  autoAccept:
                     type: boolean
-                  allowRemoteVpcDNSResolution:
-                    type: boolean
-                  allowVpcToRemoteClassicLink:
-                    type: boolean
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                  id:
+                    type: string
+                  peerOwnerID:
+                    type: string
+                  peerRegion:
+                    type: string
+                  peerVpcID:
+                    type: string
+                  requester:
+                    properties:
+                      allowClassicLinkToRemoteVpc:
+                        type: boolean
+                      allowRemoteVpcDNSResolution:
+                        type: boolean
+                      allowVpcToRemoteClassicLink:
+                        type: boolean
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  vpcID:
+                    type: string
+                  vpcPeeringConnectionID:
+                    type: string
+                required:
+                - vpcPeeringConnectionID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcID:
-                type: string
-              vpcPeeringConnectionID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - vpcPeeringConnectionID
+            - resource
             type: object
           status:
             properties:
@@ -1959,7 +1997,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: peeringconnectionoptions.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -1986,17 +2025,6 @@ spec:
             type: object
           spec:
             properties:
-              accepter:
-                properties:
-                  allowClassicLinkToRemoteVpc:
-                    type: boolean
-                  allowRemoteVpcDNSResolution:
-                    type: boolean
-                  allowVpcToRemoteClassicLink:
-                    type: boolean
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accepter:
@@ -2010,11 +2038,6 @@ spec:
                     type: object
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requester:
                     properties:
                       allowClassicLinkToRemoteVpc:
@@ -2024,15 +2047,9 @@ spec:
                       allowVpcToRemoteClassicLink:
                         type: boolean
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   vpcPeeringConnectionID:
                     type: string
                 required:
-                - providerRef
                 - vpcPeeringConnectionID
                 type: object
               providerRef:
@@ -2040,25 +2057,46 @@ spec:
                   name:
                     type: string
                 type: object
-              requester:
+              resource:
                 properties:
-                  allowClassicLinkToRemoteVpc:
-                    type: boolean
-                  allowRemoteVpcDNSResolution:
-                    type: boolean
-                  allowVpcToRemoteClassicLink:
-                    type: boolean
+                  accepter:
+                    properties:
+                      allowClassicLinkToRemoteVpc:
+                        type: boolean
+                      allowRemoteVpcDNSResolution:
+                        type: boolean
+                      allowVpcToRemoteClassicLink:
+                        type: boolean
+                    type: object
+                  id:
+                    type: string
+                  requester:
+                    properties:
+                      allowClassicLinkToRemoteVpc:
+                        type: boolean
+                      allowRemoteVpcDNSResolution:
+                        type: boolean
+                      allowVpcToRemoteClassicLink:
+                        type: boolean
+                    type: object
+                  vpcPeeringConnectionID:
+                    type: string
+                required:
+                - vpcPeeringConnectionID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcPeeringConnectionID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - vpcPeeringConnectionID
+            - resource
             type: object
           status:
             properties:
@@ -2105,7 +2143,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: vpcs.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -2132,36 +2171,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              assignGeneratedIpv6CIDRBlock:
-                type: boolean
-              cidrBlock:
-                type: string
-              defaultNetworkACLID:
-                type: string
-              defaultRouteTableID:
-                type: string
-              defaultSecurityGroupID:
-                type: string
-              dhcpOptionsID:
-                type: string
-              enableClassiclink:
-                type: boolean
-              enableClassiclinkDNSSupport:
-                type: boolean
-              enableDNSHostnames:
-                type: boolean
-              enableDNSSupport:
-                type: boolean
-              id:
-                type: string
-              instanceTenancy:
-                type: string
-              ipv6AssociationID:
-                type: string
-              ipv6CIDRBlock:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -2198,11 +2207,6 @@ spec:
                     type: string
                   ownerID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
@@ -2211,40 +2215,74 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - cidrBlock
-                - providerRef
                 type: object
-              mainRouteTableID:
-                type: string
-              ownerID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              tagsAll:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  assignGeneratedIpv6CIDRBlock:
+                    type: boolean
+                  cidrBlock:
+                    type: string
+                  defaultNetworkACLID:
+                    type: string
+                  defaultRouteTableID:
+                    type: string
+                  defaultSecurityGroupID:
+                    type: string
+                  dhcpOptionsID:
+                    type: string
+                  enableClassiclink:
+                    type: boolean
+                  enableClassiclinkDNSSupport:
+                    type: boolean
+                  enableDNSHostnames:
+                    type: boolean
+                  enableDNSSupport:
+                    type: boolean
+                  id:
+                    type: string
+                  instanceTenancy:
+                    type: string
+                  ipv6AssociationID:
+                    type: string
+                  ipv6CIDRBlock:
+                    type: string
+                  mainRouteTableID:
+                    type: string
+                  ownerID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - cidrBlock
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cidrBlock
             - providerRef
+            - resource
             type: object
           status:
             properties:

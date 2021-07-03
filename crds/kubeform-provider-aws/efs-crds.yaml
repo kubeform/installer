@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accesspoints.efs.aws.kubeform.com
 spec:
   group: efs.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              fileSystemArn:
-                type: string
-              fileSystemID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -67,10 +60,70 @@ spec:
                     - gid
                     - uid
                     type: object
-                  providerRef:
+                  rootDirectory:
                     properties:
-                      name:
+                      creationInfo:
+                        properties:
+                          ownerGid:
+                            format: int64
+                            type: integer
+                          ownerUid:
+                            format: int64
+                            type: integer
+                          permissions:
+                            type: string
+                        required:
+                        - ownerGid
+                        - ownerUid
+                        - permissions
+                        type: object
+                      path:
                         type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - fileSystemID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  fileSystemArn:
+                    type: string
+                  fileSystemID:
+                    type: string
+                  id:
+                    type: string
+                  ownerID:
+                    type: string
+                  posixUser:
+                    properties:
+                      gid:
+                        format: int64
+                        type: integer
+                      secondaryGids:
+                        items:
+                          format: int64
+                          type: integer
+                        type: array
+                      uid:
+                        format: int64
+                        type: integer
+                    required:
+                    - gid
+                    - uid
                     type: object
                   rootDirectory:
                     properties:
@@ -96,71 +149,26 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - fileSystemID
-                - providerRef
-                type: object
-              ownerID:
-                type: string
-              posixUser:
-                properties:
-                  gid:
-                    format: int64
-                    type: integer
-                  secondaryGids:
-                    items:
-                      format: int64
-                      type: integer
-                    type: array
-                  uid:
-                    format: int64
-                    type: integer
-                required:
-                - gid
-                - uid
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rootDirectory:
-                properties:
-                  creationInfo:
-                    properties:
-                      ownerGid:
-                        format: int64
-                        type: integer
-                      ownerUid:
-                        format: int64
-                        type: integer
-                      permissions:
-                        type: string
-                    required:
-                    - ownerGid
-                    - ownerUid
-                    - permissions
-                    type: object
-                  path:
-                    type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - fileSystemID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -207,7 +215,134 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: backuppolicies.efs.aws.kubeform.com
+spec:
+  group: efs.aws.kubeform.com
+  names:
+    kind: BackupPolicy
+    listKind: BackupPolicyList
+    plural: backuppolicies
+    singular: backuppolicy
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  backupPolicy:
+                    properties:
+                      status:
+                        type: string
+                    required:
+                    - status
+                    type: object
+                  fileSystemID:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - backupPolicy
+                - fileSystemID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  backupPolicy:
+                    properties:
+                      status:
+                        type: string
+                    required:
+                    - status
+                    type: object
+                  fileSystemID:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - backupPolicy
+                - fileSystemID
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: filesystems.efs.aws.kubeform.com
 spec:
   group: efs.aws.kubeform.com
@@ -234,22 +369,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              availabilityZoneID:
-                type: string
-              availabilityZoneName:
-                type: string
-              creationToken:
-                type: string
-              dnsName:
-                type: string
-              encrypted:
-                type: boolean
-              id:
-                type: string
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -282,11 +401,6 @@ spec:
                     type: string
                   performanceMode:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   provisionedThroughputInMibps:
                     format: double
                     type: number
@@ -308,65 +422,91 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   throughputMode:
                     type: string
-                required:
-                - providerRef
                 type: object
-              lifecyclePolicy:
-                properties:
-                  transitionToIa:
-                    type: string
-                required:
-                - transitionToIa
-                type: object
-              numberOfMountTargets:
-                format: int64
-                type: integer
-              ownerID:
-                type: string
-              performanceMode:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              provisionedThroughputInMibps:
-                format: double
-                type: number
-              sizeInBytes:
-                items:
-                  properties:
-                    value:
-                      format: int64
-                      type: integer
-                    valueInIa:
-                      format: int64
-                      type: integer
-                    valueInStandard:
-                      format: int64
-                      type: integer
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  availabilityZoneID:
+                    type: string
+                  availabilityZoneName:
+                    type: string
+                  creationToken:
+                    type: string
+                  dnsName:
+                    type: string
+                  encrypted:
+                    type: boolean
+                  id:
+                    type: string
+                  kmsKeyID:
+                    type: string
+                  lifecyclePolicy:
+                    properties:
+                      transitionToIa:
+                        type: string
+                    required:
+                    - transitionToIa
+                    type: object
+                  numberOfMountTargets:
+                    format: int64
+                    type: integer
+                  ownerID:
+                    type: string
+                  performanceMode:
+                    type: string
+                  provisionedThroughputInMibps:
+                    format: double
+                    type: number
+                  sizeInBytes:
+                    items:
+                      properties:
+                        value:
+                          format: int64
+                          type: integer
+                        valueInIa:
+                          format: int64
+                          type: integer
+                        valueInStandard:
+                          format: int64
+                          type: integer
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  throughputMode:
+                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              throughputMode:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -413,7 +553,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: filesystempolicies.efs.aws.kubeform.com
 spec:
   group: efs.aws.kubeform.com
@@ -440,10 +581,6 @@ spec:
             type: object
           spec:
             properties:
-              fileSystemID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   fileSystemID:
@@ -452,37 +589,40 @@ spec:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - fileSystemID
                 - policy
-                - providerRef
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  fileSystemID:
+                    type: string
+                  id:
+                    type: string
+                  policy:
+                    type: string
+                required:
+                - fileSystemID
+                - policy
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - fileSystemID
-            - policy
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -529,7 +669,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: mounttargets.efs.aws.kubeform.com
 spec:
   group: efs.aws.kubeform.com
@@ -556,20 +697,6 @@ spec:
             type: object
           spec:
             properties:
-              availabilityZoneID:
-                type: string
-              availabilityZoneName:
-                type: string
-              dnsName:
-                type: string
-              fileSystemArn:
-                type: string
-              fileSystemID:
-                type: string
-              id:
-                type: string
-              ipAddress:
-                type: string
               kubeformOutput:
                 properties:
                   availabilityZoneID:
@@ -592,53 +719,66 @@ spec:
                     type: string
                   ownerID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroups:
                     items:
                       type: string
                     type: array
                   subnetID:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - fileSystemID
-                - providerRef
                 - subnetID
                 type: object
-              mountTargetDNSName:
-                type: string
-              networkInterfaceID:
-                type: string
-              ownerID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              securityGroups:
-                items:
-                  type: string
-                type: array
-              subnetID:
-                type: string
+              resource:
+                properties:
+                  availabilityZoneID:
+                    type: string
+                  availabilityZoneName:
+                    type: string
+                  dnsName:
+                    type: string
+                  fileSystemArn:
+                    type: string
+                  fileSystemID:
+                    type: string
+                  id:
+                    type: string
+                  ipAddress:
+                    type: string
+                  mountTargetDNSName:
+                    type: string
+                  networkInterfaceID:
+                    type: string
+                  ownerID:
+                    type: string
+                  securityGroups:
+                    items:
+                      type: string
+                    type: array
+                  subnetID:
+                    type: string
+                required:
+                - fileSystemID
+                - subnetID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - fileSystemID
             - providerRef
-            - subnetID
+            - resource
             type: object
           status:
             properties:

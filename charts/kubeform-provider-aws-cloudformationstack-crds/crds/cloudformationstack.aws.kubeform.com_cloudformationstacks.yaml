@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudformationstacks.cloudformationstack.aws.kubeform.com
 spec:
   group: cloudformationstack.aws.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              capabilities:
-                items:
-                  type: string
-                type: array
-              disableRollback:
-                type: boolean
-              iamRoleArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   capabilities:
@@ -72,23 +63,17 @@ spec:
                     type: string
                   policyURL:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
                     additionalProperties:
                       type: string
                     type: object
                   templateBody:
                     type: string
                   templateURL:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeoutInMinutes:
                     format: int64
@@ -113,70 +98,93 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              notificationArns:
-                items:
-                  type: string
-                type: array
-              onFailure:
-                type: string
-              outputs:
-                additionalProperties:
-                  type: string
-                type: object
-              parameters:
-                additionalProperties:
-                  type: string
-                type: object
-              policyBody:
-                type: string
-              policyURL:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  capabilities:
+                    items:
+                      type: string
+                    type: array
+                  disableRollback:
+                    type: boolean
+                  iamRoleArn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  notificationArns:
+                    items:
+                      type: string
+                    type: array
+                  onFailure:
+                    type: string
+                  outputs:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  parameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  policyBody:
+                    type: string
+                  policyURL:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  templateBody:
+                    type: string
+                  templateURL:
+                    type: string
+                  timeoutInMinutes:
+                    format: int64
+                    type: integer
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
                 type: object
-              templateBody:
-                type: string
-              templateURL:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeoutInMinutes:
-                format: int64
-                type: integer
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

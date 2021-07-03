@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: eips.eip.aws.kubeform.com
 spec:
   group: eip.aws.kubeform.com
@@ -30,26 +31,10 @@ spec:
             type: object
           spec:
             properties:
-              allocationID:
-                type: string
-              associateWithPrivateIP:
-                type: string
-              associationID:
-                type: string
-              carrierIP:
-                type: string
-              customerOwnedIP:
-                type: string
-              customerOwnedIpv4Pool:
-                type: string
-              domain:
-                type: string
-              id:
-                type: string
-              instance:
-                type: string
               kubeformOutput:
                 properties:
+                  address:
+                    type: string
                   allocationID:
                     type: string
                   associateWithPrivateIP:
@@ -76,11 +61,6 @@ spec:
                     type: string
                   privateIP:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicDNS:
                     type: string
                   publicIP:
@@ -91,11 +71,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -116,59 +95,90 @@ spec:
                     type: object
                   vpc:
                     type: boolean
-                required:
-                - providerRef
                 type: object
-              networkBorderGroup:
-                type: string
-              networkInterface:
-                type: string
-              privateDNS:
-                type: string
-              privateIP:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicDNS:
-                type: string
-              publicIP:
-                type: string
-              publicIpv4Pool:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  address:
+                    type: string
+                  allocationID:
+                    type: string
+                  associateWithPrivateIP:
+                    type: string
+                  associationID:
+                    type: string
+                  carrierIP:
+                    type: string
+                  customerOwnedIP:
+                    type: string
+                  customerOwnedIpv4Pool:
+                    type: string
+                  domain:
+                    type: string
+                  id:
+                    type: string
+                  instance:
+                    type: string
+                  networkBorderGroup:
+                    type: string
+                  networkInterface:
+                    type: string
+                  privateDNS:
+                    type: string
+                  privateIP:
+                    type: string
+                  publicDNS:
+                    type: string
+                  publicIP:
+                    type: string
+                  publicIpv4Pool:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpc:
+                    type: boolean
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpc:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

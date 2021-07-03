@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: gatewayroutepropagations.vpn.aws.kubeform.com
 spec:
   group: vpn.aws.kubeform.com
@@ -30,28 +31,15 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   routeTableID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   vpnGatewayID:
                     type: string
                 required:
-                - providerRef
                 - routeTableID
                 - vpnGatewayID
                 type: object
@@ -60,19 +48,31 @@ spec:
                   name:
                     type: string
                 type: object
-              routeTableID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  routeTableID:
+                    type: string
+                  vpnGatewayID:
+                    type: string
+                required:
+                - routeTableID
+                - vpnGatewayID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpnGatewayID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - routeTableID
-            - vpnGatewayID
+            - resource
             type: object
           status:
             properties:

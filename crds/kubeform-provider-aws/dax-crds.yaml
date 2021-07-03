@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusters.dax.aws.kubeform.com
 spec:
   group: dax.aws.kubeform.com
@@ -30,24 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              availabilityZones:
-                items:
-                  type: string
-                type: array
-              clusterAddress:
-                type: string
-              clusterName:
-                type: string
-              configurationEndpoint:
-                type: string
-              description:
-                type: string
-              iamRoleArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -93,11 +76,6 @@ spec:
                   port:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   replicationFactor:
                     format: int64
                     type: integer
@@ -116,11 +94,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -143,86 +120,117 @@ spec:
                 - clusterName
                 - iamRoleArn
                 - nodeType
-                - providerRef
                 - replicationFactor
                 type: object
-              maintenanceWindow:
-                type: string
-              nodeType:
-                type: string
-              nodes:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    address:
-                      type: string
-                    availabilityZone:
-                      type: string
-                    port:
-                      format: int64
-                      type: integer
-                  type: object
-                type: array
-              notificationTopicArn:
-                type: string
-              parameterGroupName:
-                type: string
-              port:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              replicationFactor:
-                format: int64
-                type: integer
-              securityGroupIDS:
-                items:
-                  type: string
-                type: array
-              serverSideEncryption:
+              resource:
                 properties:
-                  enabled:
-                    type: boolean
-                type: object
-              subnetGroupName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+                  arn:
+                    type: string
+                  availabilityZones:
+                    items:
+                      type: string
+                    type: array
+                  clusterAddress:
+                    type: string
+                  clusterName:
+                    type: string
+                  configurationEndpoint:
+                    type: string
+                  description:
+                    type: string
+                  iamRoleArn:
+                    type: string
+                  id:
+                    type: string
+                  maintenanceWindow:
+                    type: string
+                  nodeType:
+                    type: string
+                  nodes:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        address:
+                          type: string
+                        availabilityZone:
+                          type: string
+                        port:
+                          format: int64
+                          type: integer
+                      type: object
+                    type: array
+                  notificationTopicArn:
+                    type: string
+                  parameterGroupName:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  replicationFactor:
+                    format: int64
+                    type: integer
+                  securityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  serverSideEncryption:
+                    properties:
+                      enabled:
+                        type: boolean
+                    type: object
+                  subnetGroupName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - iamRoleArn
+                - nodeType
+                - replicationFactor
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - iamRoleArn
-            - nodeType
             - providerRef
-            - replicationFactor
+            - resource
             type: object
           status:
             properties:
@@ -269,7 +277,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: parametergroups.dax.aws.kubeform.com
 spec:
   group: dax.aws.kubeform.com
@@ -296,10 +305,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
@@ -320,47 +325,50 @@ spec:
                       - value
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              parameters:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    value:
-                      type: string
-                  required:
-                  - name
-                  - value
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  parameters:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - name
+                      - value
+                      type: object
+                    type: array
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -407,7 +415,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: subnetgroups.dax.aws.kubeform.com
 spec:
   group: dax.aws.kubeform.com
@@ -434,10 +443,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
@@ -446,49 +451,52 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   subnetIDS:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   vpcID:
                     type: string
                 required:
                 - name
-                - providerRef
                 - subnetIDS
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              subnetIDS:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    type: array
+                  vpcID:
+                    type: string
+                required:
+                - name
+                - subnetIDS
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - subnetIDS
+            - resource
             type: object
           status:
             properties:

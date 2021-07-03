@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: xssmatchsets.waf.aws.kubeform.com
 spec:
   group: waf.aws.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -41,16 +38,6 @@ spec:
                   id:
                     type: string
                   name:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   xssMatchTuples:
                     items:
@@ -73,42 +60,55 @@ spec:
                     type: array
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  xssMatchTuples:
+                    items:
+                      properties:
+                        fieldToMatch:
+                          properties:
+                            data:
+                              type: string
+                            type:
+                              type: string
+                          required:
+                          - type
+                          type: object
+                        textTransformation:
+                          type: string
+                      required:
+                      - fieldToMatch
+                      - textTransformation
+                      type: object
+                    type: array
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              xssMatchTuples:
-                items:
-                  properties:
-                    fieldToMatch:
-                      properties:
-                        data:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                      - type
-                      type: object
-                    textTransformation:
-                      type: string
-                  required:
-                  - fieldToMatch
-                  - textTransformation
-                  type: object
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

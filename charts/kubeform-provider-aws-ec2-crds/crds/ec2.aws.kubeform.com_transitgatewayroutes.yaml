@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: transitgatewayroutes.ec2.aws.kubeform.com
 spec:
   group: ec2.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              blackhole:
-                type: boolean
-              destinationCIDRBlock:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   blackhole:
@@ -44,23 +39,12 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   transitGatewayAttachmentID:
                     type: string
                   transitGatewayRouteTableID:
                     type: string
                 required:
                 - destinationCIDRBlock
-                - providerRef
                 - transitGatewayRouteTableID
                 type: object
               providerRef:
@@ -68,19 +52,35 @@ spec:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  blackhole:
+                    type: boolean
+                  destinationCIDRBlock:
+                    type: string
+                  id:
+                    type: string
+                  transitGatewayAttachmentID:
+                    type: string
+                  transitGatewayRouteTableID:
+                    type: string
+                required:
+                - destinationCIDRBlock
+                - transitGatewayRouteTableID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              transitGatewayAttachmentID:
-                type: string
-              transitGatewayRouteTableID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - destinationCIDRBlock
             - providerRef
-            - transitGatewayRouteTableID
+            - resource
             type: object
           status:
             properties:

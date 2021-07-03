@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: triggers.codecommit.aws.kubeform.com
 spec:
   group: codecommit.aws.kubeform.com
@@ -30,27 +31,13 @@ spec:
             type: object
           spec:
             properties:
-              configurationID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   configurationID:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   repositoryName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   trigger:
                     items:
@@ -77,7 +64,6 @@ spec:
                     maxItems: 10
                     type: array
                 required:
-                - providerRef
                 - repositoryName
                 - trigger
                 type: object
@@ -86,41 +72,55 @@ spec:
                   name:
                     type: string
                 type: object
-              repositoryName:
-                type: string
+              resource:
+                properties:
+                  configurationID:
+                    type: string
+                  id:
+                    type: string
+                  repositoryName:
+                    type: string
+                  trigger:
+                    items:
+                      properties:
+                        branches:
+                          items:
+                            type: string
+                          type: array
+                        customData:
+                          type: string
+                        destinationArn:
+                          type: string
+                        events:
+                          items:
+                            type: string
+                          type: array
+                        name:
+                          type: string
+                      required:
+                      - destinationArn
+                      - events
+                      - name
+                      type: object
+                    maxItems: 10
+                    type: array
+                required:
+                - repositoryName
+                - trigger
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              trigger:
-                items:
-                  properties:
-                    branches:
-                      items:
-                        type: string
-                      type: array
-                    customData:
-                      type: string
-                    destinationArn:
-                      type: string
-                    events:
-                      items:
-                        type: string
-                      type: array
-                    name:
-                      type: string
-                  required:
-                  - destinationArn
-                  - events
-                  - name
-                  type: object
-                maxItems: 10
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - repositoryName
-            - trigger
+            - resource
             type: object
           status:
             properties:

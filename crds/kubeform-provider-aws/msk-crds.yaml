@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusters.msk.aws.kubeform.com
 spec:
   group: msk.aws.kubeform.com
@@ -188,94 +189,17 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              bootstrapBrokers:
-                type: string
-              bootstrapBrokersSaslScram:
-                type: string
-              bootstrapBrokersTLS:
-                type: string
-              brokerNodeGroupInfo:
-                properties:
-                  azDistribution:
-                    type: string
-                  clientSubnets:
-                    items:
-                      type: string
-                    type: array
-                  ebsVolumeSize:
-                    format: int64
-                    type: integer
-                  instanceType:
-                    type: string
-                  securityGroups:
-                    items:
-                      type: string
-                    type: array
-                required:
-                - clientSubnets
-                - ebsVolumeSize
-                - instanceType
-                - securityGroups
-                type: object
-              clientAuthentication:
-                properties:
-                  sasl:
-                    properties:
-                      scram:
-                        type: boolean
-                    type: object
-                  tls:
-                    properties:
-                      certificateAuthorityArns:
-                        items:
-                          type: string
-                        type: array
-                    type: object
-                type: object
-              clusterName:
-                type: string
-              configurationInfo:
-                properties:
-                  arn:
-                    type: string
-                  revision:
-                    format: int64
-                    type: integer
-                required:
-                - arn
-                - revision
-                type: object
-              currentVersion:
-                type: string
-              encryptionInfo:
-                properties:
-                  encryptionAtRestKmsKeyArn:
-                    type: string
-                  encryptionInTransit:
-                    properties:
-                      clientBroker:
-                        type: string
-                      inCluster:
-                        type: boolean
-                    type: object
-                type: object
-              enhancedMonitoring:
-                type: string
-              id:
-                type: string
-              kafkaVersion:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
                     type: string
                   bootstrapBrokers:
                     type: string
+                  bootstrapBrokersSaslIam:
+                    type: string
                   bootstrapBrokersSaslScram:
                     type: string
-                  bootstrapBrokersTLS:
+                  bootstrapBrokersTls:
                     type: string
                   brokerNodeGroupInfo:
                     properties:
@@ -304,6 +228,8 @@ spec:
                     properties:
                       sasl:
                         properties:
+                          iam:
+                            type: boolean
                           scram:
                             type: boolean
                         type: object
@@ -410,20 +336,32 @@ spec:
                     required:
                     - prometheus
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                   zookeeperConnectString:
                     type: string
                 required:
@@ -431,92 +369,206 @@ spec:
                 - clusterName
                 - kafkaVersion
                 - numberOfBrokerNodes
-                - providerRef
-                type: object
-              loggingInfo:
-                properties:
-                  brokerLogs:
-                    properties:
-                      cloudwatchLogs:
-                        properties:
-                          enabled:
-                            type: boolean
-                          logGroup:
-                            type: string
-                        required:
-                        - enabled
-                        type: object
-                      firehose:
-                        properties:
-                          deliveryStream:
-                            type: string
-                          enabled:
-                            type: boolean
-                        required:
-                        - enabled
-                        type: object
-                      s3:
-                        properties:
-                          bucket:
-                            type: string
-                          enabled:
-                            type: boolean
-                          prefix:
-                            type: string
-                        required:
-                        - enabled
-                        type: object
-                    type: object
-                required:
-                - brokerLogs
-                type: object
-              numberOfBrokerNodes:
-                format: int64
-                type: integer
-              openMonitoring:
-                properties:
-                  prometheus:
-                    properties:
-                      jmxExporter:
-                        properties:
-                          enabledInBroker:
-                            type: boolean
-                        required:
-                        - enabledInBroker
-                        type: object
-                      nodeExporter:
-                        properties:
-                          enabledInBroker:
-                            type: boolean
-                        required:
-                        - enabledInBroker
-                        type: object
-                    type: object
-                required:
-                - prometheus
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  bootstrapBrokers:
+                    type: string
+                  bootstrapBrokersSaslIam:
+                    type: string
+                  bootstrapBrokersSaslScram:
+                    type: string
+                  bootstrapBrokersTls:
+                    type: string
+                  brokerNodeGroupInfo:
+                    properties:
+                      azDistribution:
+                        type: string
+                      clientSubnets:
+                        items:
+                          type: string
+                        type: array
+                      ebsVolumeSize:
+                        format: int64
+                        type: integer
+                      instanceType:
+                        type: string
+                      securityGroups:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - clientSubnets
+                    - ebsVolumeSize
+                    - instanceType
+                    - securityGroups
+                    type: object
+                  clientAuthentication:
+                    properties:
+                      sasl:
+                        properties:
+                          iam:
+                            type: boolean
+                          scram:
+                            type: boolean
+                        type: object
+                      tls:
+                        properties:
+                          certificateAuthorityArns:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                    type: object
+                  clusterName:
+                    type: string
+                  configurationInfo:
+                    properties:
+                      arn:
+                        type: string
+                      revision:
+                        format: int64
+                        type: integer
+                    required:
+                    - arn
+                    - revision
+                    type: object
+                  currentVersion:
+                    type: string
+                  encryptionInfo:
+                    properties:
+                      encryptionAtRestKmsKeyArn:
+                        type: string
+                      encryptionInTransit:
+                        properties:
+                          clientBroker:
+                            type: string
+                          inCluster:
+                            type: boolean
+                        type: object
+                    type: object
+                  enhancedMonitoring:
+                    type: string
+                  id:
+                    type: string
+                  kafkaVersion:
+                    type: string
+                  loggingInfo:
+                    properties:
+                      brokerLogs:
+                        properties:
+                          cloudwatchLogs:
+                            properties:
+                              enabled:
+                                type: boolean
+                              logGroup:
+                                type: string
+                            required:
+                            - enabled
+                            type: object
+                          firehose:
+                            properties:
+                              deliveryStream:
+                                type: string
+                              enabled:
+                                type: boolean
+                            required:
+                            - enabled
+                            type: object
+                          s3:
+                            properties:
+                              bucket:
+                                type: string
+                              enabled:
+                                type: boolean
+                              prefix:
+                                type: string
+                            required:
+                            - enabled
+                            type: object
+                        type: object
+                    required:
+                    - brokerLogs
+                    type: object
+                  numberOfBrokerNodes:
+                    format: int64
+                    type: integer
+                  openMonitoring:
+                    properties:
+                      prometheus:
+                        properties:
+                          jmxExporter:
+                            properties:
+                              enabledInBroker:
+                                type: boolean
+                            required:
+                            - enabledInBroker
+                            type: object
+                          nodeExporter:
+                            properties:
+                              enabledInBroker:
+                                type: boolean
+                            required:
+                            - enabledInBroker
+                            type: object
+                        type: object
+                    required:
+                    - prometheus
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  zookeeperConnectString:
+                    type: string
+                required:
+                - brokerNodeGroupInfo
+                - clusterName
+                - kafkaVersion
+                - numberOfBrokerNodes
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              zookeeperConnectString:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - brokerNodeGroupInfo
-            - clusterName
-            - kafkaVersion
-            - numberOfBrokerNodes
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -563,7 +615,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: configurations.msk.aws.kubeform.com
 spec:
   group: msk.aws.kubeform.com
@@ -590,16 +643,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              kafkaVersions:
-                items:
-                  type: string
-                type: array
               kubeformOutput:
                 properties:
                   arn:
@@ -617,46 +660,53 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serverProperties:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - kafkaVersions
                 - name
-                - providerRef
                 - serverProperties
                 type: object
-              latestRevision:
-                format: int64
-                type: integer
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serverProperties:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  kafkaVersions:
+                    items:
+                      type: string
+                    type: array
+                  latestRevision:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  serverProperties:
+                    type: string
+                required:
+                - name
+                - serverProperties
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - kafkaVersions
-            - name
             - providerRef
-            - serverProperties
+            - resource
             type: object
           status:
             properties:
@@ -703,7 +753,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: scramsecretassociations.msk.aws.kubeform.com
 spec:
   group: msk.aws.kubeform.com
@@ -730,33 +781,18 @@ spec:
             type: object
           spec:
             properties:
-              clusterArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterArn:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   secretArnList:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - clusterArn
-                - providerRef
                 - secretArnList
                 type: object
               providerRef:
@@ -764,19 +800,33 @@ spec:
                   name:
                     type: string
                 type: object
-              secretArnList:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  clusterArn:
+                    type: string
+                  id:
+                    type: string
+                  secretArnList:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - clusterArn
+                - secretArnList
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterArn
             - providerRef
-            - secretArnList
+            - resource
             type: object
           status:
             properties:

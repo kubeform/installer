@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: metricalarms.cloudwatch.aws.kubeform.com
 spec:
   group: cloudwatch.aws.kubeform.com
@@ -30,41 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              actionsEnabled:
-                type: boolean
-              alarmActions:
-                items:
-                  type: string
-                type: array
-              alarmDescription:
-                type: string
-              alarmName:
-                type: string
-              arn:
-                type: string
-              comparisonOperator:
-                type: string
-              datapointsToAlarm:
-                format: int64
-                type: integer
-              dimensions:
-                additionalProperties:
-                  type: string
-                type: object
-              evaluateLowSampleCountPercentiles:
-                type: string
-              evaluationPeriods:
-                format: int64
-                type: integer
-              extendedStatistic:
-                type: string
-              id:
-                type: string
-              insufficientDataActions:
-                items:
-                  type: string
-                maxItems: 5
-                type: array
               kubeformOutput:
                 properties:
                   actionsEnabled:
@@ -151,22 +117,16 @@ spec:
                   period:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   statistic:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   threshold:
                     format: double
                     type: number
@@ -180,87 +140,135 @@ spec:
                 - alarmName
                 - comparisonOperator
                 - evaluationPeriods
-                - providerRef
                 type: object
-              metricName:
-                type: string
-              metricQuery:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    expression:
-                      type: string
-                    label:
-                      type: string
-                    metric:
-                      properties:
-                        dimensions:
-                          additionalProperties:
-                            type: string
-                          type: object
-                        metricName:
-                          type: string
-                        namespace:
-                          type: string
-                        period:
-                          format: int64
-                          type: integer
-                        stat:
-                          type: string
-                        unit:
-                          type: string
-                      required:
-                      - metricName
-                      - period
-                      - stat
-                      type: object
-                    returnData:
-                      type: boolean
-                  required:
-                  - ID
-                  type: object
-                type: array
-              namespace:
-                type: string
-              okActions:
-                items:
-                  type: string
-                maxItems: 5
-                type: array
-              period:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              statistic:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  actionsEnabled:
+                    type: boolean
+                  alarmActions:
+                    items:
+                      type: string
+                    type: array
+                  alarmDescription:
+                    type: string
+                  alarmName:
+                    type: string
+                  arn:
+                    type: string
+                  comparisonOperator:
+                    type: string
+                  datapointsToAlarm:
+                    format: int64
+                    type: integer
+                  dimensions:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  evaluateLowSampleCountPercentiles:
+                    type: string
+                  evaluationPeriods:
+                    format: int64
+                    type: integer
+                  extendedStatistic:
+                    type: string
+                  id:
+                    type: string
+                  insufficientDataActions:
+                    items:
+                      type: string
+                    maxItems: 5
+                    type: array
+                  metricName:
+                    type: string
+                  metricQuery:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        expression:
+                          type: string
+                        label:
+                          type: string
+                        metric:
+                          properties:
+                            dimensions:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            metricName:
+                              type: string
+                            namespace:
+                              type: string
+                            period:
+                              format: int64
+                              type: integer
+                            stat:
+                              type: string
+                            unit:
+                              type: string
+                          required:
+                          - metricName
+                          - period
+                          - stat
+                          type: object
+                        returnData:
+                          type: boolean
+                      required:
+                      - ID
+                      type: object
+                    type: array
+                  namespace:
+                    type: string
+                  okActions:
+                    items:
+                      type: string
+                    maxItems: 5
+                    type: array
+                  period:
+                    format: int64
+                    type: integer
+                  statistic:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  threshold:
+                    format: double
+                    type: number
+                  thresholdMetricID:
+                    type: string
+                  treatMissingData:
+                    type: string
+                  unit:
+                    type: string
+                required:
+                - alarmName
+                - comparisonOperator
+                - evaluationPeriods
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              threshold:
-                format: double
-                type: number
-              thresholdMetricID:
-                type: string
-              treatMissingData:
-                type: string
-              unit:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - alarmName
-            - comparisonOperator
-            - evaluationPeriods
             - providerRef
+            - resource
             type: object
           status:
             properties:

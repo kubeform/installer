@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: maintenancewindowtargets.ssm.aws.kubeform.com
 spec:
   group: ssm.aws.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
@@ -44,11 +41,6 @@ spec:
                     type: string
                   ownerInformation:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceType:
                     type: string
                   targets:
@@ -67,58 +59,66 @@ spec:
                       type: object
                     maxItems: 5
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   windowID:
                     type: string
                 required:
-                - providerRef
                 - resourceType
                 - targets
                 - windowID
                 type: object
-              name:
-                type: string
-              ownerInformation:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceType:
-                type: string
-              targets:
-                items:
-                  properties:
-                    key:
-                      type: string
-                    values:
-                      items:
-                        type: string
-                      maxItems: 50
-                      type: array
-                  required:
-                  - key
-                  - values
-                  type: object
-                maxItems: 5
-                type: array
+              resource:
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  ownerInformation:
+                    type: string
+                  resourceType:
+                    type: string
+                  targets:
+                    items:
+                      properties:
+                        key:
+                          type: string
+                        values:
+                          items:
+                            type: string
+                          maxItems: 50
+                          type: array
+                      required:
+                      - key
+                      - values
+                      type: object
+                    maxItems: 5
+                    type: array
+                  windowID:
+                    type: string
+                required:
+                - resourceType
+                - targets
+                - windowID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              windowID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - resourceType
-            - targets
-            - windowID
+            - resource
             type: object
           status:
             properties:

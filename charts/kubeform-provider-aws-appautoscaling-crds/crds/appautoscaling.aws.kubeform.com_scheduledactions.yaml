@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: scheduledactions.appautoscaling.aws.kubeform.com
 spec:
   group: appautoscaling.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              endTime:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -46,11 +41,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceID:
                     type: string
                   scalableDimension:
@@ -68,61 +58,71 @@ spec:
                     type: string
                   startTime:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timezone:
                     type: string
                 required:
                 - name
-                - providerRef
                 - resourceID
                 - scalableDimension
                 - scalableTargetAction
                 - schedule
                 - serviceNamespace
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceID:
-                type: string
-              scalableDimension:
-                type: string
-              scalableTargetAction:
+              resource:
                 properties:
-                  maxCapacity:
+                  arn:
                     type: string
-                  minCapacity:
+                  endTime:
                     type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceID:
+                    type: string
+                  scalableDimension:
+                    type: string
+                  scalableTargetAction:
+                    properties:
+                      maxCapacity:
+                        type: string
+                      minCapacity:
+                        type: string
+                    type: object
+                  schedule:
+                    type: string
+                  serviceNamespace:
+                    type: string
+                  startTime:
+                    type: string
+                  timezone:
+                    type: string
+                required:
+                - name
+                - resourceID
+                - scalableDimension
+                - scalableTargetAction
+                - schedule
+                - serviceNamespace
                 type: object
-              schedule:
-                type: string
-              serviceNamespace:
-                type: string
-              startTime:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timezone:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - resourceID
-            - scalableDimension
-            - scalableTargetAction
-            - schedule
-            - serviceNamespace
+            - resource
             type: object
           status:
             properties:

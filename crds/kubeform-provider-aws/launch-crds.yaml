@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: configurations.launch.aws.kubeform.com
 spec:
   group: launch.aws.kubeform.com
@@ -30,61 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              associatePublicIPAddress:
-                type: boolean
-              ebsBlockDevice:
-                items:
-                  properties:
-                    deleteOnTermination:
-                      type: boolean
-                    deviceName:
-                      type: string
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    noDevice:
-                      type: boolean
-                    snapshotID:
-                      type: string
-                    volumeSize:
-                      format: int64
-                      type: integer
-                    volumeType:
-                      type: string
-                  required:
-                  - deviceName
-                  type: object
-                type: array
-              ebsOptimized:
-                type: boolean
-              enableMonitoring:
-                type: boolean
-              ephemeralBlockDevice:
-                items:
-                  properties:
-                    deviceName:
-                      type: string
-                    virtualName:
-                      type: string
-                  required:
-                  - deviceName
-                  - virtualName
-                  type: object
-                type: array
-              iamInstanceProfile:
-                type: string
-              id:
-                type: string
-              imageID:
-                type: string
-              instanceType:
-                type: string
-              keyName:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -107,6 +53,9 @@ spec:
                           type: boolean
                         snapshotID:
                           type: string
+                        throughput:
+                          format: int64
+                          type: integer
                         volumeSize:
                           format: int64
                           type: integer
@@ -158,11 +107,6 @@ spec:
                     type: string
                   placementTenancy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rootBlockDevice:
                     properties:
                       deleteOnTermination:
@@ -170,6 +114,9 @@ spec:
                       encrypted:
                         type: boolean
                       iops:
+                        format: int64
+                        type: integer
+                      throughput:
                         format: int64
                         type: integer
                       volumeSize:
@@ -184,10 +131,124 @@ spec:
                     type: array
                   spotPrice:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  userData:
+                    type: string
+                  userDataBase64:
+                    type: string
+                  vpcClassicLinkID:
+                    type: string
+                  vpcClassicLinkSecurityGroups:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - imageID
+                - instanceType
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  associatePublicIPAddress:
+                    type: boolean
+                  ebsBlockDevice:
+                    items:
+                      properties:
+                        deleteOnTermination:
+                          type: boolean
+                        deviceName:
+                          type: string
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        noDevice:
+                          type: boolean
+                        snapshotID:
+                          type: string
+                        throughput:
+                          format: int64
+                          type: integer
+                        volumeSize:
+                          format: int64
+                          type: integer
+                        volumeType:
+                          type: string
+                      required:
+                      - deviceName
+                      type: object
+                    type: array
+                  ebsOptimized:
+                    type: boolean
+                  enableMonitoring:
+                    type: boolean
+                  ephemeralBlockDevice:
+                    items:
+                      properties:
+                        deviceName:
+                          type: string
+                        virtualName:
+                          type: string
+                      required:
+                      - deviceName
+                      - virtualName
+                      type: object
+                    type: array
+                  iamInstanceProfile:
+                    type: string
+                  id:
+                    type: string
+                  imageID:
+                    type: string
+                  instanceType:
+                    type: string
+                  keyName:
+                    type: string
+                  metadataOptions:
+                    properties:
+                      httpEndpoint:
+                        type: string
+                      httpPutResponseHopLimit:
+                        format: int64
+                        type: integer
+                      httpTokens:
+                        type: string
+                    type: object
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  placementTenancy:
+                    type: string
+                  rootBlockDevice:
+                    properties:
+                      deleteOnTermination:
+                        type: boolean
+                      encrypted:
+                        type: boolean
+                      iops:
+                        format: int64
+                        type: integer
+                      throughput:
+                        format: int64
+                        type: integer
+                      volumeSize:
+                        format: int64
+                        type: integer
+                      volumeType:
+                        type: string
+                    type: object
+                  securityGroups:
+                    items:
+                      type: string
+                    type: array
+                  spotPrice:
                     type: string
                   userData:
                     type: string
@@ -202,69 +263,20 @@ spec:
                 required:
                 - imageID
                 - instanceType
-                - providerRef
                 type: object
-              metadataOptions:
-                properties:
-                  httpEndpoint:
-                    type: string
-                  httpPutResponseHopLimit:
-                    format: int64
-                    type: integer
-                  httpTokens:
-                    type: string
-                type: object
-              name:
-                type: string
-              namePrefix:
-                type: string
-              placementTenancy:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rootBlockDevice:
-                properties:
-                  deleteOnTermination:
-                    type: boolean
-                  encrypted:
-                    type: boolean
-                  iops:
-                    format: int64
-                    type: integer
-                  volumeSize:
-                    format: int64
-                    type: integer
-                  volumeType:
-                    type: string
-                type: object
-              securityGroups:
-                items:
-                  type: string
-                type: array
-              spotPrice:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              userData:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              userDataBase64:
-                type: string
-              vpcClassicLinkID:
-                type: string
-              vpcClassicLinkSecurityGroups:
-                items:
-                  type: string
-                type: array
             required:
-            - imageID
-            - instanceType
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -311,7 +323,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: templates.launch.aws.kubeform.com
 spec:
   group: launch.aws.kubeform.com
@@ -338,140 +351,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              blockDeviceMappings:
-                items:
-                  properties:
-                    deviceName:
-                      type: string
-                    ebs:
-                      properties:
-                        deleteOnTermination:
-                          type: string
-                        encrypted:
-                          type: string
-                        iops:
-                          format: int64
-                          type: integer
-                        kmsKeyID:
-                          type: string
-                        snapshotID:
-                          type: string
-                        throughput:
-                          format: int64
-                          type: integer
-                        volumeSize:
-                          format: int64
-                          type: integer
-                        volumeType:
-                          type: string
-                      type: object
-                    noDevice:
-                      type: string
-                    virtualName:
-                      type: string
-                  type: object
-                type: array
-              capacityReservationSpecification:
-                properties:
-                  capacityReservationPreference:
-                    type: string
-                  capacityReservationTarget:
-                    properties:
-                      capacityReservationID:
-                        type: string
-                    type: object
-                type: object
-              cpuOptions:
-                properties:
-                  coreCount:
-                    format: int64
-                    type: integer
-                  threadsPerCore:
-                    format: int64
-                    type: integer
-                type: object
-              creditSpecification:
-                properties:
-                  cpuCredits:
-                    type: string
-                type: object
-              defaultVersion:
-                format: int64
-                type: integer
-              description:
-                type: string
-              disableAPITermination:
-                type: boolean
-              ebsOptimized:
-                type: string
-              elasticGpuSpecifications:
-                items:
-                  properties:
-                    type:
-                      type: string
-                  required:
-                  - type
-                  type: object
-                type: array
-              elasticInferenceAccelerator:
-                properties:
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              enclaveOptions:
-                properties:
-                  enabled:
-                    type: boolean
-                type: object
-              hibernationOptions:
-                properties:
-                  configured:
-                    type: boolean
-                required:
-                - configured
-                type: object
-              iamInstanceProfile:
-                properties:
-                  arn:
-                    type: string
-                  name:
-                    type: string
-                type: object
-              id:
-                type: string
-              imageID:
-                type: string
-              instanceInitiatedShutdownBehavior:
-                type: string
-              instanceMarketOptions:
-                properties:
-                  marketType:
-                    type: string
-                  spotOptions:
-                    properties:
-                      blockDurationMinutes:
-                        format: int64
-                        type: integer
-                      instanceInterruptionBehavior:
-                        type: string
-                      maxPrice:
-                        type: string
-                      spotInstanceType:
-                        type: string
-                      validUntil:
-                        type: string
-                    type: object
-                type: object
-              instanceType:
-                type: string
-              kernelID:
-                type: string
-              keyName:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -653,6 +532,8 @@ spec:
                         deviceIndex:
                           format: int64
                           type: integer
+                        interfaceType:
+                          type: string
                         ipv4AddressCount:
                           format: int64
                           type: integer
@@ -689,17 +570,14 @@ spec:
                         type: string
                       hostID:
                         type: string
+                      hostResourceGroupArn:
+                        type: string
                       partitionNumber:
                         format: int64
                         type: integer
                       spreadDomain:
                         type: string
                       tenancy:
-                        type: string
-                    type: object
-                  providerRef:
-                    properties:
-                      name:
                         type: string
                     type: object
                   ramDiskID:
@@ -723,11 +601,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   updateDefaultVersion:
                     type: boolean
                   userData:
@@ -736,139 +613,288 @@ spec:
                     items:
                       type: string
                     type: array
-                required:
-                - providerRef
-                type: object
-              latestVersion:
-                format: int64
-                type: integer
-              licenseSpecification:
-                items:
-                  properties:
-                    licenseConfigurationArn:
-                      type: string
-                  required:
-                  - licenseConfigurationArn
-                  type: object
-                type: array
-              metadataOptions:
-                properties:
-                  httpEndpoint:
-                    type: string
-                  httpPutResponseHopLimit:
-                    format: int64
-                    type: integer
-                  httpTokens:
-                    type: string
-                type: object
-              monitoring:
-                properties:
-                  enabled:
-                    type: boolean
-                type: object
-              name:
-                type: string
-              namePrefix:
-                type: string
-              networkInterfaces:
-                items:
-                  properties:
-                    associateCarrierIPAddress:
-                      type: string
-                    associatePublicIPAddress:
-                      type: string
-                    deleteOnTermination:
-                      type: string
-                    description:
-                      type: string
-                    deviceIndex:
-                      format: int64
-                      type: integer
-                    ipv4AddressCount:
-                      format: int64
-                      type: integer
-                    ipv4Addresses:
-                      items:
-                        type: string
-                      type: array
-                    ipv6AddressCount:
-                      format: int64
-                      type: integer
-                    ipv6Addresses:
-                      items:
-                        type: string
-                      type: array
-                    networkInterfaceID:
-                      type: string
-                    privateIPAddress:
-                      type: string
-                    securityGroups:
-                      items:
-                        type: string
-                      type: array
-                    subnetID:
-                      type: string
-                  type: object
-                type: array
-              placement:
-                properties:
-                  affinity:
-                    type: string
-                  availabilityZone:
-                    type: string
-                  groupName:
-                    type: string
-                  hostID:
-                    type: string
-                  partitionNumber:
-                    format: int64
-                    type: integer
-                  spreadDomain:
-                    type: string
-                  tenancy:
-                    type: string
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              ramDiskID:
-                type: string
-              securityGroupNames:
-                items:
-                  type: string
-                type: array
-              tagSpecifications:
-                items:
-                  properties:
-                    resourceType:
-                      type: string
-                    tags:
-                      additionalProperties:
-                        type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  blockDeviceMappings:
+                    items:
+                      properties:
+                        deviceName:
+                          type: string
+                        ebs:
+                          properties:
+                            deleteOnTermination:
+                              type: string
+                            encrypted:
+                              type: string
+                            iops:
+                              format: int64
+                              type: integer
+                            kmsKeyID:
+                              type: string
+                            snapshotID:
+                              type: string
+                            throughput:
+                              format: int64
+                              type: integer
+                            volumeSize:
+                              format: int64
+                              type: integer
+                            volumeType:
+                              type: string
+                          type: object
+                        noDevice:
+                          type: string
+                        virtualName:
+                          type: string
                       type: object
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: array
+                  capacityReservationSpecification:
+                    properties:
+                      capacityReservationPreference:
+                        type: string
+                      capacityReservationTarget:
+                        properties:
+                          capacityReservationID:
+                            type: string
+                        type: object
+                    type: object
+                  cpuOptions:
+                    properties:
+                      coreCount:
+                        format: int64
+                        type: integer
+                      threadsPerCore:
+                        format: int64
+                        type: integer
+                    type: object
+                  creditSpecification:
+                    properties:
+                      cpuCredits:
+                        type: string
+                    type: object
+                  defaultVersion:
+                    format: int64
+                    type: integer
+                  description:
+                    type: string
+                  disableAPITermination:
+                    type: boolean
+                  ebsOptimized:
+                    type: string
+                  elasticGpuSpecifications:
+                    items:
+                      properties:
+                        type:
+                          type: string
+                      required:
+                      - type
+                      type: object
+                    type: array
+                  elasticInferenceAccelerator:
+                    properties:
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  enclaveOptions:
+                    properties:
+                      enabled:
+                        type: boolean
+                    type: object
+                  hibernationOptions:
+                    properties:
+                      configured:
+                        type: boolean
+                    required:
+                    - configured
+                    type: object
+                  iamInstanceProfile:
+                    properties:
+                      arn:
+                        type: string
+                      name:
+                        type: string
+                    type: object
+                  id:
+                    type: string
+                  imageID:
+                    type: string
+                  instanceInitiatedShutdownBehavior:
+                    type: string
+                  instanceMarketOptions:
+                    properties:
+                      marketType:
+                        type: string
+                      spotOptions:
+                        properties:
+                          blockDurationMinutes:
+                            format: int64
+                            type: integer
+                          instanceInterruptionBehavior:
+                            type: string
+                          maxPrice:
+                            type: string
+                          spotInstanceType:
+                            type: string
+                          validUntil:
+                            type: string
+                        type: object
+                    type: object
+                  instanceType:
+                    type: string
+                  kernelID:
+                    type: string
+                  keyName:
+                    type: string
+                  latestVersion:
+                    format: int64
+                    type: integer
+                  licenseSpecification:
+                    items:
+                      properties:
+                        licenseConfigurationArn:
+                          type: string
+                      required:
+                      - licenseConfigurationArn
+                      type: object
+                    type: array
+                  metadataOptions:
+                    properties:
+                      httpEndpoint:
+                        type: string
+                      httpPutResponseHopLimit:
+                        format: int64
+                        type: integer
+                      httpTokens:
+                        type: string
+                    type: object
+                  monitoring:
+                    properties:
+                      enabled:
+                        type: boolean
+                    type: object
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  networkInterfaces:
+                    items:
+                      properties:
+                        associateCarrierIPAddress:
+                          type: string
+                        associatePublicIPAddress:
+                          type: string
+                        deleteOnTermination:
+                          type: string
+                        description:
+                          type: string
+                        deviceIndex:
+                          format: int64
+                          type: integer
+                        interfaceType:
+                          type: string
+                        ipv4AddressCount:
+                          format: int64
+                          type: integer
+                        ipv4Addresses:
+                          items:
+                            type: string
+                          type: array
+                        ipv6AddressCount:
+                          format: int64
+                          type: integer
+                        ipv6Addresses:
+                          items:
+                            type: string
+                          type: array
+                        networkInterfaceID:
+                          type: string
+                        privateIPAddress:
+                          type: string
+                        securityGroups:
+                          items:
+                            type: string
+                          type: array
+                        subnetID:
+                          type: string
+                      type: object
+                    type: array
+                  placement:
+                    properties:
+                      affinity:
+                        type: string
+                      availabilityZone:
+                        type: string
+                      groupName:
+                        type: string
+                      hostID:
+                        type: string
+                      hostResourceGroupArn:
+                        type: string
+                      partitionNumber:
+                        format: int64
+                        type: integer
+                      spreadDomain:
+                        type: string
+                      tenancy:
+                        type: string
+                    type: object
+                  ramDiskID:
+                    type: string
+                  securityGroupNames:
+                    items:
+                      type: string
+                    type: array
+                  tagSpecifications:
+                    items:
+                      properties:
+                        resourceType:
+                          type: string
+                        tags:
+                          additionalProperties:
+                            type: string
+                          type: object
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  updateDefaultVersion:
+                    type: boolean
+                  userData:
+                    type: string
+                  vpcSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              updateDefaultVersion:
-                type: boolean
-              userData:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              vpcSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

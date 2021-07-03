@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: patchbaselines.ssm.aws.kubeform.com
 spec:
   group: ssm.aws.kubeform.com
@@ -30,71 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              approvalRule:
-                items:
-                  properties:
-                    approveAfterDays:
-                      format: int64
-                      type: integer
-                    approveUntilDate:
-                      type: string
-                    complianceLevel:
-                      type: string
-                    enableNonSecurity:
-                      type: boolean
-                    patchFilter:
-                      items:
-                        properties:
-                          key:
-                            type: string
-                          values:
-                            items:
-                              type: string
-                            maxItems: 20
-                            minItems: 1
-                            type: array
-                        required:
-                        - key
-                        - values
-                        type: object
-                      maxItems: 10
-                      type: array
-                  required:
-                  - patchFilter
-                  type: object
-                type: array
-              approvedPatches:
-                items:
-                  type: string
-                maxItems: 50
-                type: array
-              approvedPatchesComplianceLevel:
-                type: string
-              approvedPatchesEnableNonSecurity:
-                type: boolean
-              arn:
-                type: string
-              description:
-                type: string
-              globalFilter:
-                items:
-                  properties:
-                    key:
-                      type: string
-                    values:
-                      items:
-                        type: string
-                      maxItems: 20
-                      minItems: 1
-                      type: array
-                  required:
-                  - key
-                  - values
-                  type: object
-                maxItems: 4
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   approvalRule:
@@ -166,11 +102,6 @@ spec:
                     type: string
                   operatingSystem:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rejectedPatches:
                     items:
                       type: string
@@ -201,62 +132,139 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              operatingSystem:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              rejectedPatches:
-                items:
-                  type: string
-                maxItems: 50
-                type: array
-              rejectedPatchesAction:
-                type: string
-              source:
-                items:
-                  properties:
-                    configuration:
+              resource:
+                properties:
+                  approvalRule:
+                    items:
+                      properties:
+                        approveAfterDays:
+                          format: int64
+                          type: integer
+                        approveUntilDate:
+                          type: string
+                        complianceLevel:
+                          type: string
+                        enableNonSecurity:
+                          type: boolean
+                        patchFilter:
+                          items:
+                            properties:
+                              key:
+                                type: string
+                              values:
+                                items:
+                                  type: string
+                                maxItems: 20
+                                minItems: 1
+                                type: array
+                            required:
+                            - key
+                            - values
+                            type: object
+                          maxItems: 10
+                          type: array
+                      required:
+                      - patchFilter
+                      type: object
+                    type: array
+                  approvedPatches:
+                    items:
                       type: string
-                    name:
+                    maxItems: 50
+                    type: array
+                  approvedPatchesComplianceLevel:
+                    type: string
+                  approvedPatchesEnableNonSecurity:
+                    type: boolean
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  globalFilter:
+                    items:
+                      properties:
+                        key:
+                          type: string
+                        values:
+                          items:
+                            type: string
+                          maxItems: 20
+                          minItems: 1
+                          type: array
+                      required:
+                      - key
+                      - values
+                      type: object
+                    maxItems: 4
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  operatingSystem:
+                    type: string
+                  rejectedPatches:
+                    items:
                       type: string
-                    products:
-                      items:
-                        type: string
-                      maxItems: 20
-                      type: array
-                  required:
-                  - configuration
-                  - name
-                  - products
-                  type: object
-                maxItems: 20
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    maxItems: 50
+                    type: array
+                  rejectedPatchesAction:
+                    type: string
+                  source:
+                    items:
+                      properties:
+                        configuration:
+                          type: string
+                        name:
+                          type: string
+                        products:
+                          items:
+                            type: string
+                          maxItems: 20
+                          type: array
+                      required:
+                      - configuration
+                      - name
+                      - products
+                      type: object
+                    maxItems: 20
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

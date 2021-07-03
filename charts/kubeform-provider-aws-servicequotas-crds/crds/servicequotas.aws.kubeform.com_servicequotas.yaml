@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: servicequotas.servicequotas.aws.kubeform.com
 spec:
   group: servicequotas.aws.kubeform.com
@@ -30,15 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              adjustable:
-                type: boolean
-              arn:
-                type: string
-              defaultValue:
-                format: double
-                type: number
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   adjustable:
@@ -50,11 +42,6 @@ spec:
                     type: number
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   quotaCode:
                     type: string
                   quotaName:
@@ -67,16 +54,10 @@ spec:
                     type: string
                   serviceName:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   value:
                     format: double
                     type: number
                 required:
-                - providerRef
                 - quotaCode
                 - serviceCode
                 - value
@@ -86,31 +67,50 @@ spec:
                   name:
                     type: string
                 type: object
-              quotaCode:
-                type: string
-              quotaName:
-                type: string
-              requestID:
-                type: string
-              requestStatus:
-                type: string
-              serviceCode:
-                type: string
-              serviceName:
-                type: string
+              resource:
+                properties:
+                  adjustable:
+                    type: boolean
+                  arn:
+                    type: string
+                  defaultValue:
+                    format: double
+                    type: number
+                  id:
+                    type: string
+                  quotaCode:
+                    type: string
+                  quotaName:
+                    type: string
+                  requestID:
+                    type: string
+                  requestStatus:
+                    type: string
+                  serviceCode:
+                    type: string
+                  serviceName:
+                    type: string
+                  value:
+                    format: double
+                    type: number
+                required:
+                - quotaCode
+                - serviceCode
+                - value
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              value:
-                format: double
-                type: number
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - quotaCode
-            - serviceCode
-            - value
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: canaries.synthetics.aws.kubeform.com
 spec:
   group: synthetics.aws.kubeform.com
@@ -30,21 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              artifactS3Location:
-                type: string
-              engineArn:
-                type: string
-              executionRoleArn:
-                type: string
-              failureRetentionPeriod:
-                format: int64
-                type: integer
-              handler:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -64,11 +50,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   runConfig:
                     properties:
                       activeTracing:
@@ -111,11 +92,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeline:
                     items:
                       properties:
@@ -149,100 +129,128 @@ spec:
                 - executionRoleArn
                 - handler
                 - name
-                - providerRef
                 - runtimeVersion
                 - schedule
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              runConfig:
+              resource:
                 properties:
-                  activeTracing:
+                  arn:
+                    type: string
+                  artifactS3Location:
+                    type: string
+                  engineArn:
+                    type: string
+                  executionRoleArn:
+                    type: string
+                  failureRetentionPeriod:
+                    format: int64
+                    type: integer
+                  handler:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  runConfig:
+                    properties:
+                      activeTracing:
+                        type: boolean
+                      memoryInMb:
+                        format: int64
+                        type: integer
+                      timeoutInSeconds:
+                        format: int64
+                        type: integer
+                    type: object
+                  runtimeVersion:
+                    type: string
+                  s3Bucket:
+                    type: string
+                  s3Key:
+                    type: string
+                  s3Version:
+                    type: string
+                  schedule:
+                    properties:
+                      durationInSeconds:
+                        format: int64
+                        type: integer
+                      expression:
+                        type: string
+                    required:
+                    - expression
+                    type: object
+                  sourceLocationArn:
+                    type: string
+                  startCanary:
                     type: boolean
-                  memoryInMb:
+                  status:
+                    type: string
+                  successRetentionPeriod:
                     format: int64
                     type: integer
-                  timeoutInSeconds:
-                    format: int64
-                    type: integer
-                type: object
-              runtimeVersion:
-                type: string
-              s3Bucket:
-                type: string
-              s3Key:
-                type: string
-              s3Version:
-                type: string
-              schedule:
-                properties:
-                  durationInSeconds:
-                    format: int64
-                    type: integer
-                  expression:
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeline:
+                    items:
+                      properties:
+                        created:
+                          type: string
+                        lastModified:
+                          type: string
+                        lastStarted:
+                          type: string
+                        lastStopped:
+                          type: string
+                      type: object
+                    type: array
+                  vpcConfig:
+                    properties:
+                      securityGroupIDS:
+                        items:
+                          type: string
+                        type: array
+                      subnetIDS:
+                        items:
+                          type: string
+                        type: array
+                      vpcID:
+                        type: string
+                    type: object
+                  zipFile:
                     type: string
                 required:
-                - expression
-                type: object
-              sourceLocationArn:
-                type: string
-              startCanary:
-                type: boolean
-              status:
-                type: string
-              successRetentionPeriod:
-                format: int64
-                type: integer
-              tags:
-                additionalProperties:
-                  type: string
+                - artifactS3Location
+                - executionRoleArn
+                - handler
+                - name
+                - runtimeVersion
+                - schedule
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeline:
-                items:
-                  properties:
-                    created:
-                      type: string
-                    lastModified:
-                      type: string
-                    lastStarted:
-                      type: string
-                    lastStopped:
-                      type: string
-                  type: object
-                type: array
-              vpcConfig:
-                properties:
-                  securityGroupIDS:
-                    items:
-                      type: string
-                    type: array
-                  subnetIDS:
-                    items:
-                      type: string
-                    type: array
-                  vpcID:
-                    type: string
-                type: object
-              zipFile:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - artifactS3Location
-            - executionRoleArn
-            - handler
-            - name
             - providerRef
-            - runtimeVersion
-            - schedule
+            - resource
             type: object
           status:
             properties:

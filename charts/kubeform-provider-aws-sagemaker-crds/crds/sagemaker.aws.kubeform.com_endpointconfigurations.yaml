@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointconfigurations.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -30,54 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              dataCaptureConfig:
-                properties:
-                  captureContentTypeHeader:
-                    properties:
-                      csvContentTypes:
-                        items:
-                          type: string
-                        maxItems: 10
-                        minItems: 1
-                        type: array
-                      jsonContentTypes:
-                        items:
-                          type: string
-                        maxItems: 10
-                        minItems: 1
-                        type: array
-                    type: object
-                  captureOptions:
-                    items:
-                      properties:
-                        captureMode:
-                          type: string
-                      required:
-                      - captureMode
-                      type: object
-                    maxItems: 2
-                    minItems: 1
-                    type: array
-                  destinationS3URI:
-                    type: string
-                  enableCapture:
-                    type: boolean
-                  initialSamplingPercentage:
-                    format: int64
-                    type: integer
-                  kmsKeyID:
-                    type: string
-                required:
-                - captureOptions
-                - destinationS3URI
-                - initialSamplingPercentage
-                type: object
-              id:
-                type: string
-              kmsKeyArn:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -153,66 +106,121 @@ spec:
                       - modelName
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - productionVariants
-                - providerRef
                 type: object
-              name:
-                type: string
-              productionVariants:
-                items:
-                  properties:
-                    acceleratorType:
-                      type: string
-                    initialInstanceCount:
-                      format: int64
-                      type: integer
-                    initialVariantWeight:
-                      format: double
-                      type: number
-                    instanceType:
-                      type: string
-                    modelName:
-                      type: string
-                    variantName:
-                      type: string
-                  required:
-                  - initialInstanceCount
-                  - instanceType
-                  - modelName
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  dataCaptureConfig:
+                    properties:
+                      captureContentTypeHeader:
+                        properties:
+                          csvContentTypes:
+                            items:
+                              type: string
+                            maxItems: 10
+                            minItems: 1
+                            type: array
+                          jsonContentTypes:
+                            items:
+                              type: string
+                            maxItems: 10
+                            minItems: 1
+                            type: array
+                        type: object
+                      captureOptions:
+                        items:
+                          properties:
+                            captureMode:
+                              type: string
+                          required:
+                          - captureMode
+                          type: object
+                        maxItems: 2
+                        minItems: 1
+                        type: array
+                      destinationS3URI:
+                        type: string
+                      enableCapture:
+                        type: boolean
+                      initialSamplingPercentage:
+                        format: int64
+                        type: integer
+                      kmsKeyID:
+                        type: string
+                    required:
+                    - captureOptions
+                    - destinationS3URI
+                    - initialSamplingPercentage
+                    type: object
+                  id:
+                    type: string
+                  kmsKeyArn:
+                    type: string
+                  name:
+                    type: string
+                  productionVariants:
+                    items:
+                      properties:
+                        acceleratorType:
+                          type: string
+                        initialInstanceCount:
+                          format: int64
+                          type: integer
+                        initialVariantWeight:
+                          format: double
+                          type: number
+                        instanceType:
+                          type: string
+                        modelName:
+                          type: string
+                        variantName:
+                          type: string
+                      required:
+                      - initialInstanceCount
+                      - instanceType
+                      - modelName
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - productionVariants
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - productionVariants
             - providerRef
+            - resource
             type: object
           status:
             properties:

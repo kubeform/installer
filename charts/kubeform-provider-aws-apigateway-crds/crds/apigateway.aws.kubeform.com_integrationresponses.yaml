@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: integrationresponses.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              contentHandling:
-                type: string
-              httpMethod:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   contentHandling:
@@ -44,11 +39,6 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceID:
                     type: string
                   responseParameters:
@@ -65,14 +55,8 @@ spec:
                     type: string
                   statusCode:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - httpMethod
-                - providerRef
                 - resourceID
                 - restAPIID
                 - statusCode
@@ -82,33 +66,49 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceID:
-                type: string
-              responseParameters:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  contentHandling:
+                    type: string
+                  httpMethod:
+                    type: string
+                  id:
+                    type: string
+                  resourceID:
+                    type: string
+                  responseParameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  responseTemplates:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  restAPIID:
+                    type: string
+                  selectionPattern:
+                    type: string
+                  statusCode:
+                    type: string
+                required:
+                - httpMethod
+                - resourceID
+                - restAPIID
+                - statusCode
                 type: object
-              responseTemplates:
-                additionalProperties:
-                  type: string
-                type: object
-              restAPIID:
-                type: string
-              selectionPattern:
-                type: string
-              statusCode:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - httpMethod
             - providerRef
-            - resourceID
-            - restAPIID
-            - statusCode
+            - resource
             type: object
           status:
             properties:

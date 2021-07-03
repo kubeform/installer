@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: conditionalforwarders.directoryservice.aws.kubeform.com
 spec:
   group: directoryservice.aws.kubeform.com
@@ -30,15 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              directoryID:
-                type: string
-              dnsIPS:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   directoryID:
@@ -50,22 +42,11 @@ spec:
                     type: array
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   remoteDomainName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - directoryID
                 - dnsIPS
-                - providerRef
                 - remoteDomainName
                 type: object
               providerRef:
@@ -73,18 +54,37 @@ spec:
                   name:
                     type: string
                 type: object
-              remoteDomainName:
-                type: string
+              resource:
+                properties:
+                  directoryID:
+                    type: string
+                  dnsIPS:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  id:
+                    type: string
+                  remoteDomainName:
+                    type: string
+                required:
+                - directoryID
+                - dnsIPS
+                - remoteDomainName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - directoryID
-            - dnsIPS
             - providerRef
-            - remoteDomainName
+            - resource
             type: object
           status:
             properties:
@@ -131,7 +131,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: directories.directoryservice.aws.kubeform.com
 spec:
   group: directoryservice.aws.kubeform.com
@@ -158,50 +159,6 @@ spec:
             type: object
           spec:
             properties:
-              accessURL:
-                type: string
-              alias:
-                type: string
-              connectSettings:
-                properties:
-                  availabilityZones:
-                    items:
-                      type: string
-                    type: array
-                  connectIPS:
-                    items:
-                      type: string
-                    type: array
-                  customerDNSIPS:
-                    items:
-                      type: string
-                    type: array
-                  customerUsername:
-                    type: string
-                  subnetIDS:
-                    items:
-                      type: string
-                    type: array
-                  vpcID:
-                    type: string
-                required:
-                - customerDNSIPS
-                - customerUsername
-                - subnetIDS
-                - vpcID
-                type: object
-              description:
-                type: string
-              dnsIPAddresses:
-                items:
-                  type: string
-                type: array
-              edition:
-                type: string
-              enableSso:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accessURL:
@@ -250,16 +207,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroupID:
                     type: string
                   shortName:
@@ -270,11 +217,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   type:
                     type: string
                   vpcSettings:
@@ -295,56 +241,113 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  accessURL:
+                    type: string
+                  alias:
+                    type: string
+                  connectSettings:
+                    properties:
+                      availabilityZones:
+                        items:
+                          type: string
+                        type: array
+                      connectIPS:
+                        items:
+                          type: string
+                        type: array
+                      customerDNSIPS:
+                        items:
+                          type: string
+                        type: array
+                      customerUsername:
+                        type: string
+                      subnetIDS:
+                        items:
+                          type: string
+                        type: array
+                      vpcID:
+                        type: string
+                    required:
+                    - customerDNSIPS
+                    - customerUsername
+                    - subnetIDS
+                    - vpcID
+                    type: object
+                  description:
+                    type: string
+                  dnsIPAddresses:
+                    items:
+                      type: string
+                    type: array
+                  edition:
+                    type: string
+                  enableSso:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  securityGroupID:
+                    type: string
+                  shortName:
+                    type: string
+                  size:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  type:
+                    type: string
+                  vpcSettings:
+                    properties:
+                      availabilityZones:
+                        items:
+                          type: string
+                        type: array
+                      subnetIDS:
+                        items:
+                          type: string
+                        type: array
+                      vpcID:
+                        type: string
+                    required:
+                    - subnetIDS
+                    - vpcID
+                    type: object
+                required:
+                - name
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              securityGroupID:
-                type: string
-              shortName:
-                type: string
-              size:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              vpcSettings:
-                properties:
-                  availabilityZones:
-                    items:
-                      type: string
-                    type: array
-                  subnetIDS:
-                    items:
-                      type: string
-                    type: array
-                  vpcID:
-                    type: string
-                required:
-                - subnetIDS
-                - vpcID
-                type: object
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -391,7 +394,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: logsubscriptions.directoryservice.aws.kubeform.com
 spec:
   group: directoryservice.aws.kubeform.com
@@ -418,10 +422,6 @@ spec:
             type: object
           spec:
             properties:
-              directoryID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   directoryID:
@@ -430,37 +430,40 @@ spec:
                     type: string
                   logGroupName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - directoryID
                 - logGroupName
-                - providerRef
                 type: object
-              logGroupName:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  directoryID:
+                    type: string
+                  id:
+                    type: string
+                  logGroupName:
+                    type: string
+                required:
+                - directoryID
+                - logGroupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - directoryID
-            - logGroupName
             - providerRef
+            - resource
             type: object
           status:
             properties:

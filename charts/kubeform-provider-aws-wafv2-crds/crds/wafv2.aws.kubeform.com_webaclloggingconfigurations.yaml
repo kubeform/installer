@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: webaclloggingconfigurations.wafv2.aws.kubeform.com
 spec:
   group: wafv2.aws.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -42,10 +41,46 @@ spec:
                     maxItems: 100
                     minItems: 1
                     type: array
-                  providerRef:
+                  loggingFilter:
                     properties:
-                      name:
+                      defaultBehavior:
                         type: string
+                      filter:
+                        items:
+                          properties:
+                            behavior:
+                              type: string
+                            condition:
+                              items:
+                                properties:
+                                  actionCondition:
+                                    properties:
+                                      action:
+                                        type: string
+                                    required:
+                                    - action
+                                    type: object
+                                  labelNameCondition:
+                                    properties:
+                                      labelName:
+                                        type: string
+                                    required:
+                                    - labelName
+                                    type: object
+                                type: object
+                              minItems: 1
+                              type: array
+                            requirement:
+                              type: string
+                          required:
+                          - behavior
+                          - condition
+                          - requirement
+                          type: object
+                        type: array
+                    required:
+                    - defaultBehavior
+                    - filter
                     type: object
                   redactedFields:
                     items:
@@ -79,68 +114,115 @@ spec:
                     type: array
                   resourceArn:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - logDestinationConfigs
-                - providerRef
                 - resourceArn
                 type: object
-              logDestinationConfigs:
-                items:
-                  type: string
-                maxItems: 100
-                minItems: 1
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              redactedFields:
-                items:
-                  properties:
-                    allQueryArguments:
-                      type: object
-                    body:
-                      type: object
-                    method:
-                      type: object
-                    queryString:
-                      type: object
-                    singleHeader:
+              resource:
+                properties:
+                  id:
+                    type: string
+                  logDestinationConfigs:
+                    items:
+                      type: string
+                    maxItems: 100
+                    minItems: 1
+                    type: array
+                  loggingFilter:
+                    properties:
+                      defaultBehavior:
+                        type: string
+                      filter:
+                        items:
+                          properties:
+                            behavior:
+                              type: string
+                            condition:
+                              items:
+                                properties:
+                                  actionCondition:
+                                    properties:
+                                      action:
+                                        type: string
+                                    required:
+                                    - action
+                                    type: object
+                                  labelNameCondition:
+                                    properties:
+                                      labelName:
+                                        type: string
+                                    required:
+                                    - labelName
+                                    type: object
+                                type: object
+                              minItems: 1
+                              type: array
+                            requirement:
+                              type: string
+                          required:
+                          - behavior
+                          - condition
+                          - requirement
+                          type: object
+                        type: array
+                    required:
+                    - defaultBehavior
+                    - filter
+                    type: object
+                  redactedFields:
+                    items:
                       properties:
-                        name:
-                          type: string
-                      required:
-                      - name
+                        allQueryArguments:
+                          type: object
+                        body:
+                          type: object
+                        method:
+                          type: object
+                        queryString:
+                          type: object
+                        singleHeader:
+                          properties:
+                            name:
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        singleQueryArgument:
+                          properties:
+                            name:
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        uriPath:
+                          type: object
                       type: object
-                    singleQueryArgument:
-                      properties:
-                        name:
-                          type: string
-                      required:
-                      - name
-                      type: object
-                    uriPath:
-                      type: object
-                  type: object
-                maxItems: 100
-                type: array
-              resourceArn:
-                type: string
+                    maxItems: 100
+                    type: array
+                  resourceArn:
+                    type: string
+                required:
+                - logDestinationConfigs
+                - resourceArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - logDestinationConfigs
             - providerRef
-            - resourceArn
+            - resource
             type: object
           status:
             properties:

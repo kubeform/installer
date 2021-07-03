@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: attachments.autoscaling.aws.kubeform.com
 spec:
   group: autoscaling.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              albTargetGroupArn:
-                type: string
-              autoscalingGroupName:
-                type: string
-              elb:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   albTargetGroupArn:
@@ -48,33 +41,40 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - autoscalingGroupName
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  albTargetGroupArn:
+                    type: string
+                  autoscalingGroupName:
+                    type: string
+                  elb:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - autoscalingGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - autoscalingGroupName
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -121,7 +121,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: groups.autoscaling.aws.kubeform.com
 spec:
   group: autoscaling.aws.kubeform.com
@@ -148,77 +149,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              availabilityZones:
-                items:
-                  type: string
-                type: array
-              capacityRebalance:
-                type: boolean
-              defaultCooldown:
-                format: int64
-                type: integer
-              desiredCapacity:
-                format: int64
-                type: integer
-              enabledMetrics:
-                items:
-                  type: string
-                type: array
-              forceDelete:
-                type: boolean
-              forceDeleteWarmPool:
-                type: boolean
-              healthCheckGracePeriod:
-                format: int64
-                type: integer
-              healthCheckType:
-                type: string
-              id:
-                type: string
-              initialLifecycleHook:
-                items:
-                  properties:
-                    defaultResult:
-                      type: string
-                    heartbeatTimeout:
-                      format: int64
-                      type: integer
-                    lifecycleTransition:
-                      type: string
-                    name:
-                      type: string
-                    notificationMetadata:
-                      type: string
-                    notificationTargetArn:
-                      type: string
-                    roleArn:
-                      type: string
-                  required:
-                  - lifecycleTransition
-                  - name
-                  type: object
-                type: array
-              instanceRefresh:
-                properties:
-                  preferences:
-                    properties:
-                      instanceWarmup:
-                        type: string
-                      minHealthyPercentage:
-                        format: int64
-                        type: integer
-                    type: object
-                  strategy:
-                    type: string
-                  triggers:
-                    items:
-                      type: string
-                    type: array
-                required:
-                - strategy
-                type: object
               kubeformOutput:
                 properties:
                   arn:
@@ -384,11 +314,6 @@ spec:
                     type: string
                   protectFromScaleIn:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceLinkedRoleArn:
                     type: string
                   suspendedProcesses:
@@ -418,11 +343,6 @@ spec:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -464,181 +384,261 @@ spec:
                 required:
                 - maxSize
                 - minSize
-                - providerRef
                 type: object
-              launchConfiguration:
-                type: string
-              launchTemplate:
-                properties:
-                  ID:
-                    type: string
-                  name:
-                    type: string
-                  version:
-                    type: string
-                type: object
-              loadBalancers:
-                items:
-                  type: string
-                type: array
-              maxInstanceLifetime:
-                format: int64
-                type: integer
-              maxSize:
-                format: int64
-                type: integer
-              metricsGranularity:
-                type: string
-              minElbCapacity:
-                format: int64
-                type: integer
-              minSize:
-                format: int64
-                type: integer
-              mixedInstancesPolicy:
-                properties:
-                  instancesDistribution:
-                    properties:
-                      onDemandAllocationStrategy:
-                        type: string
-                      onDemandBaseCapacity:
-                        format: int64
-                        type: integer
-                      onDemandPercentageAboveBaseCapacity:
-                        format: int64
-                        type: integer
-                      spotAllocationStrategy:
-                        type: string
-                      spotInstancePools:
-                        format: int64
-                        type: integer
-                      spotMaxPrice:
-                        type: string
-                    type: object
-                  launchTemplate:
-                    properties:
-                      launchTemplateSpecification:
-                        properties:
-                          launchTemplateID:
-                            type: string
-                          launchTemplateName:
-                            type: string
-                          version:
-                            type: string
-                        type: object
-                      override:
-                        items:
-                          properties:
-                            instanceType:
-                              type: string
-                            launchTemplateSpecification:
-                              properties:
-                                launchTemplateID:
-                                  type: string
-                                launchTemplateName:
-                                  type: string
-                                version:
-                                  type: string
-                              type: object
-                            weightedCapacity:
-                              type: string
-                          type: object
-                        type: array
-                    required:
-                    - launchTemplateSpecification
-                    type: object
-                required:
-                - launchTemplate
-                type: object
-              name:
-                type: string
-              namePrefix:
-                type: string
-              placementGroup:
-                type: string
-              protectFromScaleIn:
-                type: boolean
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serviceLinkedRoleArn:
-                type: string
-              suspendedProcesses:
-                items:
-                  type: string
-                type: array
-              tag:
-                items:
-                  properties:
-                    key:
-                      type: string
-                    propagateAtLaunch:
-                      type: boolean
-                    value:
-                      type: string
-                  required:
-                  - key
-                  - propagateAtLaunch
-                  - value
-                  type: object
-                type: array
-              targetGroupArns:
-                items:
-                  type: string
-                type: array
-              terminationPolicies:
-                items:
-                  type: string
-                type: array
-              terminationPolicy:
-                enum:
-                - Delete
-                - DoNotTerminate
-                type: string
-              timeouts:
+              resource:
                 properties:
-                  create:
+                  arn:
+                    type: string
+                  availabilityZones:
+                    items:
+                      type: string
+                    type: array
+                  capacityRebalance:
+                    type: boolean
+                  defaultCooldown:
                     format: int64
                     type: integer
-                  default:
+                  desiredCapacity:
                     format: int64
                     type: integer
-                  delete:
+                  enabledMetrics:
+                    items:
+                      type: string
+                    type: array
+                  forceDelete:
+                    type: boolean
+                  forceDeleteWarmPool:
+                    type: boolean
+                  healthCheckGracePeriod:
                     format: int64
                     type: integer
-                  read:
+                  healthCheckType:
+                    type: string
+                  id:
+                    type: string
+                  initialLifecycleHook:
+                    items:
+                      properties:
+                        defaultResult:
+                          type: string
+                        heartbeatTimeout:
+                          format: int64
+                          type: integer
+                        lifecycleTransition:
+                          type: string
+                        name:
+                          type: string
+                        notificationMetadata:
+                          type: string
+                        notificationTargetArn:
+                          type: string
+                        roleArn:
+                          type: string
+                      required:
+                      - lifecycleTransition
+                      - name
+                      type: object
+                    type: array
+                  instanceRefresh:
+                    properties:
+                      preferences:
+                        properties:
+                          instanceWarmup:
+                            type: string
+                          minHealthyPercentage:
+                            format: int64
+                            type: integer
+                        type: object
+                      strategy:
+                        type: string
+                      triggers:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - strategy
+                    type: object
+                  launchConfiguration:
+                    type: string
+                  launchTemplate:
+                    properties:
+                      ID:
+                        type: string
+                      name:
+                        type: string
+                      version:
+                        type: string
+                    type: object
+                  loadBalancers:
+                    items:
+                      type: string
+                    type: array
+                  maxInstanceLifetime:
                     format: int64
                     type: integer
-                  update:
+                  maxSize:
                     format: int64
                     type: integer
-                type: object
-              vpcZoneIdentifier:
-                items:
-                  type: string
-                type: array
-              waitForCapacityTimeout:
-                type: string
-              waitForElbCapacity:
-                format: int64
-                type: integer
-              warmPool:
-                properties:
-                  maxGroupPreparedCapacity:
+                  metricsGranularity:
+                    type: string
+                  minElbCapacity:
                     format: int64
                     type: integer
                   minSize:
                     format: int64
                     type: integer
-                  poolState:
+                  mixedInstancesPolicy:
+                    properties:
+                      instancesDistribution:
+                        properties:
+                          onDemandAllocationStrategy:
+                            type: string
+                          onDemandBaseCapacity:
+                            format: int64
+                            type: integer
+                          onDemandPercentageAboveBaseCapacity:
+                            format: int64
+                            type: integer
+                          spotAllocationStrategy:
+                            type: string
+                          spotInstancePools:
+                            format: int64
+                            type: integer
+                          spotMaxPrice:
+                            type: string
+                        type: object
+                      launchTemplate:
+                        properties:
+                          launchTemplateSpecification:
+                            properties:
+                              launchTemplateID:
+                                type: string
+                              launchTemplateName:
+                                type: string
+                              version:
+                                type: string
+                            type: object
+                          override:
+                            items:
+                              properties:
+                                instanceType:
+                                  type: string
+                                launchTemplateSpecification:
+                                  properties:
+                                    launchTemplateID:
+                                      type: string
+                                    launchTemplateName:
+                                      type: string
+                                    version:
+                                      type: string
+                                  type: object
+                                weightedCapacity:
+                                  type: string
+                              type: object
+                            type: array
+                        required:
+                        - launchTemplateSpecification
+                        type: object
+                    required:
+                    - launchTemplate
+                    type: object
+                  name:
                     type: string
+                  namePrefix:
+                    type: string
+                  placementGroup:
+                    type: string
+                  protectFromScaleIn:
+                    type: boolean
+                  serviceLinkedRoleArn:
+                    type: string
+                  suspendedProcesses:
+                    items:
+                      type: string
+                    type: array
+                  tag:
+                    items:
+                      properties:
+                        key:
+                          type: string
+                        propagateAtLaunch:
+                          type: boolean
+                        value:
+                          type: string
+                      required:
+                      - key
+                      - propagateAtLaunch
+                      - value
+                      type: object
+                    type: array
+                  targetGroupArns:
+                    items:
+                      type: string
+                    type: array
+                  terminationPolicies:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcZoneIdentifier:
+                    items:
+                      type: string
+                    type: array
+                  waitForCapacityTimeout:
+                    type: string
+                  waitForElbCapacity:
+                    format: int64
+                    type: integer
+                  warmPool:
+                    properties:
+                      maxGroupPreparedCapacity:
+                        format: int64
+                        type: integer
+                      minSize:
+                        format: int64
+                        type: integer
+                      poolState:
+                        type: string
+                    type: object
+                required:
+                - maxSize
+                - minSize
                 type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - maxSize
-            - minSize
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -685,7 +685,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: lifecyclehooks.autoscaling.aws.kubeform.com
 spec:
   group: autoscaling.aws.kubeform.com
@@ -712,15 +713,6 @@ spec:
             type: object
           spec:
             properties:
-              autoscalingGroupName:
-                type: string
-              defaultResult:
-                type: string
-              heartbeatTimeout:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   autoscalingGroupName:
@@ -740,49 +732,57 @@ spec:
                     type: string
                   notificationTargetArn:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roleArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - autoscalingGroupName
                 - lifecycleTransition
                 - name
-                - providerRef
                 type: object
-              lifecycleTransition:
-                type: string
-              name:
-                type: string
-              notificationMetadata:
-                type: string
-              notificationTargetArn:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              roleArn:
-                type: string
+              resource:
+                properties:
+                  autoscalingGroupName:
+                    type: string
+                  defaultResult:
+                    type: string
+                  heartbeatTimeout:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  lifecycleTransition:
+                    type: string
+                  name:
+                    type: string
+                  notificationMetadata:
+                    type: string
+                  notificationTargetArn:
+                    type: string
+                  roleArn:
+                    type: string
+                required:
+                - autoscalingGroupName
+                - lifecycleTransition
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - autoscalingGroupName
-            - lifecycleTransition
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -829,7 +829,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: notifications.autoscaling.aws.kubeform.com
 spec:
   group: autoscaling.aws.kubeform.com
@@ -856,12 +857,6 @@ spec:
             type: object
           spec:
             properties:
-              groupNames:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   groupNames:
@@ -874,45 +869,50 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   topicArn:
                     type: string
                 required:
                 - groupNames
                 - notifications
-                - providerRef
                 - topicArn
                 type: object
-              notifications:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  groupNames:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  notifications:
+                    items:
+                      type: string
+                    type: array
+                  topicArn:
+                    type: string
+                required:
+                - groupNames
+                - notifications
+                - topicArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              topicArn:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - groupNames
-            - notifications
             - providerRef
-            - topicArn
+            - resource
             type: object
           status:
             properties:
@@ -959,7 +959,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policies.autoscaling.aws.kubeform.com
 spec:
   group: autoscaling.aws.kubeform.com
@@ -986,20 +987,6 @@ spec:
             type: object
           spec:
             properties:
-              adjustmentType:
-                type: string
-              arn:
-                type: string
-              autoscalingGroupName:
-                type: string
-              cooldown:
-                format: int64
-                type: integer
-              estimatedInstanceWarmup:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   adjustmentType:
@@ -1025,10 +1012,56 @@ spec:
                     type: string
                   policyType:
                     type: string
-                  providerRef:
+                  predictiveScalingConfiguration:
                     properties:
-                      name:
+                      maxCapacityBreachBehavior:
                         type: string
+                      maxCapacityBuffer:
+                        type: string
+                      metricSpecification:
+                        properties:
+                          predefinedLoadMetricSpecification:
+                            properties:
+                              predefinedMetricType:
+                                type: string
+                              resourceLabel:
+                                type: string
+                            required:
+                            - predefinedMetricType
+                            - resourceLabel
+                            type: object
+                          predefinedMetricPairSpecification:
+                            properties:
+                              predefinedMetricType:
+                                type: string
+                              resourceLabel:
+                                type: string
+                            required:
+                            - predefinedMetricType
+                            - resourceLabel
+                            type: object
+                          predefinedScalingMetricSpecification:
+                            properties:
+                              predefinedMetricType:
+                                type: string
+                              resourceLabel:
+                                type: string
+                            required:
+                            - predefinedMetricType
+                            - resourceLabel
+                            type: object
+                          targetValue:
+                            format: int64
+                            type: integer
+                        required:
+                        - targetValue
+                        type: object
+                      mode:
+                        type: string
+                      schedulingBufferTime:
+                        type: string
+                    required:
+                    - metricSpecification
                     type: object
                   scalingAdjustment:
                     format: int64
@@ -1093,102 +1126,171 @@ spec:
                     required:
                     - targetValue
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - autoscalingGroupName
                 - name
-                - providerRef
                 type: object
-              metricAggregationType:
-                type: string
-              minAdjustmentMagnitude:
-                format: int64
-                type: integer
-              name:
-                type: string
-              policyType:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              scalingAdjustment:
-                format: int64
-                type: integer
-              stepAdjustment:
-                items:
-                  properties:
-                    metricIntervalLowerBound:
-                      type: string
-                    metricIntervalUpperBound:
-                      type: string
-                    scalingAdjustment:
-                      format: int64
-                      type: integer
-                  required:
-                  - scalingAdjustment
-                  type: object
-                type: array
-              targetTrackingConfiguration:
+              resource:
                 properties:
-                  customizedMetricSpecification:
+                  adjustmentType:
+                    type: string
+                  arn:
+                    type: string
+                  autoscalingGroupName:
+                    type: string
+                  cooldown:
+                    format: int64
+                    type: integer
+                  estimatedInstanceWarmup:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  metricAggregationType:
+                    type: string
+                  minAdjustmentMagnitude:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  policyType:
+                    type: string
+                  predictiveScalingConfiguration:
                     properties:
-                      metricDimension:
-                        items:
-                          properties:
-                            name:
-                              type: string
-                            value:
-                              type: string
-                          required:
-                          - name
-                          - value
-                          type: object
-                        type: array
-                      metricName:
+                      maxCapacityBreachBehavior:
                         type: string
-                      namespace:
+                      maxCapacityBuffer:
                         type: string
-                      statistic:
+                      metricSpecification:
+                        properties:
+                          predefinedLoadMetricSpecification:
+                            properties:
+                              predefinedMetricType:
+                                type: string
+                              resourceLabel:
+                                type: string
+                            required:
+                            - predefinedMetricType
+                            - resourceLabel
+                            type: object
+                          predefinedMetricPairSpecification:
+                            properties:
+                              predefinedMetricType:
+                                type: string
+                              resourceLabel:
+                                type: string
+                            required:
+                            - predefinedMetricType
+                            - resourceLabel
+                            type: object
+                          predefinedScalingMetricSpecification:
+                            properties:
+                              predefinedMetricType:
+                                type: string
+                              resourceLabel:
+                                type: string
+                            required:
+                            - predefinedMetricType
+                            - resourceLabel
+                            type: object
+                          targetValue:
+                            format: int64
+                            type: integer
+                        required:
+                        - targetValue
+                        type: object
+                      mode:
                         type: string
-                      unit:
+                      schedulingBufferTime:
                         type: string
                     required:
-                    - metricName
-                    - namespace
-                    - statistic
+                    - metricSpecification
                     type: object
-                  disableScaleIn:
-                    type: boolean
-                  predefinedMetricSpecification:
+                  scalingAdjustment:
+                    format: int64
+                    type: integer
+                  stepAdjustment:
+                    items:
+                      properties:
+                        metricIntervalLowerBound:
+                          type: string
+                        metricIntervalUpperBound:
+                          type: string
+                        scalingAdjustment:
+                          format: int64
+                          type: integer
+                      required:
+                      - scalingAdjustment
+                      type: object
+                    type: array
+                  targetTrackingConfiguration:
                     properties:
-                      predefinedMetricType:
-                        type: string
-                      resourceLabel:
-                        type: string
+                      customizedMetricSpecification:
+                        properties:
+                          metricDimension:
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                value:
+                                  type: string
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          metricName:
+                            type: string
+                          namespace:
+                            type: string
+                          statistic:
+                            type: string
+                          unit:
+                            type: string
+                        required:
+                        - metricName
+                        - namespace
+                        - statistic
+                        type: object
+                      disableScaleIn:
+                        type: boolean
+                      predefinedMetricSpecification:
+                        properties:
+                          predefinedMetricType:
+                            type: string
+                          resourceLabel:
+                            type: string
+                        required:
+                        - predefinedMetricType
+                        type: object
+                      targetValue:
+                        format: double
+                        type: number
                     required:
-                    - predefinedMetricType
+                    - targetValue
                     type: object
-                  targetValue:
-                    format: double
-                    type: number
                 required:
-                - targetValue
+                - autoscalingGroupName
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - autoscalingGroupName
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1235,7 +1337,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: schedules.autoscaling.aws.kubeform.com
 spec:
   group: autoscaling.aws.kubeform.com
@@ -1262,17 +1365,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoscalingGroupName:
-                type: string
-              desiredCapacity:
-                format: int64
-                type: integer
-              endTime:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1292,53 +1384,63 @@ spec:
                   minSize:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   recurrence:
                     type: string
                   scheduledActionName:
                     type: string
                   startTime:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - autoscalingGroupName
-                - providerRef
                 - scheduledActionName
                 type: object
-              maxSize:
-                format: int64
-                type: integer
-              minSize:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              recurrence:
-                type: string
-              scheduledActionName:
-                type: string
-              startTime:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoscalingGroupName:
+                    type: string
+                  desiredCapacity:
+                    format: int64
+                    type: integer
+                  endTime:
+                    type: string
+                  id:
+                    type: string
+                  maxSize:
+                    format: int64
+                    type: integer
+                  minSize:
+                    format: int64
+                    type: integer
+                  recurrence:
+                    type: string
+                  scheduledActionName:
+                    type: string
+                  startTime:
+                    type: string
+                required:
+                - autoscalingGroupName
+                - scheduledActionName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - autoscalingGroupName
             - providerRef
-            - scheduledActionName
+            - resource
             type: object
           status:
             properties:

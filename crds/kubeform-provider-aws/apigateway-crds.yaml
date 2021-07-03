@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accounts.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -30,25 +31,11 @@ spec:
             type: object
           spec:
             properties:
-              cloudwatchRoleArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   cloudwatchRoleArn:
                     type: string
                   id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   throttleSettings:
                     items:
@@ -61,32 +48,43 @@ spec:
                           type: number
                       type: object
                     type: array
-                required:
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  cloudwatchRoleArn:
+                    type: string
+                  id:
+                    type: string
+                  throttleSettings:
+                    items:
+                      properties:
+                        burstLimit:
+                          format: int64
+                          type: integer
+                        rateLimit:
+                          format: double
+                          type: number
+                      type: object
+                    type: array
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              throttleSettings:
-                items:
-                  properties:
-                    burstLimit:
-                      format: int64
-                      type: integer
-                    rateLimit:
-                      format: double
-                      type: number
-                  type: object
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -133,7 +131,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: apikeys.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -160,16 +159,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              createdDate:
-                type: string
-              description:
-                type: string
-              enabled:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -186,55 +175,67 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              lastUpdatedDate:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  createdDate:
+                    type: string
+                  description:
+                    type: string
+                  enabled:
+                    type: boolean
+                  id:
+                    type: string
+                  lastUpdatedDate:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - name
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -281,7 +282,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: apigatewayresources.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -308,8 +310,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -320,47 +320,48 @@ spec:
                     type: string
                   pathPart:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - parentID
                 - pathPart
-                - providerRef
                 - restAPIID
                 type: object
-              parentID:
-                type: string
-              path:
-                type: string
-              pathPart:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  parentID:
+                    type: string
+                  path:
+                    type: string
+                  pathPart:
+                    type: string
+                  restAPIID:
+                    type: string
+                required:
+                - parentID
+                - pathPart
+                - restAPIID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - parentID
-            - pathPart
             - providerRef
-            - restAPIID
+            - resource
             type: object
           status:
             properties:
@@ -407,7 +408,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: authorizers.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -434,19 +436,6 @@ spec:
             type: object
           spec:
             properties:
-              authorizerCredentials:
-                type: string
-              authorizerResultTtlInSeconds:
-                format: int64
-                type: integer
-              authorizerURI:
-                type: string
-              id:
-                type: string
-              identitySource:
-                type: string
-              identityValidationExpression:
-                type: string
               kubeformOutput:
                 properties:
                   authorizerCredentials:
@@ -468,49 +457,61 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   type:
                     type: string
                 required:
                 - name
-                - providerRef
                 - restAPIID
                 type: object
-              name:
-                type: string
-              providerArns:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
+              resource:
+                properties:
+                  authorizerCredentials:
+                    type: string
+                  authorizerResultTtlInSeconds:
+                    format: int64
+                    type: integer
+                  authorizerURI:
+                    type: string
+                  id:
+                    type: string
+                  identitySource:
+                    type: string
+                  identityValidationExpression:
+                    type: string
+                  name:
+                    type: string
+                  providerArns:
+                    items:
+                      type: string
+                    type: array
+                  restAPIID:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - name
+                - restAPIID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - restAPIID
+            - resource
             type: object
           status:
             properties:
@@ -557,7 +558,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: basepathmappings.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -584,14 +586,6 @@ spec:
             type: object
           spec:
             properties:
-              apiID:
-                type: string
-              basePath:
-                type: string
-              domainName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiID:
@@ -602,39 +596,46 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stageName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - apiID
                 - domainName
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stageName:
-                type: string
+              resource:
+                properties:
+                  apiID:
+                    type: string
+                  basePath:
+                    type: string
+                  domainName:
+                    type: string
+                  id:
+                    type: string
+                  stageName:
+                    type: string
+                required:
+                - apiID
+                - domainName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - apiID
-            - domainName
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -681,7 +682,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clientcertificates.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -708,16 +710,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              createdDate:
-                type: string
-              description:
-                type: string
-              expirationDate:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -732,41 +724,56 @@ spec:
                     type: string
                   pemEncodedCertificate:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
-              pemEncodedCertificate:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  createdDate:
+                    type: string
+                  description:
+                    type: string
+                  expirationDate:
+                    type: string
+                  id:
+                    type: string
+                  pemEncodedCertificate:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -813,7 +820,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: deployments.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -840,16 +848,6 @@ spec:
             type: object
           spec:
             properties:
-              createdDate:
-                type: string
-              description:
-                type: string
-              executionArn:
-                type: string
-              id:
-                type: string
-              invokeURL:
-                type: string
               kubeformOutput:
                 properties:
                   createdDate:
@@ -862,21 +860,11 @@ spec:
                     type: string
                   invokeURL:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
                     type: string
                   stageDescription:
                     type: string
                   stageName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   triggers:
                     additionalProperties:
@@ -887,7 +875,6 @@ spec:
                       type: string
                     type: object
                 required:
-                - providerRef
                 - restAPIID
                 type: object
               providerRef:
@@ -895,28 +882,48 @@ spec:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
-              stageDescription:
-                type: string
-              stageName:
-                type: string
+              resource:
+                properties:
+                  createdDate:
+                    type: string
+                  description:
+                    type: string
+                  executionArn:
+                    type: string
+                  id:
+                    type: string
+                  invokeURL:
+                    type: string
+                  restAPIID:
+                    type: string
+                  stageDescription:
+                    type: string
+                  stageName:
+                    type: string
+                  triggers:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  variables:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - restAPIID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              triggers:
-                additionalProperties:
-                  type: string
-                type: object
-              variables:
-                additionalProperties:
-                  type: string
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - restAPIID
+            - resource
             type: object
           status:
             properties:
@@ -963,7 +970,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: documentationparts.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -990,8 +998,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -1013,58 +1019,59 @@ spec:
                     type: object
                   properties:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - location
                 - properties
-                - providerRef
                 - restAPIID
                 type: object
-              location:
-                properties:
-                  method:
-                    type: string
-                  name:
-                    type: string
-                  path:
-                    type: string
-                  statusCode:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              properties:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  location:
+                    properties:
+                      method:
+                        type: string
+                      name:
+                        type: string
+                      path:
+                        type: string
+                      statusCode:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  properties:
+                    type: string
+                  restAPIID:
+                    type: string
+                required:
+                - location
+                - properties
+                - restAPIID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - properties
             - providerRef
-            - restAPIID
+            - resource
             type: object
           status:
             properties:
@@ -1111,7 +1118,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: documentationversions.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -1138,32 +1146,17 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   version:
                     type: string
                 required:
-                - providerRef
                 - restAPIID
                 - version
                 type: object
@@ -1172,19 +1165,33 @@ spec:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
+              resource:
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  restAPIID:
+                    type: string
+                  version:
+                    type: string
+                required:
+                - restAPIID
+                - version
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              version:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - restAPIID
-            - version
+            - resource
             type: object
           status:
             properties:
@@ -1231,7 +1238,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: domainnames.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -1258,35 +1266,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              certificateArn:
-                type: string
-              certificateBody:
-                type: string
-              certificateChain:
-                type: string
-              certificateName:
-                type: string
-              certificateUploadDate:
-                type: string
-              cloudfrontDomainName:
-                type: string
-              cloudfrontZoneID:
-                type: string
-              domainName:
-                type: string
-              endpointConfiguration:
-                properties:
-                  types:
-                    items:
-                      type: string
-                    type: array
-                required:
-                - types
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1318,7 +1297,7 @@ spec:
                     type: object
                   id:
                     type: string
-                  mutualTLSAuthentication:
+                  mutualTlsAuthentication:
                     properties:
                       truststoreURI:
                         type: string
@@ -1326,11 +1305,6 @@ spec:
                         type: string
                     required:
                     - truststoreURI
-                    type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
                     type: object
                   regionalCertificateArn:
                     type: string
@@ -1340,67 +1314,103 @@ spec:
                     type: string
                   regionalZoneID:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityPolicy:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - domainName
-                - providerRef
-                type: object
-              mutualTLSAuthentication:
-                properties:
-                  truststoreURI:
-                    type: string
-                  truststoreVersion:
-                    type: string
-                required:
-                - truststoreURI
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              regionalCertificateArn:
-                type: string
-              regionalCertificateName:
-                type: string
-              regionalDomainName:
-                type: string
-              regionalZoneID:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  certificateArn:
+                    type: string
+                  certificateBody:
+                    type: string
+                  certificateChain:
+                    type: string
+                  certificateName:
+                    type: string
+                  certificateUploadDate:
+                    type: string
+                  cloudfrontDomainName:
+                    type: string
+                  cloudfrontZoneID:
+                    type: string
+                  domainName:
+                    type: string
+                  endpointConfiguration:
+                    properties:
+                      types:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - types
+                    type: object
+                  id:
+                    type: string
+                  mutualTlsAuthentication:
+                    properties:
+                      truststoreURI:
+                        type: string
+                      truststoreVersion:
+                        type: string
+                    required:
+                    - truststoreURI
+                    type: object
+                  regionalCertificateArn:
+                    type: string
+                  regionalCertificateName:
+                    type: string
+                  regionalDomainName:
+                    type: string
+                  regionalZoneID:
+                    type: string
+                  securityPolicy:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - domainName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              securityPolicy:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - domainName
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1447,7 +1457,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: gatewayresponses.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -1474,17 +1485,10 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   responseParameters:
                     additionalProperties:
                       type: string
@@ -1499,13 +1503,7 @@ spec:
                     type: string
                   statusCode:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - responseType
                 - restAPIID
                 type: object
@@ -1514,29 +1512,41 @@ spec:
                   name:
                     type: string
                 type: object
-              responseParameters:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  responseParameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  responseTemplates:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  responseType:
+                    type: string
+                  restAPIID:
+                    type: string
+                  statusCode:
+                    type: string
+                required:
+                - responseType
+                - restAPIID
                 type: object
-              responseTemplates:
-                additionalProperties:
-                  type: string
-                type: object
-              responseType:
-                type: string
-              restAPIID:
-                type: string
-              statusCode:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - responseType
-            - restAPIID
+            - resource
             type: object
           status:
             properties:
@@ -1583,7 +1593,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: integrations.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -1610,26 +1621,6 @@ spec:
             type: object
           spec:
             properties:
-              cacheKeyParameters:
-                items:
-                  type: string
-                type: array
-              cacheNamespace:
-                type: string
-              connectionID:
-                type: string
-              connectionType:
-                type: string
-              contentHandling:
-                type: string
-              credentials:
-                type: string
-              httpMethod:
-                type: string
-              id:
-                type: string
-              integrationHTTPMethod:
-                type: string
               kubeformOutput:
                 properties:
                   cacheKeyParameters:
@@ -1654,11 +1645,6 @@ spec:
                     type: string
                   passthroughBehavior:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requestParameters:
                     additionalProperties:
                       type: string
@@ -1670,11 +1656,6 @@ spec:
                   resourceID:
                     type: string
                   restAPIID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeoutMilliseconds:
                     format: int64
@@ -1690,53 +1671,82 @@ spec:
                     type: string
                 required:
                 - httpMethod
-                - providerRef
                 - resourceID
                 - restAPIID
                 - type
                 type: object
-              passthroughBehavior:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requestParameters:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  cacheKeyParameters:
+                    items:
+                      type: string
+                    type: array
+                  cacheNamespace:
+                    type: string
+                  connectionID:
+                    type: string
+                  connectionType:
+                    type: string
+                  contentHandling:
+                    type: string
+                  credentials:
+                    type: string
+                  httpMethod:
+                    type: string
+                  id:
+                    type: string
+                  integrationHTTPMethod:
+                    type: string
+                  passthroughBehavior:
+                    type: string
+                  requestParameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  requestTemplates:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  resourceID:
+                    type: string
+                  restAPIID:
+                    type: string
+                  timeoutMilliseconds:
+                    format: int64
+                    type: integer
+                  tlsConfig:
+                    properties:
+                      insecureSkipVerification:
+                        type: boolean
+                    type: object
+                  type:
+                    type: string
+                  uri:
+                    type: string
+                required:
+                - httpMethod
+                - resourceID
+                - restAPIID
+                - type
                 type: object
-              requestTemplates:
-                additionalProperties:
-                  type: string
-                type: object
-              resourceID:
-                type: string
-              restAPIID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeoutMilliseconds:
-                format: int64
-                type: integer
-              tlsConfig:
-                properties:
-                  insecureSkipVerification:
-                    type: boolean
-                type: object
-              type:
-                type: string
-              uri:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - httpMethod
             - providerRef
-            - resourceID
-            - restAPIID
-            - type
+            - resource
             type: object
           status:
             properties:
@@ -1783,7 +1793,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: integrationresponses.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -1810,12 +1821,6 @@ spec:
             type: object
           spec:
             properties:
-              contentHandling:
-                type: string
-              httpMethod:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   contentHandling:
@@ -1824,11 +1829,6 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceID:
                     type: string
                   responseParameters:
@@ -1845,14 +1845,8 @@ spec:
                     type: string
                   statusCode:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - httpMethod
-                - providerRef
                 - resourceID
                 - restAPIID
                 - statusCode
@@ -1862,33 +1856,49 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceID:
-                type: string
-              responseParameters:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  contentHandling:
+                    type: string
+                  httpMethod:
+                    type: string
+                  id:
+                    type: string
+                  resourceID:
+                    type: string
+                  responseParameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  responseTemplates:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  restAPIID:
+                    type: string
+                  selectionPattern:
+                    type: string
+                  statusCode:
+                    type: string
+                required:
+                - httpMethod
+                - resourceID
+                - restAPIID
+                - statusCode
                 type: object
-              responseTemplates:
-                additionalProperties:
-                  type: string
-                type: object
-              restAPIID:
-                type: string
-              selectionPattern:
-                type: string
-              statusCode:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - httpMethod
             - providerRef
-            - resourceID
-            - restAPIID
-            - statusCode
+            - resource
             type: object
           status:
             properties:
@@ -1935,7 +1945,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: methods.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -1962,20 +1973,6 @@ spec:
             type: object
           spec:
             properties:
-              apiKeyRequired:
-                type: boolean
-              authorization:
-                type: string
-              authorizationScopes:
-                items:
-                  type: string
-                type: array
-              authorizerID:
-                type: string
-              httpMethod:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiKeyRequired:
@@ -1994,11 +1991,6 @@ spec:
                     type: string
                   operationName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requestModels:
                     additionalProperties:
                       type: string
@@ -2013,50 +2005,68 @@ spec:
                     type: string
                   restAPIID:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - authorization
                 - httpMethod
-                - providerRef
                 - resourceID
                 - restAPIID
                 type: object
-              operationName:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requestModels:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  apiKeyRequired:
+                    type: boolean
+                  authorization:
+                    type: string
+                  authorizationScopes:
+                    items:
+                      type: string
+                    type: array
+                  authorizerID:
+                    type: string
+                  httpMethod:
+                    type: string
+                  id:
+                    type: string
+                  operationName:
+                    type: string
+                  requestModels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  requestParameters:
+                    additionalProperties:
+                      type: boolean
+                    type: object
+                  requestValidatorID:
+                    type: string
+                  resourceID:
+                    type: string
+                  restAPIID:
+                    type: string
+                required:
+                - authorization
+                - httpMethod
+                - resourceID
+                - restAPIID
                 type: object
-              requestParameters:
-                additionalProperties:
-                  type: boolean
-                type: object
-              requestValidatorID:
-                type: string
-              resourceID:
-                type: string
-              restAPIID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - authorization
-            - httpMethod
             - providerRef
-            - resourceID
-            - restAPIID
+            - resource
             type: object
           status:
             properties:
@@ -2103,7 +2113,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: methodresponses.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -2130,21 +2141,12 @@ spec:
             type: object
           spec:
             properties:
-              httpMethod:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   httpMethod:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceID:
                     type: string
                   responseModels:
@@ -2159,14 +2161,8 @@ spec:
                     type: string
                   statusCode:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - httpMethod
-                - providerRef
                 - resourceID
                 - restAPIID
                 - statusCode
@@ -2176,31 +2172,45 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceID:
-                type: string
-              responseModels:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  httpMethod:
+                    type: string
+                  id:
+                    type: string
+                  resourceID:
+                    type: string
+                  responseModels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  responseParameters:
+                    additionalProperties:
+                      type: boolean
+                    type: object
+                  restAPIID:
+                    type: string
+                  statusCode:
+                    type: string
+                required:
+                - httpMethod
+                - resourceID
+                - restAPIID
+                - statusCode
                 type: object
-              responseParameters:
-                additionalProperties:
-                  type: boolean
-                type: object
-              restAPIID:
-                type: string
-              statusCode:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - httpMethod
             - providerRef
-            - resourceID
-            - restAPIID
-            - statusCode
+            - resource
             type: object
           status:
             properties:
@@ -2247,7 +2257,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: methodsettings.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -2274,19 +2285,12 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   methodPath:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
                     type: string
                   settings:
@@ -2317,66 +2321,72 @@ spec:
                     type: object
                   stageName:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - methodPath
-                - providerRef
                 - restAPIID
                 - settings
                 - stageName
                 type: object
-              methodPath:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
-              settings:
+              resource:
                 properties:
-                  cacheDataEncrypted:
-                    type: boolean
-                  cacheTtlInSeconds:
-                    format: int64
-                    type: integer
-                  cachingEnabled:
-                    type: boolean
-                  dataTraceEnabled:
-                    type: boolean
-                  loggingLevel:
+                  id:
                     type: string
-                  metricsEnabled:
-                    type: boolean
-                  requireAuthorizationForCacheControl:
-                    type: boolean
-                  throttlingBurstLimit:
-                    format: int64
-                    type: integer
-                  throttlingRateLimit:
-                    format: double
-                    type: number
-                  unauthorizedCacheControlHeaderStrategy:
+                  methodPath:
                     type: string
+                  restAPIID:
+                    type: string
+                  settings:
+                    properties:
+                      cacheDataEncrypted:
+                        type: boolean
+                      cacheTtlInSeconds:
+                        format: int64
+                        type: integer
+                      cachingEnabled:
+                        type: boolean
+                      dataTraceEnabled:
+                        type: boolean
+                      loggingLevel:
+                        type: string
+                      metricsEnabled:
+                        type: boolean
+                      requireAuthorizationForCacheControl:
+                        type: boolean
+                      throttlingBurstLimit:
+                        format: int64
+                        type: integer
+                      throttlingRateLimit:
+                        format: double
+                        type: number
+                      unauthorizedCacheControlHeaderStrategy:
+                        type: string
+                    type: object
+                  stageName:
+                    type: string
+                required:
+                - methodPath
+                - restAPIID
+                - settings
+                - stageName
                 type: object
-              stageName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - methodPath
             - providerRef
-            - restAPIID
-            - settings
-            - stageName
+            - resource
             type: object
           status:
             properties:
@@ -2423,7 +2433,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: models.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -2450,12 +2461,6 @@ spec:
             type: object
           spec:
             properties:
-              contentType:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   contentType:
@@ -2466,47 +2471,52 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
                     type: string
                   schema:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - contentType
                 - name
-                - providerRef
                 - restAPIID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
-              schema:
-                type: string
+              resource:
+                properties:
+                  contentType:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  restAPIID:
+                    type: string
+                  schema:
+                    type: string
+                required:
+                - contentType
+                - name
+                - restAPIID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - contentType
-            - name
             - providerRef
-            - restAPIID
+            - resource
             type: object
           status:
             properties:
@@ -2553,7 +2563,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: requestvalidators.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -2580,25 +2591,13 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   validateRequestBody:
                     type: boolean
@@ -2606,31 +2605,42 @@ spec:
                     type: boolean
                 required:
                 - name
-                - providerRef
                 - restAPIID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  restAPIID:
+                    type: string
+                  validateRequestBody:
+                    type: boolean
+                  validateRequestParameters:
+                    type: boolean
+                required:
+                - name
+                - restAPIID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              validateRequestBody:
-                type: boolean
-              validateRequestParameters:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - restAPIID
+            - resource
             type: object
           status:
             properties:
@@ -2677,7 +2687,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: restapis.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -2704,40 +2715,6 @@ spec:
             type: object
           spec:
             properties:
-              apiKeySource:
-                type: string
-              arn:
-                type: string
-              binaryMediaTypes:
-                items:
-                  type: string
-                type: array
-              body:
-                type: string
-              createdDate:
-                type: string
-              description:
-                type: string
-              disableExecuteAPIEndpoint:
-                type: boolean
-              endpointConfiguration:
-                properties:
-                  types:
-                    items:
-                      type: string
-                    type: array
-                  vpcEndpointIDS:
-                    items:
-                      type: string
-                    minItems: 1
-                    type: array
-                required:
-                - types
-                type: object
-              executionArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiKeySource:
@@ -2785,56 +2762,97 @@ spec:
                     type: object
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rootResourceID:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              minimumCompressionSize:
-                format: int64
-                type: integer
-              name:
-                type: string
-              parameters:
-                additionalProperties:
-                  type: string
-                type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              rootResourceID:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  apiKeySource:
+                    type: string
+                  arn:
+                    type: string
+                  binaryMediaTypes:
+                    items:
+                      type: string
+                    type: array
+                  body:
+                    type: string
+                  createdDate:
+                    type: string
+                  description:
+                    type: string
+                  disableExecuteAPIEndpoint:
+                    type: boolean
+                  endpointConfiguration:
+                    properties:
+                      types:
+                        items:
+                          type: string
+                        type: array
+                      vpcEndpointIDS:
+                        items:
+                          type: string
+                        minItems: 1
+                        type: array
+                    required:
+                    - types
+                    type: object
+                  executionArn:
+                    type: string
+                  id:
+                    type: string
+                  minimumCompressionSize:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  parameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  policy:
+                    type: string
+                  rootResourceID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2881,7 +2899,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: restapipolicies.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -2908,49 +2927,48 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - policy
-                - providerRef
                 - restAPIID
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  policy:
+                    type: string
+                  restAPIID:
+                    type: string
+                required:
+                - policy
+                - restAPIID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - policy
             - providerRef
-            - restAPIID
+            - resource
             type: object
           status:
             properties:
@@ -2997,7 +3015,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: stages.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -3024,36 +3043,6 @@ spec:
             type: object
           spec:
             properties:
-              accessLogSettings:
-                properties:
-                  destinationArn:
-                    type: string
-                  format:
-                    type: string
-                required:
-                - destinationArn
-                - format
-                type: object
-              arn:
-                type: string
-              cacheClusterEnabled:
-                type: boolean
-              cacheClusterSize:
-                type: string
-              clientCertificateID:
-                type: string
-              deploymentID:
-                type: string
-              description:
-                type: string
-              documentationVersion:
-                type: string
-              executionArn:
-                type: string
-              id:
-                type: string
-              invokeURL:
-                type: string
               kubeformOutput:
                 properties:
                   accessLogSettings:
@@ -3086,11 +3075,6 @@ spec:
                     type: string
                   invokeURL:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
                     type: string
                   stageName:
@@ -3099,11 +3083,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   variables:
                     additionalProperties:
                       type: string
@@ -3112,7 +3095,6 @@ spec:
                     type: boolean
                 required:
                 - deploymentID
-                - providerRef
                 - restAPIID
                 - stageName
                 type: object
@@ -3121,30 +3103,74 @@ spec:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
-              stageName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  accessLogSettings:
+                    properties:
+                      destinationArn:
+                        type: string
+                      format:
+                        type: string
+                    required:
+                    - destinationArn
+                    - format
+                    type: object
+                  arn:
+                    type: string
+                  cacheClusterEnabled:
+                    type: boolean
+                  cacheClusterSize:
+                    type: string
+                  clientCertificateID:
+                    type: string
+                  deploymentID:
+                    type: string
+                  description:
+                    type: string
+                  documentationVersion:
+                    type: string
+                  executionArn:
+                    type: string
+                  id:
+                    type: string
+                  invokeURL:
+                    type: string
+                  restAPIID:
+                    type: string
+                  stageName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  variables:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  xrayTracingEnabled:
+                    type: boolean
+                required:
+                - deploymentID
+                - restAPIID
+                - stageName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              variables:
-                additionalProperties:
-                  type: string
-                type: object
-              xrayTracingEnabled:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - deploymentID
             - providerRef
-            - restAPIID
-            - stageName
+            - resource
             type: object
           status:
             properties:
@@ -3191,7 +3217,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: usageplans.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -3218,24 +3245,6 @@ spec:
             type: object
           spec:
             properties:
-              apiStages:
-                items:
-                  properties:
-                    apiID:
-                      type: string
-                    stage:
-                      type: string
-                  required:
-                  - apiID
-                  - stage
-                  type: object
-                type: array
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiStages:
@@ -3260,11 +3269,6 @@ spec:
                     type: string
                   productCode:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   quotaSettings:
                     properties:
                       limit:
@@ -3283,11 +3287,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   throttleSettings:
                     properties:
                       burstLimit:
@@ -3299,52 +3302,83 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              productCode:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              quotaSettings:
+              resource:
                 properties:
-                  limit:
-                    format: int64
-                    type: integer
-                  offset:
-                    format: int64
-                    type: integer
-                  period:
+                  apiStages:
+                    items:
+                      properties:
+                        apiID:
+                          type: string
+                        stage:
+                          type: string
+                      required:
+                      - apiID
+                      - stage
+                      type: object
+                    type: array
+                  arn:
                     type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  productCode:
+                    type: string
+                  quotaSettings:
+                    properties:
+                      limit:
+                        format: int64
+                        type: integer
+                      offset:
+                        format: int64
+                        type: integer
+                      period:
+                        type: string
+                    required:
+                    - limit
+                    - period
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  throttleSettings:
+                    properties:
+                      burstLimit:
+                        format: int64
+                        type: integer
+                      rateLimit:
+                        format: double
+                        type: number
+                    type: object
                 required:
-                - limit
-                - period
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              throttleSettings:
-                properties:
-                  burstLimit:
-                    format: int64
-                    type: integer
-                  rateLimit:
-                    format: double
-                    type: number
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -3391,7 +3425,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: usageplankeys.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -3418,12 +3453,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              keyID:
-                type: string
-              keyType:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -3434,15 +3463,29 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  usagePlanID:
+                    type: string
+                  value:
+                    type: string
+                required:
+                - keyID
+                - keyType
+                - usagePlanID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  keyID:
+                    type: string
+                  keyType:
+                    type: string
+                  name:
                     type: string
                   usagePlanID:
                     type: string
@@ -3451,30 +3494,21 @@ spec:
                 required:
                 - keyID
                 - keyType
-                - providerRef
                 - usagePlanID
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              usagePlanID:
-                type: string
-              value:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - keyID
-            - keyType
             - providerRef
-            - usagePlanID
+            - resource
             type: object
           status:
             properties:
@@ -3521,7 +3555,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: vpclinks.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -3548,12 +3583,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -3564,12 +3593,11 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
                     additionalProperties:
                       type: string
                     type: object
@@ -3577,40 +3605,54 @@ spec:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - name
-                - providerRef
                 - targetArns
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  targetArns:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - name
+                - targetArns
                 type: object
-              targetArns:
-                items:
-                  type: string
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - targetArns
+            - resource
             type: object
           status:
             properties:

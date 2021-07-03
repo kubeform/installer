@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: associations.ssm.aws.kubeform.com
 spec:
   group: ssm.aws.kubeform.com
@@ -30,22 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              applyOnlyAtCronInterval:
-                type: boolean
-              associationID:
-                type: string
-              associationName:
-                type: string
-              automationTargetParameterName:
-                type: string
-              complianceSeverity:
-                type: string
-              documentVersion:
-                type: string
-              id:
-                type: string
-              instanceID:
-                type: string
               kubeformOutput:
                 properties:
                   applyOnlyAtCronInterval:
@@ -83,10 +68,67 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  providerRef:
+                  scheduleExpression:
+                    type: string
+                  targets:
+                    items:
+                      properties:
+                        key:
+                          type: string
+                        values:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - key
+                      - values
+                      type: object
+                    maxItems: 5
+                    type: array
+                required:
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  applyOnlyAtCronInterval:
+                    type: boolean
+                  associationID:
+                    type: string
+                  associationName:
+                    type: string
+                  automationTargetParameterName:
+                    type: string
+                  complianceSeverity:
+                    type: string
+                  documentVersion:
+                    type: string
+                  id:
+                    type: string
+                  instanceID:
+                    type: string
+                  maxConcurrency:
+                    type: string
+                  maxErrors:
+                    type: string
+                  name:
+                    type: string
+                  outputLocation:
                     properties:
-                      name:
+                      s3BucketName:
                         type: string
+                      s3KeyPrefix:
+                        type: string
+                    required:
+                    - s3BucketName
+                    type: object
+                  parameters:
+                    additionalProperties:
+                      type: string
                     type: object
                   scheduleExpression:
                     type: string
@@ -105,64 +147,22 @@ spec:
                       type: object
                     maxItems: 5
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - name
-                - providerRef
                 type: object
-              maxConcurrency:
-                type: string
-              maxErrors:
-                type: string
-              name:
-                type: string
-              outputLocation:
-                properties:
-                  s3BucketName:
-                    type: string
-                  s3KeyPrefix:
-                    type: string
-                required:
-                - s3BucketName
-                type: object
-              parameters:
-                additionalProperties:
-                  type: string
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              scheduleExpression:
-                type: string
-              targets:
-                items:
-                  properties:
-                    key:
-                      type: string
-                    values:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - key
-                  - values
-                  type: object
-                maxItems: 5
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

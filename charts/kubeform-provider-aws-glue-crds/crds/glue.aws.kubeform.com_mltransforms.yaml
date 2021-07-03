@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: mltransforms.glue.aws.kubeform.com
 spec:
   group: glue.aws.kubeform.com
@@ -30,30 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              glueVersion:
-                type: string
-              id:
-                type: string
-              inputRecordTables:
-                items:
-                  properties:
-                    catalogID:
-                      type: string
-                    connectionName:
-                      type: string
-                    databaseName:
-                      type: string
-                    tableName:
-                      type: string
-                  required:
-                  - databaseName
-                  - tableName
-                  type: object
-                type: array
               kubeformOutput:
                 properties:
                   arn:
@@ -115,10 +92,101 @@ spec:
                     - findMatchesParameters
                     - transformType
                     type: object
-                  providerRef:
+                  roleArn:
+                    type: string
+                  schema:
+                    items:
+                      properties:
+                        dataType:
+                          type: string
+                        name:
+                          type: string
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeout:
+                    format: int64
+                    type: integer
+                  workerType:
+                    type: string
+                required:
+                - inputRecordTables
+                - name
+                - parameters
+                - roleArn
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  glueVersion:
+                    type: string
+                  id:
+                    type: string
+                  inputRecordTables:
+                    items:
+                      properties:
+                        catalogID:
+                          type: string
+                        connectionName:
+                          type: string
+                        databaseName:
+                          type: string
+                        tableName:
+                          type: string
+                      required:
+                      - databaseName
+                      - tableName
+                      type: object
+                    type: array
+                  labelCount:
+                    format: int64
+                    type: integer
+                  maxCapacity:
+                    format: double
+                    type: number
+                  maxRetries:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  numberOfWorkers:
+                    format: int64
+                    type: integer
+                  parameters:
                     properties:
-                      name:
+                      findMatchesParameters:
+                        properties:
+                          accuracyCostTradeOff:
+                            format: double
+                            type: number
+                          enforceProvidedLabels:
+                            type: boolean
+                          precisionRecallTradeOff:
+                            format: double
+                            type: number
+                          primaryKeyColumnName:
+                            type: string
+                        type: object
+                      transformType:
                         type: string
+                    required:
+                    - findMatchesParameters
+                    - transformType
                     type: object
                   roleArn:
                     type: string
@@ -135,11 +203,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeout:
                     format: int64
                     type: integer
@@ -149,80 +216,21 @@ spec:
                 - inputRecordTables
                 - name
                 - parameters
-                - providerRef
                 - roleArn
-                type: object
-              labelCount:
-                format: int64
-                type: integer
-              maxCapacity:
-                format: double
-                type: number
-              maxRetries:
-                format: int64
-                type: integer
-              name:
-                type: string
-              numberOfWorkers:
-                format: int64
-                type: integer
-              parameters:
-                properties:
-                  findMatchesParameters:
-                    properties:
-                      accuracyCostTradeOff:
-                        format: double
-                        type: number
-                      enforceProvidedLabels:
-                        type: boolean
-                      precisionRecallTradeOff:
-                        format: double
-                        type: number
-                      primaryKeyColumnName:
-                        type: string
-                    type: object
-                  transformType:
-                    type: string
-                required:
-                - findMatchesParameters
-                - transformType
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              roleArn:
-                type: string
-              schema:
-                items:
-                  properties:
-                    dataType:
-                      type: string
-                    name:
-                      type: string
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeout:
-                format: int64
-                type: integer
-              workerType:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - inputRecordTables
-            - name
-            - parameters
             - providerRef
-            - roleArn
+            - resource
             type: object
           status:
             properties:

@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: delegationsets.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -188,8 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -198,39 +197,38 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   referenceName:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
                 type: object
-              nameServers:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              referenceName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  nameServers:
+                    items:
+                      type: string
+                    type: array
+                  referenceName:
+                    type: string
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -277,7 +275,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: healthchecks.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -304,34 +303,6 @@ spec:
             type: object
           spec:
             properties:
-              childHealthThreshold:
-                format: int64
-                type: integer
-              childHealthchecks:
-                items:
-                  type: string
-                type: array
-              cloudwatchAlarmName:
-                type: string
-              cloudwatchAlarmRegion:
-                type: string
-              disabled:
-                type: boolean
-              enableSni:
-                type: boolean
-              failureThreshold:
-                format: int64
-                type: integer
-              fqdn:
-                type: string
-              id:
-                type: string
-              insufficientDataHealthStatus:
-                type: string
-              invertHealthcheck:
-                type: boolean
-              ipAddress:
-                type: string
               kubeformOutput:
                 properties:
                   childHealthThreshold:
@@ -367,11 +338,6 @@ spec:
                   port:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   referenceName:
                     type: string
                   regions:
@@ -389,54 +355,94 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   type:
                     type: string
                 required:
-                - providerRef
                 - type
                 type: object
-              measureLatency:
-                type: boolean
-              port:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              referenceName:
-                type: string
-              regions:
-                items:
-                  type: string
-                type: array
-              requestInterval:
-                format: int64
-                type: integer
-              resourcePath:
-                type: string
-              searchString:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  childHealthThreshold:
+                    format: int64
+                    type: integer
+                  childHealthchecks:
+                    items:
+                      type: string
+                    type: array
+                  cloudwatchAlarmName:
+                    type: string
+                  cloudwatchAlarmRegion:
+                    type: string
+                  disabled:
+                    type: boolean
+                  enableSni:
+                    type: boolean
+                  failureThreshold:
+                    format: int64
+                    type: integer
+                  fqdn:
+                    type: string
+                  id:
+                    type: string
+                  insufficientDataHealthStatus:
+                    type: string
+                  invertHealthcheck:
+                    type: boolean
+                  ipAddress:
+                    type: string
+                  measureLatency:
+                    type: boolean
+                  port:
+                    format: int64
+                    type: integer
+                  referenceName:
+                    type: string
+                  regions:
+                    items:
+                      type: string
+                    type: array
+                  requestInterval:
+                    format: int64
+                    type: integer
+                  resourcePath:
+                    type: string
+                  searchString:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  type:
+                    type: string
+                required:
+                - type
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - type
+            - resource
             type: object
           status:
             properties:
@@ -483,7 +489,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: hostedzonednssecs.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -510,47 +517,46 @@ spec:
             type: object
           spec:
             properties:
-              hostedZoneID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   hostedZoneID:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   signingStatus:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - hostedZoneID
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              signingStatus:
-                type: string
+              resource:
+                properties:
+                  hostedZoneID:
+                    type: string
+                  id:
+                    type: string
+                  signingStatus:
+                    type: string
+                required:
+                - hostedZoneID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - hostedZoneID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -597,7 +603,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: keysigningkeys.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -624,29 +631,6 @@ spec:
             type: object
           spec:
             properties:
-              digestAlgorithmMnemonic:
-                type: string
-              digestAlgorithmType:
-                format: int64
-                type: integer
-              digestValue:
-                type: string
-              dnskeyRecord:
-                type: string
-              dsRecord:
-                type: string
-              flag:
-                format: int64
-                type: integer
-              hostedZoneID:
-                type: string
-              id:
-                type: string
-              keyManagementServiceArn:
-                type: string
-              keyTag:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   digestAlgorithmMnemonic:
@@ -674,11 +658,6 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicKey:
                     type: string
                   signingAlgorithmMnemonic:
@@ -688,43 +667,70 @@ spec:
                     type: integer
                   status:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - hostedZoneID
                 - keyManagementServiceArn
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicKey:
-                type: string
-              signingAlgorithmMnemonic:
-                type: string
-              signingAlgorithmType:
-                format: int64
-                type: integer
-              status:
-                type: string
+              resource:
+                properties:
+                  digestAlgorithmMnemonic:
+                    type: string
+                  digestAlgorithmType:
+                    format: int64
+                    type: integer
+                  digestValue:
+                    type: string
+                  dnskeyRecord:
+                    type: string
+                  dsRecord:
+                    type: string
+                  flag:
+                    format: int64
+                    type: integer
+                  hostedZoneID:
+                    type: string
+                  id:
+                    type: string
+                  keyManagementServiceArn:
+                    type: string
+                  keyTag:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  publicKey:
+                    type: string
+                  signingAlgorithmMnemonic:
+                    type: string
+                  signingAlgorithmType:
+                    format: int64
+                    type: integer
+                  status:
+                    type: string
+                required:
+                - hostedZoneID
+                - keyManagementServiceArn
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - hostedZoneID
-            - keyManagementServiceArn
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -771,7 +777,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: querylogs.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -798,31 +805,16 @@ spec:
             type: object
           spec:
             properties:
-              cloudwatchLogGroupArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   cloudwatchLogGroupArn:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   zoneID:
                     type: string
                 required:
                 - cloudwatchLogGroupArn
-                - providerRef
                 - zoneID
                 type: object
               providerRef:
@@ -830,17 +822,31 @@ spec:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  cloudwatchLogGroupArn:
+                    type: string
+                  id:
+                    type: string
+                  zoneID:
+                    type: string
+                required:
+                - cloudwatchLogGroupArn
+                - zoneID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              zoneID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - cloudwatchLogGroupArn
             - providerRef
-            - zoneID
+            - resource
             type: object
           status:
             properties:
@@ -887,7 +893,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: records.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -914,49 +921,6 @@ spec:
             type: object
           spec:
             properties:
-              alias:
-                items:
-                  properties:
-                    evaluateTargetHealth:
-                      type: boolean
-                    name:
-                      type: string
-                    zoneID:
-                      type: string
-                  required:
-                  - evaluateTargetHealth
-                  - name
-                  - zoneID
-                  type: object
-                type: array
-              allowOverwrite:
-                type: boolean
-              failoverRoutingPolicy:
-                items:
-                  properties:
-                    type:
-                      type: string
-                  required:
-                  - type
-                  type: object
-                type: array
-              fqdn:
-                type: string
-              geolocationRoutingPolicy:
-                items:
-                  properties:
-                    continent:
-                      type: string
-                    country:
-                      type: string
-                    subdivision:
-                      type: string
-                  type: object
-                type: array
-              healthCheckID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   alias:
@@ -1015,21 +979,11 @@ spec:
                     type: boolean
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   records:
                     items:
                       type: string
                     type: array
                   setIdentifier:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   ttl:
                     format: int64
@@ -1050,61 +1004,113 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 - type
                 - zoneID
                 type: object
-              latencyRoutingPolicy:
-                items:
-                  properties:
-                    region:
-                      type: string
-                  required:
-                  - region
-                  type: object
-                type: array
-              multivalueAnswerRoutingPolicy:
-                type: boolean
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              records:
-                items:
-                  type: string
-                type: array
-              setIdentifier:
-                type: string
+              resource:
+                properties:
+                  alias:
+                    items:
+                      properties:
+                        evaluateTargetHealth:
+                          type: boolean
+                        name:
+                          type: string
+                        zoneID:
+                          type: string
+                      required:
+                      - evaluateTargetHealth
+                      - name
+                      - zoneID
+                      type: object
+                    type: array
+                  allowOverwrite:
+                    type: boolean
+                  failoverRoutingPolicy:
+                    items:
+                      properties:
+                        type:
+                          type: string
+                      required:
+                      - type
+                      type: object
+                    type: array
+                  fqdn:
+                    type: string
+                  geolocationRoutingPolicy:
+                    items:
+                      properties:
+                        continent:
+                          type: string
+                        country:
+                          type: string
+                        subdivision:
+                          type: string
+                      type: object
+                    type: array
+                  healthCheckID:
+                    type: string
+                  id:
+                    type: string
+                  latencyRoutingPolicy:
+                    items:
+                      properties:
+                        region:
+                          type: string
+                      required:
+                      - region
+                      type: object
+                    type: array
+                  multivalueAnswerRoutingPolicy:
+                    type: boolean
+                  name:
+                    type: string
+                  records:
+                    items:
+                      type: string
+                    type: array
+                  setIdentifier:
+                    type: string
+                  ttl:
+                    format: int64
+                    type: integer
+                  type:
+                    type: string
+                  weightedRoutingPolicy:
+                    items:
+                      properties:
+                        weight:
+                          format: int64
+                          type: integer
+                      required:
+                      - weight
+                      type: object
+                    type: array
+                  zoneID:
+                    type: string
+                required:
+                - name
+                - type
+                - zoneID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              ttl:
-                format: int64
-                type: integer
-              type:
-                type: string
-              weightedRoutingPolicy:
-                items:
-                  properties:
-                    weight:
-                      format: int64
-                      type: integer
-                  required:
-                  - weight
-                  type: object
-                type: array
-              zoneID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - type
-            - zoneID
+            - resource
             type: object
           status:
             properties:
@@ -1151,7 +1157,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolverdnssecconfigs.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -1178,10 +1185,6 @@ spec:
             type: object
           spec:
             properties:
-              ID:
-                type: string
-              arn:
-                type: string
               kubeformOutput:
                 properties:
                   ID:
@@ -1190,43 +1193,46 @@ spec:
                     type: string
                   ownerID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   validationStatus:
                     type: string
                 required:
-                - providerRef
                 - resourceID
                 type: object
-              ownerID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceID:
-                type: string
+              resource:
+                properties:
+                  ID:
+                    type: string
+                  arn:
+                    type: string
+                  ownerID:
+                    type: string
+                  resourceID:
+                    type: string
+                  validationStatus:
+                    type: string
+                required:
+                - resourceID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              validationStatus:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - resourceID
+            - resource
             type: object
           status:
             properties:
@@ -1273,7 +1279,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolverendpoints.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -1300,29 +1307,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              direction:
-                type: string
-              hostVpcID:
-                type: string
-              id:
-                type: string
-              ipAddress:
-                items:
-                  properties:
-                    ip:
-                      type: string
-                    ipID:
-                      type: string
-                    subnetID:
-                      type: string
-                  required:
-                  - subnetID
-                  type: object
-                maxItems: 10
-                minItems: 2
-                type: array
               kubeformOutput:
                 properties:
                   arn:
@@ -1350,11 +1334,6 @@ spec:
                     type: array
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroupIDS:
                     items:
                       type: string
@@ -1365,11 +1344,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -1391,54 +1369,90 @@ spec:
                 required:
                 - direction
                 - ipAddress
-                - providerRef
                 - securityGroupIDS
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              securityGroupIDS:
-                items:
-                  type: string
-                maxItems: 64
-                minItems: 1
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  direction:
+                    type: string
+                  hostVpcID:
+                    type: string
+                  id:
+                    type: string
+                  ipAddress:
+                    items:
+                      properties:
+                        ip:
+                          type: string
+                        ipID:
+                          type: string
+                        subnetID:
+                          type: string
+                      required:
+                      - subnetID
+                      type: object
+                    maxItems: 10
+                    minItems: 2
+                    type: array
+                  name:
+                    type: string
+                  securityGroupIDS:
+                    items:
+                      type: string
+                    maxItems: 64
+                    minItems: 1
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - direction
+                - ipAddress
+                - securityGroupIDS
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - direction
-            - ipAddress
             - providerRef
-            - securityGroupIDS
+            - resource
             type: object
           status:
             properties:
@@ -1485,7 +1499,126 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: resolverfirewallconfigs.route53.aws.kubeform.com
+spec:
+  group: route53.aws.kubeform.com
+  names:
+    kind: ResolverFirewallConfig
+    listKind: ResolverFirewallConfigList
+    plural: resolverfirewallconfigs
+    singular: resolverfirewallconfig
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  firewallFailOpen:
+                    type: string
+                  id:
+                    type: string
+                  ownerID:
+                    type: string
+                  resourceID:
+                    type: string
+                required:
+                - resourceID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  firewallFailOpen:
+                    type: string
+                  id:
+                    type: string
+                  ownerID:
+                    type: string
+                  resourceID:
+                    type: string
+                required:
+                - resourceID
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolverfirewalldomainlists.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -1512,15 +1645,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              domains:
-                items:
-                  type: string
-                maxItems: 255
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1534,43 +1658,59 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  domains:
+                    items:
+                      type: string
+                    maxItems: 255
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1617,7 +1757,162 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: resolverfirewallrules.route53.aws.kubeform.com
+spec:
+  group: route53.aws.kubeform.com
+  names:
+    kind: ResolverFirewallRule
+    listKind: ResolverFirewallRuleList
+    plural: resolverfirewallrules
+    singular: resolverfirewallrule
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  action:
+                    type: string
+                  blockOverrideDNSType:
+                    type: string
+                  blockOverrideDomain:
+                    type: string
+                  blockOverrideTtl:
+                    format: int64
+                    type: integer
+                  blockResponse:
+                    type: string
+                  firewallDomainListID:
+                    type: string
+                  firewallRuleGroupID:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  priority:
+                    format: int64
+                    type: integer
+                required:
+                - action
+                - firewallDomainListID
+                - firewallRuleGroupID
+                - name
+                - priority
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  action:
+                    type: string
+                  blockOverrideDNSType:
+                    type: string
+                  blockOverrideDomain:
+                    type: string
+                  blockOverrideTtl:
+                    format: int64
+                    type: integer
+                  blockResponse:
+                    type: string
+                  firewallDomainListID:
+                    type: string
+                  firewallRuleGroupID:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  priority:
+                    format: int64
+                    type: integer
+                required:
+                - action
+                - firewallDomainListID
+                - firewallRuleGroupID
+                - name
+                - priority
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolverfirewallrulegroups.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -1644,10 +1939,6 @@ spec:
             type: object
           spec:
             properties:
-              ID:
-                type: string
-              arn:
-                type: string
               kubeformOutput:
                 properties:
                   ID:
@@ -1658,49 +1949,60 @@ spec:
                     type: string
                   ownerID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   shareStatus:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              ownerID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              shareStatus:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  ID:
+                    type: string
+                  arn:
+                    type: string
+                  name:
+                    type: string
+                  ownerID:
+                    type: string
+                  shareStatus:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1747,7 +2049,162 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: resolverfirewallrulegroupassociations.route53.aws.kubeform.com
+spec:
+  group: route53.aws.kubeform.com
+  names:
+    kind: ResolverFirewallRuleGroupAssociation
+    listKind: ResolverFirewallRuleGroupAssociationList
+    plural: resolverfirewallrulegroupassociations
+    singular: resolverfirewallrulegroupassociation
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  firewallRuleGroupID:
+                    type: string
+                  id:
+                    type: string
+                  mutationProtection:
+                    type: string
+                  name:
+                    type: string
+                  priority:
+                    format: int64
+                    type: integer
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  vpcID:
+                    type: string
+                required:
+                - firewallRuleGroupID
+                - name
+                - priority
+                - vpcID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  firewallRuleGroupID:
+                    type: string
+                  id:
+                    type: string
+                  mutationProtection:
+                    type: string
+                  name:
+                    type: string
+                  priority:
+                    format: int64
+                    type: integer
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  vpcID:
+                    type: string
+                required:
+                - firewallRuleGroupID
+                - name
+                - priority
+                - vpcID
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolverquerylogconfigs.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -1774,12 +2231,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              destinationArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1792,51 +2243,64 @@ spec:
                     type: string
                   ownerID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   shareStatus:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - destinationArn
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              ownerID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              shareStatus:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  destinationArn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  ownerID:
+                    type: string
+                  shareStatus:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - destinationArn
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - destinationArn
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1883,7 +2347,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolverquerylogconfigassociations.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -1910,28 +2375,15 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resolverQueryLogConfigID:
                     type: string
                   resourceID:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - resolverQueryLogConfigID
                 - resourceID
                 type: object
@@ -1940,19 +2392,31 @@ spec:
                   name:
                     type: string
                 type: object
-              resolverQueryLogConfigID:
-                type: string
-              resourceID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  resolverQueryLogConfigID:
+                    type: string
+                  resourceID:
+                    type: string
+                required:
+                - resolverQueryLogConfigID
+                - resourceID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - resolverQueryLogConfigID
-            - resourceID
+            - resource
             type: object
           status:
             properties:
@@ -1999,7 +2463,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolverrules.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -2026,12 +2491,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              domainName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -2044,11 +2503,6 @@ spec:
                     type: string
                   ownerID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resolverEndpointID:
                     type: string
                   ruleType:
@@ -2056,6 +2510,10 @@ spec:
                   shareStatus:
                     type: string
                   tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
                     additionalProperties:
                       type: string
                     type: object
@@ -2071,11 +2529,6 @@ spec:
                       - ip
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -2096,67 +2549,86 @@ spec:
                     type: object
                 required:
                 - domainName
-                - providerRef
                 - ruleType
                 type: object
-              name:
-                type: string
-              ownerID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resolverEndpointID:
-                type: string
-              ruleType:
-                type: string
-              shareStatus:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              targetIP:
-                items:
-                  properties:
-                    ip:
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  domainName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  ownerID:
+                    type: string
+                  resolverEndpointID:
+                    type: string
+                  ruleType:
+                    type: string
+                  shareStatus:
+                    type: string
+                  tags:
+                    additionalProperties:
                       type: string
-                    port:
-                      format: int64
-                      type: integer
-                  required:
-                  - ip
-                  type: object
-                type: array
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  targetIP:
+                    items:
+                      properties:
+                        ip:
+                          type: string
+                        port:
+                          format: int64
+                          type: integer
+                      required:
+                      - ip
+                      type: object
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - domainName
+                - ruleType
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - domainName
             - providerRef
-            - ruleType
+            - resource
             type: object
           status:
             properties:
@@ -2203,7 +2675,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolverruleassociations.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -2230,25 +2703,13 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resolverRuleID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2271,48 +2732,59 @@ spec:
                   vpcID:
                     type: string
                 required:
-                - providerRef
                 - resolverRuleID
                 - vpcID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resolverRuleID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resolverRuleID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                required:
+                - resolverRuleID
+                - vpcID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - resolverRuleID
-            - vpcID
+            - resource
             type: object
           status:
             properties:
@@ -2359,7 +2831,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: vpcassociationauthorizations.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -2386,21 +2859,9 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   vpcID:
                     type: string
@@ -2409,7 +2870,6 @@ spec:
                   zoneID:
                     type: string
                 required:
-                - providerRef
                 - vpcID
                 - zoneID
                 type: object
@@ -2418,21 +2878,33 @@ spec:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  vpcID:
+                    type: string
+                  vpcRegion:
+                    type: string
+                  zoneID:
+                    type: string
+                required:
+                - vpcID
+                - zoneID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcID:
-                type: string
-              vpcRegion:
-                type: string
-              zoneID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - vpcID
-            - zoneID
+            - resource
             type: object
           status:
             properties:
@@ -2479,7 +2951,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: zones.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -2506,14 +2979,6 @@ spec:
             type: object
           spec:
             properties:
-              comment:
-                type: string
-              delegationSetID:
-                type: string
-              forceDestroy:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   comment:
@@ -2530,20 +2995,14 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   vpc:
                     items:
                       properties:
@@ -2560,45 +3019,66 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              nameServers:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  comment:
+                    type: string
+                  delegationSetID:
+                    type: string
+                  forceDestroy:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  nameServers:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  vpc:
+                    items:
+                      properties:
+                        vpcID:
+                          type: string
+                        vpcRegion:
+                          type: string
+                      required:
+                      - vpcID
+                      type: object
+                    minItems: 1
+                    type: array
+                  zoneID:
+                    type: string
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpc:
-                items:
-                  properties:
-                    vpcID:
-                      type: string
-                    vpcRegion:
-                      type: string
-                  required:
-                  - vpcID
-                  type: object
-                minItems: 1
-                type: array
-              zoneID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2645,7 +3125,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: zoneassociations.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -2672,23 +3153,11 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   owningAccount:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   vpcID:
                     type: string
@@ -2697,32 +3166,43 @@ spec:
                   zoneID:
                     type: string
                 required:
-                - providerRef
                 - vpcID
                 - zoneID
                 type: object
-              owningAccount:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  owningAccount:
+                    type: string
+                  vpcID:
+                    type: string
+                  vpcRegion:
+                    type: string
+                  zoneID:
+                    type: string
+                required:
+                - vpcID
+                - zoneID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcID:
-                type: string
-              vpcRegion:
-                type: string
-              zoneID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - vpcID
-            - zoneID
+            - resource
             type: object
           status:
             properties:

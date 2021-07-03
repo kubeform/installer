@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: albs.alb.aws.kubeform.com
 spec:
   group: alb.aws.kubeform.com
@@ -30,42 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accessLogs:
-                properties:
-                  bucket:
-                    type: string
-                  enabled:
-                    type: boolean
-                  prefix:
-                    type: string
-                required:
-                - bucket
-                type: object
-              arn:
-                type: string
-              arnSuffix:
-                type: string
-              customerOwnedIpv4Pool:
-                type: string
-              dnsName:
-                type: string
-              dropInvalidHeaderFields:
-                type: boolean
-              enableCrossZoneLoadBalancing:
-                type: boolean
-              enableDeletionProtection:
-                type: boolean
-              enableHttp2:
-                type: boolean
-              id:
-                type: string
-              idleTimeout:
-                format: int64
-                type: integer
-              internal:
-                type: boolean
-              ipAddressType:
-                type: string
               kubeformOutput:
                 properties:
                   accessLogs:
@@ -110,11 +75,6 @@ spec:
                     type: string
                   namePrefix:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroups:
                     items:
                       type: string
@@ -144,11 +104,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -171,78 +130,125 @@ spec:
                     type: string
                   zoneID:
                     type: string
-                required:
-                - providerRef
                 type: object
-              loadBalancerType:
-                type: string
-              name:
-                type: string
-              namePrefix:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              securityGroups:
-                items:
-                  type: string
-                type: array
-              subnetMapping:
-                items:
-                  properties:
-                    allocationID:
+              resource:
+                properties:
+                  accessLogs:
+                    properties:
+                      bucket:
+                        type: string
+                      enabled:
+                        type: boolean
+                      prefix:
+                        type: string
+                    required:
+                    - bucket
+                    type: object
+                  arn:
+                    type: string
+                  arnSuffix:
+                    type: string
+                  customerOwnedIpv4Pool:
+                    type: string
+                  dnsName:
+                    type: string
+                  dropInvalidHeaderFields:
+                    type: boolean
+                  enableCrossZoneLoadBalancing:
+                    type: boolean
+                  enableDeletionProtection:
+                    type: boolean
+                  enableHttp2:
+                    type: boolean
+                  id:
+                    type: string
+                  idleTimeout:
+                    format: int64
+                    type: integer
+                  internal:
+                    type: boolean
+                  ipAddressType:
+                    type: string
+                  loadBalancerType:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  securityGroups:
+                    items:
                       type: string
-                    ipv6Address:
+                    type: array
+                  subnetMapping:
+                    items:
+                      properties:
+                        allocationID:
+                          type: string
+                        ipv6Address:
+                          type: string
+                        outpostID:
+                          type: string
+                        privateIpv4Address:
+                          type: string
+                        subnetID:
+                          type: string
+                      required:
+                      - subnetID
+                      type: object
+                    type: array
+                  subnets:
+                    items:
                       type: string
-                    outpostID:
+                    type: array
+                  tags:
+                    additionalProperties:
                       type: string
-                    privateIpv4Address:
+                    type: object
+                  tagsAll:
+                    additionalProperties:
                       type: string
-                    subnetID:
-                      type: string
-                  required:
-                  - subnetID
-                  type: object
-                type: array
-              subnets:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                  zoneID:
+                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcID:
-                type: string
-              zoneID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

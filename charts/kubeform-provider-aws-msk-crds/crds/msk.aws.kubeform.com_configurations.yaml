@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: configurations.msk.aws.kubeform.com
 spec:
   group: msk.aws.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              kafkaVersions:
-                items:
-                  type: string
-                type: array
               kubeformOutput:
                 properties:
                   arn:
@@ -57,46 +48,53 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serverProperties:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - kafkaVersions
                 - name
-                - providerRef
                 - serverProperties
                 type: object
-              latestRevision:
-                format: int64
-                type: integer
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serverProperties:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  kafkaVersions:
+                    items:
+                      type: string
+                    type: array
+                  latestRevision:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  serverProperties:
+                    type: string
+                required:
+                - name
+                - serverProperties
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - kafkaVersions
-            - name
             - providerRef
-            - serverProperties
+            - resource
             type: object
           status:
             properties:

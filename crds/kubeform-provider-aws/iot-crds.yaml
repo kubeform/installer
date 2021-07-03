@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: certificates.iot.aws.kubeform.com
 spec:
   group: iot.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              active:
-                type: boolean
-              arn:
-                type: string
-              csr:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   active:
@@ -48,29 +41,26 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - active
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  active:
+                    type: boolean
+                  arn:
+                    type: string
+                  csr:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - active
                 type: object
               secretRef:
                 properties:
@@ -82,9 +72,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - active
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -131,7 +126,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policies.iot.aws.kubeform.com
 spec:
   group: iot.aws.kubeform.com
@@ -158,12 +154,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              defaultVersionID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -176,39 +166,44 @@ spec:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - name
                 - policy
-                - providerRef
                 type: object
-              name:
-                type: string
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  defaultVersionID:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  policy:
+                    type: string
+                required:
+                - name
+                - policy
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
-            - policy
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -255,7 +250,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policyattachments.iot.aws.kubeform.com
 spec:
   group: iot.aws.kubeform.com
@@ -282,49 +278,48 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   target:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - policy
-                - providerRef
                 - target
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              target:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  policy:
+                    type: string
+                  target:
+                    type: string
+                required:
+                - policy
+                - target
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - policy
             - providerRef
-            - target
+            - resource
             type: object
           status:
             properties:
@@ -371,7 +366,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: rolealiases.iot.aws.kubeform.com
 spec:
   group: iot.aws.kubeform.com
@@ -398,15 +394,6 @@ spec:
             type: object
           spec:
             properties:
-              alias:
-                type: string
-              arn:
-                type: string
-              credentialDuration:
-                format: int64
-                type: integer
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   alias:
@@ -418,21 +405,10 @@ spec:
                     type: integer
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roleArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - alias
-                - providerRef
                 - roleArn
                 type: object
               providerRef:
@@ -440,17 +416,36 @@ spec:
                   name:
                     type: string
                 type: object
-              roleArn:
-                type: string
+              resource:
+                properties:
+                  alias:
+                    type: string
+                  arn:
+                    type: string
+                  credentialDuration:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  roleArn:
+                    type: string
+                required:
+                - alias
+                - roleArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - alias
             - providerRef
-            - roleArn
+            - resource
             type: object
           status:
             properties:
@@ -497,7 +492,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: things.iot.aws.kubeform.com
 spec:
   group: iot.aws.kubeform.com
@@ -524,16 +520,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              attributes:
-                additionalProperties:
-                  type: string
-                type: object
-              defaultClientID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -548,15 +534,32 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
+                  thingTypeName:
+                    type: string
+                  version:
+                    format: int64
+                    type: integer
+                required:
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  attributes:
+                    additionalProperties:
+                      type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  defaultClientID:
+                    type: string
+                  id:
+                    type: string
+                  name:
                     type: string
                   thingTypeName:
                     type: string
@@ -565,28 +568,20 @@ spec:
                     type: integer
                 required:
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              thingTypeName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              version:
-                format: int64
-                type: integer
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -633,7 +628,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: thingprincipalattachments.iot.aws.kubeform.com
 spec:
   group: iot.aws.kubeform.com
@@ -660,49 +656,48 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   principal:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  thing:
+                    type: string
+                required:
+                - principal
+                - thing
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  principal:
                     type: string
                   thing:
                     type: string
                 required:
                 - principal
-                - providerRef
                 - thing
-                type: object
-              principal:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              thing:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - principal
             - providerRef
-            - thing
+            - resource
             type: object
           status:
             properties:
@@ -749,7 +744,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: thingtypes.iot.aws.kubeform.com
 spec:
   group: iot.aws.kubeform.com
@@ -776,12 +772,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              deprecated:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -802,45 +792,50 @@ spec:
                         maxItems: 3
                         type: array
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              properties:
-                properties:
-                  description:
-                    type: string
-                  searchableAttributes:
-                    items:
-                      type: string
-                    maxItems: 3
-                    type: array
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  deprecated:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  properties:
+                    properties:
+                      description:
+                        type: string
+                      searchableAttributes:
+                        items:
+                          type: string
+                        maxItems: 3
+                        type: array
+                    type: object
+                required:
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -887,7 +882,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: topicrules.iot.aws.kubeform.com
 spec:
   group: iot.aws.kubeform.com
@@ -914,393 +910,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              cloudwatchAlarm:
-                items:
-                  properties:
-                    alarmName:
-                      type: string
-                    roleArn:
-                      type: string
-                    stateReason:
-                      type: string
-                    stateValue:
-                      type: string
-                  required:
-                  - alarmName
-                  - roleArn
-                  - stateReason
-                  - stateValue
-                  type: object
-                type: array
-              cloudwatchMetric:
-                items:
-                  properties:
-                    metricName:
-                      type: string
-                    metricNamespace:
-                      type: string
-                    metricTimestamp:
-                      type: string
-                    metricUnit:
-                      type: string
-                    metricValue:
-                      type: string
-                    roleArn:
-                      type: string
-                  required:
-                  - metricName
-                  - metricNamespace
-                  - metricUnit
-                  - metricValue
-                  - roleArn
-                  type: object
-                type: array
-              description:
-                type: string
-              dynamodb:
-                items:
-                  properties:
-                    hashKeyField:
-                      type: string
-                    hashKeyType:
-                      type: string
-                    hashKeyValue:
-                      type: string
-                    operation:
-                      type: string
-                    payloadField:
-                      type: string
-                    rangeKeyField:
-                      type: string
-                    rangeKeyType:
-                      type: string
-                    rangeKeyValue:
-                      type: string
-                    roleArn:
-                      type: string
-                    tableName:
-                      type: string
-                  required:
-                  - hashKeyField
-                  - hashKeyValue
-                  - roleArn
-                  - tableName
-                  type: object
-                type: array
-              dynamodbv2:
-                items:
-                  properties:
-                    putItem:
-                      properties:
-                        tableName:
-                          type: string
-                      required:
-                      - tableName
-                      type: object
-                    roleArn:
-                      type: string
-                  required:
-                  - roleArn
-                  type: object
-                type: array
-              elasticsearch:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    endpoint:
-                      type: string
-                    index:
-                      type: string
-                    roleArn:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - ID
-                  - endpoint
-                  - index
-                  - roleArn
-                  - type
-                  type: object
-                type: array
-              enabled:
-                type: boolean
-              errorAction:
-                properties:
-                  cloudwatchAlarm:
-                    properties:
-                      alarmName:
-                        type: string
-                      roleArn:
-                        type: string
-                      stateReason:
-                        type: string
-                      stateValue:
-                        type: string
-                    required:
-                    - alarmName
-                    - roleArn
-                    - stateReason
-                    - stateValue
-                    type: object
-                  cloudwatchMetric:
-                    properties:
-                      metricName:
-                        type: string
-                      metricNamespace:
-                        type: string
-                      metricTimestamp:
-                        type: string
-                      metricUnit:
-                        type: string
-                      metricValue:
-                        type: string
-                      roleArn:
-                        type: string
-                    required:
-                    - metricName
-                    - metricNamespace
-                    - metricUnit
-                    - metricValue
-                    - roleArn
-                    type: object
-                  dynamodb:
-                    properties:
-                      hashKeyField:
-                        type: string
-                      hashKeyType:
-                        type: string
-                      hashKeyValue:
-                        type: string
-                      operation:
-                        type: string
-                      payloadField:
-                        type: string
-                      rangeKeyField:
-                        type: string
-                      rangeKeyType:
-                        type: string
-                      rangeKeyValue:
-                        type: string
-                      roleArn:
-                        type: string
-                      tableName:
-                        type: string
-                    required:
-                    - hashKeyField
-                    - hashKeyValue
-                    - roleArn
-                    - tableName
-                    type: object
-                  dynamodbv2:
-                    properties:
-                      putItem:
-                        properties:
-                          tableName:
-                            type: string
-                        required:
-                        - tableName
-                        type: object
-                      roleArn:
-                        type: string
-                    required:
-                    - roleArn
-                    type: object
-                  elasticsearch:
-                    properties:
-                      ID:
-                        type: string
-                      endpoint:
-                        type: string
-                      index:
-                        type: string
-                      roleArn:
-                        type: string
-                      type:
-                        type: string
-                    required:
-                    - ID
-                    - endpoint
-                    - index
-                    - roleArn
-                    - type
-                    type: object
-                  firehose:
-                    properties:
-                      deliveryStreamName:
-                        type: string
-                      roleArn:
-                        type: string
-                      separator:
-                        type: string
-                    required:
-                    - deliveryStreamName
-                    - roleArn
-                    type: object
-                  iotAnalytics:
-                    properties:
-                      channelName:
-                        type: string
-                      roleArn:
-                        type: string
-                    required:
-                    - channelName
-                    - roleArn
-                    type: object
-                  iotEvents:
-                    properties:
-                      inputName:
-                        type: string
-                      messageID:
-                        type: string
-                      roleArn:
-                        type: string
-                    required:
-                    - inputName
-                    - roleArn
-                    type: object
-                  kinesis:
-                    properties:
-                      partitionKey:
-                        type: string
-                      roleArn:
-                        type: string
-                      streamName:
-                        type: string
-                    required:
-                    - roleArn
-                    - streamName
-                    type: object
-                  lambda:
-                    properties:
-                      functionArn:
-                        type: string
-                    required:
-                    - functionArn
-                    type: object
-                  republish:
-                    properties:
-                      qos:
-                        format: int64
-                        type: integer
-                      roleArn:
-                        type: string
-                      topic:
-                        type: string
-                    required:
-                    - roleArn
-                    - topic
-                    type: object
-                  s3:
-                    properties:
-                      bucketName:
-                        type: string
-                      key:
-                        type: string
-                      roleArn:
-                        type: string
-                    required:
-                    - bucketName
-                    - key
-                    - roleArn
-                    type: object
-                  sns:
-                    properties:
-                      messageFormat:
-                        type: string
-                      roleArn:
-                        type: string
-                      targetArn:
-                        type: string
-                    required:
-                    - roleArn
-                    - targetArn
-                    type: object
-                  sqs:
-                    properties:
-                      queueURL:
-                        type: string
-                      roleArn:
-                        type: string
-                      useBase64:
-                        type: boolean
-                    required:
-                    - queueURL
-                    - roleArn
-                    - useBase64
-                    type: object
-                  stepFunctions:
-                    properties:
-                      executionNamePrefix:
-                        type: string
-                      roleArn:
-                        type: string
-                      stateMachineName:
-                        type: string
-                    required:
-                    - roleArn
-                    - stateMachineName
-                    type: object
-                type: object
-              firehose:
-                items:
-                  properties:
-                    deliveryStreamName:
-                      type: string
-                    roleArn:
-                      type: string
-                    separator:
-                      type: string
-                  required:
-                  - deliveryStreamName
-                  - roleArn
-                  type: object
-                type: array
-              id:
-                type: string
-              iotAnalytics:
-                items:
-                  properties:
-                    channelName:
-                      type: string
-                    roleArn:
-                      type: string
-                  required:
-                  - channelName
-                  - roleArn
-                  type: object
-                type: array
-              iotEvents:
-                items:
-                  properties:
-                    inputName:
-                      type: string
-                    messageID:
-                      type: string
-                    roleArn:
-                      type: string
-                  required:
-                  - inputName
-                  - roleArn
-                  type: object
-                type: array
-              kinesis:
-                items:
-                  properties:
-                    partitionKey:
-                      type: string
-                    roleArn:
-                      type: string
-                    streamName:
-                      type: string
-                  required:
-                  - roleArn
-                  - streamName
-                  type: object
-                type: array
               kubeformOutput:
                 properties:
                   arn:
@@ -1701,11 +1310,6 @@ spec:
                     type: array
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   republish:
                     items:
                       properties:
@@ -1787,126 +1391,525 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - enabled
                 - name
-                - providerRef
                 - sql
                 - sqlVersion
                 type: object
-              lambda:
-                items:
-                  properties:
-                    functionArn:
-                      type: string
-                  required:
-                  - functionArn
-                  type: object
-                type: array
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              republish:
-                items:
-                  properties:
-                    qos:
-                      format: int64
-                      type: integer
-                    roleArn:
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  cloudwatchAlarm:
+                    items:
+                      properties:
+                        alarmName:
+                          type: string
+                        roleArn:
+                          type: string
+                        stateReason:
+                          type: string
+                        stateValue:
+                          type: string
+                      required:
+                      - alarmName
+                      - roleArn
+                      - stateReason
+                      - stateValue
+                      type: object
+                    type: array
+                  cloudwatchMetric:
+                    items:
+                      properties:
+                        metricName:
+                          type: string
+                        metricNamespace:
+                          type: string
+                        metricTimestamp:
+                          type: string
+                        metricUnit:
+                          type: string
+                        metricValue:
+                          type: string
+                        roleArn:
+                          type: string
+                      required:
+                      - metricName
+                      - metricNamespace
+                      - metricUnit
+                      - metricValue
+                      - roleArn
+                      type: object
+                    type: array
+                  description:
+                    type: string
+                  dynamodb:
+                    items:
+                      properties:
+                        hashKeyField:
+                          type: string
+                        hashKeyType:
+                          type: string
+                        hashKeyValue:
+                          type: string
+                        operation:
+                          type: string
+                        payloadField:
+                          type: string
+                        rangeKeyField:
+                          type: string
+                        rangeKeyType:
+                          type: string
+                        rangeKeyValue:
+                          type: string
+                        roleArn:
+                          type: string
+                        tableName:
+                          type: string
+                      required:
+                      - hashKeyField
+                      - hashKeyValue
+                      - roleArn
+                      - tableName
+                      type: object
+                    type: array
+                  dynamodbv2:
+                    items:
+                      properties:
+                        putItem:
+                          properties:
+                            tableName:
+                              type: string
+                          required:
+                          - tableName
+                          type: object
+                        roleArn:
+                          type: string
+                      required:
+                      - roleArn
+                      type: object
+                    type: array
+                  elasticsearch:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        endpoint:
+                          type: string
+                        index:
+                          type: string
+                        roleArn:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                      - ID
+                      - endpoint
+                      - index
+                      - roleArn
+                      - type
+                      type: object
+                    type: array
+                  enabled:
+                    type: boolean
+                  errorAction:
+                    properties:
+                      cloudwatchAlarm:
+                        properties:
+                          alarmName:
+                            type: string
+                          roleArn:
+                            type: string
+                          stateReason:
+                            type: string
+                          stateValue:
+                            type: string
+                        required:
+                        - alarmName
+                        - roleArn
+                        - stateReason
+                        - stateValue
+                        type: object
+                      cloudwatchMetric:
+                        properties:
+                          metricName:
+                            type: string
+                          metricNamespace:
+                            type: string
+                          metricTimestamp:
+                            type: string
+                          metricUnit:
+                            type: string
+                          metricValue:
+                            type: string
+                          roleArn:
+                            type: string
+                        required:
+                        - metricName
+                        - metricNamespace
+                        - metricUnit
+                        - metricValue
+                        - roleArn
+                        type: object
+                      dynamodb:
+                        properties:
+                          hashKeyField:
+                            type: string
+                          hashKeyType:
+                            type: string
+                          hashKeyValue:
+                            type: string
+                          operation:
+                            type: string
+                          payloadField:
+                            type: string
+                          rangeKeyField:
+                            type: string
+                          rangeKeyType:
+                            type: string
+                          rangeKeyValue:
+                            type: string
+                          roleArn:
+                            type: string
+                          tableName:
+                            type: string
+                        required:
+                        - hashKeyField
+                        - hashKeyValue
+                        - roleArn
+                        - tableName
+                        type: object
+                      dynamodbv2:
+                        properties:
+                          putItem:
+                            properties:
+                              tableName:
+                                type: string
+                            required:
+                            - tableName
+                            type: object
+                          roleArn:
+                            type: string
+                        required:
+                        - roleArn
+                        type: object
+                      elasticsearch:
+                        properties:
+                          ID:
+                            type: string
+                          endpoint:
+                            type: string
+                          index:
+                            type: string
+                          roleArn:
+                            type: string
+                          type:
+                            type: string
+                        required:
+                        - ID
+                        - endpoint
+                        - index
+                        - roleArn
+                        - type
+                        type: object
+                      firehose:
+                        properties:
+                          deliveryStreamName:
+                            type: string
+                          roleArn:
+                            type: string
+                          separator:
+                            type: string
+                        required:
+                        - deliveryStreamName
+                        - roleArn
+                        type: object
+                      iotAnalytics:
+                        properties:
+                          channelName:
+                            type: string
+                          roleArn:
+                            type: string
+                        required:
+                        - channelName
+                        - roleArn
+                        type: object
+                      iotEvents:
+                        properties:
+                          inputName:
+                            type: string
+                          messageID:
+                            type: string
+                          roleArn:
+                            type: string
+                        required:
+                        - inputName
+                        - roleArn
+                        type: object
+                      kinesis:
+                        properties:
+                          partitionKey:
+                            type: string
+                          roleArn:
+                            type: string
+                          streamName:
+                            type: string
+                        required:
+                        - roleArn
+                        - streamName
+                        type: object
+                      lambda:
+                        properties:
+                          functionArn:
+                            type: string
+                        required:
+                        - functionArn
+                        type: object
+                      republish:
+                        properties:
+                          qos:
+                            format: int64
+                            type: integer
+                          roleArn:
+                            type: string
+                          topic:
+                            type: string
+                        required:
+                        - roleArn
+                        - topic
+                        type: object
+                      s3:
+                        properties:
+                          bucketName:
+                            type: string
+                          key:
+                            type: string
+                          roleArn:
+                            type: string
+                        required:
+                        - bucketName
+                        - key
+                        - roleArn
+                        type: object
+                      sns:
+                        properties:
+                          messageFormat:
+                            type: string
+                          roleArn:
+                            type: string
+                          targetArn:
+                            type: string
+                        required:
+                        - roleArn
+                        - targetArn
+                        type: object
+                      sqs:
+                        properties:
+                          queueURL:
+                            type: string
+                          roleArn:
+                            type: string
+                          useBase64:
+                            type: boolean
+                        required:
+                        - queueURL
+                        - roleArn
+                        - useBase64
+                        type: object
+                      stepFunctions:
+                        properties:
+                          executionNamePrefix:
+                            type: string
+                          roleArn:
+                            type: string
+                          stateMachineName:
+                            type: string
+                        required:
+                        - roleArn
+                        - stateMachineName
+                        type: object
+                    type: object
+                  firehose:
+                    items:
+                      properties:
+                        deliveryStreamName:
+                          type: string
+                        roleArn:
+                          type: string
+                        separator:
+                          type: string
+                      required:
+                      - deliveryStreamName
+                      - roleArn
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  iotAnalytics:
+                    items:
+                      properties:
+                        channelName:
+                          type: string
+                        roleArn:
+                          type: string
+                      required:
+                      - channelName
+                      - roleArn
+                      type: object
+                    type: array
+                  iotEvents:
+                    items:
+                      properties:
+                        inputName:
+                          type: string
+                        messageID:
+                          type: string
+                        roleArn:
+                          type: string
+                      required:
+                      - inputName
+                      - roleArn
+                      type: object
+                    type: array
+                  kinesis:
+                    items:
+                      properties:
+                        partitionKey:
+                          type: string
+                        roleArn:
+                          type: string
+                        streamName:
+                          type: string
+                      required:
+                      - roleArn
+                      - streamName
+                      type: object
+                    type: array
+                  lambda:
+                    items:
+                      properties:
+                        functionArn:
+                          type: string
+                      required:
+                      - functionArn
+                      type: object
+                    type: array
+                  name:
+                    type: string
+                  republish:
+                    items:
+                      properties:
+                        qos:
+                          format: int64
+                          type: integer
+                        roleArn:
+                          type: string
+                        topic:
+                          type: string
+                      required:
+                      - roleArn
+                      - topic
+                      type: object
+                    type: array
+                  s3:
+                    items:
+                      properties:
+                        bucketName:
+                          type: string
+                        key:
+                          type: string
+                        roleArn:
+                          type: string
+                      required:
+                      - bucketName
+                      - key
+                      - roleArn
+                      type: object
+                    type: array
+                  sns:
+                    items:
+                      properties:
+                        messageFormat:
+                          type: string
+                        roleArn:
+                          type: string
+                        targetArn:
+                          type: string
+                      required:
+                      - roleArn
+                      - targetArn
+                      type: object
+                    type: array
+                  sql:
+                    type: string
+                  sqlVersion:
+                    type: string
+                  sqs:
+                    items:
+                      properties:
+                        queueURL:
+                          type: string
+                        roleArn:
+                          type: string
+                        useBase64:
+                          type: boolean
+                      required:
+                      - queueURL
+                      - roleArn
+                      - useBase64
+                      type: object
+                    type: array
+                  stepFunctions:
+                    items:
+                      properties:
+                        executionNamePrefix:
+                          type: string
+                        roleArn:
+                          type: string
+                        stateMachineName:
+                          type: string
+                      required:
+                      - roleArn
+                      - stateMachineName
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
                       type: string
-                    topic:
+                    type: object
+                  tagsAll:
+                    additionalProperties:
                       type: string
-                  required:
-                  - roleArn
-                  - topic
-                  type: object
-                type: array
-              s3:
-                items:
-                  properties:
-                    bucketName:
-                      type: string
-                    key:
-                      type: string
-                    roleArn:
-                      type: string
-                  required:
-                  - bucketName
-                  - key
-                  - roleArn
-                  type: object
-                type: array
-              sns:
-                items:
-                  properties:
-                    messageFormat:
-                      type: string
-                    roleArn:
-                      type: string
-                    targetArn:
-                      type: string
-                  required:
-                  - roleArn
-                  - targetArn
-                  type: object
-                type: array
-              sql:
-                type: string
-              sqlVersion:
-                type: string
-              sqs:
-                items:
-                  properties:
-                    queueURL:
-                      type: string
-                    roleArn:
-                      type: string
-                    useBase64:
-                      type: boolean
-                  required:
-                  - queueURL
-                  - roleArn
-                  - useBase64
-                  type: object
-                type: array
-              stepFunctions:
-                items:
-                  properties:
-                    executionNamePrefix:
-                      type: string
-                    roleArn:
-                      type: string
-                    stateMachineName:
-                      type: string
-                  required:
-                  - roleArn
-                  - stateMachineName
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                required:
+                - enabled
+                - name
+                - sql
+                - sqlVersion
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - enabled
-            - name
             - providerRef
-            - sql
-            - sqlVersion
+            - resource
             type: object
           status:
             properties:

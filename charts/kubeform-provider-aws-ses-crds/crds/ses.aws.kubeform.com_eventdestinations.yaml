@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: eventdestinations.ses.aws.kubeform.com
 spec:
   group: ses.aws.kubeform.com
@@ -30,39 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              cloudwatchDestination:
-                items:
-                  properties:
-                    defaultValue:
-                      type: string
-                    dimensionName:
-                      type: string
-                    valueSource:
-                      type: string
-                  required:
-                  - defaultValue
-                  - dimensionName
-                  - valueSource
-                  type: object
-                type: array
-              configurationSetName:
-                type: string
-              enabled:
-                type: boolean
-              id:
-                type: string
-              kinesisDestination:
-                properties:
-                  roleArn:
-                    type: string
-                  streamArn:
-                    type: string
-                required:
-                - roleArn
-                - streamArn
-                type: object
               kubeformOutput:
                 properties:
                   arn:
@@ -104,11 +72,6 @@ spec:
                     type: array
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   snsDestination:
                     properties:
                       topicArn:
@@ -116,45 +79,82 @@ spec:
                     required:
                     - topicArn
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - configurationSetName
                 - matchingTypes
                 - name
-                - providerRef
                 type: object
-              matchingTypes:
-                items:
-                  type: string
-                type: array
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              snsDestination:
+              resource:
                 properties:
-                  topicArn:
+                  arn:
                     type: string
+                  cloudwatchDestination:
+                    items:
+                      properties:
+                        defaultValue:
+                          type: string
+                        dimensionName:
+                          type: string
+                        valueSource:
+                          type: string
+                      required:
+                      - defaultValue
+                      - dimensionName
+                      - valueSource
+                      type: object
+                    type: array
+                  configurationSetName:
+                    type: string
+                  enabled:
+                    type: boolean
+                  id:
+                    type: string
+                  kinesisDestination:
+                    properties:
+                      roleArn:
+                        type: string
+                      streamArn:
+                        type: string
+                    required:
+                    - roleArn
+                    - streamArn
+                    type: object
+                  matchingTypes:
+                    items:
+                      type: string
+                    type: array
+                  name:
+                    type: string
+                  snsDestination:
+                    properties:
+                      topicArn:
+                        type: string
+                    required:
+                    - topicArn
+                    type: object
                 required:
-                - topicArn
+                - configurationSetName
+                - matchingTypes
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - configurationSetName
-            - matchingTypes
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

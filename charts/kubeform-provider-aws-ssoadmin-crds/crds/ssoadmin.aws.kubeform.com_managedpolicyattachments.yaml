@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: managedpolicyattachments.ssoadmin.aws.kubeform.com
 spec:
   group: ssoadmin.aws.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              instanceArn:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -46,43 +43,46 @@ spec:
                     type: string
                   permissionSetArn:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - instanceArn
+                - managedPolicyArn
+                - permissionSetArn
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  instanceArn:
+                    type: string
+                  managedPolicyArn:
+                    type: string
+                  managedPolicyName:
+                    type: string
+                  permissionSetArn:
                     type: string
                 required:
                 - instanceArn
                 - managedPolicyArn
                 - permissionSetArn
-                - providerRef
-                type: object
-              managedPolicyArn:
-                type: string
-              managedPolicyName:
-                type: string
-              permissionSetArn:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - instanceArn
-            - managedPolicyArn
-            - permissionSetArn
             - providerRef
+            - resource
             type: object
           status:
             properties:

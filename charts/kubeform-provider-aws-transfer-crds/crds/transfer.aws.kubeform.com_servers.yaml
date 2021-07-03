@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: servers.transfer.aws.kubeform.com
 spec:
   group: transfer.aws.kubeform.com
@@ -30,40 +31,13 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              endpoint:
-                type: string
-              endpointDetails:
-                properties:
-                  addressAllocationIDS:
-                    items:
-                      type: string
-                    type: array
-                  subnetIDS:
-                    items:
-                      type: string
-                    type: array
-                  vpcEndpointID:
-                    type: string
-                  vpcID:
-                    type: string
-                type: object
-              endpointType:
-                type: string
-              forceDestroy:
-                type: boolean
-              hostKeyFingerprint:
-                type: string
-              id:
-                type: string
-              identityProviderType:
-                type: string
-              invocationRole:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
+                    type: string
+                  certificate:
+                    type: string
+                  domain:
                     type: string
                   endpoint:
                     type: string
@@ -96,35 +70,86 @@ spec:
                     type: string
                   loggingRole:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
+                  protocols:
+                    items:
+                      type: string
+                    maxItems: 3
+                    minItems: 1
+                    type: array
+                  securityPolicyName:
+                    type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   url:
                     type: string
-                required:
-                - providerRef
                 type: object
-              loggingRole:
-                type: string
               providerRef:
                 properties:
                   name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  certificate:
+                    type: string
+                  domain:
+                    type: string
+                  endpoint:
+                    type: string
+                  endpointDetails:
+                    properties:
+                      addressAllocationIDS:
+                        items:
+                          type: string
+                        type: array
+                      subnetIDS:
+                        items:
+                          type: string
+                        type: array
+                      vpcEndpointID:
+                        type: string
+                      vpcID:
+                        type: string
+                    type: object
+                  endpointType:
+                    type: string
+                  forceDestroy:
+                    type: boolean
+                  hostKeyFingerprint:
+                    type: string
+                  id:
+                    type: string
+                  identityProviderType:
+                    type: string
+                  invocationRole:
+                    type: string
+                  loggingRole:
+                    type: string
+                  protocols:
+                    items:
+                      type: string
+                    maxItems: 3
+                    minItems: 1
+                    type: array
+                  securityPolicyName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  url:
                     type: string
                 type: object
               secretRef:
@@ -132,19 +157,19 @@ spec:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              url:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

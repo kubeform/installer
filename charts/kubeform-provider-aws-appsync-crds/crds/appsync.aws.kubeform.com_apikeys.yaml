@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: apikeys.appsync.aws.kubeform.com
 spec:
   group: appsync.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiID:
-                type: string
-              description:
-                type: string
-              expires:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiID:
@@ -48,29 +41,26 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - apiID
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  apiID:
+                    type: string
+                  description:
+                    type: string
+                  expires:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - apiID
                 type: object
               secretRef:
                 properties:
@@ -82,9 +72,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - apiID
             - providerRef
+            - resource
             type: object
           status:
             properties:

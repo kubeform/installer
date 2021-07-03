@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: apps.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -188,16 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              appName:
-                type: string
-              appType:
-                type: string
-              arn:
-                type: string
-              domainID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   appName:
@@ -210,11 +201,6 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceSpec:
                     properties:
                       instanceType:
@@ -226,18 +212,16 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   userProfileName:
                     type: string
                 required:
                 - appName
                 - appType
                 - domainID
-                - providerRef
                 - userProfileName
                 type: object
               providerRef:
@@ -245,30 +229,54 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceSpec:
+              resource:
                 properties:
-                  instanceType:
+                  appName:
                     type: string
-                  sagemakerImageArn:
+                  appType:
                     type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                  arn:
+                    type: string
+                  domainID:
+                    type: string
+                  id:
+                    type: string
+                  resourceSpec:
+                    properties:
+                      instanceType:
+                        type: string
+                      sagemakerImageArn:
+                        type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  userProfileName:
+                    type: string
+                required:
+                - appName
+                - appType
+                - domainID
+                - userProfileName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              userProfileName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - appName
-            - appType
-            - domainID
             - providerRef
-            - userProfileName
+            - resource
             type: object
           status:
             properties:
@@ -315,7 +323,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: appimageconfigs.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -342,37 +351,6 @@ spec:
             type: object
           spec:
             properties:
-              appImageConfigName:
-                type: string
-              arn:
-                type: string
-              id:
-                type: string
-              kernelGatewayImageConfig:
-                properties:
-                  fileSystemConfig:
-                    properties:
-                      defaultGid:
-                        format: int64
-                        type: integer
-                      defaultUid:
-                        format: int64
-                        type: integer
-                      mountPath:
-                        type: string
-                    type: object
-                  kernelSpec:
-                    properties:
-                      displayName:
-                        type: string
-                      name:
-                        type: string
-                    required:
-                    - name
-                    type: object
-                required:
-                - kernelSpec
-                type: object
               kubeformOutput:
                 properties:
                   appImageConfigName:
@@ -406,33 +384,63 @@ spec:
                     required:
                     - kernelSpec
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - appImageConfigName
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  appImageConfigName:
+                    type: string
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  kernelGatewayImageConfig:
+                    properties:
+                      fileSystemConfig:
+                        properties:
+                          defaultGid:
+                            format: int64
+                            type: integer
+                          defaultUid:
+                            format: int64
+                            type: integer
+                          mountPath:
+                            type: string
+                        type: object
+                      kernelSpec:
+                        properties:
+                          displayName:
+                            type: string
+                          name:
+                            type: string
+                        required:
+                        - name
+                        type: object
+                    required:
+                    - kernelSpec
+                    type: object
+                required:
+                - appImageConfigName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - appImageConfigName
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -479,7 +487,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: coderepositories.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -506,23 +515,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              codeRepositoryName:
-                type: string
-              gitConfig:
-                properties:
-                  branch:
-                    type: string
-                  repositoryURL:
-                    type: string
-                  secretArn:
-                    type: string
-                required:
-                - repositoryURL
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -542,35 +534,51 @@ spec:
                     type: object
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - codeRepositoryName
                 - gitConfig
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  codeRepositoryName:
+                    type: string
+                  gitConfig:
+                    properties:
+                      branch:
+                        type: string
+                      repositoryURL:
+                        type: string
+                      secretArn:
+                        type: string
+                    required:
+                    - repositoryURL
+                    type: object
+                  id:
+                    type: string
+                required:
+                - codeRepositoryName
+                - gitConfig
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - codeRepositoryName
-            - gitConfig
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -617,7 +625,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: domains.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -644,87 +653,6 @@ spec:
             type: object
           spec:
             properties:
-              appNetworkAccessType:
-                type: string
-              arn:
-                type: string
-              authMode:
-                type: string
-              defaultUserSettings:
-                properties:
-                  executionRole:
-                    type: string
-                  jupyterServerAppSettings:
-                    properties:
-                      defaultResourceSpec:
-                        properties:
-                          instanceType:
-                            type: string
-                          sagemakerImageArn:
-                            type: string
-                        type: object
-                    type: object
-                  kernelGatewayAppSettings:
-                    properties:
-                      customImage:
-                        items:
-                          properties:
-                            appImageConfigName:
-                              type: string
-                            imageName:
-                              type: string
-                            imageVersionNumber:
-                              format: int64
-                              type: integer
-                          required:
-                          - appImageConfigName
-                          - imageName
-                          type: object
-                        maxItems: 30
-                        type: array
-                      defaultResourceSpec:
-                        properties:
-                          instanceType:
-                            type: string
-                          sagemakerImageArn:
-                            type: string
-                        type: object
-                    type: object
-                  securityGroups:
-                    items:
-                      type: string
-                    maxItems: 5
-                    type: array
-                  sharingSettings:
-                    properties:
-                      notebookOutputOption:
-                        type: string
-                      s3KmsKeyID:
-                        type: string
-                      s3OutputPath:
-                        type: string
-                    type: object
-                  tensorBoardAppSettings:
-                    properties:
-                      defaultResourceSpec:
-                        properties:
-                          instanceType:
-                            type: string
-                          sagemakerImageArn:
-                            type: string
-                        type: object
-                    type: object
-                required:
-                - executionRole
-                type: object
-              domainName:
-                type: string
-              homeEfsFileSystemID:
-                type: string
-              id:
-                type: string
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   appNetworkAccessType:
@@ -808,11 +736,6 @@ spec:
                     type: string
                   kmsKeyID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   singleSignOnManagedApplicationInstanceID:
                     type: string
                   subnetIDS:
@@ -824,11 +747,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   url:
                     type: string
                   vpcID:
@@ -837,7 +759,6 @@ spec:
                 - authMode
                 - defaultUserSettings
                 - domainName
-                - providerRef
                 - subnetIDS
                 - vpcID
                 type: object
@@ -846,33 +767,128 @@ spec:
                   name:
                     type: string
                 type: object
-              singleSignOnManagedApplicationInstanceID:
-                type: string
-              subnetIDS:
-                items:
-                  type: string
-                maxItems: 16
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  appNetworkAccessType:
+                    type: string
+                  arn:
+                    type: string
+                  authMode:
+                    type: string
+                  defaultUserSettings:
+                    properties:
+                      executionRole:
+                        type: string
+                      jupyterServerAppSettings:
+                        properties:
+                          defaultResourceSpec:
+                            properties:
+                              instanceType:
+                                type: string
+                              sagemakerImageArn:
+                                type: string
+                            type: object
+                        type: object
+                      kernelGatewayAppSettings:
+                        properties:
+                          customImage:
+                            items:
+                              properties:
+                                appImageConfigName:
+                                  type: string
+                                imageName:
+                                  type: string
+                                imageVersionNumber:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - appImageConfigName
+                              - imageName
+                              type: object
+                            maxItems: 30
+                            type: array
+                          defaultResourceSpec:
+                            properties:
+                              instanceType:
+                                type: string
+                              sagemakerImageArn:
+                                type: string
+                            type: object
+                        type: object
+                      securityGroups:
+                        items:
+                          type: string
+                        maxItems: 5
+                        type: array
+                      sharingSettings:
+                        properties:
+                          notebookOutputOption:
+                            type: string
+                          s3KmsKeyID:
+                            type: string
+                          s3OutputPath:
+                            type: string
+                        type: object
+                      tensorBoardAppSettings:
+                        properties:
+                          defaultResourceSpec:
+                            properties:
+                              instanceType:
+                                type: string
+                              sagemakerImageArn:
+                                type: string
+                            type: object
+                        type: object
+                    required:
+                    - executionRole
+                    type: object
+                  domainName:
+                    type: string
+                  homeEfsFileSystemID:
+                    type: string
+                  id:
+                    type: string
+                  kmsKeyID:
+                    type: string
+                  singleSignOnManagedApplicationInstanceID:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    maxItems: 16
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  url:
+                    type: string
+                  vpcID:
+                    type: string
+                required:
+                - authMode
+                - defaultUserSettings
+                - domainName
+                - subnetIDS
+                - vpcID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              url:
-                type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - authMode
-            - defaultUserSettings
-            - domainName
             - providerRef
-            - subnetIDS
-            - vpcID
+            - resource
             type: object
           status:
             properties:
@@ -919,7 +935,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpoints.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -946,12 +963,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              endpointConfigName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -962,43 +973,56 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - endpointConfigName
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  endpointConfigName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - endpointConfigName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - endpointConfigName
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1045,7 +1069,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointconfigurations.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -1072,54 +1097,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              dataCaptureConfig:
-                properties:
-                  captureContentTypeHeader:
-                    properties:
-                      csvContentTypes:
-                        items:
-                          type: string
-                        maxItems: 10
-                        minItems: 1
-                        type: array
-                      jsonContentTypes:
-                        items:
-                          type: string
-                        maxItems: 10
-                        minItems: 1
-                        type: array
-                    type: object
-                  captureOptions:
-                    items:
-                      properties:
-                        captureMode:
-                          type: string
-                      required:
-                      - captureMode
-                      type: object
-                    maxItems: 2
-                    minItems: 1
-                    type: array
-                  destinationS3URI:
-                    type: string
-                  enableCapture:
-                    type: boolean
-                  initialSamplingPercentage:
-                    format: int64
-                    type: integer
-                  kmsKeyID:
-                    type: string
-                required:
-                - captureOptions
-                - destinationS3URI
-                - initialSamplingPercentage
-                type: object
-              id:
-                type: string
-              kmsKeyArn:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1195,66 +1172,121 @@ spec:
                       - modelName
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - productionVariants
-                - providerRef
                 type: object
-              name:
-                type: string
-              productionVariants:
-                items:
-                  properties:
-                    acceleratorType:
-                      type: string
-                    initialInstanceCount:
-                      format: int64
-                      type: integer
-                    initialVariantWeight:
-                      format: double
-                      type: number
-                    instanceType:
-                      type: string
-                    modelName:
-                      type: string
-                    variantName:
-                      type: string
-                  required:
-                  - initialInstanceCount
-                  - instanceType
-                  - modelName
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  dataCaptureConfig:
+                    properties:
+                      captureContentTypeHeader:
+                        properties:
+                          csvContentTypes:
+                            items:
+                              type: string
+                            maxItems: 10
+                            minItems: 1
+                            type: array
+                          jsonContentTypes:
+                            items:
+                              type: string
+                            maxItems: 10
+                            minItems: 1
+                            type: array
+                        type: object
+                      captureOptions:
+                        items:
+                          properties:
+                            captureMode:
+                              type: string
+                          required:
+                          - captureMode
+                          type: object
+                        maxItems: 2
+                        minItems: 1
+                        type: array
+                      destinationS3URI:
+                        type: string
+                      enableCapture:
+                        type: boolean
+                      initialSamplingPercentage:
+                        format: int64
+                        type: integer
+                      kmsKeyID:
+                        type: string
+                    required:
+                    - captureOptions
+                    - destinationS3URI
+                    - initialSamplingPercentage
+                    type: object
+                  id:
+                    type: string
+                  kmsKeyArn:
+                    type: string
+                  name:
+                    type: string
+                  productionVariants:
+                    items:
+                      properties:
+                        acceleratorType:
+                          type: string
+                        initialInstanceCount:
+                          format: int64
+                          type: integer
+                        initialVariantWeight:
+                          format: double
+                          type: number
+                        instanceType:
+                          type: string
+                        modelName:
+                          type: string
+                        variantName:
+                          type: string
+                      required:
+                      - initialInstanceCount
+                      - instanceType
+                      - modelName
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - productionVariants
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - productionVariants
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1301,7 +1333,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: featuregroups.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -1328,27 +1361,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              eventTimeFeatureName:
-                type: string
-              featureDefinition:
-                items:
-                  properties:
-                    featureName:
-                      type: string
-                    featureType:
-                      type: string
-                  type: object
-                maxItems: 2500
-                minItems: 1
-                type: array
-              featureGroupName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1407,10 +1419,87 @@ spec:
                             type: string
                         type: object
                     type: object
-                  providerRef:
+                  recordIdentifierFeatureName:
+                    type: string
+                  roleArn:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - eventTimeFeatureName
+                - featureDefinition
+                - featureGroupName
+                - recordIdentifierFeatureName
+                - roleArn
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  eventTimeFeatureName:
+                    type: string
+                  featureDefinition:
+                    items:
+                      properties:
+                        featureName:
+                          type: string
+                        featureType:
+                          type: string
+                      type: object
+                    maxItems: 2500
+                    minItems: 1
+                    type: array
+                  featureGroupName:
+                    type: string
+                  id:
+                    type: string
+                  offlineStoreConfig:
                     properties:
-                      name:
-                        type: string
+                      dataCatalogConfig:
+                        properties:
+                          catalog:
+                            type: string
+                          database:
+                            type: string
+                          tableName:
+                            type: string
+                        type: object
+                      disableGlueTableCreation:
+                        type: boolean
+                      s3StorageConfig:
+                        properties:
+                          kmsKeyID:
+                            type: string
+                          s3URI:
+                            type: string
+                        required:
+                        - s3URI
+                        type: object
+                    required:
+                    - s3StorageConfig
+                    type: object
+                  onlineStoreConfig:
+                    properties:
+                      enableOnlineStore:
+                        type: boolean
+                      securityConfig:
+                        properties:
+                          kmsKeyID:
+                            type: string
+                        type: object
                     type: object
                   recordIdentifierFeatureName:
                     type: string
@@ -1420,79 +1509,30 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - eventTimeFeatureName
                 - featureDefinition
                 - featureGroupName
-                - providerRef
                 - recordIdentifierFeatureName
                 - roleArn
-                type: object
-              offlineStoreConfig:
-                properties:
-                  dataCatalogConfig:
-                    properties:
-                      catalog:
-                        type: string
-                      database:
-                        type: string
-                      tableName:
-                        type: string
-                    type: object
-                  disableGlueTableCreation:
-                    type: boolean
-                  s3StorageConfig:
-                    properties:
-                      kmsKeyID:
-                        type: string
-                      s3URI:
-                        type: string
-                    required:
-                    - s3URI
-                    type: object
-                required:
-                - s3StorageConfig
-                type: object
-              onlineStoreConfig:
-                properties:
-                  enableOnlineStore:
-                    type: boolean
-                  securityConfig:
-                    properties:
-                      kmsKeyID:
-                        type: string
-                    type: object
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              recordIdentifierFeatureName:
-                type: string
-              roleArn:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - eventTimeFeatureName
-            - featureDefinition
-            - featureGroupName
             - providerRef
-            - recordIdentifierFeatureName
-            - roleArn
+            - resource
             type: object
           status:
             properties:
@@ -1539,7 +1579,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: images.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -1566,16 +1607,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              displayName:
-                type: string
-              id:
-                type: string
-              imageName:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1588,25 +1619,18 @@ spec:
                     type: string
                   imageName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roleArn:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - imageName
-                - providerRef
                 - roleArn
                 type: object
               providerRef:
@@ -1614,21 +1638,45 @@ spec:
                   name:
                     type: string
                 type: object
-              roleArn:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  displayName:
+                    type: string
+                  id:
+                    type: string
+                  imageName:
+                    type: string
+                  roleArn:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - imageName
+                - roleArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - imageName
             - providerRef
-            - roleArn
+            - resource
             type: object
           status:
             properties:
@@ -1675,7 +1723,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: imageversions.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -1702,18 +1751,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              baseImage:
-                type: string
-              containerImage:
-                type: string
-              id:
-                type: string
-              imageArn:
-                type: string
-              imageName:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1728,15 +1765,31 @@ spec:
                     type: string
                   imageName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  version:
+                    format: int64
+                    type: integer
+                required:
+                - baseImage
+                - imageName
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  baseImage:
+                    type: string
+                  containerImage:
+                    type: string
+                  id:
+                    type: string
+                  imageArn:
+                    type: string
+                  imageName:
                     type: string
                   version:
                     format: int64
@@ -1744,25 +1797,20 @@ spec:
                 required:
                 - baseImage
                 - imageName
-                - providerRef
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              version:
-                format: int64
-                type: integer
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - baseImage
-            - imageName
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1809,7 +1857,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: models.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -1836,40 +1885,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              container:
-                items:
-                  properties:
-                    containerHostname:
-                      type: string
-                    environment:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    image:
-                      type: string
-                    imageConfig:
-                      properties:
-                        repositoryAccessMode:
-                          type: string
-                      required:
-                      - repositoryAccessMode
-                      type: object
-                    mode:
-                      type: string
-                    modelDataURL:
-                      type: string
-                  required:
-                  - image
-                  type: object
-                type: array
-              enableNetworkIsolation:
-                type: boolean
-              executionRoleArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1932,20 +1947,14 @@ spec:
                     required:
                     - image
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   vpcConfig:
                     properties:
                       securityGroupIDS:
@@ -1962,65 +1971,112 @@ spec:
                     type: object
                 required:
                 - executionRoleArn
-                - providerRef
-                type: object
-              name:
-                type: string
-              primaryContainer:
-                properties:
-                  containerHostname:
-                    type: string
-                  environment:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  image:
-                    type: string
-                  imageConfig:
-                    properties:
-                      repositoryAccessMode:
-                        type: string
-                    required:
-                    - repositoryAccessMode
-                    type: object
-                  mode:
-                    type: string
-                  modelDataURL:
-                    type: string
-                required:
-                - image
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  container:
+                    items:
+                      properties:
+                        containerHostname:
+                          type: string
+                        environment:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        image:
+                          type: string
+                        imageConfig:
+                          properties:
+                            repositoryAccessMode:
+                              type: string
+                          required:
+                          - repositoryAccessMode
+                          type: object
+                        mode:
+                          type: string
+                        modelDataURL:
+                          type: string
+                      required:
+                      - image
+                      type: object
+                    type: array
+                  enableNetworkIsolation:
+                    type: boolean
+                  executionRoleArn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  primaryContainer:
+                    properties:
+                      containerHostname:
+                        type: string
+                      environment:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      image:
+                        type: string
+                      imageConfig:
+                        properties:
+                          repositoryAccessMode:
+                            type: string
+                        required:
+                        - repositoryAccessMode
+                        type: object
+                      mode:
+                        type: string
+                      modelDataURL:
+                        type: string
+                    required:
+                    - image
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  vpcConfig:
+                    properties:
+                      securityGroupIDS:
+                        items:
+                          type: string
+                        type: array
+                      subnets:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - securityGroupIDS
+                    - subnets
+                    type: object
+                required:
+                - executionRoleArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcConfig:
-                properties:
-                  securityGroupIDS:
-                    items:
-                      type: string
-                    type: array
-                  subnets:
-                    items:
-                      type: string
-                    type: array
-                required:
-                - securityGroupIDS
-                - subnets
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - executionRoleArn
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2067,7 +2123,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: modelpackagegroups.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -2094,10 +2151,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -2108,45 +2161,56 @@ spec:
                     type: string
                   modelPackageGroupName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - modelPackageGroupName
-                - providerRef
                 type: object
-              modelPackageGroupDescription:
-                type: string
-              modelPackageGroupName:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  modelPackageGroupDescription:
+                    type: string
+                  modelPackageGroupName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - modelPackageGroupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - modelPackageGroupName
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2193,7 +2257,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: notebookinstances.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -2220,23 +2285,6 @@ spec:
             type: object
           spec:
             properties:
-              additionalCodeRepositories:
-                items:
-                  type: string
-                maxItems: 3
-                type: array
-              arn:
-                type: string
-              defaultCodeRepository:
-                type: string
-              directInternetAccess:
-                type: string
-              id:
-                type: string
-              instanceType:
-                type: string
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   additionalCodeRepositories:
@@ -2262,11 +2310,6 @@ spec:
                     type: string
                   networkInterfaceID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roleArn:
                     type: string
                   rootAccess:
@@ -2282,11 +2325,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   url:
                     type: string
                   volumeSize:
@@ -2295,50 +2337,80 @@ spec:
                 required:
                 - instanceType
                 - name
-                - providerRef
                 - roleArn
                 type: object
-              lifecycleConfigName:
-                type: string
-              name:
-                type: string
-              networkInterfaceID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              roleArn:
-                type: string
-              rootAccess:
-                type: string
-              securityGroups:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              subnetID:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  additionalCodeRepositories:
+                    items:
+                      type: string
+                    maxItems: 3
+                    type: array
+                  arn:
+                    type: string
+                  defaultCodeRepository:
+                    type: string
+                  directInternetAccess:
+                    type: string
+                  id:
+                    type: string
+                  instanceType:
+                    type: string
+                  kmsKeyID:
+                    type: string
+                  lifecycleConfigName:
+                    type: string
+                  name:
+                    type: string
+                  networkInterfaceID:
+                    type: string
+                  roleArn:
+                    type: string
+                  rootAccess:
+                    type: string
+                  securityGroups:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  subnetID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  url:
+                    type: string
+                  volumeSize:
+                    format: int64
+                    type: integer
+                required:
+                - instanceType
+                - name
+                - roleArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              url:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              volumeSize:
-                format: int64
-                type: integer
             required:
-            - instanceType
-            - name
             - providerRef
-            - roleArn
+            - resource
             type: object
           status:
             properties:
@@ -2385,7 +2457,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: notebookinstancelifecycleconfigurations.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -2412,10 +2485,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -2428,28 +2497,23 @@ spec:
                     type: string
                   onStart:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
                 type: object
-              name:
-                type: string
-              onCreate:
-                type: string
-              onStart:
-                type: string
               providerRef:
                 properties:
                   name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  onCreate:
+                    type: string
+                  onStart:
                     type: string
                 type: object
               terminationPolicy:
@@ -2457,8 +2521,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2505,7 +2575,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: userprofiles.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -2532,14 +2603,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              domainID:
-                type: string
-              homeEfsFileSystemUid:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -2550,11 +2613,6 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   singleSignOnUserIdentifier:
                     type: string
                   singleSignOnUserValue:
@@ -2563,11 +2621,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   userProfileName:
                     type: string
                   userSettings:
@@ -2645,7 +2702,6 @@ spec:
                     type: object
                 required:
                 - domainID
-                - providerRef
                 - userProfileName
                 type: object
               providerRef:
@@ -2653,98 +2709,120 @@ spec:
                   name:
                     type: string
                 type: object
-              singleSignOnUserIdentifier:
-                type: string
-              singleSignOnUserValue:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  domainID:
+                    type: string
+                  homeEfsFileSystemUid:
+                    type: string
+                  id:
+                    type: string
+                  singleSignOnUserIdentifier:
+                    type: string
+                  singleSignOnUserValue:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  userProfileName:
+                    type: string
+                  userSettings:
+                    properties:
+                      executionRole:
+                        type: string
+                      jupyterServerAppSettings:
+                        properties:
+                          defaultResourceSpec:
+                            properties:
+                              instanceType:
+                                type: string
+                              sagemakerImageArn:
+                                type: string
+                            type: object
+                        required:
+                        - defaultResourceSpec
+                        type: object
+                      kernelGatewayAppSettings:
+                        properties:
+                          customImage:
+                            items:
+                              properties:
+                                appImageConfigName:
+                                  type: string
+                                imageName:
+                                  type: string
+                                imageVersionNumber:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - appImageConfigName
+                              - imageName
+                              type: object
+                            maxItems: 30
+                            type: array
+                          defaultResourceSpec:
+                            properties:
+                              instanceType:
+                                type: string
+                              sagemakerImageArn:
+                                type: string
+                            type: object
+                        required:
+                        - defaultResourceSpec
+                        type: object
+                      securityGroups:
+                        items:
+                          type: string
+                        maxItems: 5
+                        type: array
+                      sharingSettings:
+                        properties:
+                          notebookOutputOption:
+                            type: string
+                          s3KmsKeyID:
+                            type: string
+                          s3OutputPath:
+                            type: string
+                        type: object
+                      tensorBoardAppSettings:
+                        properties:
+                          defaultResourceSpec:
+                            properties:
+                              instanceType:
+                                type: string
+                              sagemakerImageArn:
+                                type: string
+                            type: object
+                        required:
+                        - defaultResourceSpec
+                        type: object
+                    required:
+                    - executionRole
+                    type: object
+                required:
+                - domainID
+                - userProfileName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              userProfileName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              userSettings:
-                properties:
-                  executionRole:
-                    type: string
-                  jupyterServerAppSettings:
-                    properties:
-                      defaultResourceSpec:
-                        properties:
-                          instanceType:
-                            type: string
-                          sagemakerImageArn:
-                            type: string
-                        type: object
-                    required:
-                    - defaultResourceSpec
-                    type: object
-                  kernelGatewayAppSettings:
-                    properties:
-                      customImage:
-                        items:
-                          properties:
-                            appImageConfigName:
-                              type: string
-                            imageName:
-                              type: string
-                            imageVersionNumber:
-                              format: int64
-                              type: integer
-                          required:
-                          - appImageConfigName
-                          - imageName
-                          type: object
-                        maxItems: 30
-                        type: array
-                      defaultResourceSpec:
-                        properties:
-                          instanceType:
-                            type: string
-                          sagemakerImageArn:
-                            type: string
-                        type: object
-                    required:
-                    - defaultResourceSpec
-                    type: object
-                  securityGroups:
-                    items:
-                      type: string
-                    maxItems: 5
-                    type: array
-                  sharingSettings:
-                    properties:
-                      notebookOutputOption:
-                        type: string
-                      s3KmsKeyID:
-                        type: string
-                      s3OutputPath:
-                        type: string
-                    type: object
-                  tensorBoardAppSettings:
-                    properties:
-                      defaultResourceSpec:
-                        properties:
-                          instanceType:
-                            type: string
-                          sagemakerImageArn:
-                            type: string
-                        type: object
-                    required:
-                    - defaultResourceSpec
-                    type: object
-                required:
-                - executionRole
-                type: object
             required:
-            - domainID
             - providerRef
-            - userProfileName
+            - resource
             type: object
           status:
             properties:

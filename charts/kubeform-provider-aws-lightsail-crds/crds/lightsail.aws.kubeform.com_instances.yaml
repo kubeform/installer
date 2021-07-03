@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instances.lightsail.aws.kubeform.com
 spec:
   group: lightsail.aws.kubeform.com
@@ -30,31 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              availabilityZone:
-                type: string
-              blueprintID:
-                type: string
-              bundleID:
-                type: string
-              cpuCount:
-                format: int64
-                type: integer
-              createdAt:
-                type: string
-              id:
-                type: string
-              ipv6Address:
-                type: string
-              ipv6Addresses:
-                items:
-                  type: string
-                type: array
-              isStaticIP:
-                type: boolean
-              keyPairName:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -86,11 +62,6 @@ spec:
                     type: string
                   privateIPAddress:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicIPAddress:
                     type: string
                   ramSize:
@@ -100,11 +71,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   userData:
                     type: string
                   username:
@@ -114,41 +84,79 @@ spec:
                 - blueprintID
                 - bundleID
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              privateIPAddress:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicIPAddress:
-                type: string
-              ramSize:
-                format: double
-                type: number
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  availabilityZone:
+                    type: string
+                  blueprintID:
+                    type: string
+                  bundleID:
+                    type: string
+                  cpuCount:
+                    format: int64
+                    type: integer
+                  createdAt:
+                    type: string
+                  id:
+                    type: string
+                  ipv6Address:
+                    type: string
+                  ipv6Addresses:
+                    items:
+                      type: string
+                    type: array
+                  isStaticIP:
+                    type: boolean
+                  keyPairName:
+                    type: string
+                  name:
+                    type: string
+                  privateIPAddress:
+                    type: string
+                  publicIPAddress:
+                    type: string
+                  ramSize:
+                    format: double
+                    type: number
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  userData:
+                    type: string
+                  username:
+                    type: string
+                required:
+                - availabilityZone
+                - blueprintID
+                - bundleID
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              userData:
-                type: string
-              username:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - availabilityZone
-            - blueprintID
-            - bundleID
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

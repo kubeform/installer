@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: botaliases.lex.aws.kubeform.com
 spec:
   group: lex.aws.kubeform.com
@@ -30,46 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              botName:
-                type: string
-              botVersion:
-                type: string
-              checksum:
-                type: string
-              conversationLogs:
-                properties:
-                  iamRoleArn:
-                    type: string
-                  logSettings:
-                    items:
-                      properties:
-                        destination:
-                          type: string
-                        kmsKeyArn:
-                          type: string
-                        logType:
-                          type: string
-                        resourceArn:
-                          type: string
-                        resourcePrefix:
-                          type: string
-                      required:
-                      - destination
-                      - logType
-                      - resourceArn
-                      type: object
-                    type: array
-                required:
-                - iamRoleArn
-                type: object
-              createdDate:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -116,15 +77,79 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - botName
+                - botVersion
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  botName:
+                    type: string
+                  botVersion:
+                    type: string
+                  checksum:
+                    type: string
+                  conversationLogs:
+                    properties:
+                      iamRoleArn:
+                        type: string
+                      logSettings:
+                        items:
+                          properties:
+                            destination:
+                              type: string
+                            kmsKeyArn:
+                              type: string
+                            logType:
+                              type: string
+                            resourceArn:
+                              type: string
+                            resourcePrefix:
+                              type: string
+                          required:
+                          - destination
+                          - logType
+                          - resourceArn
+                          type: object
+                        type: array
+                    required:
+                    - iamRoleArn
+                    type: object
+                  createdDate:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  lastUpdatedDate:
+                    type: string
+                  name:
                     type: string
                   timeouts:
                     properties:
@@ -148,45 +173,20 @@ spec:
                 - botName
                 - botVersion
                 - name
-                - providerRef
-                type: object
-              lastUpdatedDate:
-                type: string
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - botName
-            - botVersion
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
