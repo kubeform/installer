@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusters.database.digitalocean.kubeform.com
 spec:
   group: database.digitalocean.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              database:
-                type: string
-              engine:
-                type: string
-              evictionPolicy:
-                type: string
-              host:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   database:
@@ -77,18 +68,8 @@ spec:
                     type: string
                   privateNetworkUUID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   size:
                     type: string
                   sqlMode:
@@ -97,11 +78,24 @@ spec:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                   urn:
                     type: string
                   user:
@@ -112,73 +106,110 @@ spec:
                 - engine
                 - name
                 - nodeCount
-                - providerRef
                 - region
                 - size
                 type: object
-              maintenanceWindow:
-                items:
-                  properties:
-                    day:
-                      type: string
-                    hour:
-                      type: string
-                  required:
-                  - day
-                  - hour
-                  type: object
-                minItems: 1
-                type: array
-              name:
-                type: string
-              nodeCount:
-                format: int64
-                type: integer
-              port:
-                format: int64
-                type: integer
-              privateHost:
-                type: string
-              privateNetworkUUID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  database:
+                    type: string
+                  engine:
+                    type: string
+                  evictionPolicy:
+                    type: string
+                  host:
+                    type: string
+                  id:
+                    type: string
+                  maintenanceWindow:
+                    items:
+                      properties:
+                        day:
+                          type: string
+                        hour:
+                          type: string
+                      required:
+                      - day
+                      - hour
+                      type: object
+                    minItems: 1
+                    type: array
+                  name:
+                    type: string
+                  nodeCount:
+                    format: int64
+                    type: integer
+                  port:
+                    format: int64
+                    type: integer
+                  privateHost:
+                    type: string
+                  privateNetworkUUID:
+                    type: string
+                  region:
+                    type: string
+                  size:
+                    type: string
+                  sqlMode:
+                    type: string
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  urn:
+                    type: string
+                  user:
+                    type: string
+                  version:
+                    type: string
+                required:
+                - engine
+                - name
+                - nodeCount
+                - region
+                - size
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              size:
-                type: string
-              sqlMode:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              urn:
-                type: string
-              user:
-                type: string
-              version:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - engine
-            - name
-            - nodeCount
             - providerRef
-            - region
-            - size
+            - resource
             type: object
           status:
             properties:

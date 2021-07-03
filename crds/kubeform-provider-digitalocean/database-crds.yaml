@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusters.database.digitalocean.kubeform.com
 spec:
   group: database.digitalocean.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              database:
-                type: string
-              engine:
-                type: string
-              evictionPolicy:
-                type: string
-              host:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   database:
@@ -77,18 +68,8 @@ spec:
                     type: string
                   privateNetworkUUID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   size:
                     type: string
                   sqlMode:
@@ -97,11 +78,24 @@ spec:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                   urn:
                     type: string
                   user:
@@ -112,73 +106,110 @@ spec:
                 - engine
                 - name
                 - nodeCount
-                - providerRef
                 - region
                 - size
                 type: object
-              maintenanceWindow:
-                items:
-                  properties:
-                    day:
-                      type: string
-                    hour:
-                      type: string
-                  required:
-                  - day
-                  - hour
-                  type: object
-                minItems: 1
-                type: array
-              name:
-                type: string
-              nodeCount:
-                format: int64
-                type: integer
-              port:
-                format: int64
-                type: integer
-              privateHost:
-                type: string
-              privateNetworkUUID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  database:
+                    type: string
+                  engine:
+                    type: string
+                  evictionPolicy:
+                    type: string
+                  host:
+                    type: string
+                  id:
+                    type: string
+                  maintenanceWindow:
+                    items:
+                      properties:
+                        day:
+                          type: string
+                        hour:
+                          type: string
+                      required:
+                      - day
+                      - hour
+                      type: object
+                    minItems: 1
+                    type: array
+                  name:
+                    type: string
+                  nodeCount:
+                    format: int64
+                    type: integer
+                  port:
+                    format: int64
+                    type: integer
+                  privateHost:
+                    type: string
+                  privateNetworkUUID:
+                    type: string
+                  region:
+                    type: string
+                  size:
+                    type: string
+                  sqlMode:
+                    type: string
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  urn:
+                    type: string
+                  user:
+                    type: string
+                  version:
+                    type: string
+                required:
+                - engine
+                - name
+                - nodeCount
+                - region
+                - size
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              size:
-                type: string
-              sqlMode:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              urn:
-                type: string
-              user:
-                type: string
-              version:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - engine
-            - name
-            - nodeCount
             - providerRef
-            - region
-            - size
+            - resource
             type: object
           status:
             properties:
@@ -225,7 +256,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: connectionpools.database.digitalocean.kubeform.com
 spec:
   group: database.digitalocean.kubeform.com
@@ -252,14 +284,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterID:
-                type: string
-              dbName:
-                type: string
-              host:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterID:
@@ -279,24 +303,9 @@ spec:
                     type: integer
                   privateHost:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   size:
                     format: int64
                     type: integer
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   user:
                     type: string
                 required:
@@ -304,47 +313,64 @@ spec:
                 - dbName
                 - mode
                 - name
-                - providerRef
                 - size
                 - user
                 type: object
-              mode:
-                type: string
-              name:
-                type: string
-              port:
-                format: int64
-                type: integer
-              privateHost:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  clusterID:
+                    type: string
+                  dbName:
+                    type: string
+                  host:
+                    type: string
+                  id:
+                    type: string
+                  mode:
+                    type: string
+                  name:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  privateHost:
+                    type: string
+                  size:
+                    format: int64
+                    type: integer
+                  user:
+                    type: string
+                required:
+                - clusterID
+                - dbName
+                - mode
+                - name
+                - size
+                - user
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              size:
-                format: int64
-                type: integer
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              user:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - clusterID
-            - dbName
-            - mode
-            - name
             - providerRef
-            - size
-            - user
+            - resource
             type: object
           status:
             properties:
@@ -391,7 +417,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dbs.database.digitalocean.kubeform.com
 spec:
   group: database.digitalocean.kubeform.com
@@ -418,10 +445,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterID:
@@ -430,37 +453,40 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - clusterID
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  clusterID:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                required:
+                - clusterID
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterID
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -507,7 +533,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: firewalls.database.digitalocean.kubeform.com
 spec:
   group: database.digitalocean.kubeform.com
@@ -534,21 +561,12 @@ spec:
             type: object
           spec:
             properties:
-              clusterID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterID:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rule:
                     items:
                       properties:
@@ -565,14 +583,8 @@ spec:
                       - value
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - clusterID
-                - providerRef
                 - rule
                 type: object
               providerRef:
@@ -580,31 +592,45 @@ spec:
                   name:
                     type: string
                 type: object
-              rule:
-                items:
-                  properties:
-                    createdAt:
-                      type: string
-                    type:
-                      type: string
-                    uuid:
-                      type: string
-                    value:
-                      type: string
-                  required:
-                  - type
-                  - value
-                  type: object
-                type: array
+              resource:
+                properties:
+                  clusterID:
+                    type: string
+                  id:
+                    type: string
+                  rule:
+                    items:
+                      properties:
+                        createdAt:
+                          type: string
+                        type:
+                          type: string
+                        uuid:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - type
+                      - value
+                      type: object
+                    type: array
+                required:
+                - clusterID
+                - rule
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterID
             - providerRef
-            - rule
+            - resource
             type: object
           status:
             properties:
@@ -651,7 +677,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: replicas.database.digitalocean.kubeform.com
 spec:
   group: database.digitalocean.kubeform.com
@@ -678,14 +705,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterID:
-                type: string
-              database:
-                type: string
-              host:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterID:
@@ -705,74 +724,76 @@ spec:
                     type: string
                   privateNetworkUUID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   size:
                     type: string
                   tags:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   user:
                     type: string
                 required:
                 - clusterID
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              port:
-                format: int64
-                type: integer
-              privateHost:
-                type: string
-              privateNetworkUUID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  clusterID:
+                    type: string
+                  database:
+                    type: string
+                  host:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  privateHost:
+                    type: string
+                  privateNetworkUUID:
+                    type: string
+                  region:
+                    type: string
+                  size:
+                    type: string
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  user:
+                    type: string
+                required:
+                - clusterID
+                - name
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              size:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              user:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - clusterID
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -819,7 +840,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: users.database.digitalocean.kubeform.com
 spec:
   group: database.digitalocean.kubeform.com
@@ -846,10 +868,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterID:
@@ -860,39 +878,33 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   role:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - clusterID
                 - name
-                - providerRef
                 type: object
-              mysqlAuthPlugin:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
+              resource:
+                properties:
+                  clusterID:
+                    type: string
+                  id:
+                    type: string
+                  mysqlAuthPlugin:
+                    type: string
+                  name:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - clusterID
+                - name
+                type: object
               secretRef:
                 properties:
                   name:
@@ -903,10 +915,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterID
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
