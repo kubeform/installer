@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: integrations.apigatewayv2.aws.kubeform.com
 spec:
   group: apigatewayv2.aws.kubeform.com
@@ -30,30 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiID:
-                type: string
-              connectionID:
-                type: string
-              connectionType:
-                type: string
-              contentHandlingStrategy:
-                type: string
-              credentialsArn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              integrationMethod:
-                type: string
-              integrationResponseSelectionExpression:
-                type: string
-              integrationSubtype:
-                type: string
-              integrationType:
-                type: string
-              integrationURI:
-                type: string
               kubeformOutput:
                 properties:
                   apiID:
@@ -84,11 +61,6 @@ spec:
                     type: string
                   payloadFormatVersion:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requestParameters:
                     additionalProperties:
                       type: string
@@ -113,10 +85,76 @@ spec:
                     type: array
                   templateSelectionExpression:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  timeoutMilliseconds:
+                    format: int64
+                    type: integer
+                  tlsConfig:
+                    properties:
+                      serverNameToVerify:
+                        type: string
+                    type: object
+                required:
+                - apiID
+                - integrationType
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  apiID:
+                    type: string
+                  connectionID:
+                    type: string
+                  connectionType:
+                    type: string
+                  contentHandlingStrategy:
+                    type: string
+                  credentialsArn:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  integrationMethod:
+                    type: string
+                  integrationResponseSelectionExpression:
+                    type: string
+                  integrationSubtype:
+                    type: string
+                  integrationType:
+                    type: string
+                  integrationURI:
+                    type: string
+                  passthroughBehavior:
+                    type: string
+                  payloadFormatVersion:
+                    type: string
+                  requestParameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  requestTemplates:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  responseParameters:
+                    items:
+                      properties:
+                        mappings:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        statusCode:
+                          type: string
+                      required:
+                      - mappings
+                      - statusCode
+                      type: object
+                    type: array
+                  templateSelectionExpression:
                     type: string
                   timeoutMilliseconds:
                     format: int64
@@ -129,58 +167,20 @@ spec:
                 required:
                 - apiID
                 - integrationType
-                - providerRef
                 type: object
-              passthroughBehavior:
-                type: string
-              payloadFormatVersion:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              requestParameters:
-                additionalProperties:
-                  type: string
-                type: object
-              requestTemplates:
-                additionalProperties:
-                  type: string
-                type: object
-              responseParameters:
-                items:
-                  properties:
-                    mappings:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    statusCode:
-                      type: string
-                  required:
-                  - mappings
-                  - statusCode
-                  type: object
-                type: array
-              templateSelectionExpression:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeoutMilliseconds:
-                format: int64
-                type: integer
-              tlsConfig:
-                properties:
-                  serverNameToVerify:
-                    type: string
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - apiID
-            - integrationType
             - providerRef
+            - resource
             type: object
           status:
             properties:

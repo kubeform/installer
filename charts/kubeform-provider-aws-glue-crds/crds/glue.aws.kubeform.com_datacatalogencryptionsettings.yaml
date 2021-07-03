@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: datacatalogencryptionsettings.glue.aws.kubeform.com
 spec:
   group: glue.aws.kubeform.com
@@ -30,34 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              catalogID:
-                type: string
-              dataCatalogEncryptionSettings:
-                properties:
-                  connectionPasswordEncryption:
-                    properties:
-                      awsKmsKeyID:
-                        type: string
-                      returnConnectionPasswordEncrypted:
-                        type: boolean
-                    required:
-                    - returnConnectionPasswordEncrypted
-                    type: object
-                  encryptionAtRest:
-                    properties:
-                      catalogEncryptionMode:
-                        type: string
-                      sseAwsKmsKeyID:
-                        type: string
-                    required:
-                    - catalogEncryptionMode
-                    type: object
-                required:
-                - connectionPasswordEncryption
-                - encryptionAtRest
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   catalogID:
@@ -88,33 +61,60 @@ spec:
                     type: object
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - dataCatalogEncryptionSettings
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  catalogID:
+                    type: string
+                  dataCatalogEncryptionSettings:
+                    properties:
+                      connectionPasswordEncryption:
+                        properties:
+                          awsKmsKeyID:
+                            type: string
+                          returnConnectionPasswordEncrypted:
+                            type: boolean
+                        required:
+                        - returnConnectionPasswordEncrypted
+                        type: object
+                      encryptionAtRest:
+                        properties:
+                          catalogEncryptionMode:
+                            type: string
+                          sseAwsKmsKeyID:
+                            type: string
+                        required:
+                        - catalogEncryptionMode
+                        type: object
+                    required:
+                    - connectionPasswordEncryption
+                    - encryptionAtRest
+                    type: object
+                  id:
+                    type: string
+                required:
+                - dataCatalogEncryptionSettings
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - dataCatalogEncryptionSettings
             - providerRef
+            - resource
             type: object
           status:
             properties:

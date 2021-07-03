@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accesspoints.efs.aws.kubeform.com
 spec:
   group: efs.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              fileSystemArn:
-                type: string
-              fileSystemID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -67,10 +60,70 @@ spec:
                     - gid
                     - uid
                     type: object
-                  providerRef:
+                  rootDirectory:
                     properties:
-                      name:
+                      creationInfo:
+                        properties:
+                          ownerGid:
+                            format: int64
+                            type: integer
+                          ownerUid:
+                            format: int64
+                            type: integer
+                          permissions:
+                            type: string
+                        required:
+                        - ownerGid
+                        - ownerUid
+                        - permissions
+                        type: object
+                      path:
                         type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - fileSystemID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  fileSystemArn:
+                    type: string
+                  fileSystemID:
+                    type: string
+                  id:
+                    type: string
+                  ownerID:
+                    type: string
+                  posixUser:
+                    properties:
+                      gid:
+                        format: int64
+                        type: integer
+                      secondaryGids:
+                        items:
+                          format: int64
+                          type: integer
+                        type: array
+                      uid:
+                        format: int64
+                        type: integer
+                    required:
+                    - gid
+                    - uid
                     type: object
                   rootDirectory:
                     properties:
@@ -96,71 +149,26 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - fileSystemID
-                - providerRef
-                type: object
-              ownerID:
-                type: string
-              posixUser:
-                properties:
-                  gid:
-                    format: int64
-                    type: integer
-                  secondaryGids:
-                    items:
-                      format: int64
-                      type: integer
-                    type: array
-                  uid:
-                    format: int64
-                    type: integer
-                required:
-                - gid
-                - uid
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rootDirectory:
-                properties:
-                  creationInfo:
-                    properties:
-                      ownerGid:
-                        format: int64
-                        type: integer
-                      ownerUid:
-                        format: int64
-                        type: integer
-                      permissions:
-                        type: string
-                    required:
-                    - ownerGid
-                    - ownerUid
-                    - permissions
-                    type: object
-                  path:
-                    type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - fileSystemID
             - providerRef
+            - resource
             type: object
           status:
             properties:

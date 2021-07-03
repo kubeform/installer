@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudformationstacks.serverlessapplicationrepository.aws.kubeform.com
 spec:
   group: serverlessapplicationrepository.aws.kubeform.com
@@ -188,14 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              applicationID:
-                type: string
-              capabilities:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   applicationID:
@@ -216,22 +209,16 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   semanticVersion:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -254,57 +241,78 @@ spec:
                 - applicationID
                 - capabilities
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              outputs:
-                additionalProperties:
-                  type: string
-                type: object
-              parameters:
-                additionalProperties:
-                  type: string
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              semanticVersion:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  applicationID:
+                    type: string
+                  capabilities:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  outputs:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  parameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  semanticVersion:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - applicationID
+                - capabilities
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - applicationID
-            - capabilities
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

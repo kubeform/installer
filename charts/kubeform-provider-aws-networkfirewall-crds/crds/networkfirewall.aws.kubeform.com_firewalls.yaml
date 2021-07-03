@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: firewalls.networkfirewall.aws.kubeform.com
 spec:
   group: networkfirewall.aws.kubeform.com
@@ -30,39 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              deleteProtection:
-                type: boolean
-              description:
-                type: string
-              firewallPolicyArn:
-                type: string
-              firewallPolicyChangeProtection:
-                type: boolean
-              firewallStatus:
-                items:
-                  properties:
-                    syncStates:
-                      items:
-                        properties:
-                          attachment:
-                            items:
-                              properties:
-                                endpointID:
-                                  type: string
-                                subnetID:
-                                  type: string
-                              type: object
-                            type: array
-                          availabilityZone:
-                            type: string
-                        type: object
-                      type: array
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -100,11 +68,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   subnetChangeProtection:
                     type: boolean
                   subnetMapping:
@@ -120,11 +83,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   updateToken:
                     type: string
                   vpcID:
@@ -132,47 +94,93 @@ spec:
                 required:
                 - firewallPolicyArn
                 - name
-                - providerRef
                 - subnetMapping
                 - vpcID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              subnetChangeProtection:
-                type: boolean
-              subnetMapping:
-                items:
-                  properties:
-                    subnetID:
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  deleteProtection:
+                    type: boolean
+                  description:
+                    type: string
+                  firewallPolicyArn:
+                    type: string
+                  firewallPolicyChangeProtection:
+                    type: boolean
+                  firewallStatus:
+                    items:
+                      properties:
+                        syncStates:
+                          items:
+                            properties:
+                              attachment:
+                                items:
+                                  properties:
+                                    endpointID:
+                                      type: string
+                                    subnetID:
+                                      type: string
+                                  type: object
+                                type: array
+                              availabilityZone:
+                                type: string
+                            type: object
+                          type: array
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  subnetChangeProtection:
+                    type: boolean
+                  subnetMapping:
+                    items:
+                      properties:
+                        subnetID:
+                          type: string
+                      required:
+                      - subnetID
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
                       type: string
-                  required:
-                  - subnetID
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  updateToken:
+                    type: string
+                  vpcID:
+                    type: string
+                required:
+                - firewallPolicyArn
+                - name
+                - subnetMapping
+                - vpcID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              updateToken:
-                type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - firewallPolicyArn
-            - name
             - providerRef
-            - subnetMapping
-            - vpcID
+            - resource
             type: object
           status:
             properties:

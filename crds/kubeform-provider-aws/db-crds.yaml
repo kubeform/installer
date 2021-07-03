@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clustersnapshots.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -30,27 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              allocatedStorage:
-                format: int64
-                type: integer
-              availabilityZones:
-                items:
-                  type: string
-                type: array
-              dbClusterIdentifier:
-                type: string
-              dbClusterSnapshotArn:
-                type: string
-              dbClusterSnapshotIdentifier:
-                type: string
-              engine:
-                type: string
-              engineVersion:
-                type: string
-              id:
-                type: string
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   allocatedStorage:
@@ -79,11 +59,6 @@ spec:
                   port:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   snapshotType:
                     type: string
                   sourceDbClusterSnapshotArn:
@@ -96,11 +71,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -124,59 +98,93 @@ spec:
                 required:
                 - dbClusterIdentifier
                 - dbClusterSnapshotIdentifier
-                - providerRef
                 type: object
-              licenseModel:
-                type: string
-              port:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              snapshotType:
-                type: string
-              sourceDbClusterSnapshotArn:
-                type: string
-              status:
-                type: string
-              storageEncrypted:
-                type: boolean
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  allocatedStorage:
+                    format: int64
+                    type: integer
+                  availabilityZones:
+                    items:
+                      type: string
+                    type: array
+                  dbClusterIdentifier:
+                    type: string
+                  dbClusterSnapshotArn:
+                    type: string
+                  dbClusterSnapshotIdentifier:
+                    type: string
+                  engine:
+                    type: string
+                  engineVersion:
+                    type: string
+                  id:
+                    type: string
+                  kmsKeyID:
+                    type: string
+                  licenseModel:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  snapshotType:
+                    type: string
+                  sourceDbClusterSnapshotArn:
+                    type: string
+                  status:
+                    type: string
+                  storageEncrypted:
+                    type: boolean
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                required:
+                - dbClusterIdentifier
+                - dbClusterSnapshotIdentifier
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - dbClusterIdentifier
-            - dbClusterSnapshotIdentifier
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -223,7 +231,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: eventsubscriptions.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -250,18 +259,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              customerAwsID:
-                type: string
-              enabled:
-                type: boolean
-              eventCategories:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -280,11 +277,6 @@ spec:
                     type: string
                   namePrefix:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   snsTopic:
                     type: string
                   sourceIDS:
@@ -297,11 +289,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -321,56 +312,81 @@ spec:
                         type: integer
                     type: object
                 required:
-                - providerRef
                 - snsTopic
                 type: object
-              name:
-                type: string
-              namePrefix:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              snsTopic:
-                type: string
-              sourceIDS:
-                items:
-                  type: string
-                type: array
-              sourceType:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  customerAwsID:
+                    type: string
+                  enabled:
+                    type: boolean
+                  eventCategories:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  snsTopic:
+                    type: string
+                  sourceIDS:
+                    items:
+                      type: string
+                    type: array
+                  sourceType:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - snsTopic
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - snsTopic
+            - resource
             type: object
           status:
             properties:
@@ -417,7 +433,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instances.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -444,71 +461,6 @@ spec:
             type: object
           spec:
             properties:
-              address:
-                type: string
-              allocatedStorage:
-                format: int64
-                type: integer
-              allowMajorVersionUpgrade:
-                type: boolean
-              applyImmediately:
-                type: boolean
-              arn:
-                type: string
-              autoMinorVersionUpgrade:
-                type: boolean
-              availabilityZone:
-                type: string
-              backupRetentionPeriod:
-                format: int64
-                type: integer
-              backupWindow:
-                type: string
-              caCertIdentifier:
-                type: string
-              characterSetName:
-                type: string
-              copyTagsToSnapshot:
-                type: boolean
-              dbSubnetGroupName:
-                type: string
-              deleteAutomatedBackups:
-                type: boolean
-              deletionProtection:
-                type: boolean
-              domain:
-                type: string
-              domainIamRoleName:
-                type: string
-              enabledCloudwatchLogsExports:
-                items:
-                  type: string
-                type: array
-              endpoint:
-                type: string
-              engine:
-                type: string
-              engineVersion:
-                type: string
-              finalSnapshotIdentifier:
-                type: string
-              hostedZoneID:
-                type: string
-              iamDatabaseAuthenticationEnabled:
-                type: boolean
-              id:
-                type: string
-              identifier:
-                type: string
-              identifierPrefix:
-                type: string
-              instanceClass:
-                type: string
-              iops:
-                format: int64
-                type: integer
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   address:
@@ -608,11 +560,6 @@ spec:
                   port:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publiclyAccessible:
                     type: boolean
                   replicas:
@@ -652,11 +599,6 @@ spec:
                     - sourceEngine
                     - sourceEngineVersion
                     type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroupNames:
                     items:
                       type: string
@@ -675,11 +617,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -708,141 +649,219 @@ spec:
                     type: array
                 required:
                 - instanceClass
-                - providerRef
                 type: object
-              latestRestorableTime:
-                type: string
-              licenseModel:
-                type: string
-              maintenanceWindow:
-                type: string
-              maxAllocatedStorage:
-                format: int64
-                type: integer
-              monitoringInterval:
-                format: int64
-                type: integer
-              monitoringRoleArn:
-                type: string
-              multiAz:
-                type: boolean
-              name:
-                type: string
-              optionGroupName:
-                type: string
-              parameterGroupName:
-                type: string
-              performanceInsightsEnabled:
-                type: boolean
-              performanceInsightsKmsKeyID:
-                type: string
-              performanceInsightsRetentionPeriod:
-                format: int64
-                type: integer
-              port:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publiclyAccessible:
-                type: boolean
-              replicas:
-                items:
-                  type: string
-                type: array
-              replicateSourceDb:
-                type: string
-              resourceID:
-                type: string
-              restoreToPointInTime:
+              resource:
                 properties:
-                  restoreTime:
+                  address:
                     type: string
-                  sourceDbInstanceIdentifier:
-                    type: string
-                  sourceDbiResourceID:
-                    type: string
-                  useLatestRestorableTime:
+                  allocatedStorage:
+                    format: int64
+                    type: integer
+                  allowMajorVersionUpgrade:
                     type: boolean
-                type: object
-              s3Import:
-                properties:
-                  bucketName:
+                  applyImmediately:
+                    type: boolean
+                  arn:
                     type: string
-                  bucketPrefix:
+                  autoMinorVersionUpgrade:
+                    type: boolean
+                  availabilityZone:
                     type: string
-                  ingestionRole:
+                  backupRetentionPeriod:
+                    format: int64
+                    type: integer
+                  backupWindow:
                     type: string
-                  sourceEngine:
+                  caCertIdentifier:
                     type: string
-                  sourceEngineVersion:
+                  characterSetName:
                     type: string
+                  copyTagsToSnapshot:
+                    type: boolean
+                  dbSubnetGroupName:
+                    type: string
+                  deleteAutomatedBackups:
+                    type: boolean
+                  deletionProtection:
+                    type: boolean
+                  domain:
+                    type: string
+                  domainIamRoleName:
+                    type: string
+                  enabledCloudwatchLogsExports:
+                    items:
+                      type: string
+                    type: array
+                  endpoint:
+                    type: string
+                  engine:
+                    type: string
+                  engineVersion:
+                    type: string
+                  finalSnapshotIdentifier:
+                    type: string
+                  hostedZoneID:
+                    type: string
+                  iamDatabaseAuthenticationEnabled:
+                    type: boolean
+                  id:
+                    type: string
+                  identifier:
+                    type: string
+                  identifierPrefix:
+                    type: string
+                  instanceClass:
+                    type: string
+                  iops:
+                    format: int64
+                    type: integer
+                  kmsKeyID:
+                    type: string
+                  latestRestorableTime:
+                    type: string
+                  licenseModel:
+                    type: string
+                  maintenanceWindow:
+                    type: string
+                  maxAllocatedStorage:
+                    format: int64
+                    type: integer
+                  monitoringInterval:
+                    format: int64
+                    type: integer
+                  monitoringRoleArn:
+                    type: string
+                  multiAz:
+                    type: boolean
+                  name:
+                    type: string
+                  optionGroupName:
+                    type: string
+                  parameterGroupName:
+                    type: string
+                  performanceInsightsEnabled:
+                    type: boolean
+                  performanceInsightsKmsKeyID:
+                    type: string
+                  performanceInsightsRetentionPeriod:
+                    format: int64
+                    type: integer
+                  port:
+                    format: int64
+                    type: integer
+                  publiclyAccessible:
+                    type: boolean
+                  replicas:
+                    items:
+                      type: string
+                    type: array
+                  replicateSourceDb:
+                    type: string
+                  resourceID:
+                    type: string
+                  restoreToPointInTime:
+                    properties:
+                      restoreTime:
+                        type: string
+                      sourceDbInstanceIdentifier:
+                        type: string
+                      sourceDbiResourceID:
+                        type: string
+                      useLatestRestorableTime:
+                        type: boolean
+                    type: object
+                  s3Import:
+                    properties:
+                      bucketName:
+                        type: string
+                      bucketPrefix:
+                        type: string
+                      ingestionRole:
+                        type: string
+                      sourceEngine:
+                        type: string
+                      sourceEngineVersion:
+                        type: string
+                    required:
+                    - bucketName
+                    - ingestionRole
+                    - sourceEngine
+                    - sourceEngineVersion
+                    type: object
+                  securityGroupNames:
+                    items:
+                      type: string
+                    type: array
+                  skipFinalSnapshot:
+                    type: boolean
+                  snapshotIdentifier:
+                    type: string
+                  status:
+                    type: string
+                  storageEncrypted:
+                    type: boolean
+                  storageType:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  timezone:
+                    type: string
+                  username:
+                    type: string
+                  vpcSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
                 required:
-                - bucketName
-                - ingestionRole
-                - sourceEngine
-                - sourceEngineVersion
+                - instanceClass
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              securityGroupNames:
-                items:
-                  type: string
-                type: array
-              skipFinalSnapshot:
-                type: boolean
-              snapshotIdentifier:
-                type: string
-              status:
-                type: string
-              storageEncrypted:
-                type: boolean
-              storageType:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              timezone:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              username:
-                type: string
-              vpcSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
             required:
-            - instanceClass
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -889,7 +908,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instanceroleassociations.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -916,12 +936,6 @@ spec:
             type: object
           spec:
             properties:
-              dbInstanceIdentifier:
-                type: string
-              featureName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dbInstanceIdentifier:
@@ -930,22 +944,11 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roleArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - dbInstanceIdentifier
                 - featureName
-                - providerRef
                 - roleArn
                 type: object
               providerRef:
@@ -953,18 +956,34 @@ spec:
                   name:
                     type: string
                 type: object
-              roleArn:
-                type: string
+              resource:
+                properties:
+                  dbInstanceIdentifier:
+                    type: string
+                  featureName:
+                    type: string
+                  id:
+                    type: string
+                  roleArn:
+                    type: string
+                required:
+                - dbInstanceIdentifier
+                - featureName
+                - roleArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - dbInstanceIdentifier
-            - featureName
             - providerRef
-            - roleArn
+            - resource
             type: object
           status:
             properties:
@@ -1011,7 +1030,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: optiongroups.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -1038,12 +1058,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              engineName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1094,20 +1108,14 @@ spec:
                     type: array
                   optionGroupDescription:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -1129,86 +1137,105 @@ spec:
                 required:
                 - engineName
                 - majorEngineVersion
-                - providerRef
                 type: object
-              majorEngineVersion:
-                type: string
-              name:
-                type: string
-              namePrefix:
-                type: string
-              option:
-                items:
-                  properties:
-                    dbSecurityGroupMemberships:
-                      items:
-                        type: string
-                      type: array
-                    optionName:
-                      type: string
-                    optionSettings:
-                      items:
-                        properties:
-                          name:
-                            type: string
-                          value:
-                            type: string
-                        required:
-                        - name
-                        - value
-                        type: object
-                      type: array
-                    port:
-                      format: int64
-                      type: integer
-                    version:
-                      type: string
-                    vpcSecurityGroupMemberships:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - optionName
-                  type: object
-                type: array
-              optionGroupDescription:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  engineName:
+                    type: string
+                  id:
+                    type: string
+                  majorEngineVersion:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  option:
+                    items:
+                      properties:
+                        dbSecurityGroupMemberships:
+                          items:
+                            type: string
+                          type: array
+                        optionName:
+                          type: string
+                        optionSettings:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              value:
+                                type: string
+                            required:
+                            - name
+                            - value
+                            type: object
+                          type: array
+                        port:
+                          format: int64
+                          type: integer
+                        version:
+                          type: string
+                        vpcSecurityGroupMemberships:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - optionName
+                      type: object
+                    type: array
+                  optionGroupDescription:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - engineName
+                - majorEngineVersion
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - engineName
-            - majorEngineVersion
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1255,7 +1282,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: parametergroups.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -1282,14 +1310,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              family:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1318,59 +1338,74 @@ spec:
                       - value
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - family
-                - providerRef
                 type: object
-              name:
-                type: string
-              namePrefix:
-                type: string
-              parameter:
-                items:
-                  properties:
-                    applyMethod:
-                      type: string
-                    name:
-                      type: string
-                    value:
-                      type: string
-                  required:
-                  - name
-                  - value
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  family:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  parameter:
+                    items:
+                      properties:
+                        applyMethod:
+                          type: string
+                        name:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - name
+                      - value
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - family
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - family
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1417,7 +1452,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: proxies.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -1444,32 +1480,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              auth:
-                items:
-                  properties:
-                    authScheme:
-                      type: string
-                    description:
-                      type: string
-                    iamAuth:
-                      type: string
-                    secretArn:
-                      type: string
-                  type: object
-                type: array
-              debugLogging:
-                type: boolean
-              endpoint:
-                type: string
-              engineFamily:
-                type: string
-              id:
-                type: string
-              idleClientTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   arn:
@@ -1500,12 +1510,7 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  requireTLS:
+                  requireTls:
                     type: boolean
                   roleArn:
                     type: string
@@ -1513,11 +1518,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -1548,63 +1552,102 @@ spec:
                 - auth
                 - engineFamily
                 - name
-                - providerRef
                 - roleArn
                 - vpcSubnetIDS
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requireTLS:
-                type: boolean
-              roleArn:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  auth:
+                    items:
+                      properties:
+                        authScheme:
+                          type: string
+                        description:
+                          type: string
+                        iamAuth:
+                          type: string
+                        secretArn:
+                          type: string
+                      type: object
+                    type: array
+                  debugLogging:
+                    type: boolean
+                  endpoint:
+                    type: string
+                  engineFamily:
+                    type: string
+                  id:
+                    type: string
+                  idleClientTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  requireTls:
+                    type: boolean
+                  roleArn:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  vpcSubnetIDS:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - auth
+                - engineFamily
+                - name
+                - roleArn
+                - vpcSubnetIDS
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              vpcSubnetIDS:
-                items:
-                  type: string
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - auth
-            - engineFamily
-            - name
             - providerRef
-            - roleArn
-            - vpcSubnetIDS
+            - resource
             type: object
           status:
             properties:
@@ -1651,7 +1694,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: proxydefaulttargetgroups.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -1678,30 +1722,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              connectionPoolConfig:
-                properties:
-                  connectionBorrowTimeout:
-                    format: int64
-                    type: integer
-                  initQuery:
-                    type: string
-                  maxConnectionsPercent:
-                    format: int64
-                    type: integer
-                  maxIdleConnectionsPercent:
-                    format: int64
-                    type: integer
-                  sessionPinningFilters:
-                    items:
-                      type: string
-                    type: array
-                type: object
-              dbProxyName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1730,15 +1750,59 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
+                  timeouts:
                     properties:
-                      name:
-                        type: string
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - dbProxyName
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  connectionPoolConfig:
+                    properties:
+                      connectionBorrowTimeout:
+                        format: int64
+                        type: integer
+                      initQuery:
+                        type: string
+                      maxConnectionsPercent:
+                        format: int64
+                        type: integer
+                      maxIdleConnectionsPercent:
+                        format: int64
+                        type: integer
+                      sessionPinningFilters:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  dbProxyName:
+                    type: string
+                  id:
+                    type: string
+                  name:
                     type: string
                   timeouts:
                     properties:
@@ -1760,41 +1824,20 @@ spec:
                     type: object
                 required:
                 - dbProxyName
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - dbProxyName
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1841,7 +1884,214 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: proxyendpoints.db.aws.kubeform.com
+spec:
+  group: db.aws.kubeform.com
+  names:
+    kind: ProxyEndpoint
+    listKind: ProxyEndpointList
+    plural: proxyendpoints
+    singular: proxyendpoint
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  arn:
+                    type: string
+                  dbProxyEndpointName:
+                    type: string
+                  dbProxyName:
+                    type: string
+                  endpoint:
+                    type: string
+                  id:
+                    type: string
+                  isDefault:
+                    type: boolean
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  targetRole:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                  vpcSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  vpcSubnetIDS:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - dbProxyEndpointName
+                - dbProxyName
+                - vpcSubnetIDS
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  dbProxyEndpointName:
+                    type: string
+                  dbProxyName:
+                    type: string
+                  endpoint:
+                    type: string
+                  id:
+                    type: string
+                  isDefault:
+                    type: boolean
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  targetRole:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                  vpcSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  vpcSubnetIDS:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - dbProxyEndpointName
+                - dbProxyName
+                - vpcSubnetIDS
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: proxytargets.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -1868,16 +2118,6 @@ spec:
             type: object
           spec:
             properties:
-              dbClusterIdentifier:
-                type: string
-              dbInstanceIdentifier:
-                type: string
-              dbProxyName:
-                type: string
-              endpoint:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dbClusterIdentifier:
@@ -1893,21 +2133,11 @@ spec:
                   port:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rdsResourceID:
                     type: string
                   targetArn:
                     type: string
                   targetGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   trackedClusterID:
                     type: string
@@ -1915,36 +2145,55 @@ spec:
                     type: string
                 required:
                 - dbProxyName
-                - providerRef
                 - targetGroupName
                 type: object
-              port:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              rdsResourceID:
-                type: string
-              targetArn:
-                type: string
-              targetGroupName:
-                type: string
+              resource:
+                properties:
+                  dbClusterIdentifier:
+                    type: string
+                  dbInstanceIdentifier:
+                    type: string
+                  dbProxyName:
+                    type: string
+                  endpoint:
+                    type: string
+                  id:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  rdsResourceID:
+                    type: string
+                  targetArn:
+                    type: string
+                  targetGroupName:
+                    type: string
+                  trackedClusterID:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - dbProxyName
+                - targetGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              trackedClusterID:
-                type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - dbProxyName
             - providerRef
-            - targetGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1991,7 +2240,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: securitygroups.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -2018,25 +2268,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              ingress:
-                items:
-                  properties:
-                    cidr:
-                      type: string
-                    securityGroupID:
-                      type: string
-                    securityGroupName:
-                      type: string
-                    securityGroupOwnerID:
-                      type: string
-                  type: object
-                type: array
               kubeformOutput:
                 properties:
                   arn:
@@ -2060,45 +2291,71 @@ spec:
                     type: array
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - ingress
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  ingress:
+                    items:
+                      properties:
+                        cidr:
+                          type: string
+                        securityGroupID:
+                          type: string
+                        securityGroupName:
+                          type: string
+                        securityGroupOwnerID:
+                          type: string
+                      type: object
+                    type: array
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - ingress
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - ingress
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2145,7 +2402,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: snapshots.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -2172,30 +2430,6 @@ spec:
             type: object
           spec:
             properties:
-              allocatedStorage:
-                format: int64
-                type: integer
-              availabilityZone:
-                type: string
-              dbInstanceIdentifier:
-                type: string
-              dbSnapshotArn:
-                type: string
-              dbSnapshotIdentifier:
-                type: string
-              encrypted:
-                type: boolean
-              engine:
-                type: string
-              engineVersion:
-                type: string
-              id:
-                type: string
-              iops:
-                format: int64
-                type: integer
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   allocatedStorage:
@@ -2229,11 +2463,6 @@ spec:
                   port:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   snapshotType:
                     type: string
                   sourceDbSnapshotIdentifier:
@@ -2248,11 +2477,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -2276,63 +2504,100 @@ spec:
                 required:
                 - dbInstanceIdentifier
                 - dbSnapshotIdentifier
-                - providerRef
                 type: object
-              licenseModel:
-                type: string
-              optionGroupName:
-                type: string
-              port:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              snapshotType:
-                type: string
-              sourceDbSnapshotIdentifier:
-                type: string
-              sourceRegion:
-                type: string
-              status:
-                type: string
-              storageType:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  allocatedStorage:
+                    format: int64
+                    type: integer
+                  availabilityZone:
+                    type: string
+                  dbInstanceIdentifier:
+                    type: string
+                  dbSnapshotArn:
+                    type: string
+                  dbSnapshotIdentifier:
+                    type: string
+                  encrypted:
+                    type: boolean
+                  engine:
+                    type: string
+                  engineVersion:
+                    type: string
+                  id:
+                    type: string
+                  iops:
+                    format: int64
+                    type: integer
+                  kmsKeyID:
+                    type: string
+                  licenseModel:
+                    type: string
+                  optionGroupName:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  snapshotType:
+                    type: string
+                  sourceDbSnapshotIdentifier:
+                    type: string
+                  sourceRegion:
+                    type: string
+                  status:
+                    type: string
+                  storageType:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcID:
+                    type: string
+                required:
+                - dbInstanceIdentifier
+                - dbSnapshotIdentifier
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - dbInstanceIdentifier
-            - dbSnapshotIdentifier
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2379,7 +2644,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: subnetgroups.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -2406,12 +2672,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -2424,11 +2684,6 @@ spec:
                     type: string
                   namePrefix:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   subnetIDS:
                     items:
                       type: string
@@ -2437,40 +2692,58 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
-                - providerRef
                 - subnetIDS
                 type: object
-              name:
-                type: string
-              namePrefix:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              subnetIDS:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - subnetIDS
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - subnetIDS
+            - resource
             type: object
           status:
             properties:

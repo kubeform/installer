@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: agents.datasync.aws.kubeform.com
 spec:
   group: datasync.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              activationKey:
-                type: string
-              arn:
-                type: string
-              id:
-                type: string
-              ipAddress:
-                type: string
               kubeformOutput:
                 properties:
                   activationKey:
@@ -50,20 +43,24 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
+                  privateLinkEndpoint:
+                    type: string
+                  securityGroupArns:
+                    items:
+                      type: string
+                    type: array
+                  subnetArns:
+                    items:
+                      type: string
+                    type: array
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -82,45 +79,78 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                required:
-                - providerRef
+                  vpcEndpointID:
+                    type: string
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  activationKey:
+                    type: string
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  ipAddress:
+                    type: string
+                  name:
+                    type: string
+                  privateLinkEndpoint:
+                    type: string
+                  securityGroupArns:
+                    items:
+                      type: string
+                    type: array
+                  subnetArns:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcEndpointID:
+                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -167,7 +197,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: locationefs.datasync.aws.kubeform.com
 spec:
   group: datasync.aws.kubeform.com
@@ -194,24 +225,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              ec2Config:
-                properties:
-                  securityGroupArns:
-                    items:
-                      type: string
-                    type: array
-                  subnetArn:
-                    type: string
-                required:
-                - securityGroupArns
-                - subnetArn
-                type: object
-              efsFileSystemArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -232,51 +245,76 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   subdirectory:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   uri:
                     type: string
                 required:
                 - ec2Config
                 - efsFileSystemArn
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              subdirectory:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  ec2Config:
+                    properties:
+                      securityGroupArns:
+                        items:
+                          type: string
+                        type: array
+                      subnetArn:
+                        type: string
+                    required:
+                    - securityGroupArns
+                    - subnetArn
+                    type: object
+                  efsFileSystemArn:
+                    type: string
+                  id:
+                    type: string
+                  subdirectory:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  uri:
+                    type: string
+                required:
+                - ec2Config
+                - efsFileSystemArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              uri:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - ec2Config
-            - efsFileSystemArn
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -323,7 +361,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: locationfsxwindowsfilesystems.datasync.aws.kubeform.com
 spec:
   group: datasync.aws.kubeform.com
@@ -350,16 +389,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              creationTime:
-                type: string
-              domain:
-                type: string
-              fsxFilesystemArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -372,16 +401,6 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroupArns:
                     items:
                       type: string
@@ -394,18 +413,16 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   uri:
                     type: string
                   user:
                     type: string
                 required:
                 - fsxFilesystemArn
-                - providerRef
                 - securityGroupArns
                 - user
                 type: object
@@ -414,37 +431,61 @@ spec:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  creationTime:
+                    type: string
+                  domain:
+                    type: string
+                  fsxFilesystemArn:
+                    type: string
+                  id:
+                    type: string
+                  securityGroupArns:
+                    items:
+                      type: string
+                    maxItems: 5
+                    minItems: 1
+                    type: array
+                  subdirectory:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  uri:
+                    type: string
+                  user:
+                    type: string
+                required:
+                - fsxFilesystemArn
+                - securityGroupArns
+                - user
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              securityGroupArns:
-                items:
-                  type: string
-                maxItems: 5
-                minItems: 1
-                type: array
-              subdirectory:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              uri:
-                type: string
-              user:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - fsxFilesystemArn
             - providerRef
-            - securityGroupArns
-            - user
+            - resource
             type: object
           status:
             properties:
@@ -491,7 +532,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: locationnfs.datasync.aws.kubeform.com
 spec:
   group: datasync.aws.kubeform.com
@@ -518,16 +560,17 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
                     type: string
                   id:
                     type: string
+                  mountOptions:
+                    properties:
+                      version:
+                        type: string
+                    type: object
                   onPremConfig:
                     properties:
                       agentArns:
@@ -537,10 +580,49 @@ spec:
                     required:
                     - agentArns
                     type: object
-                  providerRef:
+                  serverHostname:
+                    type: string
+                  subdirectory:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  uri:
+                    type: string
+                required:
+                - onPremConfig
+                - serverHostname
+                - subdirectory
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  mountOptions:
                     properties:
-                      name:
+                      version:
                         type: string
+                    type: object
+                  onPremConfig:
+                    properties:
+                      agentArns:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - agentArns
                     type: object
                   serverHostname:
                     type: string
@@ -550,53 +632,30 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   uri:
                     type: string
                 required:
                 - onPremConfig
-                - providerRef
                 - serverHostname
                 - subdirectory
-                type: object
-              onPremConfig:
-                properties:
-                  agentArns:
-                    items:
-                      type: string
-                    type: array
-                required:
-                - agentArns
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              serverHostname:
-                type: string
-              subdirectory:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              uri:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - onPremConfig
             - providerRef
-            - serverHostname
-            - subdirectory
+            - resource
             type: object
           status:
             properties:
@@ -643,7 +702,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: locations3s.datasync.aws.kubeform.com
 spec:
   group: datasync.aws.kubeform.com
@@ -670,21 +730,16 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
+                  agentArns:
+                    items:
+                      type: string
+                    type: array
                   arn:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   s3BucketArn:
                     type: string
                   s3Config:
@@ -694,21 +749,21 @@ spec:
                     required:
                     - bucketAccessRoleArn
                     type: object
+                  s3StorageClass:
+                    type: string
                   subdirectory:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   uri:
                     type: string
                 required:
-                - providerRef
                 - s3BucketArn
                 - s3Config
                 - subdirectory
@@ -718,33 +773,57 @@ spec:
                   name:
                     type: string
                 type: object
-              s3BucketArn:
-                type: string
-              s3Config:
+              resource:
                 properties:
-                  bucketAccessRoleArn:
+                  agentArns:
+                    items:
+                      type: string
+                    type: array
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  s3BucketArn:
+                    type: string
+                  s3Config:
+                    properties:
+                      bucketAccessRoleArn:
+                        type: string
+                    required:
+                    - bucketAccessRoleArn
+                    type: object
+                  s3StorageClass:
+                    type: string
+                  subdirectory:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  uri:
                     type: string
                 required:
-                - bucketAccessRoleArn
-                type: object
-              subdirectory:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+                - s3BucketArn
+                - s3Config
+                - subdirectory
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              uri:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - s3BucketArn
-            - s3Config
-            - subdirectory
+            - resource
             type: object
           status:
             properties:
@@ -791,7 +870,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: locationsmbs.datasync.aws.kubeform.com
 spec:
   group: datasync.aws.kubeform.com
@@ -818,16 +898,6 @@ spec:
             type: object
           spec:
             properties:
-              agentArns:
-                items:
-                  type: string
-                type: array
-              arn:
-                type: string
-              domain:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   agentArns:
@@ -845,14 +915,48 @@ spec:
                       version:
                         type: string
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
+                  serverHostname:
+                    type: string
+                  subdirectory:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
                     type: object
-                  secretRef:
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  uri:
+                    type: string
+                  user:
+                    type: string
+                required:
+                - agentArns
+                - serverHostname
+                - subdirectory
+                - user
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  agentArns:
+                    items:
+                      type: string
+                    type: array
+                  arn:
+                    type: string
+                  domain:
+                    type: string
+                  id:
+                    type: string
+                  mountOptions:
                     properties:
-                      name:
+                      version:
                         type: string
                     type: object
                   serverHostname:
@@ -863,60 +967,38 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   uri:
                     type: string
                   user:
                     type: string
                 required:
                 - agentArns
-                - providerRef
                 - serverHostname
                 - subdirectory
                 - user
-                type: object
-              mountOptions:
-                properties:
-                  version:
-                    type: string
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serverHostname:
-                type: string
-              subdirectory:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              uri:
-                type: string
-              user:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - agentArns
             - providerRef
-            - serverHostname
-            - subdirectory
-            - user
+            - resource
             type: object
           status:
             properties:
@@ -963,7 +1045,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: tasks.datasync.aws.kubeform.com
 spec:
   group: datasync.aws.kubeform.com
@@ -990,14 +1073,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              cloudwatchLogGroupArn:
-                type: string
-              destinationLocationArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1006,6 +1081,13 @@ spec:
                     type: string
                   destinationLocationArn:
                     type: string
+                  excludes:
+                    properties:
+                      filterType:
+                        type: string
+                      value:
+                        type: string
+                    type: object
                   id:
                     type: string
                   name:
@@ -1019,7 +1101,11 @@ spec:
                         type: integer
                       gid:
                         type: string
+                      logLevel:
+                        type: string
                       mtime:
+                        type: string
+                      overwriteMode:
                         type: string
                       posixPermissions:
                         type: string
@@ -1027,15 +1113,21 @@ spec:
                         type: string
                       preserveDevices:
                         type: string
+                      taskQueueing:
+                        type: string
+                      transferMode:
+                        type: string
                       uid:
                         type: string
                       verifyMode:
                         type: string
                     type: object
-                  providerRef:
+                  schedule:
                     properties:
-                      name:
+                      scheduleExpression:
                         type: string
+                    required:
+                    - scheduleExpression
                     type: object
                   sourceLocationArn:
                     type: string
@@ -1043,11 +1135,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -1068,71 +1159,114 @@ spec:
                     type: object
                 required:
                 - destinationLocationArn
-                - providerRef
                 - sourceLocationArn
-                type: object
-              name:
-                type: string
-              options:
-                properties:
-                  atime:
-                    type: string
-                  bytesPerSecond:
-                    format: int64
-                    type: integer
-                  gid:
-                    type: string
-                  mtime:
-                    type: string
-                  posixPermissions:
-                    type: string
-                  preserveDeletedFiles:
-                    type: string
-                  preserveDevices:
-                    type: string
-                  uid:
-                    type: string
-                  verifyMode:
-                    type: string
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              sourceLocationArn:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  cloudwatchLogGroupArn:
+                    type: string
+                  destinationLocationArn:
+                    type: string
+                  excludes:
+                    properties:
+                      filterType:
+                        type: string
+                      value:
+                        type: string
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  options:
+                    properties:
+                      atime:
+                        type: string
+                      bytesPerSecond:
+                        format: int64
+                        type: integer
+                      gid:
+                        type: string
+                      logLevel:
+                        type: string
+                      mtime:
+                        type: string
+                      overwriteMode:
+                        type: string
+                      posixPermissions:
+                        type: string
+                      preserveDeletedFiles:
+                        type: string
+                      preserveDevices:
+                        type: string
+                      taskQueueing:
+                        type: string
+                      transferMode:
+                        type: string
+                      uid:
+                        type: string
+                      verifyMode:
+                        type: string
+                    type: object
+                  schedule:
+                    properties:
+                      scheduleExpression:
+                        type: string
+                    required:
+                    - scheduleExpression
+                    type: object
+                  sourceLocationArn:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - destinationLocationArn
+                - sourceLocationArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - destinationLocationArn
             - providerRef
-            - sourceLocationArn
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: functioneventinvokeconfigs.lambda.aws.kubeform.com
 spec:
   group: lambda.aws.kubeform.com
@@ -30,27 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              destinationConfig:
-                properties:
-                  onFailure:
-                    properties:
-                      destination:
-                        type: string
-                    required:
-                    - destination
-                    type: object
-                  onSuccess:
-                    properties:
-                      destination:
-                        type: string
-                    required:
-                    - destination
-                    type: object
-                type: object
-              functionName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   destinationConfig:
@@ -80,43 +60,63 @@ spec:
                   maximumRetryAttempts:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   qualifier:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - functionName
-                - providerRef
                 type: object
-              maximumEventAgeInSeconds:
-                format: int64
-                type: integer
-              maximumRetryAttempts:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              qualifier:
-                type: string
+              resource:
+                properties:
+                  destinationConfig:
+                    properties:
+                      onFailure:
+                        properties:
+                          destination:
+                            type: string
+                        required:
+                        - destination
+                        type: object
+                      onSuccess:
+                        properties:
+                          destination:
+                            type: string
+                        required:
+                        - destination
+                        type: object
+                    type: object
+                  functionName:
+                    type: string
+                  id:
+                    type: string
+                  maximumEventAgeInSeconds:
+                    format: int64
+                    type: integer
+                  maximumRetryAttempts:
+                    format: int64
+                    type: integer
+                  qualifier:
+                    type: string
+                required:
+                - functionName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - functionName
             - providerRef
+            - resource
             type: object
           status:
             properties:

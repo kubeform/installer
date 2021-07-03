@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: aggregateauthorizations.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accountID:
@@ -44,25 +39,18 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - accountID
-                - providerRef
                 - region
                 type: object
               providerRef:
@@ -70,21 +58,41 @@ spec:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  accountID:
+                    type: string
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  region:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - accountID
+                - region
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - accountID
             - providerRef
-            - region
+            - resource
             type: object
           status:
             properties:
@@ -131,7 +139,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: configrules.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -158,14 +167,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              inputParameters:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -180,11 +181,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   ruleID:
                     type: string
                   scope:
@@ -227,76 +223,96 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 - source
                 type: object
-              maximumExecutionFrequency:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              ruleID:
-                type: string
-              scope:
+              resource:
                 properties:
-                  complianceResourceID:
+                  arn:
                     type: string
-                  complianceResourceTypes:
-                    items:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  inputParameters:
+                    type: string
+                  maximumExecutionFrequency:
+                    type: string
+                  name:
+                    type: string
+                  ruleID:
+                    type: string
+                  scope:
+                    properties:
+                      complianceResourceID:
+                        type: string
+                      complianceResourceTypes:
+                        items:
+                          type: string
+                        maxItems: 100
+                        type: array
+                      tagKey:
+                        type: string
+                      tagValue:
+                        type: string
+                    type: object
+                  source:
+                    properties:
+                      owner:
+                        type: string
+                      sourceDetail:
+                        items:
+                          properties:
+                            eventSource:
+                              type: string
+                            maximumExecutionFrequency:
+                              type: string
+                            messageType:
+                              type: string
+                          type: object
+                        maxItems: 25
+                        type: array
+                      sourceIdentifier:
+                        type: string
+                    required:
+                    - owner
+                    - sourceIdentifier
+                    type: object
+                  tags:
+                    additionalProperties:
                       type: string
-                    maxItems: 100
-                    type: array
-                  tagKey:
-                    type: string
-                  tagValue:
-                    type: string
-                type: object
-              source:
-                properties:
-                  owner:
-                    type: string
-                  sourceDetail:
-                    items:
-                      properties:
-                        eventSource:
-                          type: string
-                        maximumExecutionFrequency:
-                          type: string
-                        messageType:
-                          type: string
-                      type: object
-                    maxItems: 25
-                    type: array
-                  sourceIdentifier:
-                    type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
-                - owner
-                - sourceIdentifier
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - name
+                - source
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - source
+            - resource
             type: object
           status:
             properties:
@@ -343,7 +359,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: configurationaggregators.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -370,27 +387,6 @@ spec:
             type: object
           spec:
             properties:
-              accountAggregationSource:
-                properties:
-                  accountIDS:
-                    items:
-                      type: string
-                    minItems: 1
-                    type: array
-                  allRegions:
-                    type: boolean
-                  regions:
-                    items:
-                      type: string
-                    minItems: 1
-                    type: array
-                required:
-                - accountIDS
-                type: object
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accountAggregationSource:
@@ -430,57 +426,85 @@ spec:
                     required:
                     - roleArn
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              organizationAggregationSource:
-                properties:
-                  allRegions:
-                    type: boolean
-                  regions:
-                    items:
-                      type: string
-                    minItems: 1
-                    type: array
-                  roleArn:
-                    type: string
-                required:
-                - roleArn
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  accountAggregationSource:
+                    properties:
+                      accountIDS:
+                        items:
+                          type: string
+                        minItems: 1
+                        type: array
+                      allRegions:
+                        type: boolean
+                      regions:
+                        items:
+                          type: string
+                        minItems: 1
+                        type: array
+                    required:
+                    - accountIDS
+                    type: object
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  organizationAggregationSource:
+                    properties:
+                      allRegions:
+                        type: boolean
+                      regions:
+                        items:
+                          type: string
+                        minItems: 1
+                        type: array
+                      roleArn:
+                        type: string
+                    required:
+                    - roleArn
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -527,7 +551,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: configurationrecorders.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -554,19 +579,12 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   recordingGroup:
                     properties:
                       allSupported:
@@ -580,43 +598,49 @@ spec:
                     type: object
                   roleArn:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - roleArn
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              recordingGroup:
+              resource:
                 properties:
-                  allSupported:
-                    type: boolean
-                  includeGlobalResourceTypes:
-                    type: boolean
-                  resourceTypes:
-                    items:
-                      type: string
-                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  recordingGroup:
+                    properties:
+                      allSupported:
+                        type: boolean
+                      includeGlobalResourceTypes:
+                        type: boolean
+                      resourceTypes:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  roleArn:
+                    type: string
+                required:
+                - roleArn
                 type: object
-              roleArn:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - roleArn
+            - resource
             type: object
           status:
             properties:
@@ -663,7 +687,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: configurationrecorderstatus_statuses.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -690,10 +715,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              isEnabled:
-                type: boolean
               kubeformOutput:
                 properties:
                   id:
@@ -702,37 +723,40 @@ spec:
                     type: boolean
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - isEnabled
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  isEnabled:
+                    type: boolean
+                  name:
+                    type: string
+                required:
+                - isEnabled
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - isEnabled
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -779,7 +803,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: conformancepacks.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -806,27 +831,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              deliveryS3Bucket:
-                type: string
-              deliveryS3KeyPrefix:
-                type: string
-              id:
-                type: string
-              inputParameter:
-                items:
-                  properties:
-                    parameterName:
-                      type: string
-                    parameterValue:
-                      type: string
-                  required:
-                  - parameterName
-                  - parameterValue
-                  type: object
-                maxItems: 60
-                type: array
               kubeformOutput:
                 properties:
                   arn:
@@ -852,43 +856,63 @@ spec:
                     type: array
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   templateBody:
                     type: string
                   templateS3URI:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              templateBody:
-                type: string
-              templateS3URI:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  deliveryS3Bucket:
+                    type: string
+                  deliveryS3KeyPrefix:
+                    type: string
+                  id:
+                    type: string
+                  inputParameter:
+                    items:
+                      properties:
+                        parameterName:
+                          type: string
+                        parameterValue:
+                          type: string
+                      required:
+                      - parameterName
+                      - parameterValue
+                      type: object
+                    maxItems: 60
+                    type: array
+                  name:
+                    type: string
+                  templateBody:
+                    type: string
+                  templateS3URI:
+                    type: string
+                required:
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -935,7 +959,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: deliverychannels.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -962,19 +987,12 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   s3BucketName:
                     type: string
                   s3KeyPrefix:
@@ -986,41 +1004,47 @@ spec:
                     type: object
                   snsTopicArn:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - s3BucketName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              s3BucketName:
-                type: string
-              s3KeyPrefix:
-                type: string
-              snapshotDeliveryProperties:
+              resource:
                 properties:
-                  deliveryFrequency:
+                  id:
                     type: string
+                  name:
+                    type: string
+                  s3BucketName:
+                    type: string
+                  s3KeyPrefix:
+                    type: string
+                  snapshotDeliveryProperties:
+                    properties:
+                      deliveryFrequency:
+                        type: string
+                    type: object
+                  snsTopicArn:
+                    type: string
+                required:
+                - s3BucketName
                 type: object
-              snsTopicArn:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - s3BucketName
+            - resource
             type: object
           status:
             properties:
@@ -1067,7 +1091,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: organizationcustomrules.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -1094,19 +1119,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              excludedAccounts:
-                items:
-                  type: string
-                maxItems: 1000
-                type: array
-              id:
-                type: string
-              inputParameters:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1128,11 +1140,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceIDScope:
                     type: string
                   resourceTypesScope:
@@ -1143,11 +1150,6 @@ spec:
                   tagKeyScope:
                     type: string
                   tagValueScope:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1176,65 +1178,87 @@ spec:
                 required:
                 - lambdaFunctionArn
                 - name
-                - providerRef
                 - triggerTypes
                 type: object
-              lambdaFunctionArn:
-                type: string
-              maximumExecutionFrequency:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceIDScope:
-                type: string
-              resourceTypesScope:
-                items:
-                  type: string
-                maxItems: 100
-                type: array
-              tagKeyScope:
-                type: string
-              tagValueScope:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  excludedAccounts:
+                    items:
+                      type: string
+                    maxItems: 1000
+                    type: array
+                  id:
+                    type: string
+                  inputParameters:
+                    type: string
+                  lambdaFunctionArn:
+                    type: string
+                  maximumExecutionFrequency:
+                    type: string
+                  name:
+                    type: string
+                  resourceIDScope:
+                    type: string
+                  resourceTypesScope:
+                    items:
+                      type: string
+                    maxItems: 100
+                    type: array
+                  tagKeyScope:
+                    type: string
+                  tagValueScope:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  triggerTypes:
+                    items:
+                      type: string
+                    maxItems: 3
+                    minItems: 1
+                    type: array
+                required:
+                - lambdaFunctionArn
+                - name
+                - triggerTypes
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              triggerTypes:
-                items:
-                  type: string
-                maxItems: 3
-                minItems: 1
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - lambdaFunctionArn
-            - name
             - providerRef
-            - triggerTypes
+            - resource
             type: object
           status:
             properties:
@@ -1281,7 +1305,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: organizationmanagedrules.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -1308,19 +1333,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              excludedAccounts:
-                items:
-                  type: string
-                maxItems: 1000
-                type: array
-              id:
-                type: string
-              inputParameters:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1340,11 +1352,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceIDScope:
                     type: string
                   resourceTypesScope:
@@ -1357,11 +1364,6 @@ spec:
                   tagKeyScope:
                     type: string
                   tagValueScope:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1383,58 +1385,80 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - ruleIdentifier
                 type: object
-              maximumExecutionFrequency:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceIDScope:
-                type: string
-              resourceTypesScope:
-                items:
-                  type: string
-                maxItems: 100
-                type: array
-              ruleIdentifier:
-                type: string
-              tagKeyScope:
-                type: string
-              tagValueScope:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  excludedAccounts:
+                    items:
+                      type: string
+                    maxItems: 1000
+                    type: array
+                  id:
+                    type: string
+                  inputParameters:
+                    type: string
+                  maximumExecutionFrequency:
+                    type: string
+                  name:
+                    type: string
+                  resourceIDScope:
+                    type: string
+                  resourceTypesScope:
+                    items:
+                      type: string
+                    maxItems: 100
+                    type: array
+                  ruleIdentifier:
+                    type: string
+                  tagKeyScope:
+                    type: string
+                  tagValueScope:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - ruleIdentifier
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - ruleIdentifier
+            - resource
             type: object
           status:
             properties:
@@ -1481,7 +1505,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: remediationconfigurations.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -1508,12 +1533,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              configRuleName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1536,11 +1555,6 @@ spec:
                       type: object
                     maxItems: 25
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceType:
                     type: string
                   targetID:
@@ -1549,54 +1563,64 @@ spec:
                     type: string
                   targetVersion:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - configRuleName
-                - providerRef
                 - targetID
                 - targetType
                 type: object
-              parameter:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    resourceValue:
-                      type: string
-                    staticValue:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                maxItems: 25
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceType:
-                type: string
-              targetID:
-                type: string
-              targetType:
-                type: string
-              targetVersion:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  configRuleName:
+                    type: string
+                  id:
+                    type: string
+                  parameter:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        resourceValue:
+                          type: string
+                        staticValue:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    maxItems: 25
+                    type: array
+                  resourceType:
+                    type: string
+                  targetID:
+                    type: string
+                  targetType:
+                    type: string
+                  targetVersion:
+                    type: string
+                required:
+                - configRuleName
+                - targetID
+                - targetType
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - configRuleName
             - providerRef
-            - targetID
-            - targetType
+            - resource
             type: object
           status:
             properties:

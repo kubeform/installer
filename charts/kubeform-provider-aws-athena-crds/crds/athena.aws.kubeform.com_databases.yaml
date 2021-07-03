@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: databases.athena.aws.kubeform.com
 spec:
   group: athena.aws.kubeform.com
@@ -30,21 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              bucket:
-                type: string
-              encryptionConfiguration:
-                properties:
-                  encryptionOption:
-                    type: string
-                  kmsKey:
-                    type: string
-                required:
-                - encryptionOption
-                type: object
-              forceDestroy:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bucket:
@@ -64,37 +50,51 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - bucket
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  bucket:
+                    type: string
+                  encryptionConfiguration:
+                    properties:
+                      encryptionOption:
+                        type: string
+                      kmsKey:
+                        type: string
+                    required:
+                    - encryptionOption
+                    type: object
+                  forceDestroy:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                required:
+                - bucket
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

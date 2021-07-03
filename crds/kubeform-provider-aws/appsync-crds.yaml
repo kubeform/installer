@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: apikeys.appsync.aws.kubeform.com
 spec:
   group: appsync.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiID:
-                type: string
-              description:
-                type: string
-              expires:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiID:
@@ -48,29 +41,26 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - apiID
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  apiID:
+                    type: string
+                  description:
+                    type: string
+                  expires:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - apiID
                 type: object
               secretRef:
                 properties:
@@ -82,9 +72,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - apiID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -131,7 +126,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: datasources.appsync.aws.kubeform.com
 spec:
   group: appsync.aws.kubeform.com
@@ -158,41 +154,6 @@ spec:
             type: object
           spec:
             properties:
-              apiID:
-                type: string
-              arn:
-                type: string
-              description:
-                type: string
-              dynamodbConfig:
-                properties:
-                  region:
-                    type: string
-                  tableName:
-                    type: string
-                  useCallerCredentials:
-                    type: boolean
-                required:
-                - tableName
-                type: object
-              elasticsearchConfig:
-                properties:
-                  endpoint:
-                    type: string
-                  region:
-                    type: string
-                required:
-                - endpoint
-                type: object
-              httpConfig:
-                properties:
-                  endpoint:
-                    type: string
-                required:
-                - endpoint
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiID:
@@ -239,54 +200,88 @@ spec:
                     type: object
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceRoleArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   type:
                     type: string
                 required:
                 - apiID
                 - name
-                - providerRef
                 - type
                 type: object
-              lambdaConfig:
-                properties:
-                  functionArn:
-                    type: string
-                required:
-                - functionArn
-                type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serviceRoleArn:
-                type: string
+              resource:
+                properties:
+                  apiID:
+                    type: string
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  dynamodbConfig:
+                    properties:
+                      region:
+                        type: string
+                      tableName:
+                        type: string
+                      useCallerCredentials:
+                        type: boolean
+                    required:
+                    - tableName
+                    type: object
+                  elasticsearchConfig:
+                    properties:
+                      endpoint:
+                        type: string
+                      region:
+                        type: string
+                    required:
+                    - endpoint
+                    type: object
+                  httpConfig:
+                    properties:
+                      endpoint:
+                        type: string
+                    required:
+                    - endpoint
+                    type: object
+                  id:
+                    type: string
+                  lambdaConfig:
+                    properties:
+                      functionArn:
+                        type: string
+                    required:
+                    - functionArn
+                    type: object
+                  name:
+                    type: string
+                  serviceRoleArn:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - apiID
+                - name
+                - type
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - apiID
-            - name
             - providerRef
-            - type
+            - resource
             type: object
           status:
             properties:
@@ -333,7 +328,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: functions.appsync.aws.kubeform.com
 spec:
   group: appsync.aws.kubeform.com
@@ -360,20 +356,6 @@ spec:
             type: object
           spec:
             properties:
-              apiID:
-                type: string
-              arn:
-                type: string
-              dataSource:
-                type: string
-              description:
-                type: string
-              functionID:
-                type: string
-              functionVersion:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiID:
@@ -392,51 +374,64 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requestMappingTemplate:
                     type: string
                   responseMappingTemplate:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - apiID
                 - dataSource
                 - name
-                - providerRef
                 - requestMappingTemplate
                 - responseMappingTemplate
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requestMappingTemplate:
-                type: string
-              responseMappingTemplate:
-                type: string
+              resource:
+                properties:
+                  apiID:
+                    type: string
+                  arn:
+                    type: string
+                  dataSource:
+                    type: string
+                  description:
+                    type: string
+                  functionID:
+                    type: string
+                  functionVersion:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  requestMappingTemplate:
+                    type: string
+                  responseMappingTemplate:
+                    type: string
+                required:
+                - apiID
+                - dataSource
+                - name
+                - requestMappingTemplate
+                - responseMappingTemplate
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - apiID
-            - dataSource
-            - name
             - providerRef
-            - requestMappingTemplate
-            - responseMappingTemplate
+            - resource
             type: object
           status:
             properties:
@@ -483,7 +478,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: graphqlapis.appsync.aws.kubeform.com
 spec:
   group: appsync.aws.kubeform.com
@@ -510,47 +506,6 @@ spec:
             type: object
           spec:
             properties:
-              additionalAuthenticationProvider:
-                items:
-                  properties:
-                    authenticationType:
-                      type: string
-                    openidConnectConfig:
-                      properties:
-                        authTtl:
-                          format: int64
-                          type: integer
-                        clientID:
-                          type: string
-                        iatTtl:
-                          format: int64
-                          type: integer
-                        issuer:
-                          type: string
-                      required:
-                      - issuer
-                      type: object
-                    userPoolConfig:
-                      properties:
-                        appIDClientRegex:
-                          type: string
-                        awsRegion:
-                          type: string
-                        userPoolID:
-                          type: string
-                      required:
-                      - userPoolID
-                      type: object
-                  required:
-                  - authenticationType
-                  type: object
-                type: array
-              arn:
-                type: string
-              authenticationType:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   additionalAuthenticationProvider:
@@ -623,22 +578,16 @@ spec:
                     required:
                     - issuer
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   schema:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   uris:
                     additionalProperties:
                       type: string
@@ -662,77 +611,131 @@ spec:
                 required:
                 - authenticationType
                 - name
-                - providerRef
-                type: object
-              logConfig:
-                properties:
-                  cloudwatchLogsRoleArn:
-                    type: string
-                  excludeVerboseContent:
-                    type: boolean
-                  fieldLogLevel:
-                    type: string
-                required:
-                - cloudwatchLogsRoleArn
-                - fieldLogLevel
-                type: object
-              name:
-                type: string
-              openidConnectConfig:
-                properties:
-                  authTtl:
-                    format: int64
-                    type: integer
-                  clientID:
-                    type: string
-                  iatTtl:
-                    format: int64
-                    type: integer
-                  issuer:
-                    type: string
-                required:
-                - issuer
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              schema:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  additionalAuthenticationProvider:
+                    items:
+                      properties:
+                        authenticationType:
+                          type: string
+                        openidConnectConfig:
+                          properties:
+                            authTtl:
+                              format: int64
+                              type: integer
+                            clientID:
+                              type: string
+                            iatTtl:
+                              format: int64
+                              type: integer
+                            issuer:
+                              type: string
+                          required:
+                          - issuer
+                          type: object
+                        userPoolConfig:
+                          properties:
+                            appIDClientRegex:
+                              type: string
+                            awsRegion:
+                              type: string
+                            userPoolID:
+                              type: string
+                          required:
+                          - userPoolID
+                          type: object
+                      required:
+                      - authenticationType
+                      type: object
+                    type: array
+                  arn:
+                    type: string
+                  authenticationType:
+                    type: string
+                  id:
+                    type: string
+                  logConfig:
+                    properties:
+                      cloudwatchLogsRoleArn:
+                        type: string
+                      excludeVerboseContent:
+                        type: boolean
+                      fieldLogLevel:
+                        type: string
+                    required:
+                    - cloudwatchLogsRoleArn
+                    - fieldLogLevel
+                    type: object
+                  name:
+                    type: string
+                  openidConnectConfig:
+                    properties:
+                      authTtl:
+                        format: int64
+                        type: integer
+                      clientID:
+                        type: string
+                      iatTtl:
+                        format: int64
+                        type: integer
+                      issuer:
+                        type: string
+                    required:
+                    - issuer
+                    type: object
+                  schema:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  uris:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  userPoolConfig:
+                    properties:
+                      appIDClientRegex:
+                        type: string
+                      awsRegion:
+                        type: string
+                      defaultAction:
+                        type: string
+                      userPoolID:
+                        type: string
+                    required:
+                    - defaultAction
+                    - userPoolID
+                    type: object
+                  xrayEnabled:
+                    type: boolean
+                required:
+                - authenticationType
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              uris:
-                additionalProperties:
-                  type: string
-                type: object
-              userPoolConfig:
-                properties:
-                  appIDClientRegex:
-                    type: string
-                  awsRegion:
-                    type: string
-                  defaultAction:
-                    type: string
-                  userPoolID:
-                    type: string
-                required:
-                - defaultAction
-                - userPoolID
-                type: object
-              xrayEnabled:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - authenticationType
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -779,7 +782,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolvers.appsync.aws.kubeform.com
 spec:
   group: appsync.aws.kubeform.com
@@ -806,28 +810,6 @@ spec:
             type: object
           spec:
             properties:
-              apiID:
-                type: string
-              arn:
-                type: string
-              cachingConfig:
-                properties:
-                  cachingKeys:
-                    items:
-                      type: string
-                    type: array
-                  ttl:
-                    format: int64
-                    type: integer
-                type: object
-              dataSource:
-                type: string
-              field:
-                type: string
-              id:
-                type: string
-              kind:
-                type: string
               kubeformOutput:
                 properties:
                   apiID:
@@ -859,60 +841,77 @@ spec:
                           type: string
                         type: array
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requestTemplate:
                     type: string
                   responseTemplate:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   type:
                     type: string
                 required:
                 - apiID
                 - field
-                - providerRef
-                - requestTemplate
-                - responseTemplate
                 - type
-                type: object
-              pipelineConfig:
-                properties:
-                  functions:
-                    items:
-                      type: string
-                    type: array
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requestTemplate:
-                type: string
-              responseTemplate:
-                type: string
+              resource:
+                properties:
+                  apiID:
+                    type: string
+                  arn:
+                    type: string
+                  cachingConfig:
+                    properties:
+                      cachingKeys:
+                        items:
+                          type: string
+                        type: array
+                      ttl:
+                        format: int64
+                        type: integer
+                    type: object
+                  dataSource:
+                    type: string
+                  field:
+                    type: string
+                  id:
+                    type: string
+                  kind:
+                    type: string
+                  pipelineConfig:
+                    properties:
+                      functions:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  requestTemplate:
+                    type: string
+                  responseTemplate:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - apiID
+                - field
+                - type
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - apiID
-            - field
             - providerRef
-            - requestTemplate
-            - responseTemplate
-            - type
+            - resource
             type: object
           status:
             properties:

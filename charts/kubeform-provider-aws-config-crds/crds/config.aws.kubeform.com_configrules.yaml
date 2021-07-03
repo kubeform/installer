@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: configrules.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              inputParameters:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -52,11 +45,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   ruleID:
                     type: string
                   scope:
@@ -99,76 +87,96 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 - source
                 type: object
-              maximumExecutionFrequency:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              ruleID:
-                type: string
-              scope:
+              resource:
                 properties:
-                  complianceResourceID:
+                  arn:
                     type: string
-                  complianceResourceTypes:
-                    items:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  inputParameters:
+                    type: string
+                  maximumExecutionFrequency:
+                    type: string
+                  name:
+                    type: string
+                  ruleID:
+                    type: string
+                  scope:
+                    properties:
+                      complianceResourceID:
+                        type: string
+                      complianceResourceTypes:
+                        items:
+                          type: string
+                        maxItems: 100
+                        type: array
+                      tagKey:
+                        type: string
+                      tagValue:
+                        type: string
+                    type: object
+                  source:
+                    properties:
+                      owner:
+                        type: string
+                      sourceDetail:
+                        items:
+                          properties:
+                            eventSource:
+                              type: string
+                            maximumExecutionFrequency:
+                              type: string
+                            messageType:
+                              type: string
+                          type: object
+                        maxItems: 25
+                        type: array
+                      sourceIdentifier:
+                        type: string
+                    required:
+                    - owner
+                    - sourceIdentifier
+                    type: object
+                  tags:
+                    additionalProperties:
                       type: string
-                    maxItems: 100
-                    type: array
-                  tagKey:
-                    type: string
-                  tagValue:
-                    type: string
-                type: object
-              source:
-                properties:
-                  owner:
-                    type: string
-                  sourceDetail:
-                    items:
-                      properties:
-                        eventSource:
-                          type: string
-                        maximumExecutionFrequency:
-                          type: string
-                        messageType:
-                          type: string
-                      type: object
-                    maxItems: 25
-                    type: array
-                  sourceIdentifier:
-                    type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
-                - owner
-                - sourceIdentifier
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - name
+                - source
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - source
+            - resource
             type: object
           status:
             properties:

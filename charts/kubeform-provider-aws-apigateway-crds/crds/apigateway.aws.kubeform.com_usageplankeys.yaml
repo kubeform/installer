@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: usageplankeys.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              keyID:
-                type: string
-              keyType:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -46,15 +41,29 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  usagePlanID:
+                    type: string
+                  value:
+                    type: string
+                required:
+                - keyID
+                - keyType
+                - usagePlanID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  keyID:
+                    type: string
+                  keyType:
+                    type: string
+                  name:
                     type: string
                   usagePlanID:
                     type: string
@@ -63,30 +72,21 @@ spec:
                 required:
                 - keyID
                 - keyType
-                - providerRef
                 - usagePlanID
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              usagePlanID:
-                type: string
-              value:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - keyID
-            - keyType
             - providerRef
-            - usagePlanID
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: filesystems.efs.aws.kubeform.com
 spec:
   group: efs.aws.kubeform.com
@@ -30,22 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              availabilityZoneID:
-                type: string
-              availabilityZoneName:
-                type: string
-              creationToken:
-                type: string
-              dnsName:
-                type: string
-              encrypted:
-                type: boolean
-              id:
-                type: string
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -78,11 +63,6 @@ spec:
                     type: string
                   performanceMode:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   provisionedThroughputInMibps:
                     format: double
                     type: number
@@ -104,65 +84,91 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   throughputMode:
                     type: string
-                required:
-                - providerRef
                 type: object
-              lifecyclePolicy:
-                properties:
-                  transitionToIa:
-                    type: string
-                required:
-                - transitionToIa
-                type: object
-              numberOfMountTargets:
-                format: int64
-                type: integer
-              ownerID:
-                type: string
-              performanceMode:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              provisionedThroughputInMibps:
-                format: double
-                type: number
-              sizeInBytes:
-                items:
-                  properties:
-                    value:
-                      format: int64
-                      type: integer
-                    valueInIa:
-                      format: int64
-                      type: integer
-                    valueInStandard:
-                      format: int64
-                      type: integer
-                  type: object
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  availabilityZoneID:
+                    type: string
+                  availabilityZoneName:
+                    type: string
+                  creationToken:
+                    type: string
+                  dnsName:
+                    type: string
+                  encrypted:
+                    type: boolean
+                  id:
+                    type: string
+                  kmsKeyID:
+                    type: string
+                  lifecyclePolicy:
+                    properties:
+                      transitionToIa:
+                        type: string
+                    required:
+                    - transitionToIa
+                    type: object
+                  numberOfMountTargets:
+                    format: int64
+                    type: integer
+                  ownerID:
+                    type: string
+                  performanceMode:
+                    type: string
+                  provisionedThroughputInMibps:
+                    format: double
+                    type: number
+                  sizeInBytes:
+                    items:
+                      properties:
+                        value:
+                          format: int64
+                          type: integer
+                        valueInIa:
+                          format: int64
+                          type: integer
+                        valueInStandard:
+                          format: int64
+                          type: integer
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  throughputMode:
+                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              throughputMode:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

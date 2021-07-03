@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: schedules.autoscaling.aws.kubeform.com
 spec:
   group: autoscaling.aws.kubeform.com
@@ -30,17 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoscalingGroupName:
-                type: string
-              desiredCapacity:
-                format: int64
-                type: integer
-              endTime:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -60,53 +50,63 @@ spec:
                   minSize:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   recurrence:
                     type: string
                   scheduledActionName:
                     type: string
                   startTime:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - autoscalingGroupName
-                - providerRef
                 - scheduledActionName
                 type: object
-              maxSize:
-                format: int64
-                type: integer
-              minSize:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              recurrence:
-                type: string
-              scheduledActionName:
-                type: string
-              startTime:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoscalingGroupName:
+                    type: string
+                  desiredCapacity:
+                    format: int64
+                    type: integer
+                  endTime:
+                    type: string
+                  id:
+                    type: string
+                  maxSize:
+                    format: int64
+                    type: integer
+                  minSize:
+                    format: int64
+                    type: integer
+                  recurrence:
+                    type: string
+                  scheduledActionName:
+                    type: string
+                  startTime:
+                    type: string
+                required:
+                - autoscalingGroupName
+                - scheduledActionName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - autoscalingGroupName
             - providerRef
-            - scheduledActionName
+            - resource
             type: object
           status:
             properties:

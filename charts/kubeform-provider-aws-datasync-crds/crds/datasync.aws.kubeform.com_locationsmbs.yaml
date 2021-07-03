@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: locationsmbs.datasync.aws.kubeform.com
 spec:
   group: datasync.aws.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              agentArns:
-                items:
-                  type: string
-                type: array
-              arn:
-                type: string
-              domain:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   agentArns:
@@ -57,14 +48,48 @@ spec:
                       version:
                         type: string
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
+                  serverHostname:
+                    type: string
+                  subdirectory:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
                     type: object
-                  secretRef:
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  uri:
+                    type: string
+                  user:
+                    type: string
+                required:
+                - agentArns
+                - serverHostname
+                - subdirectory
+                - user
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  agentArns:
+                    items:
+                      type: string
+                    type: array
+                  arn:
+                    type: string
+                  domain:
+                    type: string
+                  id:
+                    type: string
+                  mountOptions:
                     properties:
-                      name:
+                      version:
                         type: string
                     type: object
                   serverHostname:
@@ -75,60 +100,38 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   uri:
                     type: string
                   user:
                     type: string
                 required:
                 - agentArns
-                - providerRef
                 - serverHostname
                 - subdirectory
                 - user
-                type: object
-              mountOptions:
-                properties:
-                  version:
-                    type: string
-                type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serverHostname:
-                type: string
-              subdirectory:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              uri:
-                type: string
-              user:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - agentArns
             - providerRef
-            - serverHostname
-            - subdirectory
-            - user
+            - resource
             type: object
           status:
             properties:

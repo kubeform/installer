@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instanceroleassociations.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              dbInstanceIdentifier:
-                type: string
-              featureName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dbInstanceIdentifier:
@@ -44,22 +39,11 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roleArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - dbInstanceIdentifier
                 - featureName
-                - providerRef
                 - roleArn
                 type: object
               providerRef:
@@ -67,18 +51,34 @@ spec:
                   name:
                     type: string
                 type: object
-              roleArn:
-                type: string
+              resource:
+                properties:
+                  dbInstanceIdentifier:
+                    type: string
+                  featureName:
+                    type: string
+                  id:
+                    type: string
+                  roleArn:
+                    type: string
+                required:
+                - dbInstanceIdentifier
+                - featureName
+                - roleArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - dbInstanceIdentifier
-            - featureName
             - providerRef
-            - roleArn
+            - resource
             type: object
           status:
             properties:

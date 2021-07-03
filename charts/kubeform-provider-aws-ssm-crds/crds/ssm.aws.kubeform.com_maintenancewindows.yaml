@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: maintenancewindows.ssm.aws.kubeform.com
 spec:
   group: ssm.aws.kubeform.com
@@ -30,22 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              allowUnassociatedTargets:
-                type: boolean
-              cutoff:
-                format: int64
-                type: integer
-              description:
-                type: string
-              duration:
-                format: int64
-                type: integer
-              enabled:
-                type: boolean
-              endDate:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   allowUnassociatedTargets:
@@ -66,11 +51,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   schedule:
                     type: string
                   scheduleOffset:
@@ -84,49 +64,77 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - cutoff
                 - duration
                 - name
-                - providerRef
                 - schedule
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              schedule:
-                type: string
-              scheduleOffset:
-                format: int64
-                type: integer
-              scheduleTimezone:
-                type: string
-              startDate:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  allowUnassociatedTargets:
+                    type: boolean
+                  cutoff:
+                    format: int64
+                    type: integer
+                  description:
+                    type: string
+                  duration:
+                    format: int64
+                    type: integer
+                  enabled:
+                    type: boolean
+                  endDate:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  schedule:
+                    type: string
+                  scheduleOffset:
+                    format: int64
+                    type: integer
+                  scheduleTimezone:
+                    type: string
+                  startDate:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - cutoff
+                - duration
+                - name
+                - schedule
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cutoff
-            - duration
-            - name
             - providerRef
-            - schedule
+            - resource
             type: object
           status:
             properties:

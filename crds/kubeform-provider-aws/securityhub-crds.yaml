@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accounts.securityhub.aws.kubeform.com
 spec:
   group: securityhub.aws.kubeform.com
@@ -188,28 +189,19 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  id:
                     type: string
                 type: object
               terminationPolicy:
@@ -217,8 +209,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -265,7 +263,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: actiontargets.securityhub.aws.kubeform.com
 spec:
   group: securityhub.aws.kubeform.com
@@ -292,14 +291,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              identifier:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -312,39 +303,46 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                required:
+                - description
+                - identifier
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  identifier:
+                    type: string
+                  name:
                     type: string
                 required:
                 - description
                 - identifier
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - description
-            - identifier
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -391,7 +389,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: insights.securityhub.aws.kubeform.com
 spec:
   group: securityhub.aws.kubeform.com
@@ -418,1230 +417,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              filters:
-                properties:
-                  ID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  awsAccountID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  companyName:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  complianceStatus:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  confidence:
-                    items:
-                      properties:
-                        eq:
-                          type: string
-                        gte:
-                          type: string
-                        lte:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  createdAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  criticality:
-                    items:
-                      properties:
-                        eq:
-                          type: string
-                        gte:
-                          type: string
-                        lte:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  description:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  findingProviderFieldsConfidence:
-                    items:
-                      properties:
-                        eq:
-                          type: string
-                        gte:
-                          type: string
-                        lte:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  findingProviderFieldsCriticality:
-                    items:
-                      properties:
-                        eq:
-                          type: string
-                        gte:
-                          type: string
-                        lte:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  findingProviderFieldsRelatedFindingsID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  findingProviderFieldsRelatedFindingsProductArn:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  findingProviderFieldsSeverityLabel:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  findingProviderFieldsSeverityOriginal:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  findingProviderFieldsTypes:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  firstObservedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  generatorID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  keyword:
-                    items:
-                      properties:
-                        value:
-                          type: string
-                      required:
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  lastObservedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  malwareName:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  malwarePath:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  malwareState:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  malwareType:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkDestinationDomain:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkDestinationIpv4:
-                    items:
-                      properties:
-                        cidr:
-                          type: string
-                      required:
-                      - cidr
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkDestinationIpv6:
-                    items:
-                      properties:
-                        cidr:
-                          type: string
-                      required:
-                      - cidr
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkDestinationPort:
-                    items:
-                      properties:
-                        eq:
-                          type: string
-                        gte:
-                          type: string
-                        lte:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkDirection:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkProtocol:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkSourceDomain:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkSourceIpv4:
-                    items:
-                      properties:
-                        cidr:
-                          type: string
-                      required:
-                      - cidr
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkSourceIpv6:
-                    items:
-                      properties:
-                        cidr:
-                          type: string
-                      required:
-                      - cidr
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkSourceMAC:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  networkSourcePort:
-                    items:
-                      properties:
-                        eq:
-                          type: string
-                        gte:
-                          type: string
-                        lte:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  noteText:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  noteUpdatedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  noteUpdatedBy:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  processLaunchedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  processName:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  processParentPid:
-                    items:
-                      properties:
-                        eq:
-                          type: string
-                        gte:
-                          type: string
-                        lte:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  processPath:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  processPid:
-                    items:
-                      properties:
-                        eq:
-                          type: string
-                        gte:
-                          type: string
-                        lte:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  processTerminatedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  productArn:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  productFields:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        key:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - key
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  productName:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  recommendationText:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  recordState:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  relatedFindingsID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  relatedFindingsProductArn:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsEc2InstanceIamInstanceProfileArn:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsEc2InstanceImageID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsEc2InstanceIpv4Addresses:
-                    items:
-                      properties:
-                        cidr:
-                          type: string
-                      required:
-                      - cidr
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsEc2InstanceIpv6Addresses:
-                    items:
-                      properties:
-                        cidr:
-                          type: string
-                      required:
-                      - cidr
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsEc2InstanceKeyName:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsEc2InstanceLaunchedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsEc2InstanceSubnetID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsEc2InstanceType:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsEc2InstanceVpcID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsIamAccessKeyCreatedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsIamAccessKeyStatus:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsIamAccessKeyUserName:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsS3BucketOwnerID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceAwsS3BucketOwnerName:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceContainerImageID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceContainerImageName:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceContainerLaunchedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceContainerName:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceDetailsOther:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        key:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - key
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceID:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourcePartition:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceRegion:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceTags:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        key:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - key
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  resourceType:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  severityLabel:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  sourceURL:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  threatIntelIndicatorCategory:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  threatIntelIndicatorLastObservedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  threatIntelIndicatorSource:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  threatIntelIndicatorSourceURL:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  threatIntelIndicatorType:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  threatIntelIndicatorValue:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  title:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  type:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  updatedAt:
-                    items:
-                      properties:
-                        dateRange:
-                          properties:
-                            unit:
-                              type: string
-                            value:
-                              format: int64
-                              type: integer
-                          required:
-                          - unit
-                          - value
-                          type: object
-                        end:
-                          type: string
-                        start:
-                          type: string
-                      type: object
-                    maxItems: 20
-                    type: array
-                  userDefinedValues:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        key:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - key
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  verificationState:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                  workflowStatus:
-                    items:
-                      properties:
-                        comparison:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - comparison
-                      - value
-                      type: object
-                    maxItems: 20
-                    type: array
-                type: object
-              groupByAttribute:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -2870,39 +1645,1262 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
+                required:
+                - filters
+                - groupByAttribute
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  filters:
                     properties:
-                      name:
-                        type: string
+                      ID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      awsAccountID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      companyName:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      complianceStatus:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      confidence:
+                        items:
+                          properties:
+                            eq:
+                              type: string
+                            gte:
+                              type: string
+                            lte:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      createdAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      criticality:
+                        items:
+                          properties:
+                            eq:
+                              type: string
+                            gte:
+                              type: string
+                            lte:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      description:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      findingProviderFieldsConfidence:
+                        items:
+                          properties:
+                            eq:
+                              type: string
+                            gte:
+                              type: string
+                            lte:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      findingProviderFieldsCriticality:
+                        items:
+                          properties:
+                            eq:
+                              type: string
+                            gte:
+                              type: string
+                            lte:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      findingProviderFieldsRelatedFindingsID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      findingProviderFieldsRelatedFindingsProductArn:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      findingProviderFieldsSeverityLabel:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      findingProviderFieldsSeverityOriginal:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      findingProviderFieldsTypes:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      firstObservedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      generatorID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      keyword:
+                        items:
+                          properties:
+                            value:
+                              type: string
+                          required:
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      lastObservedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      malwareName:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      malwarePath:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      malwareState:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      malwareType:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkDestinationDomain:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkDestinationIpv4:
+                        items:
+                          properties:
+                            cidr:
+                              type: string
+                          required:
+                          - cidr
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkDestinationIpv6:
+                        items:
+                          properties:
+                            cidr:
+                              type: string
+                          required:
+                          - cidr
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkDestinationPort:
+                        items:
+                          properties:
+                            eq:
+                              type: string
+                            gte:
+                              type: string
+                            lte:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkDirection:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkProtocol:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkSourceDomain:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkSourceIpv4:
+                        items:
+                          properties:
+                            cidr:
+                              type: string
+                          required:
+                          - cidr
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkSourceIpv6:
+                        items:
+                          properties:
+                            cidr:
+                              type: string
+                          required:
+                          - cidr
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkSourceMAC:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      networkSourcePort:
+                        items:
+                          properties:
+                            eq:
+                              type: string
+                            gte:
+                              type: string
+                            lte:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      noteText:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      noteUpdatedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      noteUpdatedBy:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      processLaunchedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      processName:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      processParentPid:
+                        items:
+                          properties:
+                            eq:
+                              type: string
+                            gte:
+                              type: string
+                            lte:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      processPath:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      processPid:
+                        items:
+                          properties:
+                            eq:
+                              type: string
+                            gte:
+                              type: string
+                            lte:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      processTerminatedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      productArn:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      productFields:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            key:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - key
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      productName:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      recommendationText:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      recordState:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      relatedFindingsID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      relatedFindingsProductArn:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsEc2InstanceIamInstanceProfileArn:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsEc2InstanceImageID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsEc2InstanceIpv4Addresses:
+                        items:
+                          properties:
+                            cidr:
+                              type: string
+                          required:
+                          - cidr
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsEc2InstanceIpv6Addresses:
+                        items:
+                          properties:
+                            cidr:
+                              type: string
+                          required:
+                          - cidr
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsEc2InstanceKeyName:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsEc2InstanceLaunchedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsEc2InstanceSubnetID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsEc2InstanceType:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsEc2InstanceVpcID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsIamAccessKeyCreatedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsIamAccessKeyStatus:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsIamAccessKeyUserName:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsS3BucketOwnerID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceAwsS3BucketOwnerName:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceContainerImageID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceContainerImageName:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceContainerLaunchedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceContainerName:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceDetailsOther:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            key:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - key
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceID:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourcePartition:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceRegion:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceTags:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            key:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - key
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      resourceType:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      severityLabel:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      sourceURL:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      threatIntelIndicatorCategory:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      threatIntelIndicatorLastObservedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      threatIntelIndicatorSource:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      threatIntelIndicatorSourceURL:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      threatIntelIndicatorType:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      threatIntelIndicatorValue:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      title:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      type:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      updatedAt:
+                        items:
+                          properties:
+                            dateRange:
+                              properties:
+                                unit:
+                                  type: string
+                                value:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - unit
+                              - value
+                              type: object
+                            end:
+                              type: string
+                            start:
+                              type: string
+                          type: object
+                        maxItems: 20
+                        type: array
+                      userDefinedValues:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            key:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - key
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      verificationState:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
+                      workflowStatus:
+                        items:
+                          properties:
+                            comparison:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - comparison
+                          - value
+                          type: object
+                        maxItems: 20
+                        type: array
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  groupByAttribute:
+                    type: string
+                  id:
+                    type: string
+                  name:
                     type: string
                 required:
                 - filters
                 - groupByAttribute
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - filters
-            - groupByAttribute
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2949,7 +2947,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: inviteaccepters.securityhub.aws.kubeform.com
 spec:
   group: securityhub.aws.kubeform.com
@@ -2976,10 +2975,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              invitationID:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -2988,35 +2983,38 @@ spec:
                     type: string
                   masterID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - masterID
-                - providerRef
                 type: object
-              masterID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  invitationID:
+                    type: string
+                  masterID:
+                    type: string
+                required:
+                - masterID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - masterID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -3063,7 +3061,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: members.securityhub.aws.kubeform.com
 spec:
   group: securityhub.aws.kubeform.com
@@ -3090,14 +3089,6 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              email:
-                type: string
-              id:
-                type: string
-              invite:
-                type: boolean
               kubeformOutput:
                 properties:
                   accountID:
@@ -3112,39 +3103,46 @@ spec:
                     type: string
                   memberStatus:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - accountID
                 - email
-                - providerRef
                 type: object
-              masterID:
-                type: string
-              memberStatus:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  accountID:
+                    type: string
+                  email:
+                    type: string
+                  id:
+                    type: string
+                  invite:
+                    type: boolean
+                  masterID:
+                    type: string
+                  memberStatus:
+                    type: string
+                required:
+                - accountID
+                - email
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - accountID
-            - email
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -3191,7 +3189,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: organizationadminaccounts.securityhub.aws.kubeform.com
 spec:
   group: securityhub.aws.kubeform.com
@@ -3218,43 +3217,42 @@ spec:
             type: object
           spec:
             properties:
-              adminAccountID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   adminAccountID:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - adminAccountID
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  adminAccountID:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - adminAccountID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - adminAccountID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -3301,7 +3299,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: productsubscriptions.securityhub.aws.kubeform.com
 spec:
   group: securityhub.aws.kubeform.com
@@ -3328,10 +3327,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -3340,35 +3335,38 @@ spec:
                     type: string
                   productArn:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - productArn
-                - providerRef
                 type: object
-              productArn:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  productArn:
+                    type: string
+                required:
+                - productArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - productArn
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -3415,7 +3413,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: standardssubscriptions.securityhub.aws.kubeform.com
 spec:
   group: securityhub.aws.kubeform.com
@@ -3442,26 +3441,13 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   standardsArn:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - standardsArn
                 type: object
               providerRef:
@@ -3469,16 +3455,28 @@ spec:
                   name:
                     type: string
                 type: object
-              standardsArn:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  standardsArn:
+                    type: string
+                required:
+                - standardsArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - standardsArn
+            - resource
             type: object
           status:
             properties:

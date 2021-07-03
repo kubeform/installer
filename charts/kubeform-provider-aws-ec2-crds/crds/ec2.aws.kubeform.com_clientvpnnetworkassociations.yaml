@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clientvpnnetworkassociations.ec2.aws.kubeform.com
 spec:
   group: ec2.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              associationID:
-                type: string
-              clientVPNEndpointID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   associationID:
@@ -44,11 +39,6 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroups:
                     items:
                       type: string
@@ -59,16 +49,10 @@ spec:
                     type: string
                   subnetID:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   vpcID:
                     type: string
                 required:
                 - clientVPNEndpointID
-                - providerRef
                 - subnetID
                 type: object
               providerRef:
@@ -76,27 +60,43 @@ spec:
                   name:
                     type: string
                 type: object
-              securityGroups:
-                items:
-                  type: string
-                maxItems: 5
-                minItems: 1
-                type: array
-              status:
-                type: string
-              subnetID:
-                type: string
+              resource:
+                properties:
+                  associationID:
+                    type: string
+                  clientVPNEndpointID:
+                    type: string
+                  id:
+                    type: string
+                  securityGroups:
+                    items:
+                      type: string
+                    maxItems: 5
+                    minItems: 1
+                    type: array
+                  status:
+                    type: string
+                  subnetID:
+                    type: string
+                  vpcID:
+                    type: string
+                required:
+                - clientVPNEndpointID
+                - subnetID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - clientVPNEndpointID
             - providerRef
-            - subnetID
+            - resource
             type: object
           status:
             properties:

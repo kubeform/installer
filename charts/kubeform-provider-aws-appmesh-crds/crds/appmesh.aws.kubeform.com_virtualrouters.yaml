@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: virtualrouters.appmesh.aws.kubeform.com
 spec:
   group: appmesh.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              createdDate:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -52,11 +47,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceOwner:
                     type: string
                   spec:
@@ -84,67 +74,85 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - meshName
                 - name
-                - providerRef
                 - spec
                 type: object
-              lastUpdatedDate:
-                type: string
-              meshName:
-                type: string
-              meshOwner:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceOwner:
-                type: string
-              spec:
+              resource:
                 properties:
-                  listener:
+                  arn:
+                    type: string
+                  createdDate:
+                    type: string
+                  id:
+                    type: string
+                  lastUpdatedDate:
+                    type: string
+                  meshName:
+                    type: string
+                  meshOwner:
+                    type: string
+                  name:
+                    type: string
+                  resourceOwner:
+                    type: string
+                  spec:
                     properties:
-                      portMapping:
+                      listener:
                         properties:
-                          port:
-                            format: int64
-                            type: integer
-                          protocol:
-                            type: string
+                          portMapping:
+                            properties:
+                              port:
+                                format: int64
+                                type: integer
+                              protocol:
+                                type: string
+                            required:
+                            - port
+                            - protocol
+                            type: object
                         required:
-                        - port
-                        - protocol
+                        - portMapping
                         type: object
                     required:
-                    - portMapping
+                    - listener
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
                     type: object
                 required:
-                - listener
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - meshName
+                - name
+                - spec
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - meshName
-            - name
             - providerRef
-            - spec
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: replicationsubnetgroups.dms.aws.kubeform.com
 spec:
   group: dms.aws.kubeform.com
@@ -30,17 +31,10 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   replicationSubnetGroupArn:
                     type: string
                   replicationSubnetGroupDescription:
@@ -55,15 +49,13 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   vpcID:
                     type: string
                 required:
-                - providerRef
                 - replicationSubnetGroupDescription
                 - replicationSubnetGroupID
                 - subnetIDS
@@ -73,32 +65,48 @@ spec:
                   name:
                     type: string
                 type: object
-              replicationSubnetGroupArn:
-                type: string
-              replicationSubnetGroupDescription:
-                type: string
-              replicationSubnetGroupID:
-                type: string
-              subnetIDS:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  replicationSubnetGroupArn:
+                    type: string
+                  replicationSubnetGroupDescription:
+                    type: string
+                  replicationSubnetGroupID:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  vpcID:
+                    type: string
+                required:
+                - replicationSubnetGroupDescription
+                - replicationSubnetGroupID
+                - subnetIDS
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - replicationSubnetGroupDescription
-            - replicationSubnetGroupID
-            - subnetIDS
+            - resource
             type: object
           status:
             properties:

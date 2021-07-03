@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: grants.kms.aws.kubeform.com
 spec:
   group: kms.aws.kubeform.com
@@ -30,33 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              constraints:
-                items:
-                  properties:
-                    encryptionContextEquals:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    encryptionContextSubset:
-                      additionalProperties:
-                        type: string
-                      type: object
-                  type: object
-                type: array
-              grantCreationTokens:
-                items:
-                  type: string
-                type: array
-              grantID:
-                type: string
-              grantToken:
-                type: string
-              granteePrincipal:
-                type: string
-              id:
-                type: string
-              keyID:
-                type: string
               kubeformOutput:
                 properties:
                   constraints:
@@ -92,51 +66,77 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   retireOnDelete:
                     type: boolean
                   retiringPrincipal:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - granteePrincipal
                 - keyID
                 - operations
-                - providerRef
                 type: object
-              name:
-                type: string
-              operations:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              retireOnDelete:
-                type: boolean
-              retiringPrincipal:
-                type: string
+              resource:
+                properties:
+                  constraints:
+                    items:
+                      properties:
+                        encryptionContextEquals:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        encryptionContextSubset:
+                          additionalProperties:
+                            type: string
+                          type: object
+                      type: object
+                    type: array
+                  grantCreationTokens:
+                    items:
+                      type: string
+                    type: array
+                  grantID:
+                    type: string
+                  grantToken:
+                    type: string
+                  granteePrincipal:
+                    type: string
+                  id:
+                    type: string
+                  keyID:
+                    type: string
+                  name:
+                    type: string
+                  operations:
+                    items:
+                      type: string
+                    type: array
+                  retireOnDelete:
+                    type: boolean
+                  retiringPrincipal:
+                    type: string
+                required:
+                - granteePrincipal
+                - keyID
+                - operations
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - granteePrincipal
-            - keyID
-            - operations
             - providerRef
+            - resource
             type: object
           status:
             properties:

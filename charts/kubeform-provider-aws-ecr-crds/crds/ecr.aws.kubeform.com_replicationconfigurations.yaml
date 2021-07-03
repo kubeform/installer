@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: replicationconfigurations.ecr.aws.kubeform.com
 spec:
   group: ecr.aws.kubeform.com
@@ -30,17 +31,10 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registryID:
                     type: string
                   replicationConfiguration:
@@ -65,50 +59,54 @@ spec:
                     required:
                     - rule
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              registryID:
-                type: string
-              replicationConfiguration:
+              resource:
                 properties:
-                  rule:
+                  id:
+                    type: string
+                  registryID:
+                    type: string
+                  replicationConfiguration:
                     properties:
-                      destination:
-                        items:
-                          properties:
-                            region:
-                              type: string
-                            registryID:
-                              type: string
-                          required:
-                          - region
-                          - registryID
-                          type: object
-                        type: array
+                      rule:
+                        properties:
+                          destination:
+                            items:
+                              properties:
+                                region:
+                                  type: string
+                                registryID:
+                                  type: string
+                              required:
+                              - region
+                              - registryID
+                              type: object
+                            type: array
+                        required:
+                        - destination
+                        type: object
                     required:
-                    - destination
+                    - rule
                     type: object
-                required:
-                - rule
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

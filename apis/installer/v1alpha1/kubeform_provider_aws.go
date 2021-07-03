@@ -52,11 +52,13 @@ type AwsCRDs struct {
 	Acmpca                          bool `json:"acmpca"`
 	Alb                             bool `json:"alb"`
 	Ami                             bool `json:"ami"`
+	Amplify                         bool `json:"amplify"`
 	Apigateway                      bool `json:"apigateway"`
 	Apigatewayv2                    bool `json:"apigatewayv2"`
 	App                             bool `json:"app"`
 	Appautoscaling                  bool `json:"appautoscaling"`
 	Appmesh                         bool `json:"appmesh"`
+	Apprunner                       bool `json:"apprunner"`
 	Appsync                         bool `json:"appsync"`
 	Athena                          bool `json:"athena"`
 	Autoscaling                     bool `json:"autoscaling"`
@@ -66,6 +68,7 @@ type AwsCRDs struct {
 	Budgets                         bool `json:"budgets"`
 	Cloud9                          bool `json:"cloud9"`
 	Cloudformationstack             bool `json:"cloudformationstack"`
+	Cloudformationtype              bool `json:"cloudformationtype"`
 	Cloudfront                      bool `json:"cloudfront"`
 	Cloudhsmv2                      bool `json:"cloudhsmv2"`
 	Cloudtrail                      bool `json:"cloudtrail"`
@@ -135,6 +138,7 @@ type AwsCRDs struct {
 	Lightsail                       bool `json:"lightsail"`
 	Loadbalancer                    bool `json:"loadbalancer"`
 	Macie                           bool `json:"macie"`
+	Macie2                          bool `json:"macie2"`
 	Main                            bool `json:"main"`
 	Media                           bool `json:"media"`
 	Mq                              bool `json:"mq"`
@@ -162,6 +166,7 @@ type AwsCRDs struct {
 	S3control                       bool `json:"s3control"`
 	S3outposts                      bool `json:"s3outposts"`
 	Sagemaker                       bool `json:"sagemaker"`
+	Schemas                         bool `json:"schemas"`
 	Secretsmanager                  bool `json:"secretsmanager"`
 	Security                        bool `json:"security"`
 	Securityhub                     bool `json:"securityhub"`
@@ -184,6 +189,7 @@ type AwsCRDs struct {
 	Subnet                          bool `json:"subnet"`
 	Swf                             bool `json:"swf"`
 	Synthetics                      bool `json:"synthetics"`
+	Timestreamwrite                 bool `json:"timestreamwrite"`
 	Transfer                        bool `json:"transfer"`
 	Volume                          bool `json:"volume"`
 	Vpc                             bool `json:"vpc"`

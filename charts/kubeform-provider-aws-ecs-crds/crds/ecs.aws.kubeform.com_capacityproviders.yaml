@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: capacityproviders.ecs.aws.kubeform.com
 spec:
   group: ecs.aws.kubeform.com
@@ -30,36 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoScalingGroupProvider:
-                properties:
-                  autoScalingGroupArn:
-                    type: string
-                  managedScaling:
-                    properties:
-                      instanceWarmupPeriod:
-                        format: int64
-                        type: integer
-                      maximumScalingStepSize:
-                        format: int64
-                        type: integer
-                      minimumScalingStepSize:
-                        format: int64
-                        type: integer
-                      status:
-                        type: string
-                      targetCapacity:
-                        format: int64
-                        type: integer
-                    type: object
-                  managedTerminationProtection:
-                    type: string
-                required:
-                - autoScalingGroupArn
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -94,45 +65,82 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - autoScalingGroupProvider
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoScalingGroupProvider:
+                    properties:
+                      autoScalingGroupArn:
+                        type: string
+                      managedScaling:
+                        properties:
+                          instanceWarmupPeriod:
+                            format: int64
+                            type: integer
+                          maximumScalingStepSize:
+                            format: int64
+                            type: integer
+                          minimumScalingStepSize:
+                            format: int64
+                            type: integer
+                          status:
+                            type: string
+                          targetCapacity:
+                            format: int64
+                            type: integer
+                        type: object
+                      managedTerminationProtection:
+                        type: string
+                    required:
+                    - autoScalingGroupArn
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - autoScalingGroupProvider
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - autoScalingGroupProvider
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

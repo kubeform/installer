@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: partitions.glue.aws.kubeform.com
 spec:
   group: glue.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              catalogID:
-                type: string
-              creationTime:
-                type: string
-              databaseName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   catalogID:
@@ -60,11 +53,6 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   storageDescriptor:
                     properties:
                       bucketColumns:
@@ -143,122 +131,134 @@ spec:
                     type: object
                   tableName:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - databaseName
                 - partitionValues
-                - providerRef
                 - tableName
                 type: object
-              lastAccessedTime:
-                type: string
-              lastAnalyzedTime:
-                type: string
-              parameters:
-                additionalProperties:
-                  type: string
-                type: object
-              partitionValues:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              storageDescriptor:
+              resource:
                 properties:
-                  bucketColumns:
-                    items:
-                      type: string
-                    type: array
-                  columns:
-                    items:
-                      properties:
-                        comment:
-                          type: string
-                        name:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                      - name
-                      type: object
-                    type: array
-                  compressed:
-                    type: boolean
-                  inputFormat:
+                  catalogID:
                     type: string
-                  location:
+                  creationTime:
                     type: string
-                  numberOfBuckets:
-                    format: int64
-                    type: integer
-                  outputFormat:
+                  databaseName:
+                    type: string
+                  id:
+                    type: string
+                  lastAccessedTime:
+                    type: string
+                  lastAnalyzedTime:
                     type: string
                   parameters:
                     additionalProperties:
                       type: string
                     type: object
-                  serDeInfo:
+                  partitionValues:
+                    items:
+                      type: string
+                    type: array
+                  storageDescriptor:
                     properties:
-                      name:
+                      bucketColumns:
+                        items:
+                          type: string
+                        type: array
+                      columns:
+                        items:
+                          properties:
+                            comment:
+                              type: string
+                            name:
+                              type: string
+                            type:
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        type: array
+                      compressed:
+                        type: boolean
+                      inputFormat:
+                        type: string
+                      location:
+                        type: string
+                      numberOfBuckets:
+                        format: int64
+                        type: integer
+                      outputFormat:
                         type: string
                       parameters:
                         additionalProperties:
                           type: string
                         type: object
-                      serializationLibrary:
-                        type: string
-                    type: object
-                  skewedInfo:
-                    properties:
-                      skewedColumnNames:
-                        items:
-                          type: string
-                        type: array
-                      skewedColumnValueLocationMaps:
-                        additionalProperties:
-                          type: string
+                      serDeInfo:
+                        properties:
+                          name:
+                            type: string
+                          parameters:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          serializationLibrary:
+                            type: string
                         type: object
-                      skewedColumnValues:
+                      skewedInfo:
+                        properties:
+                          skewedColumnNames:
+                            items:
+                              type: string
+                            type: array
+                          skewedColumnValueLocationMaps:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          skewedColumnValues:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      sortColumns:
                         items:
-                          type: string
+                          properties:
+                            column:
+                              type: string
+                            sortOrder:
+                              format: int64
+                              type: integer
+                          required:
+                          - column
+                          - sortOrder
+                          type: object
                         type: array
+                      storedAsSubDirectories:
+                        type: boolean
                     type: object
-                  sortColumns:
-                    items:
-                      properties:
-                        column:
-                          type: string
-                        sortOrder:
-                          format: int64
-                          type: integer
-                      required:
-                      - column
-                      - sortOrder
-                      type: object
-                    type: array
-                  storedAsSubDirectories:
-                    type: boolean
+                  tableName:
+                    type: string
+                required:
+                - databaseName
+                - partitionValues
+                - tableName
                 type: object
-              tableName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - databaseName
-            - partitionValues
             - providerRef
-            - tableName
+            - resource
             type: object
           status:
             properties:

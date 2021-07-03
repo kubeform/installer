@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: authorizers.apigatewayv2.aws.kubeform.com
 spec:
   group: apigatewayv2.aws.kubeform.com
@@ -30,36 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiID:
-                type: string
-              authorizerCredentialsArn:
-                type: string
-              authorizerPayloadFormatVersion:
-                type: string
-              authorizerResultTtlInSeconds:
-                format: int64
-                type: integer
-              authorizerType:
-                type: string
-              authorizerURI:
-                type: string
-              enableSimpleResponses:
-                type: boolean
-              id:
-                type: string
-              identitySources:
-                items:
-                  type: string
-                type: array
-              jwtConfiguration:
-                properties:
-                  audience:
-                    items:
-                      type: string
-                    type: array
-                  issuer:
-                    type: string
-                type: object
               kubeformOutput:
                 properties:
                   apiID:
@@ -94,39 +65,68 @@ spec:
                     type: object
                   name:
                     type: string
-                  providerRef:
+                required:
+                - apiID
+                - authorizerType
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  apiID:
+                    type: string
+                  authorizerCredentialsArn:
+                    type: string
+                  authorizerPayloadFormatVersion:
+                    type: string
+                  authorizerResultTtlInSeconds:
+                    format: int64
+                    type: integer
+                  authorizerType:
+                    type: string
+                  authorizerURI:
+                    type: string
+                  enableSimpleResponses:
+                    type: boolean
+                  id:
+                    type: string
+                  identitySources:
+                    items:
+                      type: string
+                    type: array
+                  jwtConfiguration:
                     properties:
-                      name:
+                      audience:
+                        items:
+                          type: string
+                        type: array
+                      issuer:
                         type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  name:
                     type: string
                 required:
                 - apiID
                 - authorizerType
                 - name
-                - providerRef
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - apiID
-            - authorizerType
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

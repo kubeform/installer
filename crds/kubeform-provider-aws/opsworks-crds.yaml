@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: applications.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -188,57 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              appSource:
-                items:
-                  properties:
-                    revision:
-                      type: string
-                    type:
-                      type: string
-                    url:
-                      type: string
-                    username:
-                      type: string
-                  required:
-                  - type
-                  type: object
-                type: array
-              autoBundleOnDeploy:
-                type: string
-              awsFlowRubySettings:
-                type: string
-              dataSourceArn:
-                type: string
-              dataSourceDatabaseName:
-                type: string
-              dataSourceType:
-                type: string
-              description:
-                type: string
-              documentRoot:
-                type: string
-              domains:
-                items:
-                  type: string
-                type: array
-              enableSSL:
-                type: boolean
-              environment:
-                items:
-                  properties:
-                    key:
-                      type: string
-                    secure:
-                      type: boolean
-                    value:
-                      type: string
-                  required:
-                  - key
-                  - value
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   appSource:
@@ -274,7 +224,7 @@ spec:
                     items:
                       type: string
                     type: array
-                  enableSSL:
+                  enableSsl:
                     type: boolean
                   environment:
                     items:
@@ -294,18 +244,8 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   railsEnv:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   shortName:
                     type: string
                   sslConfiguration:
@@ -321,60 +261,115 @@ spec:
                     type: array
                   stackID:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   type:
                     type: string
                 required:
                 - name
-                - providerRef
                 - stackID
                 - type
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              railsEnv:
-                type: string
+              resource:
+                properties:
+                  appSource:
+                    items:
+                      properties:
+                        revision:
+                          type: string
+                        type:
+                          type: string
+                        url:
+                          type: string
+                        username:
+                          type: string
+                      required:
+                      - type
+                      type: object
+                    type: array
+                  autoBundleOnDeploy:
+                    type: string
+                  awsFlowRubySettings:
+                    type: string
+                  dataSourceArn:
+                    type: string
+                  dataSourceDatabaseName:
+                    type: string
+                  dataSourceType:
+                    type: string
+                  description:
+                    type: string
+                  documentRoot:
+                    type: string
+                  domains:
+                    items:
+                      type: string
+                    type: array
+                  enableSsl:
+                    type: boolean
+                  environment:
+                    items:
+                      properties:
+                        key:
+                          type: string
+                        secure:
+                          type: boolean
+                        value:
+                          type: string
+                      required:
+                      - key
+                      - value
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  railsEnv:
+                    type: string
+                  shortName:
+                    type: string
+                  sslConfiguration:
+                    items:
+                      properties:
+                        certificate:
+                          type: string
+                        chain:
+                          type: string
+                      required:
+                      - certificate
+                      type: object
+                    type: array
+                  stackID:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - name
+                - stackID
+                - type
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              shortName:
-                type: string
-              sslConfiguration:
-                items:
-                  properties:
-                    certificate:
-                      type: string
-                    chain:
-                      type: string
-                  required:
-                  - certificate
-                  type: object
-                type: array
-              stackID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - stackID
-            - type
+            - resource
             type: object
           status:
             properties:
@@ -421,7 +416,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: customlayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -448,79 +444,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   arn:
@@ -598,11 +521,6 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   shortName:
                     type: string
                   stackID:
@@ -615,50 +533,135 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useEbsOptimizedInstances:
                     type: boolean
                 required:
                 - name
-                - providerRef
                 - shortName
                 - stackID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              shortName:
-                type: string
-              stackID:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  shortName:
+                    type: string
+                  stackID:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useEbsOptimizedInstances:
+                    type: boolean
+                required:
+                - name
+                - shortName
+                - stackID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useEbsOptimizedInstances:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - shortName
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -705,7 +708,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: ganglialayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -732,79 +736,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   arn:
@@ -884,11 +815,6 @@ spec:
                     type: string
                   password:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
                     type: string
                   systemPackages:
@@ -899,11 +825,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   url:
                     type: string
                   useEbsOptimizedInstances:
@@ -912,43 +837,129 @@ spec:
                     type: string
                 required:
                 - password
-                - providerRef
                 - stackID
                 type: object
-              name:
-                type: string
-              password:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  password:
+                    type: string
+                  stackID:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  url:
+                    type: string
+                  useEbsOptimizedInstances:
+                    type: boolean
+                  username:
+                    type: string
+                required:
+                - password
+                - stackID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              url:
-                type: string
-              useEbsOptimizedInstances:
-                type: boolean
-              username:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - password
             - providerRef
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -995,7 +1006,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: haproxylayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -1022,83 +1034,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              healthcheckMethod:
-                type: string
-              healthcheckURL:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   arn:
@@ -1180,11 +1115,6 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
                     type: string
                   statsEnabled:
@@ -1203,54 +1133,143 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useEbsOptimizedInstances:
                     type: boolean
                 required:
-                - providerRef
                 - stackID
                 - statsPassword
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
-              statsEnabled:
-                type: boolean
-              statsPassword:
-                type: string
-              statsURL:
-                type: string
-              statsUser:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  healthcheckMethod:
+                    type: string
+                  healthcheckURL:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  stackID:
+                    type: string
+                  statsEnabled:
+                    type: boolean
+                  statsPassword:
+                    type: string
+                  statsURL:
+                    type: string
+                  statsUser:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useEbsOptimizedInstances:
+                    type: boolean
+                required:
+                - stackID
+                - statsPassword
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useEbsOptimizedInstances:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - stackID
-            - statsPassword
+            - resource
             type: object
           status:
             properties:
@@ -1297,7 +1316,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instances.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -1324,75 +1344,6 @@ spec:
             type: object
           spec:
             properties:
-              agentVersion:
-                type: string
-              amiID:
-                type: string
-              architecture:
-                type: string
-              autoScalingType:
-                type: string
-              availabilityZone:
-                type: string
-              createdAt:
-                type: string
-              deleteEbs:
-                type: boolean
-              deleteEip:
-                type: boolean
-              ebsBlockDevice:
-                items:
-                  properties:
-                    deleteOnTermination:
-                      type: boolean
-                    deviceName:
-                      type: string
-                    iops:
-                      format: int64
-                      type: integer
-                    snapshotID:
-                      type: string
-                    volumeSize:
-                      format: int64
-                      type: integer
-                    volumeType:
-                      type: string
-                  required:
-                  - deviceName
-                  type: object
-                type: array
-              ebsOptimized:
-                type: boolean
-              ec2InstanceID:
-                type: string
-              ecsClusterArn:
-                type: string
-              elasticIP:
-                type: string
-              ephemeralBlockDevice:
-                items:
-                  properties:
-                    deviceName:
-                      type: string
-                    virtualName:
-                      type: string
-                  required:
-                  - deviceName
-                  - virtualName
-                  type: object
-                type: array
-              hostname:
-                type: string
-              id:
-                type: string
-              infrastructureClass:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceProfileArn:
-                type: string
-              instanceType:
-                type: string
               kubeformOutput:
                 properties:
                   agentVersion:
@@ -1478,11 +1429,6 @@ spec:
                     type: string
                   privateIP:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicDNS:
                     type: string
                   publicIP:
@@ -1536,10 +1482,172 @@ spec:
                     type: string
                   tenancy:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualizationType:
+                    type: string
+                required:
+                - layerIDS
+                - stackID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  agentVersion:
+                    type: string
+                  amiID:
+                    type: string
+                  architecture:
+                    type: string
+                  autoScalingType:
+                    type: string
+                  availabilityZone:
+                    type: string
+                  createdAt:
+                    type: string
+                  deleteEbs:
+                    type: boolean
+                  deleteEip:
+                    type: boolean
+                  ebsBlockDevice:
+                    items:
+                      properties:
+                        deleteOnTermination:
+                          type: boolean
+                        deviceName:
+                          type: string
+                        iops:
+                          format: int64
+                          type: integer
+                        snapshotID:
+                          type: string
+                        volumeSize:
+                          format: int64
+                          type: integer
+                        volumeType:
+                          type: string
+                      required:
+                      - deviceName
+                      type: object
+                    type: array
+                  ebsOptimized:
+                    type: boolean
+                  ec2InstanceID:
+                    type: string
+                  ecsClusterArn:
+                    type: string
+                  elasticIP:
+                    type: string
+                  ephemeralBlockDevice:
+                    items:
+                      properties:
+                        deviceName:
+                          type: string
+                        virtualName:
+                          type: string
+                      required:
+                      - deviceName
+                      - virtualName
+                      type: object
+                    type: array
+                  hostname:
+                    type: string
+                  id:
+                    type: string
+                  infrastructureClass:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceProfileArn:
+                    type: string
+                  instanceType:
+                    type: string
+                  lastServiceErrorID:
+                    type: string
+                  layerIDS:
+                    items:
+                      type: string
+                    type: array
+                  os:
+                    type: string
+                  platform:
+                    type: string
+                  privateDNS:
+                    type: string
+                  privateIP:
+                    type: string
+                  publicDNS:
+                    type: string
+                  publicIP:
+                    type: string
+                  registeredBy:
+                    type: string
+                  reportedAgentVersion:
+                    type: string
+                  reportedOsFamily:
+                    type: string
+                  reportedOsName:
+                    type: string
+                  reportedOsVersion:
+                    type: string
+                  rootBlockDevice:
+                    items:
+                      properties:
+                        deleteOnTermination:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        volumeSize:
+                          format: int64
+                          type: integer
+                        volumeType:
+                          type: string
+                      type: object
+                    type: array
+                  rootDeviceType:
+                    type: string
+                  rootDeviceVolumeID:
+                    type: string
+                  securityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  sshHostDsaKeyFingerprint:
+                    type: string
+                  sshHostRsaKeyFingerprint:
+                    type: string
+                  sshKeyName:
+                    type: string
+                  stackID:
+                    type: string
+                  state:
+                    type: string
+                  status:
+                    type: string
+                  subnetID:
+                    type: string
+                  tenancy:
                     type: string
                   timeouts:
                     properties:
@@ -1563,110 +1671,21 @@ spec:
                     type: string
                 required:
                 - layerIDS
-                - providerRef
                 - stackID
                 type: object
-              lastServiceErrorID:
-                type: string
-              layerIDS:
-                items:
-                  type: string
-                type: array
-              os:
-                type: string
-              platform:
-                type: string
-              privateDNS:
-                type: string
-              privateIP:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              publicDNS:
-                type: string
-              publicIP:
-                type: string
-              registeredBy:
-                type: string
-              reportedAgentVersion:
-                type: string
-              reportedOsFamily:
-                type: string
-              reportedOsName:
-                type: string
-              reportedOsVersion:
-                type: string
-              rootBlockDevice:
-                items:
-                  properties:
-                    deleteOnTermination:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    volumeSize:
-                      format: int64
-                      type: integer
-                    volumeType:
-                      type: string
-                  type: object
-                type: array
-              rootDeviceType:
-                type: string
-              rootDeviceVolumeID:
-                type: string
-              securityGroupIDS:
-                items:
-                  type: string
-                type: array
-              sshHostDsaKeyFingerprint:
-                type: string
-              sshHostRsaKeyFingerprint:
-                type: string
-              sshKeyName:
-                type: string
-              stackID:
-                type: string
-              state:
-                type: string
-              status:
-                type: string
-              subnetID:
-                type: string
-              tenancy:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualizationType:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - layerIDS
             - providerRef
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -1713,7 +1732,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: javaapplayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -1740,89 +1760,6 @@ spec:
             type: object
           spec:
             properties:
-              appServer:
-                type: string
-              appServerVersion:
-                type: string
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
-              jvmOptions:
-                type: string
-              jvmType:
-                type: string
-              jvmVersion:
-                type: string
               kubeformOutput:
                 properties:
                   appServer:
@@ -1910,11 +1847,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
                     type: string
                   systemPackages:
@@ -1925,44 +1857,139 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useEbsOptimizedInstances:
                     type: boolean
                 required:
-                - providerRef
                 - stackID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  appServer:
+                    type: string
+                  appServerVersion:
+                    type: string
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  jvmOptions:
+                    type: string
+                  jvmType:
+                    type: string
+                  jvmVersion:
+                    type: string
+                  name:
+                    type: string
+                  stackID:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useEbsOptimizedInstances:
+                    type: boolean
+                required:
+                - stackID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useEbsOptimizedInstances:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -2009,7 +2036,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: memcachedlayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -2036,82 +2064,6 @@ spec:
             type: object
           spec:
             properties:
-              allocatedMemory:
-                format: int64
-                type: integer
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   allocatedMemory:
@@ -2192,11 +2144,6 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
                     type: string
                   systemPackages:
@@ -2207,44 +2154,132 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useEbsOptimizedInstances:
                     type: boolean
                 required:
-                - providerRef
                 - stackID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  allocatedMemory:
+                    format: int64
+                    type: integer
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  stackID:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useEbsOptimizedInstances:
+                    type: boolean
+                required:
+                - stackID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useEbsOptimizedInstances:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -2291,7 +2326,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: mysqllayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -2318,79 +2354,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   arn:
@@ -2468,11 +2431,6 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rootPassword:
                     type: string
                   rootPasswordOnAllInstances:
@@ -2487,48 +2445,133 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useEbsOptimizedInstances:
                     type: boolean
                 required:
-                - providerRef
                 - stackID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              rootPassword:
-                type: string
-              rootPasswordOnAllInstances:
-                type: boolean
-              stackID:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  rootPassword:
+                    type: string
+                  rootPasswordOnAllInstances:
+                    type: boolean
+                  stackID:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useEbsOptimizedInstances:
+                    type: boolean
+                required:
+                - stackID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useEbsOptimizedInstances:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -2575,7 +2618,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: nodejsapplayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -2602,79 +2646,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   arn:
@@ -2754,11 +2725,6 @@ spec:
                     type: string
                   nodejsVersion:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
                     type: string
                   systemPackages:
@@ -2769,46 +2735,131 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useEbsOptimizedInstances:
                     type: boolean
                 required:
-                - providerRef
                 - stackID
                 type: object
-              name:
-                type: string
-              nodejsVersion:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  nodejsVersion:
+                    type: string
+                  stackID:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useEbsOptimizedInstances:
+                    type: boolean
+                required:
+                - stackID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useEbsOptimizedInstances:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -2855,7 +2906,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: permissions.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -2882,12 +2934,6 @@ spec:
             type: object
           spec:
             properties:
-              allowSSH:
-                type: boolean
-              allowSudo:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   allowSSH:
@@ -2898,43 +2944,48 @@ spec:
                     type: string
                   level:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   userArn:
                     type: string
                 required:
-                - providerRef
                 - userArn
                 type: object
-              level:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
+              resource:
+                properties:
+                  allowSSH:
+                    type: boolean
+                  allowSudo:
+                    type: boolean
+                  id:
+                    type: string
+                  level:
+                    type: string
+                  stackID:
+                    type: string
+                  userArn:
+                    type: string
+                required:
+                - userArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              userArn:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - userArn
+            - resource
             type: object
           status:
             properties:
@@ -2981,7 +3032,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: phpapplayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -3008,79 +3060,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   arn:
@@ -3158,11 +3137,6 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
                     type: string
                   systemPackages:
@@ -3173,44 +3147,129 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useEbsOptimizedInstances:
                     type: boolean
                 required:
-                - providerRef
                 - stackID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  stackID:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useEbsOptimizedInstances:
+                    type: boolean
+                required:
+                - stackID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useEbsOptimizedInstances:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -3257,7 +3316,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: railsapplayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -3284,83 +3344,6 @@ spec:
             type: object
           spec:
             properties:
-              appServer:
-                type: string
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              bundlerVersion:
-                type: string
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   appServer:
@@ -3446,11 +3429,6 @@ spec:
                     type: string
                   passengerVersion:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rubyVersion:
                     type: string
                   rubygemsVersion:
@@ -3465,52 +3443,141 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useEbsOptimizedInstances:
                     type: boolean
                 required:
-                - providerRef
                 - stackID
                 type: object
-              manageBundler:
-                type: boolean
-              name:
-                type: string
-              passengerVersion:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              rubyVersion:
-                type: string
-              rubygemsVersion:
-                type: string
-              stackID:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  appServer:
+                    type: string
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  bundlerVersion:
+                    type: string
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  manageBundler:
+                    type: boolean
+                  name:
+                    type: string
+                  passengerVersion:
+                    type: string
+                  rubyVersion:
+                    type: string
+                  rubygemsVersion:
+                    type: string
+                  stackID:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useEbsOptimizedInstances:
+                    type: boolean
+                required:
+                - stackID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useEbsOptimizedInstances:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -3557,7 +3624,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: rdsdbinstances.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -3584,38 +3652,18 @@ spec:
             type: object
           spec:
             properties:
-              dbUser:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dbUser:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rdsDbInstanceArn:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - dbUser
-                - providerRef
                 - rdsDbInstanceArn
                 - stackID
                 type: object
@@ -3624,25 +3672,39 @@ spec:
                   name:
                     type: string
                 type: object
-              rdsDbInstanceArn:
-                type: string
+              resource:
+                properties:
+                  dbUser:
+                    type: string
+                  id:
+                    type: string
+                  rdsDbInstanceArn:
+                    type: string
+                  stackID:
+                    type: string
+                required:
+                - dbUser
+                - rdsDbInstanceArn
+                - stackID
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - dbUser
             - providerRef
-            - rdsDbInstanceArn
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -3689,7 +3751,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: stacks.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -3716,52 +3779,6 @@ spec:
             type: object
           spec:
             properties:
-              agentVersion:
-                type: string
-              arn:
-                type: string
-              berkshelfVersion:
-                type: string
-              color:
-                type: string
-              configurationManagerName:
-                type: string
-              configurationManagerVersion:
-                type: string
-              customCookbooksSource:
-                items:
-                  properties:
-                    revision:
-                      type: string
-                    type:
-                      type: string
-                    url:
-                      type: string
-                    username:
-                      type: string
-                  required:
-                  - type
-                  - url
-                  type: object
-                type: array
-              customJSON:
-                type: string
-              defaultAvailabilityZone:
-                type: string
-              defaultInstanceProfileArn:
-                type: string
-              defaultOs:
-                type: string
-              defaultRootDeviceType:
-                type: string
-              defaultSSHKeyName:
-                type: string
-              defaultSubnetID:
-                type: string
-              hostnameTheme:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   agentVersion:
@@ -3814,18 +3831,8 @@ spec:
                     type: boolean
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceRoleArn:
                     type: string
                   stackEndpoint:
@@ -3834,11 +3841,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useCustomCookbooks:
                     type: boolean
                   useOpsworksSecurityGroups:
@@ -3848,51 +3854,110 @@ spec:
                 required:
                 - defaultInstanceProfileArn
                 - name
-                - providerRef
                 - region
                 - serviceRoleArn
                 type: object
-              manageBerkshelf:
-                type: boolean
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  agentVersion:
+                    type: string
+                  arn:
+                    type: string
+                  berkshelfVersion:
+                    type: string
+                  color:
+                    type: string
+                  configurationManagerName:
+                    type: string
+                  configurationManagerVersion:
+                    type: string
+                  customCookbooksSource:
+                    items:
+                      properties:
+                        revision:
+                          type: string
+                        type:
+                          type: string
+                        url:
+                          type: string
+                        username:
+                          type: string
+                      required:
+                      - type
+                      - url
+                      type: object
+                    type: array
+                  customJSON:
+                    type: string
+                  defaultAvailabilityZone:
+                    type: string
+                  defaultInstanceProfileArn:
+                    type: string
+                  defaultOs:
+                    type: string
+                  defaultRootDeviceType:
+                    type: string
+                  defaultSSHKeyName:
+                    type: string
+                  defaultSubnetID:
+                    type: string
+                  hostnameTheme:
+                    type: string
+                  id:
+                    type: string
+                  manageBerkshelf:
+                    type: boolean
+                  name:
+                    type: string
+                  region:
+                    type: string
+                  serviceRoleArn:
+                    type: string
+                  stackEndpoint:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useCustomCookbooks:
+                    type: boolean
+                  useOpsworksSecurityGroups:
+                    type: boolean
+                  vpcID:
+                    type: string
+                required:
+                - defaultInstanceProfileArn
+                - name
+                - region
+                - serviceRoleArn
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              serviceRoleArn:
-                type: string
-              stackEndpoint:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useCustomCookbooks:
-                type: boolean
-              useOpsworksSecurityGroups:
-                type: boolean
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - defaultInstanceProfileArn
-            - name
             - providerRef
-            - region
-            - serviceRoleArn
+            - resource
             type: object
           status:
             properties:
@@ -3939,7 +4004,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: staticweblayers.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -3966,79 +4032,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoAssignElasticIPS:
-                type: boolean
-              autoAssignPublicIPS:
-                type: boolean
-              autoHealing:
-                type: boolean
-              customConfigureRecipes:
-                items:
-                  type: string
-                type: array
-              customDeployRecipes:
-                items:
-                  type: string
-                type: array
-              customInstanceProfileArn:
-                type: string
-              customJSON:
-                type: string
-              customSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              customSetupRecipes:
-                items:
-                  type: string
-                type: array
-              customShutdownRecipes:
-                items:
-                  type: string
-                type: array
-              customUndeployRecipes:
-                items:
-                  type: string
-                type: array
-              drainElbOnShutdown:
-                type: boolean
-              ebsVolume:
-                items:
-                  properties:
-                    encrypted:
-                      type: boolean
-                    iops:
-                      format: int64
-                      type: integer
-                    mountPoint:
-                      type: string
-                    numberOfDisks:
-                      format: int64
-                      type: integer
-                    raidLevel:
-                      type: string
-                    size:
-                      format: int64
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - mountPoint
-                  - numberOfDisks
-                  - size
-                  type: object
-                type: array
-              elasticLoadBalancer:
-                type: string
-              id:
-                type: string
-              installUpdatesOnBoot:
-                type: boolean
-              instanceShutdownTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   arn:
@@ -4116,11 +4109,6 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
                     type: string
                   systemPackages:
@@ -4131,44 +4119,129 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   useEbsOptimizedInstances:
                     type: boolean
                 required:
-                - providerRef
                 - stackID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
-              systemPackages:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoAssignElasticIPS:
+                    type: boolean
+                  autoAssignPublicIPS:
+                    type: boolean
+                  autoHealing:
+                    type: boolean
+                  customConfigureRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customDeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customInstanceProfileArn:
+                    type: string
+                  customJSON:
+                    type: string
+                  customSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  customSetupRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customShutdownRecipes:
+                    items:
+                      type: string
+                    type: array
+                  customUndeployRecipes:
+                    items:
+                      type: string
+                    type: array
+                  drainElbOnShutdown:
+                    type: boolean
+                  ebsVolume:
+                    items:
+                      properties:
+                        encrypted:
+                          type: boolean
+                        iops:
+                          format: int64
+                          type: integer
+                        mountPoint:
+                          type: string
+                        numberOfDisks:
+                          format: int64
+                          type: integer
+                        raidLevel:
+                          type: string
+                        size:
+                          format: int64
+                          type: integer
+                        type:
+                          type: string
+                      required:
+                      - mountPoint
+                      - numberOfDisks
+                      - size
+                      type: object
+                    type: array
+                  elasticLoadBalancer:
+                    type: string
+                  id:
+                    type: string
+                  installUpdatesOnBoot:
+                    type: boolean
+                  instanceShutdownTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  stackID:
+                    type: string
+                  systemPackages:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  useEbsOptimizedInstances:
+                    type: boolean
+                required:
+                - stackID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              useEbsOptimizedInstances:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - stackID
+            - resource
             type: object
           status:
             properties:
@@ -4215,7 +4288,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: userprofiles.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -4242,34 +4316,19 @@ spec:
             type: object
           spec:
             properties:
-              allowSelfManagement:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   allowSelfManagement:
                     type: boolean
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sshPublicKey:
                     type: string
                   sshUsername:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   userArn:
                     type: string
                 required:
-                - providerRef
                 - sshUsername
                 - userArn
                 type: object
@@ -4278,21 +4337,35 @@ spec:
                   name:
                     type: string
                 type: object
-              sshPublicKey:
-                type: string
-              sshUsername:
-                type: string
+              resource:
+                properties:
+                  allowSelfManagement:
+                    type: boolean
+                  id:
+                    type: string
+                  sshPublicKey:
+                    type: string
+                  sshUsername:
+                    type: string
+                  userArn:
+                    type: string
+                required:
+                - sshUsername
+                - userArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              userArn:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - sshUsername
-            - userArn
+            - resource
             type: object
           status:
             properties:

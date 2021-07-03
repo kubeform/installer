@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resolverendpoints.route53.aws.kubeform.com
 spec:
   group: route53.aws.kubeform.com
@@ -30,29 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              direction:
-                type: string
-              hostVpcID:
-                type: string
-              id:
-                type: string
-              ipAddress:
-                items:
-                  properties:
-                    ip:
-                      type: string
-                    ipID:
-                      type: string
-                    subnetID:
-                      type: string
-                  required:
-                  - subnetID
-                  type: object
-                maxItems: 10
-                minItems: 2
-                type: array
               kubeformOutput:
                 properties:
                   arn:
@@ -80,11 +58,6 @@ spec:
                     type: array
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroupIDS:
                     items:
                       type: string
@@ -95,11 +68,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -121,54 +93,90 @@ spec:
                 required:
                 - direction
                 - ipAddress
-                - providerRef
                 - securityGroupIDS
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              securityGroupIDS:
-                items:
-                  type: string
-                maxItems: 64
-                minItems: 1
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  direction:
+                    type: string
+                  hostVpcID:
+                    type: string
+                  id:
+                    type: string
+                  ipAddress:
+                    items:
+                      properties:
+                        ip:
+                          type: string
+                        ipID:
+                          type: string
+                        subnetID:
+                          type: string
+                      required:
+                      - subnetID
+                      type: object
+                    maxItems: 10
+                    minItems: 2
+                    type: array
+                  name:
+                    type: string
+                  securityGroupIDS:
+                    items:
+                      type: string
+                    maxItems: 64
+                    minItems: 1
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - direction
+                - ipAddress
+                - securityGroupIDS
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - direction
-            - ipAddress
             - providerRef
-            - securityGroupIDS
+            - resource
             type: object
           status:
             properties:

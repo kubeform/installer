@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: groupmemberships.iam.aws.kubeform.com
 spec:
   group: iam.aws.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              group:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   group:
@@ -42,15 +39,27 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  users:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - group
+                - name
+                - users
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  group:
+                    type: string
+                  id:
+                    type: string
+                  name:
                     type: string
                   users:
                     items:
@@ -59,30 +68,21 @@ spec:
                 required:
                 - group
                 - name
-                - providerRef
                 - users
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              users:
-                items:
-                  type: string
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - group
-            - name
             - providerRef
-            - users
+            - resource
             type: object
           status:
             properties:

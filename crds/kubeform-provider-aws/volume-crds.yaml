@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: attachments.volume.aws.kubeform.com
 spec:
   group: volume.aws.kubeform.com
@@ -188,14 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              deviceName:
-                type: string
-              forceDetach:
-                type: boolean
-              id:
-                type: string
-              instanceID:
-                type: string
               kubeformOutput:
                 properties:
                   deviceName:
@@ -206,24 +199,13 @@ spec:
                     type: string
                   instanceID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   skipDestroy:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   volumeID:
                     type: string
                 required:
                 - deviceName
                 - instanceID
-                - providerRef
                 - volumeID
                 type: object
               providerRef:
@@ -231,20 +213,38 @@ spec:
                   name:
                     type: string
                 type: object
-              skipDestroy:
-                type: boolean
+              resource:
+                properties:
+                  deviceName:
+                    type: string
+                  forceDetach:
+                    type: boolean
+                  id:
+                    type: string
+                  instanceID:
+                    type: string
+                  skipDestroy:
+                    type: boolean
+                  volumeID:
+                    type: string
+                required:
+                - deviceName
+                - instanceID
+                - volumeID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              volumeID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - deviceName
-            - instanceID
             - providerRef
-            - volumeID
+            - resource
             type: object
           status:
             properties:

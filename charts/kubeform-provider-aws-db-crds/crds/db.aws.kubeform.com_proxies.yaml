@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: proxies.db.aws.kubeform.com
 spec:
   group: db.aws.kubeform.com
@@ -30,32 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              auth:
-                items:
-                  properties:
-                    authScheme:
-                      type: string
-                    description:
-                      type: string
-                    iamAuth:
-                      type: string
-                    secretArn:
-                      type: string
-                  type: object
-                type: array
-              debugLogging:
-                type: boolean
-              endpoint:
-                type: string
-              engineFamily:
-                type: string
-              id:
-                type: string
-              idleClientTimeout:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   arn:
@@ -86,12 +61,7 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  requireTLS:
+                  requireTls:
                     type: boolean
                   roleArn:
                     type: string
@@ -99,11 +69,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -134,63 +103,102 @@ spec:
                 - auth
                 - engineFamily
                 - name
-                - providerRef
                 - roleArn
                 - vpcSubnetIDS
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requireTLS:
-                type: boolean
-              roleArn:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  auth:
+                    items:
+                      properties:
+                        authScheme:
+                          type: string
+                        description:
+                          type: string
+                        iamAuth:
+                          type: string
+                        secretArn:
+                          type: string
+                      type: object
+                    type: array
+                  debugLogging:
+                    type: boolean
+                  endpoint:
+                    type: string
+                  engineFamily:
+                    type: string
+                  id:
+                    type: string
+                  idleClientTimeout:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  requireTls:
+                    type: boolean
+                  roleArn:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcSecurityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  vpcSubnetIDS:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - auth
+                - engineFamily
+                - name
+                - roleArn
+                - vpcSubnetIDS
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcSecurityGroupIDS:
-                items:
-                  type: string
-                type: array
-              vpcSubnetIDS:
-                items:
-                  type: string
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - auth
-            - engineFamily
-            - name
             - providerRef
-            - roleArn
-            - vpcSubnetIDS
+            - resource
             type: object
           status:
             properties:

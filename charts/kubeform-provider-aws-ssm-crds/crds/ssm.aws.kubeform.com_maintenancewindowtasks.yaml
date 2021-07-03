@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: maintenancewindowtasks.ssm.aws.kubeform.com
 spec:
   group: ssm.aws.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
@@ -49,16 +46,6 @@ spec:
                   priority:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceRoleArn:
                     type: string
                   targets:
@@ -167,162 +154,170 @@ spec:
                     type: object
                   taskType:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  windowID:
+                    type: string
+                required:
+                - maxConcurrency
+                - maxErrors
+                - taskArn
+                - taskType
+                - windowID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  maxConcurrency:
+                    type: string
+                  maxErrors:
+                    type: string
+                  name:
+                    type: string
+                  priority:
+                    format: int64
+                    type: integer
+                  serviceRoleArn:
+                    type: string
+                  targets:
+                    items:
+                      properties:
+                        key:
+                          type: string
+                        values:
+                          items:
+                            type: string
+                          maxItems: 50
+                          type: array
+                      required:
+                      - key
+                      - values
+                      type: object
+                    maxItems: 5
+                    type: array
+                  taskArn:
+                    type: string
+                  taskInvocationParameters:
+                    properties:
+                      automationParameters:
+                        properties:
+                          documentVersion:
+                            type: string
+                          parameter:
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - name
+                              - values
+                              type: object
+                            type: array
+                        type: object
+                      lambdaParameters:
+                        properties:
+                          clientContext:
+                            type: string
+                          qualifier:
+                            type: string
+                        type: object
+                      runCommandParameters:
+                        properties:
+                          cloudwatchConfig:
+                            properties:
+                              cloudwatchLogGroupName:
+                                type: string
+                              cloudwatchOutputEnabled:
+                                type: boolean
+                            type: object
+                          comment:
+                            type: string
+                          documentHash:
+                            type: string
+                          documentHashType:
+                            type: string
+                          documentVersion:
+                            type: string
+                          notificationConfig:
+                            properties:
+                              notificationArn:
+                                type: string
+                              notificationEvents:
+                                items:
+                                  type: string
+                                type: array
+                              notificationType:
+                                type: string
+                            type: object
+                          outputS3Bucket:
+                            type: string
+                          outputS3KeyPrefix:
+                            type: string
+                          parameter:
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - name
+                              - values
+                              type: object
+                            type: array
+                          serviceRoleArn:
+                            type: string
+                          timeoutSeconds:
+                            format: int64
+                            type: integer
+                        type: object
+                      stepFunctionsParameters:
+                        properties:
+                          name:
+                            type: string
+                        type: object
+                    type: object
+                  taskType:
                     type: string
                   windowID:
                     type: string
                 required:
                 - maxConcurrency
                 - maxErrors
-                - providerRef
                 - taskArn
                 - taskType
                 - windowID
-                type: object
-              maxConcurrency:
-                type: string
-              maxErrors:
-                type: string
-              name:
-                type: string
-              priority:
-                format: int64
-                type: integer
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serviceRoleArn:
-                type: string
-              targets:
-                items:
-                  properties:
-                    key:
-                      type: string
-                    values:
-                      items:
-                        type: string
-                      maxItems: 50
-                      type: array
-                  required:
-                  - key
-                  - values
-                  type: object
-                maxItems: 5
-                type: array
-              taskArn:
-                type: string
-              taskInvocationParameters:
-                properties:
-                  automationParameters:
-                    properties:
-                      documentVersion:
-                        type: string
-                      parameter:
-                        items:
-                          properties:
-                            name:
-                              type: string
-                            values:
-                              items:
-                                type: string
-                              type: array
-                          required:
-                          - name
-                          - values
-                          type: object
-                        type: array
-                    type: object
-                  lambdaParameters:
-                    properties:
-                      clientContext:
-                        type: string
-                      qualifier:
-                        type: string
-                    type: object
-                  runCommandParameters:
-                    properties:
-                      cloudwatchConfig:
-                        properties:
-                          cloudwatchLogGroupName:
-                            type: string
-                          cloudwatchOutputEnabled:
-                            type: boolean
-                        type: object
-                      comment:
-                        type: string
-                      documentHash:
-                        type: string
-                      documentHashType:
-                        type: string
-                      documentVersion:
-                        type: string
-                      notificationConfig:
-                        properties:
-                          notificationArn:
-                            type: string
-                          notificationEvents:
-                            items:
-                              type: string
-                            type: array
-                          notificationType:
-                            type: string
-                        type: object
-                      outputS3Bucket:
-                        type: string
-                      outputS3KeyPrefix:
-                        type: string
-                      parameter:
-                        items:
-                          properties:
-                            name:
-                              type: string
-                            values:
-                              items:
-                                type: string
-                              type: array
-                          required:
-                          - name
-                          - values
-                          type: object
-                        type: array
-                      serviceRoleArn:
-                        type: string
-                      timeoutSeconds:
-                        format: int64
-                        type: integer
-                    type: object
-                  stepFunctionsParameters:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                type: object
-              taskType:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              windowID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - maxConcurrency
-            - maxErrors
             - providerRef
-            - taskArn
-            - taskType
-            - windowID
+            - resource
             type: object
           status:
             properties:

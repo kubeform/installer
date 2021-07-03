@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: lifecyclepolicies.ecr.aws.kubeform.com
 spec:
   group: ecr.aws.kubeform.com
@@ -30,53 +31,52 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registryID:
                     type: string
                   repository:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - policy
-                - providerRef
                 - repository
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              registryID:
-                type: string
-              repository:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  policy:
+                    type: string
+                  registryID:
+                    type: string
+                  repository:
+                    type: string
+                required:
+                - policy
+                - repository
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - policy
             - providerRef
-            - repository
+            - resource
             type: object
           status:
             properties:
@@ -123,7 +123,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: registrypolicies.ecr.aws.kubeform.com
 spec:
   group: ecr.aws.kubeform.com
@@ -150,47 +151,46 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registryID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - policy
-                - providerRef
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              registryID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  policy:
+                    type: string
+                  registryID:
+                    type: string
+                required:
+                - policy
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - policy
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -237,7 +237,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: replicationconfigurations.ecr.aws.kubeform.com
 spec:
   group: ecr.aws.kubeform.com
@@ -264,17 +265,10 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registryID:
                     type: string
                   replicationConfiguration:
@@ -299,50 +293,54 @@ spec:
                     required:
                     - rule
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              registryID:
-                type: string
-              replicationConfiguration:
+              resource:
                 properties:
-                  rule:
+                  id:
+                    type: string
+                  registryID:
+                    type: string
+                  replicationConfiguration:
                     properties:
-                      destination:
-                        items:
-                          properties:
-                            region:
-                              type: string
-                            registryID:
-                              type: string
-                          required:
-                          - region
-                          - registryID
-                          type: object
-                        type: array
+                      rule:
+                        properties:
+                          destination:
+                            items:
+                              properties:
+                                region:
+                                  type: string
+                                registryID:
+                                  type: string
+                              required:
+                              - region
+                              - registryID
+                              type: object
+                            type: array
+                        required:
+                        - destination
+                        type: object
                     required:
-                    - destination
+                    - rule
                     type: object
-                required:
-                - rule
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -389,7 +387,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: repositories.ecr.aws.kubeform.com
 spec:
   group: ecr.aws.kubeform.com
@@ -416,28 +415,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              encryptionConfiguration:
-                items:
-                  properties:
-                    encryptionType:
-                      type: string
-                    kmsKey:
-                      type: string
-                  type: object
-                type: array
-              id:
-                type: string
-              imageScanningConfiguration:
-                properties:
-                  scanOnPush:
-                    type: boolean
-                required:
-                - scanOnPush
-                type: object
-              imageTagMutability:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -464,11 +441,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registryID:
                     type: string
                   repositoryURL:
@@ -477,11 +449,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -502,49 +473,84 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              registryID:
-                type: string
-              repositoryURL:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  encryptionConfiguration:
+                    items:
+                      properties:
+                        encryptionType:
+                          type: string
+                        kmsKey:
+                          type: string
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  imageScanningConfiguration:
+                    properties:
+                      scanOnPush:
+                        type: boolean
+                    required:
+                    - scanOnPush
+                    type: object
+                  imageTagMutability:
+                    type: string
+                  name:
+                    type: string
+                  registryID:
+                    type: string
+                  repositoryURL:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -591,7 +597,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: repositorypolicies.ecr.aws.kubeform.com
 spec:
   group: ecr.aws.kubeform.com
@@ -618,53 +625,52 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registryID:
                     type: string
                   repository:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - policy
-                - providerRef
                 - repository
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              registryID:
-                type: string
-              repository:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  policy:
+                    type: string
+                  registryID:
+                    type: string
+                  repository:
+                    type: string
+                required:
+                - policy
+                - repository
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - policy
             - providerRef
-            - repository
+            - resource
             type: object
           status:
             properties:

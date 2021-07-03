@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: sqsqueues.sqsqueue.aws.kubeform.com
 spec:
   group: sqsqueue.aws.kubeform.com
@@ -30,33 +31,21 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              contentBasedDeduplication:
-                type: boolean
-              delaySeconds:
-                format: int64
-                type: integer
-              fifoQueue:
-                type: boolean
-              id:
-                type: string
-              kmsDataKeyReusePeriodSeconds:
-                format: int64
-                type: integer
-              kmsMasterKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
                     type: string
                   contentBasedDeduplication:
                     type: boolean
+                  deduplicationScope:
+                    type: string
                   delaySeconds:
                     format: int64
                     type: integer
                   fifoQueue:
                     type: boolean
+                  fifoThroughputLimit:
+                    type: string
                   id:
                     type: string
                   kmsDataKeyReusePeriodSeconds:
@@ -76,11 +65,6 @@ spec:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   receiveWaitTimeSeconds:
                     format: int64
                     type: integer
@@ -90,53 +74,87 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  url:
                     type: string
                   visibilityTimeoutSeconds:
                     format: int64
                     type: integer
-                required:
-                - providerRef
                 type: object
-              maxMessageSize:
-                format: int64
-                type: integer
-              messageRetentionSeconds:
-                format: int64
-                type: integer
-              name:
-                type: string
-              namePrefix:
-                type: string
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              receiveWaitTimeSeconds:
-                format: int64
-                type: integer
-              redrivePolicy:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  contentBasedDeduplication:
+                    type: boolean
+                  deduplicationScope:
+                    type: string
+                  delaySeconds:
+                    format: int64
+                    type: integer
+                  fifoQueue:
+                    type: boolean
+                  fifoThroughputLimit:
+                    type: string
+                  id:
+                    type: string
+                  kmsDataKeyReusePeriodSeconds:
+                    format: int64
+                    type: integer
+                  kmsMasterKeyID:
+                    type: string
+                  maxMessageSize:
+                    format: int64
+                    type: integer
+                  messageRetentionSeconds:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  policy:
+                    type: string
+                  receiveWaitTimeSeconds:
+                    format: int64
+                    type: integer
+                  redrivePolicy:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  url:
+                    type: string
+                  visibilityTimeoutSeconds:
+                    format: int64
+                    type: integer
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              visibilityTimeoutSeconds:
-                format: int64
-                type: integer
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

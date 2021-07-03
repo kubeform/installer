@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: organizationcustomrules.config.aws.kubeform.com
 spec:
   group: config.aws.kubeform.com
@@ -30,19 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              excludedAccounts:
-                items:
-                  type: string
-                maxItems: 1000
-                type: array
-              id:
-                type: string
-              inputParameters:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -64,11 +52,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceIDScope:
                     type: string
                   resourceTypesScope:
@@ -79,11 +62,6 @@ spec:
                   tagKeyScope:
                     type: string
                   tagValueScope:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -112,65 +90,87 @@ spec:
                 required:
                 - lambdaFunctionArn
                 - name
-                - providerRef
                 - triggerTypes
                 type: object
-              lambdaFunctionArn:
-                type: string
-              maximumExecutionFrequency:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceIDScope:
-                type: string
-              resourceTypesScope:
-                items:
-                  type: string
-                maxItems: 100
-                type: array
-              tagKeyScope:
-                type: string
-              tagValueScope:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  excludedAccounts:
+                    items:
+                      type: string
+                    maxItems: 1000
+                    type: array
+                  id:
+                    type: string
+                  inputParameters:
+                    type: string
+                  lambdaFunctionArn:
+                    type: string
+                  maximumExecutionFrequency:
+                    type: string
+                  name:
+                    type: string
+                  resourceIDScope:
+                    type: string
+                  resourceTypesScope:
+                    items:
+                      type: string
+                    maxItems: 100
+                    type: array
+                  tagKeyScope:
+                    type: string
+                  tagValueScope:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  triggerTypes:
+                    items:
+                      type: string
+                    maxItems: 3
+                    minItems: 1
+                    type: array
+                required:
+                - lambdaFunctionArn
+                - name
+                - triggerTypes
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              triggerTypes:
-                items:
-                  type: string
-                maxItems: 3
-                minItems: 1
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - lambdaFunctionArn
-            - name
             - providerRef
-            - triggerTypes
+            - resource
             type: object
           status:
             properties:

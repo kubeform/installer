@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: fargateprofiles.eks.aws.kubeform.com
 spec:
   group: eks.aws.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              clusterName:
-                type: string
-              fargateProfileName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -50,11 +43,6 @@ spec:
                     type: string
                   podExecutionRoleArn:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selector:
                     items:
                       properties:
@@ -80,11 +68,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -107,70 +94,91 @@ spec:
                 - clusterName
                 - fargateProfileName
                 - podExecutionRoleArn
-                - providerRef
                 - selector
                 type: object
-              podExecutionRoleArn:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selector:
-                items:
-                  properties:
-                    labels:
-                      additionalProperties:
-                        type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  clusterName:
+                    type: string
+                  fargateProfileName:
+                    type: string
+                  id:
+                    type: string
+                  podExecutionRoleArn:
+                    type: string
+                  selector:
+                    items:
+                      properties:
+                        labels:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        namespace:
+                          type: string
+                      required:
+                      - namespace
                       type: object
-                    namespace:
+                    minItems: 1
+                    type: array
+                  status:
+                    type: string
+                  subnetIDS:
+                    items:
                       type: string
-                  required:
-                  - namespace
-                  type: object
-                minItems: 1
-                type: array
-              status:
-                type: string
-              subnetIDS:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+                    minItems: 1
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - fargateProfileName
+                - podExecutionRoleArn
+                - selector
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - fargateProfileName
-            - podExecutionRoleArn
             - providerRef
-            - selector
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: authorizers.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -30,19 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              authorizerCredentials:
-                type: string
-              authorizerResultTtlInSeconds:
-                format: int64
-                type: integer
-              authorizerURI:
-                type: string
-              id:
-                type: string
-              identitySource:
-                type: string
-              identityValidationExpression:
-                type: string
               kubeformOutput:
                 properties:
                   authorizerCredentials:
@@ -64,49 +52,61 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   type:
                     type: string
                 required:
                 - name
-                - providerRef
                 - restAPIID
                 type: object
-              name:
-                type: string
-              providerArns:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
+              resource:
+                properties:
+                  authorizerCredentials:
+                    type: string
+                  authorizerResultTtlInSeconds:
+                    format: int64
+                    type: integer
+                  authorizerURI:
+                    type: string
+                  id:
+                    type: string
+                  identitySource:
+                    type: string
+                  identityValidationExpression:
+                    type: string
+                  name:
+                    type: string
+                  providerArns:
+                    items:
+                      type: string
+                    type: array
+                  restAPIID:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - name
+                - restAPIID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - restAPIID
+            - resource
             type: object
           status:
             properties:

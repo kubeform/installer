@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: grouprules.security.aws.kubeform.com
 spec:
   group: security.aws.kubeform.com
@@ -30,21 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              cidrBlocks:
-                items:
-                  type: string
-                type: array
-              description:
-                type: string
-              fromPort:
-                format: int64
-                type: integer
-              id:
-                type: string
-              ipv6CIDRBlocks:
-                items:
-                  type: string
-                type: array
               kubeformOutput:
                 properties:
                   cidrBlocks:
@@ -68,21 +54,11 @@ spec:
                     type: array
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroupID:
                     type: string
                   self:
                     type: boolean
                   sourceSecurityGroupID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   toPort:
                     format: int64
@@ -92,45 +68,69 @@ spec:
                 required:
                 - fromPort
                 - protocol
-                - providerRef
                 - securityGroupID
                 - toPort
                 - type
                 type: object
-              prefixListIDS:
-                items:
-                  type: string
-                type: array
-              protocol:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              securityGroupID:
-                type: string
-              self:
-                type: boolean
-              sourceSecurityGroupID:
-                type: string
+              resource:
+                properties:
+                  cidrBlocks:
+                    items:
+                      type: string
+                    type: array
+                  description:
+                    type: string
+                  fromPort:
+                    format: int64
+                    type: integer
+                  id:
+                    type: string
+                  ipv6CIDRBlocks:
+                    items:
+                      type: string
+                    type: array
+                  prefixListIDS:
+                    items:
+                      type: string
+                    type: array
+                  protocol:
+                    type: string
+                  securityGroupID:
+                    type: string
+                  self:
+                    type: boolean
+                  sourceSecurityGroupID:
+                    type: string
+                  toPort:
+                    format: int64
+                    type: integer
+                  type:
+                    type: string
+                required:
+                - fromPort
+                - protocol
+                - securityGroupID
+                - toPort
+                - type
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              toPort:
-                format: int64
-                type: integer
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - fromPort
-            - protocol
             - providerRef
-            - securityGroupID
-            - toPort
-            - type
+            - resource
             type: object
           status:
             properties:

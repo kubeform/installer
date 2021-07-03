@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policyattachments.iam.aws.kubeform.com
 spec:
   group: iam.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              groups:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   groups:
@@ -48,20 +43,10 @@ spec:
                     type: string
                   policyArn:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   roles:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   users:
                     items:
                       type: string
@@ -69,34 +54,49 @@ spec:
                 required:
                 - name
                 - policyArn
-                - providerRef
                 type: object
-              name:
-                type: string
-              policyArn:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              roles:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  groups:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  policyArn:
+                    type: string
+                  roles:
+                    items:
+                      type: string
+                    type: array
+                  users:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - name
+                - policyArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              users:
-                items:
-                  type: string
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
-            - policyArn
             - providerRef
+            - resource
             type: object
           status:
             properties:

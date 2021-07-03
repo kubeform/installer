@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: caches.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -188,12 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              diskID:
-                type: string
-              gatewayArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   diskID:
@@ -202,35 +197,40 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - diskID
                 - gatewayArn
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  diskID:
+                    type: string
+                  gatewayArn:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - diskID
+                - gatewayArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - diskID
-            - gatewayArn
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -277,7 +277,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cachediscsivolumes.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -304,18 +305,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              chapEnabled:
-                type: boolean
-              gatewayArn:
-                type: string
-              id:
-                type: string
-              kmsEncrypted:
-                type: boolean
-              kmsKey:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -338,11 +327,6 @@ spec:
                   networkInterfacePort:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   snapshotID:
                     type: string
                   sourceVolumeArn:
@@ -351,14 +335,13 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   targetArn:
                     type: string
                   targetName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   volumeArn:
                     type: string
@@ -370,53 +353,78 @@ spec:
                 required:
                 - gatewayArn
                 - networkInterfaceID
-                - providerRef
                 - targetName
                 - volumeSizeInBytes
                 type: object
-              lunNumber:
-                format: int64
-                type: integer
-              networkInterfaceID:
-                type: string
-              networkInterfacePort:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              snapshotID:
-                type: string
-              sourceVolumeArn:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  chapEnabled:
+                    type: boolean
+                  gatewayArn:
+                    type: string
+                  id:
+                    type: string
+                  kmsEncrypted:
+                    type: boolean
+                  kmsKey:
+                    type: string
+                  lunNumber:
+                    format: int64
+                    type: integer
+                  networkInterfaceID:
+                    type: string
+                  networkInterfacePort:
+                    format: int64
+                    type: integer
+                  snapshotID:
+                    type: string
+                  sourceVolumeArn:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  targetArn:
+                    type: string
+                  targetName:
+                    type: string
+                  volumeArn:
+                    type: string
+                  volumeID:
+                    type: string
+                  volumeSizeInBytes:
+                    format: int64
+                    type: integer
+                required:
+                - gatewayArn
+                - networkInterfaceID
+                - targetName
+                - volumeSizeInBytes
                 type: object
-              targetArn:
-                type: string
-              targetName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              volumeArn:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              volumeID:
-                type: string
-              volumeSizeInBytes:
-                format: int64
-                type: integer
             required:
-            - gatewayArn
-            - networkInterfaceID
             - providerRef
-            - targetName
-            - volumeSizeInBytes
+            - resource
             type: object
           status:
             properties:
@@ -463,7 +471,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: gateways.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -490,45 +499,6 @@ spec:
             type: object
           spec:
             properties:
-              activationKey:
-                type: string
-              arn:
-                type: string
-              averageDownloadRateLimitInBitsPerSec:
-                format: int64
-                type: integer
-              averageUploadRateLimitInBitsPerSec:
-                format: int64
-                type: integer
-              cloudwatchLogGroupArn:
-                type: string
-              ec2InstanceID:
-                type: string
-              endpointType:
-                type: string
-              gatewayID:
-                type: string
-              gatewayIPAddress:
-                type: string
-              gatewayName:
-                type: string
-              gatewayNetworkInterface:
-                items:
-                  properties:
-                    ipv4Address:
-                      type: string
-                  type: object
-                type: array
-              gatewayTimezone:
-                type: string
-              gatewayType:
-                type: string
-              gatewayVpcEndpoint:
-                type: string
-              hostEnvironment:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   activationKey:
@@ -572,16 +542,6 @@ spec:
                     type: string
                   mediumChangerType:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   smbActiveDirectorySettings:
                     properties:
                       activeDirectoryStatus:
@@ -611,12 +571,11 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   tapeDriveType:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -639,78 +598,130 @@ spec:
                 required:
                 - gatewayName
                 - gatewayTimezone
-                - providerRef
                 type: object
-              mediumChangerType:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  activationKey:
+                    type: string
+                  arn:
+                    type: string
+                  averageDownloadRateLimitInBitsPerSec:
+                    format: int64
+                    type: integer
+                  averageUploadRateLimitInBitsPerSec:
+                    format: int64
+                    type: integer
+                  cloudwatchLogGroupArn:
+                    type: string
+                  ec2InstanceID:
+                    type: string
+                  endpointType:
+                    type: string
+                  gatewayID:
+                    type: string
+                  gatewayIPAddress:
+                    type: string
+                  gatewayName:
+                    type: string
+                  gatewayNetworkInterface:
+                    items:
+                      properties:
+                        ipv4Address:
+                          type: string
+                      type: object
+                    type: array
+                  gatewayTimezone:
+                    type: string
+                  gatewayType:
+                    type: string
+                  gatewayVpcEndpoint:
+                    type: string
+                  hostEnvironment:
+                    type: string
+                  id:
+                    type: string
+                  mediumChangerType:
+                    type: string
+                  smbActiveDirectorySettings:
+                    properties:
+                      activeDirectoryStatus:
+                        type: string
+                      domainControllers:
+                        items:
+                          type: string
+                        type: array
+                      domainName:
+                        type: string
+                      organizationalUnit:
+                        type: string
+                      timeoutInSeconds:
+                        format: int64
+                        type: integer
+                      username:
+                        type: string
+                    required:
+                    - domainName
+                    - username
+                    type: object
+                  smbFileShareVisibility:
+                    type: boolean
+                  smbSecurityStrategy:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tapeDriveType:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - gatewayName
+                - gatewayTimezone
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              smbActiveDirectorySettings:
-                properties:
-                  activeDirectoryStatus:
-                    type: string
-                  domainControllers:
-                    items:
-                      type: string
-                    type: array
-                  domainName:
-                    type: string
-                  organizationalUnit:
-                    type: string
-                  timeoutInSeconds:
-                    format: int64
-                    type: integer
-                  username:
-                    type: string
-                required:
-                - domainName
-                - username
-                type: object
-              smbFileShareVisibility:
-                type: boolean
-              smbSecurityStrategy:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
-              tapeDriveType:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - gatewayName
-            - gatewayTimezone
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -757,7 +768,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: nfsfileshares.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -784,36 +796,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              cacheAttributes:
-                properties:
-                  cacheStaleTimeoutInSeconds:
-                    format: int64
-                    type: integer
-                type: object
-              clientList:
-                items:
-                  type: string
-                maxItems: 100
-                minItems: 1
-                type: array
-              defaultStorageClass:
-                type: string
-              fileShareName:
-                type: string
-              fileshareID:
-                type: string
-              gatewayArn:
-                type: string
-              guessMimeTypeEnabled:
-                type: boolean
-              id:
-                type: string
-              kmsEncrypted:
-                type: boolean
-              kmsKeyArn:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -865,11 +847,6 @@ spec:
                     type: string
                   path:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   readOnly:
                     type: boolean
                   requesterPays:
@@ -882,11 +859,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -909,74 +885,117 @@ spec:
                 - clientList
                 - gatewayArn
                 - locationArn
-                - providerRef
                 - roleArn
                 type: object
-              locationArn:
-                type: string
-              nfsFileShareDefaults:
-                properties:
-                  directoryMode:
-                    type: string
-                  fileMode:
-                    type: string
-                  groupID:
-                    type: string
-                  ownerID:
-                    type: string
-                type: object
-              notificationPolicy:
-                type: string
-              objectACL:
-                type: string
-              path:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              readOnly:
-                type: boolean
-              requesterPays:
-                type: boolean
-              roleArn:
-                type: string
-              squash:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  cacheAttributes:
+                    properties:
+                      cacheStaleTimeoutInSeconds:
+                        format: int64
+                        type: integer
+                    type: object
+                  clientList:
+                    items:
+                      type: string
+                    maxItems: 100
+                    minItems: 1
+                    type: array
+                  defaultStorageClass:
+                    type: string
+                  fileShareName:
+                    type: string
+                  fileshareID:
+                    type: string
+                  gatewayArn:
+                    type: string
+                  guessMimeTypeEnabled:
+                    type: boolean
+                  id:
+                    type: string
+                  kmsEncrypted:
+                    type: boolean
+                  kmsKeyArn:
+                    type: string
+                  locationArn:
+                    type: string
+                  nfsFileShareDefaults:
+                    properties:
+                      directoryMode:
+                        type: string
+                      fileMode:
+                        type: string
+                      groupID:
+                        type: string
+                      ownerID:
+                        type: string
+                    type: object
+                  notificationPolicy:
+                    type: string
+                  objectACL:
+                    type: string
+                  path:
+                    type: string
+                  readOnly:
+                    type: boolean
+                  requesterPays:
+                    type: boolean
+                  roleArn:
+                    type: string
+                  squash:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clientList
+                - gatewayArn
+                - locationArn
+                - roleArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clientList
-            - gatewayArn
-            - locationArn
             - providerRef
-            - roleArn
+            - resource
             type: object
           status:
             properties:
@@ -1023,7 +1042,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: smbfileshares.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -1050,47 +1070,6 @@ spec:
             type: object
           spec:
             properties:
-              accessBasedEnumeration:
-                type: boolean
-              adminUserList:
-                items:
-                  type: string
-                type: array
-              arn:
-                type: string
-              auditDestinationArn:
-                type: string
-              authentication:
-                type: string
-              cacheAttributes:
-                properties:
-                  cacheStaleTimeoutInSeconds:
-                    format: int64
-                    type: integer
-                type: object
-              caseSensitivity:
-                type: string
-              defaultStorageClass:
-                type: string
-              fileShareName:
-                type: string
-              fileshareID:
-                type: string
-              gatewayArn:
-                type: string
-              guessMimeTypeEnabled:
-                type: boolean
-              id:
-                type: string
-              invalidUserList:
-                items:
-                  type: string
-                maxItems: 100
-                type: array
-              kmsEncrypted:
-                type: boolean
-              kmsKeyArn:
-                type: string
               kubeformOutput:
                 properties:
                   accessBasedEnumeration:
@@ -1142,11 +1121,6 @@ spec:
                     type: string
                   path:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   readOnly:
                     type: boolean
                   requesterPays:
@@ -1159,11 +1133,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -1190,67 +1163,121 @@ spec:
                 required:
                 - gatewayArn
                 - locationArn
-                - providerRef
                 - roleArn
                 type: object
-              locationArn:
-                type: string
-              notificationPolicy:
-                type: string
-              objectACL:
-                type: string
-              path:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              readOnly:
-                type: boolean
-              requesterPays:
-                type: boolean
-              roleArn:
-                type: string
-              smbACLEnabled:
-                type: boolean
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  accessBasedEnumeration:
+                    type: boolean
+                  adminUserList:
+                    items:
+                      type: string
+                    type: array
+                  arn:
+                    type: string
+                  auditDestinationArn:
+                    type: string
+                  authentication:
+                    type: string
+                  cacheAttributes:
+                    properties:
+                      cacheStaleTimeoutInSeconds:
+                        format: int64
+                        type: integer
+                    type: object
+                  caseSensitivity:
+                    type: string
+                  defaultStorageClass:
+                    type: string
+                  fileShareName:
+                    type: string
+                  fileshareID:
+                    type: string
+                  gatewayArn:
+                    type: string
+                  guessMimeTypeEnabled:
+                    type: boolean
+                  id:
+                    type: string
+                  invalidUserList:
+                    items:
+                      type: string
+                    maxItems: 100
+                    type: array
+                  kmsEncrypted:
+                    type: boolean
+                  kmsKeyArn:
+                    type: string
+                  locationArn:
+                    type: string
+                  notificationPolicy:
+                    type: string
+                  objectACL:
+                    type: string
+                  path:
+                    type: string
+                  readOnly:
+                    type: boolean
+                  requesterPays:
+                    type: boolean
+                  roleArn:
+                    type: string
+                  smbACLEnabled:
+                    type: boolean
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  validUserList:
+                    items:
+                      type: string
+                    maxItems: 100
+                    type: array
+                required:
+                - gatewayArn
+                - locationArn
+                - roleArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              validUserList:
-                items:
-                  type: string
-                maxItems: 100
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - gatewayArn
-            - locationArn
             - providerRef
-            - roleArn
+            - resource
             type: object
           status:
             properties:
@@ -1297,7 +1324,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: storediscsivolumes.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -1324,20 +1352,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              chapEnabled:
-                type: boolean
-              diskID:
-                type: string
-              gatewayArn:
-                type: string
-              id:
-                type: string
-              kmsEncrypted:
-                type: boolean
-              kmsKey:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1364,25 +1378,19 @@ spec:
                     type: integer
                   preserveExistingData:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   snapshotID:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   targetArn:
                     type: string
                   targetName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   volumeAttachmentStatus:
                     type: string
@@ -1400,57 +1408,84 @@ spec:
                 - gatewayArn
                 - networkInterfaceID
                 - preserveExistingData
-                - providerRef
                 - targetName
                 type: object
-              lunNumber:
-                format: int64
-                type: integer
-              networkInterfaceID:
-                type: string
-              networkInterfacePort:
-                format: int64
-                type: integer
-              preserveExistingData:
-                type: boolean
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              snapshotID:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  chapEnabled:
+                    type: boolean
+                  diskID:
+                    type: string
+                  gatewayArn:
+                    type: string
+                  id:
+                    type: string
+                  kmsEncrypted:
+                    type: boolean
+                  kmsKey:
+                    type: string
+                  lunNumber:
+                    format: int64
+                    type: integer
+                  networkInterfaceID:
+                    type: string
+                  networkInterfacePort:
+                    format: int64
+                    type: integer
+                  preserveExistingData:
+                    type: boolean
+                  snapshotID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  targetArn:
+                    type: string
+                  targetName:
+                    type: string
+                  volumeAttachmentStatus:
+                    type: string
+                  volumeID:
+                    type: string
+                  volumeSizeInBytes:
+                    format: int64
+                    type: integer
+                  volumeStatus:
+                    type: string
+                  volumeType:
+                    type: string
+                required:
+                - diskID
+                - gatewayArn
+                - networkInterfaceID
+                - preserveExistingData
+                - targetName
                 type: object
-              targetArn:
-                type: string
-              targetName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              volumeAttachmentStatus:
-                type: string
-              volumeID:
-                type: string
-              volumeSizeInBytes:
-                format: int64
-                type: integer
-              volumeStatus:
-                type: string
-              volumeType:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - diskID
-            - gatewayArn
-            - networkInterfaceID
-            - preserveExistingData
             - providerRef
-            - targetName
+            - resource
             type: object
           status:
             properties:
@@ -1497,7 +1532,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: tapepools.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -1524,10 +1560,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -1536,11 +1568,6 @@ spec:
                     type: string
                   poolName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   retentionLockTimeInDays:
                     format: int64
                     type: integer
@@ -1552,43 +1579,59 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - poolName
-                - providerRef
                 - storageClass
                 type: object
-              poolName:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              retentionLockTimeInDays:
-                format: int64
-                type: integer
-              retentionLockType:
-                type: string
-              storageClass:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  poolName:
+                    type: string
+                  retentionLockTimeInDays:
+                    format: int64
+                    type: integer
+                  retentionLockType:
+                    type: string
+                  storageClass:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - poolName
+                - storageClass
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - poolName
             - providerRef
-            - storageClass
+            - resource
             type: object
           status:
             properties:
@@ -1635,7 +1678,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: uploadbuffers.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -1662,14 +1706,6 @@ spec:
             type: object
           spec:
             properties:
-              diskID:
-                type: string
-              diskPath:
-                type: string
-              gatewayArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   diskID:
@@ -1680,33 +1716,40 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - gatewayArn
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  diskID:
+                    type: string
+                  diskPath:
+                    type: string
+                  gatewayArn:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - gatewayArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - gatewayArn
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1753,7 +1796,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: workingstorages.storagegateway.aws.kubeform.com
 spec:
   group: storagegateway.aws.kubeform.com
@@ -1780,12 +1824,6 @@ spec:
             type: object
           spec:
             properties:
-              diskID:
-                type: string
-              gatewayArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   diskID:
@@ -1794,35 +1832,40 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - diskID
                 - gatewayArn
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  diskID:
+                    type: string
+                  gatewayArn:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - diskID
+                - gatewayArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - diskID
-            - gatewayArn
             - providerRef
+            - resource
             type: object
           status:
             properties:

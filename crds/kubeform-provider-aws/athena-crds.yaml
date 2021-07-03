@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: databases.athena.aws.kubeform.com
 spec:
   group: athena.aws.kubeform.com
@@ -30,21 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              bucket:
-                type: string
-              encryptionConfiguration:
-                properties:
-                  encryptionOption:
-                    type: string
-                  kmsKey:
-                    type: string
-                required:
-                - encryptionOption
-                type: object
-              forceDestroy:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bucket:
@@ -64,37 +50,51 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - bucket
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  bucket:
+                    type: string
+                  encryptionConfiguration:
+                    properties:
+                      encryptionOption:
+                        type: string
+                      kmsKey:
+                        type: string
+                    required:
+                    - encryptionOption
+                    type: object
+                  forceDestroy:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                required:
+                - bucket
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -141,7 +141,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: namedqueries.athena.aws.kubeform.com
 spec:
   group: athena.aws.kubeform.com
@@ -168,12 +169,6 @@ spec:
             type: object
           spec:
             properties:
-              database:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   database:
@@ -184,47 +179,52 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   query:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   workgroup:
                     type: string
                 required:
                 - database
                 - name
-                - providerRef
                 - query
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              query:
-                type: string
+              resource:
+                properties:
+                  database:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  query:
+                    type: string
+                  workgroup:
+                    type: string
+                required:
+                - database
+                - name
+                - query
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              workgroup:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - database
-            - name
             - providerRef
-            - query
+            - resource
             type: object
           status:
             properties:
@@ -271,7 +271,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: workgroups.athena.aws.kubeform.com
 spec:
   group: athena.aws.kubeform.com
@@ -298,36 +299,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              configuration:
-                properties:
-                  bytesScannedCutoffPerQuery:
-                    format: int64
-                    type: integer
-                  enforceWorkgroupConfiguration:
-                    type: boolean
-                  publishCloudwatchMetricsEnabled:
-                    type: boolean
-                  resultConfiguration:
-                    properties:
-                      encryptionConfiguration:
-                        properties:
-                          encryptionOption:
-                            type: string
-                          kmsKeyArn:
-                            type: string
-                        type: object
-                      outputLocation:
-                        type: string
-                    type: object
-                type: object
-              description:
-                type: string
-              forceDestroy:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -362,47 +333,84 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   state:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              state:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  configuration:
+                    properties:
+                      bytesScannedCutoffPerQuery:
+                        format: int64
+                        type: integer
+                      enforceWorkgroupConfiguration:
+                        type: boolean
+                      publishCloudwatchMetricsEnabled:
+                        type: boolean
+                      resultConfiguration:
+                        properties:
+                          encryptionConfiguration:
+                            properties:
+                              encryptionOption:
+                                type: string
+                              kmsKeyArn:
+                                type: string
+                            type: object
+                          outputLocation:
+                            type: string
+                        type: object
+                    type: object
+                  description:
+                    type: string
+                  forceDestroy:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  state:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

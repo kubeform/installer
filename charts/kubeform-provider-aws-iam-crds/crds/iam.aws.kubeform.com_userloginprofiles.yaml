@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: userloginprofiles.iam.aws.kubeform.com
 spec:
   group: iam.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              encryptedPassword:
-                type: string
-              id:
-                type: string
-              keyFingerprint:
-                type: string
               kubeformOutput:
                 properties:
                   encryptedPassword:
@@ -51,46 +46,51 @@ spec:
                     type: boolean
                   pgpKey:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  user:
+                    type: string
+                required:
+                - pgpKey
+                - user
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  encryptedPassword:
+                    type: string
+                  id:
+                    type: string
+                  keyFingerprint:
+                    type: string
+                  passwordLength:
+                    format: int64
+                    type: integer
+                  passwordResetRequired:
+                    type: boolean
+                  pgpKey:
                     type: string
                   user:
                     type: string
                 required:
                 - pgpKey
-                - providerRef
                 - user
-                type: object
-              passwordLength:
-                format: int64
-                type: integer
-              passwordResetRequired:
-                type: boolean
-              pgpKey:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              user:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - pgpKey
             - providerRef
-            - user
+            - resource
             type: object
           status:
             properties:

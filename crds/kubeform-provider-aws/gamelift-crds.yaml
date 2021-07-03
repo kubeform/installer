@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: aliases.gamelift.aws.kubeform.com
 spec:
   group: gamelift.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -46,11 +41,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   routingStrategy:
                     properties:
                       fleetID:
@@ -66,47 +56,65 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - name
-                - providerRef
                 - routingStrategy
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              routingStrategy:
+              resource:
                 properties:
-                  fleetID:
+                  arn:
                     type: string
-                  message:
+                  description:
                     type: string
-                  type:
+                  id:
                     type: string
+                  name:
+                    type: string
+                  routingStrategy:
+                    properties:
+                      fleetID:
+                        type: string
+                      message:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
-                - type
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - name
+                - routingStrategy
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - routingStrategy
+            - resource
             type: object
           status:
             properties:
@@ -153,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: builds.gamelift.aws.kubeform.com
 spec:
   group: gamelift.aws.kubeform.com
@@ -180,10 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -194,11 +199,6 @@ spec:
                     type: string
                   operatingSystem:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   storageLocation:
                     properties:
                       bucket:
@@ -216,57 +216,73 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   version:
                     type: string
                 required:
                 - name
                 - operatingSystem
-                - providerRef
                 - storageLocation
                 type: object
-              name:
-                type: string
-              operatingSystem:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              storageLocation:
+              resource:
                 properties:
-                  bucket:
+                  arn:
                     type: string
-                  key:
+                  id:
                     type: string
-                  roleArn:
+                  name:
+                    type: string
+                  operatingSystem:
+                    type: string
+                  storageLocation:
+                    properties:
+                      bucket:
+                        type: string
+                      key:
+                        type: string
+                      roleArn:
+                        type: string
+                    required:
+                    - bucket
+                    - key
+                    - roleArn
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  version:
                     type: string
                 required:
-                - bucket
-                - key
-                - roleArn
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - name
+                - operatingSystem
+                - storageLocation
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              version:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
-            - operatingSystem
             - providerRef
-            - storageLocation
+            - resource
             type: object
           status:
             properties:
@@ -313,7 +329,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: fleet.gamelift.aws.kubeform.com
 spec:
   group: gamelift.aws.kubeform.com
@@ -340,41 +357,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              buildID:
-                type: string
-              description:
-                type: string
-              ec2InboundPermission:
-                items:
-                  properties:
-                    fromPort:
-                      format: int64
-                      type: integer
-                    ipRange:
-                      type: string
-                    protocol:
-                      type: string
-                    toPort:
-                      format: int64
-                      type: integer
-                  required:
-                  - fromPort
-                  - ipRange
-                  - protocol
-                  - toPort
-                  type: object
-                maxItems: 50
-                type: array
-              ec2InstanceType:
-                type: string
-              fleetType:
-                type: string
-              id:
-                type: string
-              instanceRoleArn:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -426,11 +408,6 @@ spec:
                     type: string
                   operatingSystem:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceCreationLimitPolicy:
                     properties:
                       newGameSessionsPerCreator:
@@ -469,11 +446,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -496,93 +472,141 @@ spec:
                 - buildID
                 - ec2InstanceType
                 - name
-                - providerRef
                 type: object
-              logPaths:
-                items:
-                  type: string
-                type: array
-              metricGroups:
-                items:
-                  type: string
-                type: array
-              name:
-                type: string
-              newGameSessionProtectionPolicy:
-                type: string
-              operatingSystem:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceCreationLimitPolicy:
+              resource:
                 properties:
-                  newGameSessionsPerCreator:
-                    format: int64
-                    type: integer
-                  policyPeriodInMinutes:
-                    format: int64
-                    type: integer
-                type: object
-              runtimeConfiguration:
-                properties:
-                  gameSessionActivationTimeoutSeconds:
-                    format: int64
-                    type: integer
-                  maxConcurrentGameSessionActivations:
-                    format: int64
-                    type: integer
-                  serverProcess:
+                  arn:
+                    type: string
+                  buildID:
+                    type: string
+                  description:
+                    type: string
+                  ec2InboundPermission:
                     items:
                       properties:
-                        concurrentExecutions:
+                        fromPort:
                           format: int64
                           type: integer
-                        launchPath:
+                        ipRange:
                           type: string
-                        parameters:
+                        protocol:
                           type: string
+                        toPort:
+                          format: int64
+                          type: integer
                       required:
-                      - concurrentExecutions
-                      - launchPath
+                      - fromPort
+                      - ipRange
+                      - protocol
+                      - toPort
                       type: object
                     maxItems: 50
                     type: array
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                  ec2InstanceType:
+                    type: string
+                  fleetType:
+                    type: string
+                  id:
+                    type: string
+                  instanceRoleArn:
+                    type: string
+                  logPaths:
+                    items:
+                      type: string
+                    type: array
+                  metricGroups:
+                    items:
+                      type: string
+                    type: array
+                  name:
+                    type: string
+                  newGameSessionProtectionPolicy:
+                    type: string
+                  operatingSystem:
+                    type: string
+                  resourceCreationLimitPolicy:
+                    properties:
+                      newGameSessionsPerCreator:
+                        format: int64
+                        type: integer
+                      policyPeriodInMinutes:
+                        format: int64
+                        type: integer
+                    type: object
+                  runtimeConfiguration:
+                    properties:
+                      gameSessionActivationTimeoutSeconds:
+                        format: int64
+                        type: integer
+                      maxConcurrentGameSessionActivations:
+                        format: int64
+                        type: integer
+                      serverProcess:
+                        items:
+                          properties:
+                            concurrentExecutions:
+                              format: int64
+                              type: integer
+                            launchPath:
+                              type: string
+                            parameters:
+                              type: string
+                          required:
+                          - concurrentExecutions
+                          - launchPath
+                          type: object
+                        maxItems: 50
+                        type: array
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - buildID
+                - ec2InstanceType
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - buildID
-            - ec2InstanceType
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -629,7 +653,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: gamesessionqueues.gamelift.aws.kubeform.com
 spec:
   group: gamelift.aws.kubeform.com
@@ -656,14 +681,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              destinations:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -689,62 +706,77 @@ spec:
                       - maximumIndividualPlayerLatencyMilliseconds
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeoutInSeconds:
                     format: int64
                     type: integer
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              playerLatencyPolicy:
-                items:
-                  properties:
-                    maximumIndividualPlayerLatencyMilliseconds:
-                      format: int64
-                      type: integer
-                    policyDurationSeconds:
-                      format: int64
-                      type: integer
-                  required:
-                  - maximumIndividualPlayerLatencyMilliseconds
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  destinations:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  playerLatencyPolicy:
+                    items:
+                      properties:
+                        maximumIndividualPlayerLatencyMilliseconds:
+                          format: int64
+                          type: integer
+                        policyDurationSeconds:
+                          format: int64
+                          type: integer
+                      required:
+                      - maximumIndividualPlayerLatencyMilliseconds
+                      type: object
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeoutInSeconds:
+                    format: int64
+                    type: integer
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeoutInSeconds:
-                format: int64
-                type: integer
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

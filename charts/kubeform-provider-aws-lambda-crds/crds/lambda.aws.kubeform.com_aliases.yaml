@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: aliases.lambda.aws.kubeform.com
 spec:
   group: lambda.aws.kubeform.com
@@ -30,18 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              functionName:
-                type: string
-              functionVersion:
-                type: string
-              id:
-                type: string
-              invokeArn:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -58,11 +47,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   routingConfig:
                     properties:
                       additionalVersionWeights:
@@ -71,42 +55,58 @@ spec:
                           type: number
                         type: object
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - functionName
                 - functionVersion
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              routingConfig:
+              resource:
                 properties:
-                  additionalVersionWeights:
-                    additionalProperties:
-                      format: double
-                      type: number
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  functionName:
+                    type: string
+                  functionVersion:
+                    type: string
+                  id:
+                    type: string
+                  invokeArn:
+                    type: string
+                  name:
+                    type: string
+                  routingConfig:
+                    properties:
+                      additionalVersionWeights:
+                        additionalProperties:
+                          format: double
+                          type: number
+                        type: object
                     type: object
+                required:
+                - functionName
+                - functionVersion
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - functionName
-            - functionVersion
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

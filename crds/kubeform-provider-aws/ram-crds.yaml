@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: principalassociations.ram.aws.kubeform.com
 spec:
   group: ram.aws.kubeform.com
@@ -188,49 +189,48 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   principal:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceShareArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - principal
-                - providerRef
                 - resourceShareArn
                 type: object
-              principal:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceShareArn:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  principal:
+                    type: string
+                  resourceShareArn:
+                    type: string
+                required:
+                - principal
+                - resourceShareArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - principal
             - providerRef
-            - resourceShareArn
+            - resource
             type: object
           status:
             properties:
@@ -277,7 +277,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resourceassociations.ram.aws.kubeform.com
 spec:
   group: ram.aws.kubeform.com
@@ -304,28 +305,15 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceArn:
                     type: string
                   resourceShareArn:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - resourceArn
                 - resourceShareArn
                 type: object
@@ -334,19 +322,31 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceArn:
-                type: string
-              resourceShareArn:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  resourceArn:
+                    type: string
+                  resourceShareArn:
+                    type: string
+                required:
+                - resourceArn
+                - resourceShareArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - resourceArn
-            - resourceShareArn
+            - resource
             type: object
           status:
             properties:
@@ -393,7 +393,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resourceshares.ram.aws.kubeform.com
 spec:
   group: ram.aws.kubeform.com
@@ -420,12 +421,6 @@ spec:
             type: object
           spec:
             properties:
-              allowExternalPrincipals:
-                type: boolean
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   allowExternalPrincipals:
@@ -436,20 +431,14 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -470,45 +459,64 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  allowExternalPrincipals:
+                    type: boolean
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -555,7 +563,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resourceshareaccepters.ram.aws.kubeform.com
 spec:
   group: ram.aws.kubeform.com
@@ -582,21 +591,12 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              invitationArn:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   invitationArn:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   receiverAccountID:
                     type: string
                   resources:
@@ -612,11 +612,6 @@ spec:
                   shareName:
                     type: string
                   status:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -637,7 +632,6 @@ spec:
                         type: integer
                     type: object
                 required:
-                - providerRef
                 - shareArn
                 type: object
               providerRef:
@@ -645,48 +639,62 @@ spec:
                   name:
                     type: string
                 type: object
-              receiverAccountID:
-                type: string
-              resources:
-                items:
-                  type: string
-                type: array
-              senderAccountID:
-                type: string
-              shareArn:
-                type: string
-              shareID:
-                type: string
-              shareName:
-                type: string
-              status:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  invitationArn:
+                    type: string
+                  receiverAccountID:
+                    type: string
+                  resources:
+                    items:
+                      type: string
+                    type: array
+                  senderAccountID:
+                    type: string
+                  shareArn:
+                    type: string
+                  shareID:
+                    type: string
+                  shareName:
+                    type: string
+                  status:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - shareArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - shareArn
+            - resource
             type: object
           status:
             properties:

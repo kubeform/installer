@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: notificationrules.codestarnotifications.aws.kubeform.com
 spec:
   group: codestarnotifications.aws.kubeform.com
@@ -30,18 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              detailType:
-                type: string
-              eventTypeIDS:
-                items:
-                  type: string
-                maxItems: 200
-                minItems: 1
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -58,16 +47,15 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resource:
                     type: string
                   status:
                     type: string
                   tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
                     additionalProperties:
                       type: string
                     type: object
@@ -85,56 +73,76 @@ spec:
                       type: object
                     maxItems: 10
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - detailType
                 - eventTypeIDS
                 - name
-                - providerRef
                 - resource
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
               resource:
-                type: string
-              status:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+                properties:
+                  arn:
+                    type: string
+                  detailType:
+                    type: string
+                  eventTypeIDS:
+                    items:
+                      type: string
+                    maxItems: 200
+                    minItems: 1
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resource:
+                    type: string
+                  status:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  target:
+                    items:
+                      properties:
+                        address:
+                          type: string
+                        status:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                      - address
+                      type: object
+                    maxItems: 10
+                    type: array
+                required:
+                - detailType
+                - eventTypeIDS
+                - name
+                - resource
                 type: object
-              target:
-                items:
-                  properties:
-                    address:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - address
-                  type: object
-                maxItems: 10
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - detailType
-            - eventTypeIDS
-            - name
             - providerRef
             - resource
             type: object

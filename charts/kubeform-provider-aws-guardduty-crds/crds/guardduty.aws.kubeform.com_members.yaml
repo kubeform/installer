@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: members.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -30,20 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              detectorID:
-                type: string
-              disableEmailNotification:
-                type: boolean
-              email:
-                type: string
-              id:
-                type: string
-              invitationMessage:
-                type: string
-              invite:
-                type: boolean
               kubeformOutput:
                 properties:
                   accountID:
@@ -60,17 +47,7 @@ spec:
                     type: string
                   invite:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   relationshipStatus:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -94,43 +71,66 @@ spec:
                 - accountID
                 - detectorID
                 - email
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              relationshipStatus:
-                type: string
+              resource:
+                properties:
+                  accountID:
+                    type: string
+                  detectorID:
+                    type: string
+                  disableEmailNotification:
+                    type: boolean
+                  email:
+                    type: string
+                  id:
+                    type: string
+                  invitationMessage:
+                    type: string
+                  invite:
+                    type: boolean
+                  relationshipStatus:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - accountID
+                - detectorID
+                - email
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - accountID
-            - detectorID
-            - email
             - providerRef
+            - resource
             type: object
           status:
             properties:

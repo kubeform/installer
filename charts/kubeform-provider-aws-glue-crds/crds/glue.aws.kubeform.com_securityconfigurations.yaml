@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: securityconfigurations.glue.aws.kubeform.com
 spec:
   group: glue.aws.kubeform.com
@@ -30,36 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              encryptionConfiguration:
-                properties:
-                  cloudwatchEncryption:
-                    properties:
-                      cloudwatchEncryptionMode:
-                        type: string
-                      kmsKeyArn:
-                        type: string
-                    type: object
-                  jobBookmarksEncryption:
-                    properties:
-                      jobBookmarksEncryptionMode:
-                        type: string
-                      kmsKeyArn:
-                        type: string
-                    type: object
-                  s3Encryption:
-                    properties:
-                      kmsKeyArn:
-                        type: string
-                      s3EncryptionMode:
-                        type: string
-                    type: object
-                required:
-                - cloudwatchEncryption
-                - jobBookmarksEncryption
-                - s3Encryption
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   encryptionConfiguration:
@@ -94,37 +65,66 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - encryptionConfiguration
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  encryptionConfiguration:
+                    properties:
+                      cloudwatchEncryption:
+                        properties:
+                          cloudwatchEncryptionMode:
+                            type: string
+                          kmsKeyArn:
+                            type: string
+                        type: object
+                      jobBookmarksEncryption:
+                        properties:
+                          jobBookmarksEncryptionMode:
+                            type: string
+                          kmsKeyArn:
+                            type: string
+                        type: object
+                      s3Encryption:
+                        properties:
+                          kmsKeyArn:
+                            type: string
+                          s3EncryptionMode:
+                            type: string
+                        type: object
+                    required:
+                    - cloudwatchEncryption
+                    - jobBookmarksEncryption
+                    - s3Encryption
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    type: string
+                required:
+                - encryptionConfiguration
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - encryptionConfiguration
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

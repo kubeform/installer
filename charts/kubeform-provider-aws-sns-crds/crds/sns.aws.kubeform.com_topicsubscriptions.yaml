@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: topicsubscriptions.sns.aws.kubeform.com
 spec:
   group: sns.aws.kubeform.com
@@ -30,23 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              confirmationTimeoutInMinutes:
-                format: int64
-                type: integer
-              confirmationWasAuthenticated:
-                type: boolean
-              deliveryPolicy:
-                type: string
-              endpoint:
-                type: string
-              endpointAutoConfirms:
-                type: boolean
-              filterPolicy:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -72,59 +56,75 @@ spec:
                     type: boolean
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rawMessageDelivery:
                     type: boolean
                   redrivePolicy:
                     type: string
                   subscriptionRoleArn:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  topicArn:
+                    type: string
+                required:
+                - endpoint
+                - protocol
+                - topicArn
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  confirmationTimeoutInMinutes:
+                    format: int64
+                    type: integer
+                  confirmationWasAuthenticated:
+                    type: boolean
+                  deliveryPolicy:
+                    type: string
+                  endpoint:
+                    type: string
+                  endpointAutoConfirms:
+                    type: boolean
+                  filterPolicy:
+                    type: string
+                  id:
+                    type: string
+                  ownerID:
+                    type: string
+                  pendingConfirmation:
+                    type: boolean
+                  protocol:
+                    type: string
+                  rawMessageDelivery:
+                    type: boolean
+                  redrivePolicy:
+                    type: string
+                  subscriptionRoleArn:
                     type: string
                   topicArn:
                     type: string
                 required:
                 - endpoint
                 - protocol
-                - providerRef
                 - topicArn
                 type: object
-              ownerID:
-                type: string
-              pendingConfirmation:
-                type: boolean
-              protocol:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rawMessageDelivery:
-                type: boolean
-              redrivePolicy:
-                type: string
-              subscriptionRoleArn:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              topicArn:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - endpoint
-            - protocol
             - providerRef
-            - topicArn
+            - resource
             type: object
           status:
             properties:

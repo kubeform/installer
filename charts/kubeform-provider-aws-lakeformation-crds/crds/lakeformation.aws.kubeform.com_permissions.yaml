@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: permissions.lakeformation.aws.kubeform.com
 spec:
   group: lakeformation.aws.kubeform.com
@@ -30,30 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              catalogID:
-                type: string
-              catalogResource:
-                type: boolean
-              dataLocation:
-                properties:
-                  arn:
-                    type: string
-                  catalogID:
-                    type: string
-                required:
-                - arn
-                type: object
-              database:
-                properties:
-                  catalogID:
-                    type: string
-                  name:
-                    type: string
-                required:
-                - name
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   catalogID:
@@ -91,11 +68,6 @@ spec:
                     type: array
                   principal:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   table:
                     properties:
                       catalogID:
@@ -125,78 +97,110 @@ spec:
                         type: array
                       name:
                         type: string
+                      wildcard:
+                        type: boolean
                     required:
                     - databaseName
                     - name
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - permissions
                 - principal
-                - providerRef
                 type: object
-              permissions:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              permissionsWithGrantOption:
-                items:
-                  type: string
-                type: array
-              principal:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              table:
+              resource:
                 properties:
                   catalogID:
                     type: string
-                  databaseName:
-                    type: string
-                  name:
-                    type: string
-                  wildcard:
+                  catalogResource:
                     type: boolean
-                required:
-                - databaseName
-                type: object
-              tableWithColumns:
-                properties:
-                  catalogID:
+                  dataLocation:
+                    properties:
+                      arn:
+                        type: string
+                      catalogID:
+                        type: string
+                    required:
+                    - arn
+                    type: object
+                  database:
+                    properties:
+                      catalogID:
+                        type: string
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  id:
                     type: string
-                  columnNames:
+                  permissions:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  permissionsWithGrantOption:
                     items:
                       type: string
                     type: array
-                  databaseName:
+                  principal:
                     type: string
-                  excludedColumnNames:
-                    items:
-                      type: string
-                    type: array
-                  name:
-                    type: string
+                  table:
+                    properties:
+                      catalogID:
+                        type: string
+                      databaseName:
+                        type: string
+                      name:
+                        type: string
+                      wildcard:
+                        type: boolean
+                    required:
+                    - databaseName
+                    type: object
+                  tableWithColumns:
+                    properties:
+                      catalogID:
+                        type: string
+                      columnNames:
+                        items:
+                          type: string
+                        type: array
+                      databaseName:
+                        type: string
+                      excludedColumnNames:
+                        items:
+                          type: string
+                        type: array
+                      name:
+                        type: string
+                      wildcard:
+                        type: boolean
+                    required:
+                    - databaseName
+                    - name
+                    type: object
                 required:
-                - databaseName
-                - name
+                - permissions
+                - principal
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - permissions
-            - principal
             - providerRef
+            - resource
             type: object
           status:
             properties:

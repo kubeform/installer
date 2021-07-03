@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: distributions.cloudfront.aws.kubeform.com
 spec:
   group: cloudfront.aws.kubeform.com
@@ -30,144 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              aliases:
-                items:
-                  type: string
-                type: array
-              arn:
-                type: string
-              callerReference:
-                type: string
-              comment:
-                type: string
-              customErrorResponse:
-                items:
-                  properties:
-                    errorCachingMinTtl:
-                      format: int64
-                      type: integer
-                    errorCode:
-                      format: int64
-                      type: integer
-                    responseCode:
-                      format: int64
-                      type: integer
-                    responsePagePath:
-                      type: string
-                  required:
-                  - errorCode
-                  type: object
-                type: array
-              defaultCacheBehavior:
-                properties:
-                  allowedMethods:
-                    items:
-                      type: string
-                    type: array
-                  cachePolicyID:
-                    type: string
-                  cachedMethods:
-                    items:
-                      type: string
-                    type: array
-                  compress:
-                    type: boolean
-                  defaultTtl:
-                    format: int64
-                    type: integer
-                  fieldLevelEncryptionID:
-                    type: string
-                  forwardedValues:
-                    properties:
-                      cookies:
-                        properties:
-                          forward:
-                            type: string
-                          whitelistedNames:
-                            items:
-                              type: string
-                            type: array
-                        required:
-                        - forward
-                        type: object
-                      headers:
-                        items:
-                          type: string
-                        type: array
-                      queryString:
-                        type: boolean
-                      queryStringCacheKeys:
-                        items:
-                          type: string
-                        type: array
-                    required:
-                    - cookies
-                    - queryString
-                    type: object
-                  lambdaFunctionAssociation:
-                    items:
-                      properties:
-                        eventType:
-                          type: string
-                        includeBody:
-                          type: boolean
-                        lambdaArn:
-                          type: string
-                      required:
-                      - eventType
-                      - lambdaArn
-                      type: object
-                    maxItems: 4
-                    type: array
-                  maxTtl:
-                    format: int64
-                    type: integer
-                  minTtl:
-                    format: int64
-                    type: integer
-                  originRequestPolicyID:
-                    type: string
-                  realtimeLogConfigArn:
-                    type: string
-                  smoothStreaming:
-                    type: boolean
-                  targetOriginID:
-                    type: string
-                  trustedKeyGroups:
-                    items:
-                      type: string
-                    type: array
-                  trustedSigners:
-                    items:
-                      type: string
-                    type: array
-                  viewerProtocolPolicy:
-                    type: string
-                required:
-                - allowedMethods
-                - cachedMethods
-                - targetOriginID
-                - viewerProtocolPolicy
-                type: object
-              defaultRootObject:
-                type: string
-              domainName:
-                type: string
-              enabled:
-                type: boolean
-              etag:
-                type: string
-              hostedZoneID:
-                type: string
-              httpVersion:
-                type: string
-              id:
-                type: string
-              inProgressValidationBatches:
-                format: int64
-                type: integer
-              isIpv6Enabled:
-                type: boolean
               kubeformOutput:
                 properties:
                   aliases:
@@ -244,6 +107,19 @@ spec:
                         - cookies
                         - queryString
                         type: object
+                      functionAssociation:
+                        items:
+                          properties:
+                            eventType:
+                              type: string
+                            functionArn:
+                              type: string
+                          required:
+                          - eventType
+                          - functionArn
+                          type: object
+                        maxItems: 2
+                        type: array
                       lambdaFunctionAssociation:
                         items:
                           properties:
@@ -368,6 +244,19 @@ spec:
                           - cookies
                           - queryString
                           type: object
+                        functionAssociation:
+                          items:
+                            properties:
+                              eventType:
+                                type: string
+                              functionArn:
+                                type: string
+                            required:
+                            - eventType
+                            - functionArn
+                            type: object
+                          maxItems: 2
+                          type: array
                         lambdaFunctionAssociation:
                           items:
                             properties:
@@ -420,6 +309,12 @@ spec:
                   origin:
                     items:
                       properties:
+                        connectionAttempts:
+                          format: int64
+                          type: integer
+                        connectionTimeout:
+                          format: int64
+                          type: integer
                         customHeader:
                           items:
                             properties:
@@ -448,7 +343,7 @@ spec:
                             originReadTimeout:
                               format: int64
                               type: integer
-                            originSSLProtocols:
+                            originSslProtocols:
                               items:
                                 type: string
                               type: array
@@ -456,7 +351,7 @@ spec:
                           - httpPort
                           - httpsPort
                           - originProtocolPolicy
-                          - originSSLProtocols
+                          - originSslProtocols
                           type: object
                         domainName:
                           type: string
@@ -464,6 +359,16 @@ spec:
                           type: string
                         originPath:
                           type: string
+                        originShield:
+                          properties:
+                            enabled:
+                              type: boolean
+                            originShieldRegion:
+                              type: string
+                          required:
+                          - enabled
+                          - originShieldRegion
+                          type: object
                         s3OriginConfig:
                           properties:
                             originAccessIdentity:
@@ -510,11 +415,6 @@ spec:
                     type: array
                   priceClass:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restrictions:
                     properties:
                       geoRestriction:
@@ -539,11 +439,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   trustedKeyGroups:
                     items:
                       properties:
@@ -601,306 +500,499 @@ spec:
                 - defaultCacheBehavior
                 - enabled
                 - origin
-                - providerRef
                 - restrictions
                 - viewerCertificate
                 type: object
-              lastModifiedTime:
-                type: string
-              loggingConfig:
-                properties:
-                  bucket:
-                    type: string
-                  includeCookies:
-                    type: boolean
-                  prefix:
-                    type: string
-                required:
-                - bucket
-                type: object
-              orderedCacheBehavior:
-                items:
-                  properties:
-                    allowedMethods:
-                      items:
-                        type: string
-                      type: array
-                    cachePolicyID:
-                      type: string
-                    cachedMethods:
-                      items:
-                        type: string
-                      type: array
-                    compress:
-                      type: boolean
-                    defaultTtl:
-                      format: int64
-                      type: integer
-                    fieldLevelEncryptionID:
-                      type: string
-                    forwardedValues:
-                      properties:
-                        cookies:
-                          properties:
-                            forward:
-                              type: string
-                            whitelistedNames:
-                              items:
-                                type: string
-                              type: array
-                          required:
-                          - forward
-                          type: object
-                        headers:
-                          items:
-                            type: string
-                          type: array
-                        queryString:
-                          type: boolean
-                        queryStringCacheKeys:
-                          items:
-                            type: string
-                          type: array
-                      required:
-                      - cookies
-                      - queryString
-                      type: object
-                    lambdaFunctionAssociation:
-                      items:
-                        properties:
-                          eventType:
-                            type: string
-                          includeBody:
-                            type: boolean
-                          lambdaArn:
-                            type: string
-                        required:
-                        - eventType
-                        - lambdaArn
-                        type: object
-                      maxItems: 4
-                      type: array
-                    maxTtl:
-                      format: int64
-                      type: integer
-                    minTtl:
-                      format: int64
-                      type: integer
-                    originRequestPolicyID:
-                      type: string
-                    pathPattern:
-                      type: string
-                    realtimeLogConfigArn:
-                      type: string
-                    smoothStreaming:
-                      type: boolean
-                    targetOriginID:
-                      type: string
-                    trustedKeyGroups:
-                      items:
-                        type: string
-                      type: array
-                    trustedSigners:
-                      items:
-                        type: string
-                      type: array
-                    viewerProtocolPolicy:
-                      type: string
-                  required:
-                  - allowedMethods
-                  - cachedMethods
-                  - pathPattern
-                  - targetOriginID
-                  - viewerProtocolPolicy
-                  type: object
-                type: array
-              origin:
-                items:
-                  properties:
-                    customHeader:
-                      items:
-                        properties:
-                          name:
-                            type: string
-                          value:
-                            type: string
-                        required:
-                        - name
-                        - value
-                        type: object
-                      type: array
-                    customOriginConfig:
-                      properties:
-                        httpPort:
-                          format: int64
-                          type: integer
-                        httpsPort:
-                          format: int64
-                          type: integer
-                        originKeepaliveTimeout:
-                          format: int64
-                          type: integer
-                        originProtocolPolicy:
-                          type: string
-                        originReadTimeout:
-                          format: int64
-                          type: integer
-                        originSSLProtocols:
-                          items:
-                            type: string
-                          type: array
-                      required:
-                      - httpPort
-                      - httpsPort
-                      - originProtocolPolicy
-                      - originSSLProtocols
-                      type: object
-                    domainName:
-                      type: string
-                    originID:
-                      type: string
-                    originPath:
-                      type: string
-                    s3OriginConfig:
-                      properties:
-                        originAccessIdentity:
-                          type: string
-                      required:
-                      - originAccessIdentity
-                      type: object
-                  required:
-                  - domainName
-                  - originID
-                  type: object
-                type: array
-              originGroup:
-                items:
-                  properties:
-                    failoverCriteria:
-                      properties:
-                        statusCodes:
-                          items:
-                            format: int64
-                            type: integer
-                          type: array
-                      required:
-                      - statusCodes
-                      type: object
-                    member:
-                      items:
-                        properties:
-                          originID:
-                            type: string
-                        required:
-                        - originID
-                        type: object
-                      maxItems: 2
-                      minItems: 2
-                      type: array
-                    originID:
-                      type: string
-                  required:
-                  - failoverCriteria
-                  - member
-                  - originID
-                  type: object
-                type: array
-              priceClass:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restrictions:
+              resource:
                 properties:
-                  geoRestriction:
+                  aliases:
+                    items:
+                      type: string
+                    type: array
+                  arn:
+                    type: string
+                  callerReference:
+                    type: string
+                  comment:
+                    type: string
+                  customErrorResponse:
+                    items:
+                      properties:
+                        errorCachingMinTtl:
+                          format: int64
+                          type: integer
+                        errorCode:
+                          format: int64
+                          type: integer
+                        responseCode:
+                          format: int64
+                          type: integer
+                        responsePagePath:
+                          type: string
+                      required:
+                      - errorCode
+                      type: object
+                    type: array
+                  defaultCacheBehavior:
                     properties:
-                      locations:
+                      allowedMethods:
                         items:
                           type: string
                         type: array
-                      restrictionType:
+                      cachePolicyID:
+                        type: string
+                      cachedMethods:
+                        items:
+                          type: string
+                        type: array
+                      compress:
+                        type: boolean
+                      defaultTtl:
+                        format: int64
+                        type: integer
+                      fieldLevelEncryptionID:
+                        type: string
+                      forwardedValues:
+                        properties:
+                          cookies:
+                            properties:
+                              forward:
+                                type: string
+                              whitelistedNames:
+                                items:
+                                  type: string
+                                type: array
+                            required:
+                            - forward
+                            type: object
+                          headers:
+                            items:
+                              type: string
+                            type: array
+                          queryString:
+                            type: boolean
+                          queryStringCacheKeys:
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - cookies
+                        - queryString
+                        type: object
+                      functionAssociation:
+                        items:
+                          properties:
+                            eventType:
+                              type: string
+                            functionArn:
+                              type: string
+                          required:
+                          - eventType
+                          - functionArn
+                          type: object
+                        maxItems: 2
+                        type: array
+                      lambdaFunctionAssociation:
+                        items:
+                          properties:
+                            eventType:
+                              type: string
+                            includeBody:
+                              type: boolean
+                            lambdaArn:
+                              type: string
+                          required:
+                          - eventType
+                          - lambdaArn
+                          type: object
+                        maxItems: 4
+                        type: array
+                      maxTtl:
+                        format: int64
+                        type: integer
+                      minTtl:
+                        format: int64
+                        type: integer
+                      originRequestPolicyID:
+                        type: string
+                      realtimeLogConfigArn:
+                        type: string
+                      smoothStreaming:
+                        type: boolean
+                      targetOriginID:
+                        type: string
+                      trustedKeyGroups:
+                        items:
+                          type: string
+                        type: array
+                      trustedSigners:
+                        items:
+                          type: string
+                        type: array
+                      viewerProtocolPolicy:
                         type: string
                     required:
-                    - restrictionType
+                    - allowedMethods
+                    - cachedMethods
+                    - targetOriginID
+                    - viewerProtocolPolicy
                     type: object
+                  defaultRootObject:
+                    type: string
+                  domainName:
+                    type: string
+                  enabled:
+                    type: boolean
+                  etag:
+                    type: string
+                  hostedZoneID:
+                    type: string
+                  httpVersion:
+                    type: string
+                  id:
+                    type: string
+                  inProgressValidationBatches:
+                    format: int64
+                    type: integer
+                  isIpv6Enabled:
+                    type: boolean
+                  lastModifiedTime:
+                    type: string
+                  loggingConfig:
+                    properties:
+                      bucket:
+                        type: string
+                      includeCookies:
+                        type: boolean
+                      prefix:
+                        type: string
+                    required:
+                    - bucket
+                    type: object
+                  orderedCacheBehavior:
+                    items:
+                      properties:
+                        allowedMethods:
+                          items:
+                            type: string
+                          type: array
+                        cachePolicyID:
+                          type: string
+                        cachedMethods:
+                          items:
+                            type: string
+                          type: array
+                        compress:
+                          type: boolean
+                        defaultTtl:
+                          format: int64
+                          type: integer
+                        fieldLevelEncryptionID:
+                          type: string
+                        forwardedValues:
+                          properties:
+                            cookies:
+                              properties:
+                                forward:
+                                  type: string
+                                whitelistedNames:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - forward
+                              type: object
+                            headers:
+                              items:
+                                type: string
+                              type: array
+                            queryString:
+                              type: boolean
+                            queryStringCacheKeys:
+                              items:
+                                type: string
+                              type: array
+                          required:
+                          - cookies
+                          - queryString
+                          type: object
+                        functionAssociation:
+                          items:
+                            properties:
+                              eventType:
+                                type: string
+                              functionArn:
+                                type: string
+                            required:
+                            - eventType
+                            - functionArn
+                            type: object
+                          maxItems: 2
+                          type: array
+                        lambdaFunctionAssociation:
+                          items:
+                            properties:
+                              eventType:
+                                type: string
+                              includeBody:
+                                type: boolean
+                              lambdaArn:
+                                type: string
+                            required:
+                            - eventType
+                            - lambdaArn
+                            type: object
+                          maxItems: 4
+                          type: array
+                        maxTtl:
+                          format: int64
+                          type: integer
+                        minTtl:
+                          format: int64
+                          type: integer
+                        originRequestPolicyID:
+                          type: string
+                        pathPattern:
+                          type: string
+                        realtimeLogConfigArn:
+                          type: string
+                        smoothStreaming:
+                          type: boolean
+                        targetOriginID:
+                          type: string
+                        trustedKeyGroups:
+                          items:
+                            type: string
+                          type: array
+                        trustedSigners:
+                          items:
+                            type: string
+                          type: array
+                        viewerProtocolPolicy:
+                          type: string
+                      required:
+                      - allowedMethods
+                      - cachedMethods
+                      - pathPattern
+                      - targetOriginID
+                      - viewerProtocolPolicy
+                      type: object
+                    type: array
+                  origin:
+                    items:
+                      properties:
+                        connectionAttempts:
+                          format: int64
+                          type: integer
+                        connectionTimeout:
+                          format: int64
+                          type: integer
+                        customHeader:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              value:
+                                type: string
+                            required:
+                            - name
+                            - value
+                            type: object
+                          type: array
+                        customOriginConfig:
+                          properties:
+                            httpPort:
+                              format: int64
+                              type: integer
+                            httpsPort:
+                              format: int64
+                              type: integer
+                            originKeepaliveTimeout:
+                              format: int64
+                              type: integer
+                            originProtocolPolicy:
+                              type: string
+                            originReadTimeout:
+                              format: int64
+                              type: integer
+                            originSslProtocols:
+                              items:
+                                type: string
+                              type: array
+                          required:
+                          - httpPort
+                          - httpsPort
+                          - originProtocolPolicy
+                          - originSslProtocols
+                          type: object
+                        domainName:
+                          type: string
+                        originID:
+                          type: string
+                        originPath:
+                          type: string
+                        originShield:
+                          properties:
+                            enabled:
+                              type: boolean
+                            originShieldRegion:
+                              type: string
+                          required:
+                          - enabled
+                          - originShieldRegion
+                          type: object
+                        s3OriginConfig:
+                          properties:
+                            originAccessIdentity:
+                              type: string
+                          required:
+                          - originAccessIdentity
+                          type: object
+                      required:
+                      - domainName
+                      - originID
+                      type: object
+                    type: array
+                  originGroup:
+                    items:
+                      properties:
+                        failoverCriteria:
+                          properties:
+                            statusCodes:
+                              items:
+                                format: int64
+                                type: integer
+                              type: array
+                          required:
+                          - statusCodes
+                          type: object
+                        member:
+                          items:
+                            properties:
+                              originID:
+                                type: string
+                            required:
+                            - originID
+                            type: object
+                          maxItems: 2
+                          minItems: 2
+                          type: array
+                        originID:
+                          type: string
+                      required:
+                      - failoverCriteria
+                      - member
+                      - originID
+                      type: object
+                    type: array
+                  priceClass:
+                    type: string
+                  restrictions:
+                    properties:
+                      geoRestriction:
+                        properties:
+                          locations:
+                            items:
+                              type: string
+                            type: array
+                          restrictionType:
+                            type: string
+                        required:
+                        - restrictionType
+                        type: object
+                    required:
+                    - geoRestriction
+                    type: object
+                  retainOnDelete:
+                    type: boolean
+                  status:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  trustedKeyGroups:
+                    items:
+                      properties:
+                        enabled:
+                          type: boolean
+                        items:
+                          items:
+                            properties:
+                              keyGroupID:
+                                type: string
+                              keyPairIDS:
+                                items:
+                                  type: string
+                                type: array
+                            type: object
+                          type: array
+                      type: object
+                    type: array
+                  trustedSigners:
+                    items:
+                      properties:
+                        enabled:
+                          type: boolean
+                        items:
+                          items:
+                            properties:
+                              awsAccountNumber:
+                                type: string
+                              keyPairIDS:
+                                items:
+                                  type: string
+                                type: array
+                            type: object
+                          type: array
+                      type: object
+                    type: array
+                  viewerCertificate:
+                    properties:
+                      acmCertificateArn:
+                        type: string
+                      cloudfrontDefaultCertificate:
+                        type: boolean
+                      iamCertificateID:
+                        type: string
+                      minimumProtocolVersion:
+                        type: string
+                      sslSupportMethod:
+                        type: string
+                    type: object
+                  waitForDeployment:
+                    type: boolean
+                  webACLID:
+                    type: string
                 required:
-                - geoRestriction
-                type: object
-              retainOnDelete:
-                type: boolean
-              status:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+                - defaultCacheBehavior
+                - enabled
+                - origin
+                - restrictions
+                - viewerCertificate
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              trustedKeyGroups:
-                items:
-                  properties:
-                    enabled:
-                      type: boolean
-                    items:
-                      items:
-                        properties:
-                          keyGroupID:
-                            type: string
-                          keyPairIDS:
-                            items:
-                              type: string
-                            type: array
-                        type: object
-                      type: array
-                  type: object
-                type: array
-              trustedSigners:
-                items:
-                  properties:
-                    enabled:
-                      type: boolean
-                    items:
-                      items:
-                        properties:
-                          awsAccountNumber:
-                            type: string
-                          keyPairIDS:
-                            items:
-                              type: string
-                            type: array
-                        type: object
-                      type: array
-                  type: object
-                type: array
-              viewerCertificate:
-                properties:
-                  acmCertificateArn:
-                    type: string
-                  cloudfrontDefaultCertificate:
-                    type: boolean
-                  iamCertificateID:
-                    type: string
-                  minimumProtocolVersion:
-                    type: string
-                  sslSupportMethod:
-                    type: string
-                type: object
-              waitForDeployment:
-                type: boolean
-              webACLID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - defaultCacheBehavior
-            - enabled
-            - origin
             - providerRef
-            - restrictions
-            - viewerCertificate
+            - resource
             type: object
           status:
             properties:

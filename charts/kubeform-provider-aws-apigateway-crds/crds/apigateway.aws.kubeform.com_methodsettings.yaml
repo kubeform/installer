@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: methodsettings.apigateway.aws.kubeform.com
 spec:
   group: apigateway.aws.kubeform.com
@@ -30,19 +31,12 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   methodPath:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restAPIID:
                     type: string
                   settings:
@@ -73,66 +67,72 @@ spec:
                     type: object
                   stageName:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - methodPath
-                - providerRef
                 - restAPIID
                 - settings
                 - stageName
                 type: object
-              methodPath:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restAPIID:
-                type: string
-              settings:
+              resource:
                 properties:
-                  cacheDataEncrypted:
-                    type: boolean
-                  cacheTtlInSeconds:
-                    format: int64
-                    type: integer
-                  cachingEnabled:
-                    type: boolean
-                  dataTraceEnabled:
-                    type: boolean
-                  loggingLevel:
+                  id:
                     type: string
-                  metricsEnabled:
-                    type: boolean
-                  requireAuthorizationForCacheControl:
-                    type: boolean
-                  throttlingBurstLimit:
-                    format: int64
-                    type: integer
-                  throttlingRateLimit:
-                    format: double
-                    type: number
-                  unauthorizedCacheControlHeaderStrategy:
+                  methodPath:
                     type: string
+                  restAPIID:
+                    type: string
+                  settings:
+                    properties:
+                      cacheDataEncrypted:
+                        type: boolean
+                      cacheTtlInSeconds:
+                        format: int64
+                        type: integer
+                      cachingEnabled:
+                        type: boolean
+                      dataTraceEnabled:
+                        type: boolean
+                      loggingLevel:
+                        type: string
+                      metricsEnabled:
+                        type: boolean
+                      requireAuthorizationForCacheControl:
+                        type: boolean
+                      throttlingBurstLimit:
+                        format: int64
+                        type: integer
+                      throttlingRateLimit:
+                        format: double
+                        type: number
+                      unauthorizedCacheControlHeaderStrategy:
+                        type: string
+                    type: object
+                  stageName:
+                    type: string
+                required:
+                - methodPath
+                - restAPIID
+                - settings
+                - stageName
                 type: object
-              stageName:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - methodPath
             - providerRef
-            - restAPIID
-            - settings
-            - stageName
+            - resource
             type: object
           status:
             properties:

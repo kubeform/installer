@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: aliases.kms.aws.kubeform.com
 spec:
   group: kms.aws.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -44,45 +41,48 @@ spec:
                     type: string
                   namePrefix:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   targetKeyArn:
                     type: string
                   targetKeyID:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
-                - providerRef
                 - targetKeyID
                 type: object
-              name:
-                type: string
-              namePrefix:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              targetKeyArn:
-                type: string
-              targetKeyID:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  targetKeyArn:
+                    type: string
+                  targetKeyID:
+                    type: string
+                required:
+                - targetKeyID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - targetKeyID
+            - resource
             type: object
           status:
             properties:
@@ -129,7 +129,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: ciphertexts.kms.aws.kubeform.com
 spec:
   group: kms.aws.kubeform.com
@@ -156,16 +157,6 @@ spec:
             type: object
           spec:
             properties:
-              ciphertextBlob:
-                type: string
-              context:
-                additionalProperties:
-                  type: string
-                type: object
-              id:
-                type: string
-              keyID:
-                type: string
               kubeformOutput:
                 properties:
                   ciphertextBlob:
@@ -178,29 +169,28 @@ spec:
                     type: string
                   keyID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - keyID
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  ciphertextBlob:
+                    type: string
+                  context:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  id:
+                    type: string
+                  keyID:
+                    type: string
+                required:
+                - keyID
                 type: object
               secretRef:
                 properties:
@@ -212,9 +202,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - keyID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -261,7 +256,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: externalkeys.kms.aws.kubeform.com
 spec:
   group: kms.aws.kubeform.com
@@ -288,23 +284,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              deletionWindowInDays:
-                format: int64
-                type: integer
-              description:
-                type: string
-              enabled:
-                type: boolean
-              expirationModel:
-                type: string
-              id:
-                type: string
-              keyState:
-                type: string
-              keyUsage:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -326,35 +305,52 @@ spec:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   validTo:
                     type: string
-                required:
-                - providerRef
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  deletionWindowInDays:
+                    format: int64
+                    type: integer
+                  description:
+                    type: string
+                  enabled:
+                    type: boolean
+                  expirationModel:
+                    type: string
+                  id:
+                    type: string
+                  keyState:
+                    type: string
+                  keyUsage:
+                    type: string
+                  policy:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  validTo:
                     type: string
                 type: object
               secretRef:
@@ -362,19 +358,19 @@ spec:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              validTo:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -421,7 +417,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: grants.kms.aws.kubeform.com
 spec:
   group: kms.aws.kubeform.com
@@ -448,33 +445,6 @@ spec:
             type: object
           spec:
             properties:
-              constraints:
-                items:
-                  properties:
-                    encryptionContextEquals:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    encryptionContextSubset:
-                      additionalProperties:
-                        type: string
-                      type: object
-                  type: object
-                type: array
-              grantCreationTokens:
-                items:
-                  type: string
-                type: array
-              grantID:
-                type: string
-              grantToken:
-                type: string
-              granteePrincipal:
-                type: string
-              id:
-                type: string
-              keyID:
-                type: string
               kubeformOutput:
                 properties:
                   constraints:
@@ -510,51 +480,77 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   retireOnDelete:
                     type: boolean
                   retiringPrincipal:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - granteePrincipal
                 - keyID
                 - operations
-                - providerRef
                 type: object
-              name:
-                type: string
-              operations:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              retireOnDelete:
-                type: boolean
-              retiringPrincipal:
-                type: string
+              resource:
+                properties:
+                  constraints:
+                    items:
+                      properties:
+                        encryptionContextEquals:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        encryptionContextSubset:
+                          additionalProperties:
+                            type: string
+                          type: object
+                      type: object
+                    type: array
+                  grantCreationTokens:
+                    items:
+                      type: string
+                    type: array
+                  grantID:
+                    type: string
+                  grantToken:
+                    type: string
+                  granteePrincipal:
+                    type: string
+                  id:
+                    type: string
+                  keyID:
+                    type: string
+                  name:
+                    type: string
+                  operations:
+                    items:
+                      type: string
+                    type: array
+                  retireOnDelete:
+                    type: boolean
+                  retiringPrincipal:
+                    type: string
+                required:
+                - granteePrincipal
+                - keyID
+                - operations
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - granteePrincipal
-            - keyID
-            - operations
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -601,7 +597,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: keys.kms.aws.kubeform.com
 spec:
   group: kms.aws.kubeform.com
@@ -628,25 +625,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              customerMasterKeySpec:
-                type: string
-              deletionWindowInDays:
-                format: int64
-                type: integer
-              description:
-                type: string
-              enableKeyRotation:
-                type: boolean
-              id:
-                type: string
-              isEnabled:
-                type: boolean
-              keyID:
-                type: string
-              keyUsage:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -670,41 +648,65 @@ spec:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  customerMasterKeySpec:
+                    type: string
+                  deletionWindowInDays:
+                    format: int64
+                    type: integer
+                  description:
+                    type: string
+                  enableKeyRotation:
+                    type: boolean
+                  id:
+                    type: string
+                  isEnabled:
+                    type: boolean
+                  keyID:
+                    type: string
+                  keyUsage:
+                    type: string
+                  policy:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

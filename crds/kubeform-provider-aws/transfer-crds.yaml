@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: servers.transfer.aws.kubeform.com
 spec:
   group: transfer.aws.kubeform.com
@@ -188,40 +189,13 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              endpoint:
-                type: string
-              endpointDetails:
-                properties:
-                  addressAllocationIDS:
-                    items:
-                      type: string
-                    type: array
-                  subnetIDS:
-                    items:
-                      type: string
-                    type: array
-                  vpcEndpointID:
-                    type: string
-                  vpcID:
-                    type: string
-                type: object
-              endpointType:
-                type: string
-              forceDestroy:
-                type: boolean
-              hostKeyFingerprint:
-                type: string
-              id:
-                type: string
-              identityProviderType:
-                type: string
-              invocationRole:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
+                    type: string
+                  certificate:
+                    type: string
+                  domain:
                     type: string
                   endpoint:
                     type: string
@@ -254,35 +228,86 @@ spec:
                     type: string
                   loggingRole:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
+                  protocols:
+                    items:
+                      type: string
+                    maxItems: 3
+                    minItems: 1
+                    type: array
+                  securityPolicyName:
+                    type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   url:
                     type: string
-                required:
-                - providerRef
                 type: object
-              loggingRole:
-                type: string
               providerRef:
                 properties:
                   name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  certificate:
+                    type: string
+                  domain:
+                    type: string
+                  endpoint:
+                    type: string
+                  endpointDetails:
+                    properties:
+                      addressAllocationIDS:
+                        items:
+                          type: string
+                        type: array
+                      subnetIDS:
+                        items:
+                          type: string
+                        type: array
+                      vpcEndpointID:
+                        type: string
+                      vpcID:
+                        type: string
+                    type: object
+                  endpointType:
+                    type: string
+                  forceDestroy:
+                    type: boolean
+                  hostKeyFingerprint:
+                    type: string
+                  id:
+                    type: string
+                  identityProviderType:
+                    type: string
+                  invocationRole:
+                    type: string
+                  loggingRole:
+                    type: string
+                  protocols:
+                    items:
+                      type: string
+                    maxItems: 3
+                    minItems: 1
+                    type: array
+                  securityPolicyName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  url:
                     type: string
                 type: object
               secretRef:
@@ -290,19 +315,19 @@ spec:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              url:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -349,7 +374,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: sshkeys.transfer.aws.kubeform.com
 spec:
   group: transfer.aws.kubeform.com
@@ -376,33 +402,18 @@ spec:
             type: object
           spec:
             properties:
-              body:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   body:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serverID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   userName:
                     type: string
                 required:
                 - body
-                - providerRef
                 - serverID
                 - userName
                 type: object
@@ -411,20 +422,34 @@ spec:
                   name:
                     type: string
                 type: object
-              serverID:
-                type: string
+              resource:
+                properties:
+                  body:
+                    type: string
+                  id:
+                    type: string
+                  serverID:
+                    type: string
+                  userName:
+                    type: string
+                required:
+                - body
+                - serverID
+                - userName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              userName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - body
             - providerRef
-            - serverID
-            - userName
+            - resource
             type: object
           status:
             properties:
@@ -471,7 +496,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: users.transfer.aws.kubeform.com
 spec:
   group: transfer.aws.kubeform.com
@@ -498,26 +524,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              homeDirectory:
-                type: string
-              homeDirectoryMappings:
-                items:
-                  properties:
-                    entry:
-                      type: string
-                    target:
-                      type: string
-                  required:
-                  - entry
-                  - target
-                  type: object
-                type: array
-              homeDirectoryType:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -542,10 +548,22 @@ spec:
                     type: string
                   policy:
                     type: string
-                  providerRef:
+                  posixProfile:
                     properties:
-                      name:
-                        type: string
+                      gid:
+                        format: int64
+                        type: integer
+                      secondaryGids:
+                        items:
+                          format: int64
+                          type: integer
+                        type: array
+                      uid:
+                        format: int64
+                        type: integer
+                    required:
+                    - gid
+                    - uid
                     type: object
                   role:
                     type: string
@@ -555,46 +573,95 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   userName:
                     type: string
                 required:
-                - providerRef
                 - role
                 - serverID
                 - userName
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
-              serverID:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  homeDirectory:
+                    type: string
+                  homeDirectoryMappings:
+                    items:
+                      properties:
+                        entry:
+                          type: string
+                        target:
+                          type: string
+                      required:
+                      - entry
+                      - target
+                      type: object
+                    type: array
+                  homeDirectoryType:
+                    type: string
+                  id:
+                    type: string
+                  policy:
+                    type: string
+                  posixProfile:
+                    properties:
+                      gid:
+                        format: int64
+                        type: integer
+                      secondaryGids:
+                        items:
+                          format: int64
+                          type: integer
+                        type: array
+                      uid:
+                        format: int64
+                        type: integer
+                    required:
+                    - gid
+                    - uid
+                    type: object
+                  role:
+                    type: string
+                  serverID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  userName:
+                    type: string
+                required:
+                - role
+                - serverID
+                - userName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              userName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - role
-            - serverID
-            - userName
+            - resource
             type: object
           status:
             properties:

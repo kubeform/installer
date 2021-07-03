@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: models.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -30,40 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              container:
-                items:
-                  properties:
-                    containerHostname:
-                      type: string
-                    environment:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    image:
-                      type: string
-                    imageConfig:
-                      properties:
-                        repositoryAccessMode:
-                          type: string
-                      required:
-                      - repositoryAccessMode
-                      type: object
-                    mode:
-                      type: string
-                    modelDataURL:
-                      type: string
-                  required:
-                  - image
-                  type: object
-                type: array
-              enableNetworkIsolation:
-                type: boolean
-              executionRoleArn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -126,20 +93,14 @@ spec:
                     required:
                     - image
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   vpcConfig:
                     properties:
                       securityGroupIDS:
@@ -156,65 +117,112 @@ spec:
                     type: object
                 required:
                 - executionRoleArn
-                - providerRef
-                type: object
-              name:
-                type: string
-              primaryContainer:
-                properties:
-                  containerHostname:
-                    type: string
-                  environment:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  image:
-                    type: string
-                  imageConfig:
-                    properties:
-                      repositoryAccessMode:
-                        type: string
-                    required:
-                    - repositoryAccessMode
-                    type: object
-                  mode:
-                    type: string
-                  modelDataURL:
-                    type: string
-                required:
-                - image
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  container:
+                    items:
+                      properties:
+                        containerHostname:
+                          type: string
+                        environment:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        image:
+                          type: string
+                        imageConfig:
+                          properties:
+                            repositoryAccessMode:
+                              type: string
+                          required:
+                          - repositoryAccessMode
+                          type: object
+                        mode:
+                          type: string
+                        modelDataURL:
+                          type: string
+                      required:
+                      - image
+                      type: object
+                    type: array
+                  enableNetworkIsolation:
+                    type: boolean
+                  executionRoleArn:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  primaryContainer:
+                    properties:
+                      containerHostname:
+                        type: string
+                      environment:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      image:
+                        type: string
+                      imageConfig:
+                        properties:
+                          repositoryAccessMode:
+                            type: string
+                        required:
+                        - repositoryAccessMode
+                        type: object
+                      mode:
+                        type: string
+                      modelDataURL:
+                        type: string
+                    required:
+                    - image
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  vpcConfig:
+                    properties:
+                      securityGroupIDS:
+                        items:
+                          type: string
+                        type: array
+                      subnets:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - securityGroupIDS
+                    - subnets
+                    type: object
+                required:
+                - executionRoleArn
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcConfig:
-                properties:
-                  securityGroupIDS:
-                    items:
-                      type: string
-                    type: array
-                  subnets:
-                    items:
-                      type: string
-                    type: array
-                required:
-                - securityGroupIDS
-                - subnets
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - executionRoleArn
             - providerRef
+            - resource
             type: object
           status:
             properties:

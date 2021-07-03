@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: firewallpolicies.networkfirewall.aws.kubeform.com
 spec:
   group: networkfirewall.aws.kubeform.com
@@ -30,77 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              description:
-                type: string
-              firewallPolicy:
-                properties:
-                  statefulRuleGroupReference:
-                    items:
-                      properties:
-                        resourceArn:
-                          type: string
-                      required:
-                      - resourceArn
-                      type: object
-                    type: array
-                  statelessCustomAction:
-                    items:
-                      properties:
-                        actionDefinition:
-                          properties:
-                            publishMetricAction:
-                              properties:
-                                dimension:
-                                  items:
-                                    properties:
-                                      value:
-                                        type: string
-                                    required:
-                                    - value
-                                    type: object
-                                  type: array
-                              required:
-                              - dimension
-                              type: object
-                          required:
-                          - publishMetricAction
-                          type: object
-                        actionName:
-                          type: string
-                      required:
-                      - actionDefinition
-                      - actionName
-                      type: object
-                    type: array
-                  statelessDefaultActions:
-                    items:
-                      type: string
-                    type: array
-                  statelessFragmentDefaultActions:
-                    items:
-                      type: string
-                    type: array
-                  statelessRuleGroupReference:
-                    items:
-                      properties:
-                        priority:
-                          format: int64
-                          type: integer
-                        resourceArn:
-                          type: string
-                      required:
-                      - priority
-                      - resourceArn
-                      type: object
-                    type: array
-                required:
-                - statelessDefaultActions
-                - statelessFragmentDefaultActions
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -176,49 +106,127 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   updateToken:
                     type: string
                 required:
                 - firewallPolicy
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  firewallPolicy:
+                    properties:
+                      statefulRuleGroupReference:
+                        items:
+                          properties:
+                            resourceArn:
+                              type: string
+                          required:
+                          - resourceArn
+                          type: object
+                        type: array
+                      statelessCustomAction:
+                        items:
+                          properties:
+                            actionDefinition:
+                              properties:
+                                publishMetricAction:
+                                  properties:
+                                    dimension:
+                                      items:
+                                        properties:
+                                          value:
+                                            type: string
+                                        required:
+                                        - value
+                                        type: object
+                                      type: array
+                                  required:
+                                  - dimension
+                                  type: object
+                              required:
+                              - publishMetricAction
+                              type: object
+                            actionName:
+                              type: string
+                          required:
+                          - actionDefinition
+                          - actionName
+                          type: object
+                        type: array
+                      statelessDefaultActions:
+                        items:
+                          type: string
+                        type: array
+                      statelessFragmentDefaultActions:
+                        items:
+                          type: string
+                        type: array
+                      statelessRuleGroupReference:
+                        items:
+                          properties:
+                            priority:
+                              format: int64
+                              type: integer
+                            resourceArn:
+                              type: string
+                          required:
+                          - priority
+                          - resourceArn
+                          type: object
+                        type: array
+                    required:
+                    - statelessDefaultActions
+                    - statelessFragmentDefaultActions
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  updateToken:
+                    type: string
+                required:
+                - firewallPolicy
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              updateToken:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - firewallPolicy
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

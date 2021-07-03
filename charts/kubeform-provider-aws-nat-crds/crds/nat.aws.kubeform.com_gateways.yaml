@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: gateways.nat.aws.kubeform.com
 spec:
   group: nat.aws.kubeform.com
@@ -30,13 +31,11 @@ spec:
             type: object
           spec:
             properties:
-              allocationID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   allocationID:
+                    type: string
+                  connectivityType:
                     type: string
                   id:
                     type: string
@@ -44,11 +43,6 @@ spec:
                     type: string
                   privateIP:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicIP:
                     type: string
                   subnetID:
@@ -57,42 +51,58 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
-                - allocationID
-                - providerRef
                 - subnetID
                 type: object
-              networkInterfaceID:
-                type: string
-              privateIP:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicIP:
-                type: string
-              subnetID:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  allocationID:
+                    type: string
+                  connectivityType:
+                    type: string
+                  id:
+                    type: string
+                  networkInterfaceID:
+                    type: string
+                  privateIP:
+                    type: string
+                  publicIP:
+                    type: string
+                  subnetID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - subnetID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - allocationID
             - providerRef
-            - subnetID
+            - resource
             type: object
           status:
             properties:

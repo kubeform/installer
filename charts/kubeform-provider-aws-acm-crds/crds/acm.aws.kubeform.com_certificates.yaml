@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: certificates.acm.aws.kubeform.com
 spec:
   group: acm.aws.kubeform.com
@@ -30,31 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              certificateAuthorityArn:
-                type: string
-              certificateBody:
-                type: string
-              certificateChain:
-                type: string
-              domainName:
-                type: string
-              domainValidationOptions:
-                items:
-                  properties:
-                    domainName:
-                      type: string
-                    resourceRecordName:
-                      type: string
-                    resourceRecordType:
-                      type: string
-                    resourceRecordValue:
-                      type: string
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -87,14 +63,62 @@ spec:
                       certificateTransparencyLoggingPreference:
                         type: string
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
+                  status:
+                    type: string
+                  subjectAlternativeNames:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
                     type: object
-                  secretRef:
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  validationEmails:
+                    items:
+                      type: string
+                    type: array
+                  validationMethod:
+                    type: string
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  certificateAuthorityArn:
+                    type: string
+                  certificateBody:
+                    type: string
+                  certificateChain:
+                    type: string
+                  domainName:
+                    type: string
+                  domainValidationOptions:
+                    items:
+                      properties:
+                        domainName:
+                          type: string
+                        resourceRecordName:
+                          type: string
+                        resourceRecordType:
+                          type: string
+                        resourceRecordValue:
+                          type: string
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  options:
                     properties:
-                      name:
+                      certificateTransparencyLoggingPreference:
                         type: string
                     type: object
                   status:
@@ -107,28 +131,15 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   validationEmails:
                     items:
                       type: string
                     type: array
                   validationMethod:
-                    type: string
-                required:
-                - providerRef
-                type: object
-              options:
-                properties:
-                  certificateTransparencyLoggingPreference:
-                    type: string
-                type: object
-              providerRef:
-                properties:
-                  name:
                     type: string
                 type: object
               secretRef:
@@ -136,29 +147,19 @@ spec:
                   name:
                     type: string
                 type: object
-              status:
-                type: string
-              subjectAlternativeNames:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              validationEmails:
-                items:
-                  type: string
-                type: array
-              validationMethod:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

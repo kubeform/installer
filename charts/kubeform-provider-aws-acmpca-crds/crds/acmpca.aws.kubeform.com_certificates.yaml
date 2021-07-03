@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: certificates.acmpca.aws.kubeform.com
 spec:
   group: acmpca.aws.kubeform.com
@@ -30,18 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              certificate:
-                type: string
-              certificateAuthorityArn:
-                type: string
-              certificateChain:
-                type: string
-              certificateSigningRequest:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -56,19 +45,9 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   signingAlgorithm:
                     type: string
                   templateArn:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   validity:
                     properties:
@@ -83,7 +62,6 @@ spec:
                 required:
                 - certificateAuthorityArn
                 - certificateSigningRequest
-                - providerRef
                 - signingAlgorithm
                 - validity
                 type: object
@@ -92,31 +70,53 @@ spec:
                   name:
                     type: string
                 type: object
-              signingAlgorithm:
-                type: string
-              templateArn:
-                type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  certificate:
+                    type: string
+                  certificateAuthorityArn:
+                    type: string
+                  certificateChain:
+                    type: string
+                  certificateSigningRequest:
+                    type: string
+                  id:
+                    type: string
+                  signingAlgorithm:
+                    type: string
+                  templateArn:
+                    type: string
+                  validity:
+                    properties:
+                      type:
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - type
+                    - value
+                    type: object
+                required:
+                - certificateAuthorityArn
+                - certificateSigningRequest
+                - signingAlgorithm
+                - validity
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              validity:
-                properties:
-                  type:
-                    type: string
-                  value:
-                    type: string
-                required:
-                - type
-                - value
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - certificateAuthorityArn
-            - certificateSigningRequest
             - providerRef
-            - signingAlgorithm
-            - validity
+            - resource
             type: object
           status:
             properties:

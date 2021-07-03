@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: detectors.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              arn:
-                type: string
-              enable:
-                type: boolean
-              findingPublishingFrequency:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accountID:
@@ -52,39 +43,54 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  accountID:
+                    type: string
+                  arn:
+                    type: string
+                  enable:
+                    type: boolean
+                  findingPublishingFrequency:
+                    type: string
+                  id:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -131,7 +137,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: filters.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -158,49 +165,6 @@ spec:
             type: object
           spec:
             properties:
-              action:
-                type: string
-              arn:
-                type: string
-              description:
-                type: string
-              detectorID:
-                type: string
-              findingCriteria:
-                properties:
-                  criterion:
-                    items:
-                      properties:
-                        equals:
-                          items:
-                            type: string
-                          minItems: 1
-                          type: array
-                        field:
-                          type: string
-                        greaterThan:
-                          type: string
-                        greaterThanOrEqual:
-                          type: string
-                        lessThan:
-                          type: string
-                        lessThanOrEqual:
-                          type: string
-                        notEquals:
-                          items:
-                            type: string
-                          minItems: 1
-                          type: array
-                      required:
-                      - field
-                      type: object
-                    minItems: 1
-                    type: array
-                required:
-                - criterion
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   action:
@@ -248,11 +212,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rank:
                     format: int64
                     type: integer
@@ -260,45 +219,100 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - action
                 - detectorID
                 - findingCriteria
                 - name
-                - providerRef
                 - rank
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              rank:
-                format: int64
-                type: integer
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  action:
+                    type: string
+                  arn:
+                    type: string
+                  description:
+                    type: string
+                  detectorID:
+                    type: string
+                  findingCriteria:
+                    properties:
+                      criterion:
+                        items:
+                          properties:
+                            equals:
+                              items:
+                                type: string
+                              minItems: 1
+                              type: array
+                            field:
+                              type: string
+                            greaterThan:
+                              type: string
+                            greaterThanOrEqual:
+                              type: string
+                            lessThan:
+                              type: string
+                            lessThanOrEqual:
+                              type: string
+                            notEquals:
+                              items:
+                                type: string
+                              minItems: 1
+                              type: array
+                          required:
+                          - field
+                          type: object
+                        minItems: 1
+                        type: array
+                    required:
+                    - criterion
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  rank:
+                    format: int64
+                    type: integer
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - action
+                - detectorID
+                - findingCriteria
+                - name
+                - rank
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - action
-            - detectorID
-            - findingCriteria
-            - name
             - providerRef
-            - rank
+            - resource
             type: object
           status:
             properties:
@@ -345,7 +359,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: inviteaccepters.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -372,10 +387,6 @@ spec:
             type: object
           spec:
             properties:
-              detectorID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   detectorID:
@@ -383,16 +394,6 @@ spec:
                   id:
                     type: string
                   masterAccountID:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -415,42 +416,55 @@ spec:
                 required:
                 - detectorID
                 - masterAccountID
-                - providerRef
                 type: object
-              masterAccountID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  detectorID:
+                    type: string
+                  id:
+                    type: string
+                  masterAccountID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - detectorID
+                - masterAccountID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - detectorID
-            - masterAccountID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -497,7 +511,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: ipsets.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -524,16 +539,6 @@ spec:
             type: object
           spec:
             properties:
-              activate:
-                type: boolean
-              arn:
-                type: string
-              detectorID:
-                type: string
-              format:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   activate:
@@ -550,53 +555,70 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - activate
                 - detectorID
                 - format
                 - location
                 - name
-                - providerRef
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  activate:
+                    type: boolean
+                  arn:
+                    type: string
+                  detectorID:
+                    type: string
+                  format:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - activate
+                - detectorID
+                - format
+                - location
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - activate
-            - detectorID
-            - format
-            - location
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -643,7 +665,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: members.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -670,20 +693,6 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              detectorID:
-                type: string
-              disableEmailNotification:
-                type: boolean
-              email:
-                type: string
-              id:
-                type: string
-              invitationMessage:
-                type: string
-              invite:
-                type: boolean
               kubeformOutput:
                 properties:
                   accountID:
@@ -700,17 +709,7 @@ spec:
                     type: string
                   invite:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   relationshipStatus:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -734,43 +733,66 @@ spec:
                 - accountID
                 - detectorID
                 - email
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              relationshipStatus:
-                type: string
+              resource:
+                properties:
+                  accountID:
+                    type: string
+                  detectorID:
+                    type: string
+                  disableEmailNotification:
+                    type: boolean
+                  email:
+                    type: string
+                  id:
+                    type: string
+                  invitationMessage:
+                    type: string
+                  invite:
+                    type: boolean
+                  relationshipStatus:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - accountID
+                - detectorID
+                - email
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - accountID
-            - detectorID
-            - email
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -817,7 +839,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: organizationadminaccounts.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -844,43 +867,42 @@ spec:
             type: object
           spec:
             properties:
-              adminAccountID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   adminAccountID:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - adminAccountID
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  adminAccountID:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - adminAccountID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - adminAccountID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -927,7 +949,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: organizationconfigurations.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -954,12 +977,6 @@ spec:
             type: object
           spec:
             properties:
-              autoEnable:
-                type: boolean
-              detectorID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   autoEnable:
@@ -968,35 +985,40 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - autoEnable
                 - detectorID
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  autoEnable:
+                    type: boolean
+                  detectorID:
+                    type: string
+                  id:
+                    type: string
+                required:
+                - autoEnable
+                - detectorID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - autoEnable
-            - detectorID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1043,7 +1065,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: publishingdestinations.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -1070,16 +1093,6 @@ spec:
             type: object
           spec:
             properties:
-              destinationArn:
-                type: string
-              destinationType:
-                type: string
-              detectorID:
-                type: string
-              id:
-                type: string
-              kmsKeyArn:
-                type: string
               kubeformOutput:
                 properties:
                   destinationArn:
@@ -1092,37 +1105,46 @@ spec:
                     type: string
                   kmsKeyArn:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - destinationArn
                 - detectorID
                 - kmsKeyArn
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  destinationArn:
+                    type: string
+                  destinationType:
+                    type: string
+                  detectorID:
+                    type: string
+                  id:
+                    type: string
+                  kmsKeyArn:
+                    type: string
+                required:
+                - destinationArn
+                - detectorID
+                - kmsKeyArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - destinationArn
-            - detectorID
-            - kmsKeyArn
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1169,7 +1191,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: threatintelsets.guardduty.aws.kubeform.com
 spec:
   group: guardduty.aws.kubeform.com
@@ -1196,16 +1219,6 @@ spec:
             type: object
           spec:
             properties:
-              activate:
-                type: boolean
-              arn:
-                type: string
-              detectorID:
-                type: string
-              format:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   activate:
@@ -1222,53 +1235,70 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - activate
                 - detectorID
                 - format
                 - location
                 - name
-                - providerRef
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  activate:
+                    type: boolean
+                  arn:
+                    type: string
+                  detectorID:
+                    type: string
+                  format:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - activate
+                - detectorID
+                - format
+                - location
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - activate
-            - detectorID
-            - format
-            - location
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

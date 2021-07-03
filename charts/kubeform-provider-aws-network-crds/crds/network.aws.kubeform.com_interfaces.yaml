@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: interfaces.network.aws.kubeform.com
 spec:
   group: network.aws.kubeform.com
@@ -30,32 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              attachment:
-                items:
-                  properties:
-                    attachmentID:
-                      type: string
-                    deviceIndex:
-                      format: int64
-                      type: integer
-                    instance:
-                      type: string
-                  required:
-                  - deviceIndex
-                  - instance
-                  type: object
-                type: array
-              description:
-                type: string
-              id:
-                type: string
-              ipv6AddressCount:
-                format: int64
-                type: integer
-              ipv6Addresses:
-                items:
-                  type: string
-                type: array
               kubeformOutput:
                 properties:
                   attachment:
@@ -76,6 +51,8 @@ spec:
                   description:
                     type: string
                   id:
+                    type: string
+                  interfaceType:
                     type: string
                   ipv6AddressCount:
                     format: int64
@@ -99,11 +76,6 @@ spec:
                   privateIPSCount:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   securityGroups:
                     items:
                       type: string
@@ -116,55 +88,95 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
-                - providerRef
                 - subnetID
                 type: object
-              macAddress:
-                type: string
-              outpostArn:
-                type: string
-              privateDNSName:
-                type: string
-              privateIP:
-                type: string
-              privateIPS:
-                items:
-                  type: string
-                type: array
-              privateIPSCount:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              securityGroups:
-                items:
-                  type: string
-                type: array
-              sourceDestCheck:
-                type: boolean
-              subnetID:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  attachment:
+                    items:
+                      properties:
+                        attachmentID:
+                          type: string
+                        deviceIndex:
+                          format: int64
+                          type: integer
+                        instance:
+                          type: string
+                      required:
+                      - deviceIndex
+                      - instance
+                      type: object
+                    type: array
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  interfaceType:
+                    type: string
+                  ipv6AddressCount:
+                    format: int64
+                    type: integer
+                  ipv6Addresses:
+                    items:
+                      type: string
+                    type: array
+                  macAddress:
+                    type: string
+                  outpostArn:
+                    type: string
+                  privateDNSName:
+                    type: string
+                  privateIP:
+                    type: string
+                  privateIPS:
+                    items:
+                      type: string
+                    type: array
+                  privateIPSCount:
+                    format: int64
+                    type: integer
+                  securityGroups:
+                    items:
+                      type: string
+                    type: array
+                  sourceDestCheck:
+                    type: boolean
+                  subnetID:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - subnetID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - subnetID
+            - resource
             type: object
           status:
             properties:

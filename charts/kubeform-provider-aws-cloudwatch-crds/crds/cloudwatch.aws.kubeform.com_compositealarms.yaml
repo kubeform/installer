@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: compositealarms.cloudwatch.aws.kubeform.com
 spec:
   group: cloudwatch.aws.kubeform.com
@@ -30,28 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              actionsEnabled:
-                type: boolean
-              alarmActions:
-                items:
-                  type: string
-                maxItems: 5
-                type: array
-              alarmDescription:
-                type: string
-              alarmName:
-                type: string
-              alarmRule:
-                type: string
-              arn:
-                type: string
-              id:
-                type: string
-              insufficientDataActions:
-                items:
-                  type: string
-                maxItems: 5
-                type: array
               kubeformOutput:
                 properties:
                   actionsEnabled:
@@ -81,48 +60,77 @@ spec:
                       type: string
                     maxItems: 5
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - alarmName
                 - alarmRule
-                - providerRef
                 type: object
-              okActions:
-                items:
-                  type: string
-                maxItems: 5
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  actionsEnabled:
+                    type: boolean
+                  alarmActions:
+                    items:
+                      type: string
+                    maxItems: 5
+                    type: array
+                  alarmDescription:
+                    type: string
+                  alarmName:
+                    type: string
+                  alarmRule:
+                    type: string
+                  arn:
+                    type: string
+                  id:
+                    type: string
+                  insufficientDataActions:
+                    items:
+                      type: string
+                    maxItems: 5
+                    type: array
+                  okActions:
+                    items:
+                      type: string
+                    maxItems: 5
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - alarmName
+                - alarmRule
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - alarmName
-            - alarmRule
             - providerRef
+            - resource
             type: object
           status:
             properties:

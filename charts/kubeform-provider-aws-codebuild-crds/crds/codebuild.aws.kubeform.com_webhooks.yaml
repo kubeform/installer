@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: webhooks.codebuild.aws.kubeform.com
 spec:
   group: codebuild.aws.kubeform.com
@@ -30,29 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              branchFilter:
-                type: string
-              filterGroup:
-                items:
-                  properties:
-                    filter:
-                      items:
-                        properties:
-                          excludeMatchedPattern:
-                            type: boolean
-                          pattern:
-                            type: string
-                          type:
-                            type: string
-                        required:
-                        - pattern
-                        - type
-                        type: object
-                      type: array
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   branchFilter:
@@ -82,35 +60,49 @@ spec:
                     type: string
                   projectName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  url:
+                    type: string
+                required:
+                - projectName
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  branchFilter:
+                    type: string
+                  filterGroup:
+                    items:
+                      properties:
+                        filter:
+                          items:
+                            properties:
+                              excludeMatchedPattern:
+                                type: boolean
+                              pattern:
+                                type: string
+                              type:
+                                type: string
+                            required:
+                            - pattern
+                            - type
+                            type: object
+                          type: array
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  payloadURL:
+                    type: string
+                  projectName:
                     type: string
                   url:
                     type: string
                 required:
                 - projectName
-                - providerRef
-                type: object
-              payloadURL:
-                type: string
-              projectName:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               secretRef:
                 properties:
@@ -122,11 +114,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              url:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - projectName
             - providerRef
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpoints.vpc.aws.kubeform.com
 spec:
   group: vpc.aws.kubeform.com
@@ -30,25 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              autoAccept:
-                type: boolean
-              cidrBlocks:
-                items:
-                  type: string
-                type: array
-              dnsEntry:
-                items:
-                  properties:
-                    dnsName:
-                      type: string
-                    hostedZoneID:
-                      type: string
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   arn:
@@ -82,11 +64,6 @@ spec:
                     type: string
                   privateDNSEnabled:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requesterManaged:
                     type: boolean
                   routeTableIDS:
@@ -109,11 +86,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   timeouts:
                     properties:
                       create:
@@ -137,80 +113,112 @@ spec:
                   vpcID:
                     type: string
                 required:
-                - providerRef
                 - serviceName
                 - vpcID
                 type: object
-              networkInterfaceIDS:
-                items:
-                  type: string
-                type: array
-              ownerID:
-                type: string
-              policy:
-                type: string
-              prefixListID:
-                type: string
-              privateDNSEnabled:
-                type: boolean
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requesterManaged:
-                type: boolean
-              routeTableIDS:
-                items:
-                  type: string
-                type: array
-              securityGroupIDS:
-                items:
-                  type: string
-                type: array
-              serviceName:
-                type: string
-              state:
-                type: string
-              subnetIDS:
-                items:
-                  type: string
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  arn:
+                    type: string
+                  autoAccept:
+                    type: boolean
+                  cidrBlocks:
+                    items:
+                      type: string
+                    type: array
+                  dnsEntry:
+                    items:
+                      properties:
+                        dnsName:
+                          type: string
+                        hostedZoneID:
+                          type: string
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  networkInterfaceIDS:
+                    items:
+                      type: string
+                    type: array
+                  ownerID:
+                    type: string
+                  policy:
+                    type: string
+                  prefixListID:
+                    type: string
+                  privateDNSEnabled:
+                    type: boolean
+                  requesterManaged:
+                    type: boolean
+                  routeTableIDS:
+                    items:
+                      type: string
+                    type: array
+                  securityGroupIDS:
+                    items:
+                      type: string
+                    type: array
+                  serviceName:
+                    type: string
+                  state:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpcEndpointType:
+                    type: string
+                  vpcID:
+                    type: string
+                required:
+                - serviceName
+                - vpcID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpcEndpointType:
-                type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - serviceName
-            - vpcID
+            - resource
             type: object
           status:
             properties:

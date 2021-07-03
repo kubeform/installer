@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: eventtargets.cloudwatch.aws.kubeform.com
 spec:
   group: cloudwatch.aws.kubeform.com
@@ -30,84 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              arn:
-                type: string
-              batchTarget:
-                properties:
-                  arraySize:
-                    format: int64
-                    type: integer
-                  jobAttempts:
-                    format: int64
-                    type: integer
-                  jobDefinition:
-                    type: string
-                  jobName:
-                    type: string
-                required:
-                - jobDefinition
-                - jobName
-                type: object
-              deadLetterConfig:
-                properties:
-                  arn:
-                    type: string
-                type: object
-              ecsTarget:
-                properties:
-                  group:
-                    type: string
-                  launchType:
-                    type: string
-                  networkConfiguration:
-                    properties:
-                      assignPublicIP:
-                        type: boolean
-                      securityGroups:
-                        items:
-                          type: string
-                        type: array
-                      subnets:
-                        items:
-                          type: string
-                        type: array
-                    required:
-                    - subnets
-                    type: object
-                  platformVersion:
-                    type: string
-                  taskCount:
-                    format: int64
-                    type: integer
-                  taskDefinitionArn:
-                    type: string
-                required:
-                - taskDefinitionArn
-                type: object
-              eventBusName:
-                type: string
-              id:
-                type: string
-              input:
-                type: string
-              inputPath:
-                type: string
-              inputTransformer:
-                properties:
-                  inputPaths:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  inputTemplate:
-                    type: string
-                required:
-                - inputTemplate
-                type: object
-              kinesisTarget:
-                properties:
-                  partitionKeyPath:
-                    type: string
-                type: object
               kubeformOutput:
                 properties:
                   arn:
@@ -166,6 +89,21 @@ spec:
                     type: object
                   eventBusName:
                     type: string
+                  httpTarget:
+                    properties:
+                      headerParameters:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      pathParameterValues:
+                        items:
+                          type: string
+                        type: array
+                      queryStringParameters:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
                   id:
                     type: string
                   input:
@@ -186,11 +124,6 @@ spec:
                   kinesisTarget:
                     properties:
                       partitionKeyPath:
-                        type: string
-                    type: object
-                  providerRef:
-                    properties:
-                      name:
                         type: string
                     type: object
                   retryPolicy:
@@ -228,14 +161,8 @@ spec:
                     type: object
                   targetID:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - arn
-                - providerRef
                 - rule
                 type: object
               providerRef:
@@ -243,50 +170,153 @@ spec:
                   name:
                     type: string
                 type: object
-              retryPolicy:
+              resource:
                 properties:
-                  maximumEventAgeInSeconds:
-                    format: int64
-                    type: integer
-                  maximumRetryAttempts:
-                    format: int64
-                    type: integer
-                type: object
-              roleArn:
-                type: string
-              rule:
-                type: string
-              runCommandTargets:
-                items:
-                  properties:
-                    key:
-                      type: string
-                    values:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - key
-                  - values
-                  type: object
-                maxItems: 5
-                type: array
-              sqsTarget:
-                properties:
-                  messageGroupID:
+                  arn:
                     type: string
+                  batchTarget:
+                    properties:
+                      arraySize:
+                        format: int64
+                        type: integer
+                      jobAttempts:
+                        format: int64
+                        type: integer
+                      jobDefinition:
+                        type: string
+                      jobName:
+                        type: string
+                    required:
+                    - jobDefinition
+                    - jobName
+                    type: object
+                  deadLetterConfig:
+                    properties:
+                      arn:
+                        type: string
+                    type: object
+                  ecsTarget:
+                    properties:
+                      group:
+                        type: string
+                      launchType:
+                        type: string
+                      networkConfiguration:
+                        properties:
+                          assignPublicIP:
+                            type: boolean
+                          securityGroups:
+                            items:
+                              type: string
+                            type: array
+                          subnets:
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - subnets
+                        type: object
+                      platformVersion:
+                        type: string
+                      taskCount:
+                        format: int64
+                        type: integer
+                      taskDefinitionArn:
+                        type: string
+                    required:
+                    - taskDefinitionArn
+                    type: object
+                  eventBusName:
+                    type: string
+                  httpTarget:
+                    properties:
+                      headerParameters:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      pathParameterValues:
+                        items:
+                          type: string
+                        type: array
+                      queryStringParameters:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  id:
+                    type: string
+                  input:
+                    type: string
+                  inputPath:
+                    type: string
+                  inputTransformer:
+                    properties:
+                      inputPaths:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      inputTemplate:
+                        type: string
+                    required:
+                    - inputTemplate
+                    type: object
+                  kinesisTarget:
+                    properties:
+                      partitionKeyPath:
+                        type: string
+                    type: object
+                  retryPolicy:
+                    properties:
+                      maximumEventAgeInSeconds:
+                        format: int64
+                        type: integer
+                      maximumRetryAttempts:
+                        format: int64
+                        type: integer
+                    type: object
+                  roleArn:
+                    type: string
+                  rule:
+                    type: string
+                  runCommandTargets:
+                    items:
+                      properties:
+                        key:
+                          type: string
+                        values:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - key
+                      - values
+                      type: object
+                    maxItems: 5
+                    type: array
+                  sqsTarget:
+                    properties:
+                      messageGroupID:
+                        type: string
+                    type: object
+                  targetID:
+                    type: string
+                required:
+                - arn
+                - rule
                 type: object
-              targetID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - arn
             - providerRef
-            - rule
+            - resource
             type: object
           status:
             properties:

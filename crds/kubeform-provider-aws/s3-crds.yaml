@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accesspoints.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -188,18 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              arn:
-                type: string
-              bucket:
-                type: string
-              domainName:
-                type: string
-              hasPublicAccessPolicy:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accountID:
@@ -220,11 +209,6 @@ spec:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicAccessBlockConfiguration:
                     properties:
                       blockPublicAcls:
@@ -236,11 +220,6 @@ spec:
                       restrictPublicBuckets:
                         type: boolean
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   vpcConfiguration:
                     properties:
                       vpcID:
@@ -251,46 +230,67 @@ spec:
                 required:
                 - bucket
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              networkOrigin:
-                type: string
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicAccessBlockConfiguration:
+              resource:
                 properties:
-                  blockPublicAcls:
+                  accountID:
+                    type: string
+                  arn:
+                    type: string
+                  bucket:
+                    type: string
+                  domainName:
+                    type: string
+                  hasPublicAccessPolicy:
                     type: boolean
-                  blockPublicPolicy:
-                    type: boolean
-                  ignorePublicAcls:
-                    type: boolean
-                  restrictPublicBuckets:
-                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  networkOrigin:
+                    type: string
+                  policy:
+                    type: string
+                  publicAccessBlockConfiguration:
+                    properties:
+                      blockPublicAcls:
+                        type: boolean
+                      blockPublicPolicy:
+                        type: boolean
+                      ignorePublicAcls:
+                        type: boolean
+                      restrictPublicBuckets:
+                        type: boolean
+                    type: object
+                  vpcConfiguration:
+                    properties:
+                      vpcID:
+                        type: string
+                    required:
+                    - vpcID
+                    type: object
+                required:
+                - bucket
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              vpcConfiguration:
-                properties:
-                  vpcID:
-                    type: string
-                required:
-                - vpcID
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -337,7 +337,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accountpublicaccessblocks.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -364,16 +365,6 @@ spec:
             type: object
           spec:
             properties:
-              accountID:
-                type: string
-              blockPublicAcls:
-                type: boolean
-              blockPublicPolicy:
-                type: boolean
-              id:
-                type: string
-              ignorePublicAcls:
-                type: boolean
               kubeformOutput:
                 properties:
                   accountID:
@@ -386,35 +377,42 @@ spec:
                     type: string
                   ignorePublicAcls:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restrictPublicBuckets:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
-                required:
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restrictPublicBuckets:
-                type: boolean
+              resource:
+                properties:
+                  accountID:
+                    type: string
+                  blockPublicAcls:
+                    type: boolean
+                  blockPublicPolicy:
+                    type: boolean
+                  id:
+                    type: string
+                  ignorePublicAcls:
+                    type: boolean
+                  restrictPublicBuckets:
+                    type: boolean
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -461,7 +459,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: buckets.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -488,71 +487,6 @@ spec:
             type: object
           spec:
             properties:
-              accelerationStatus:
-                type: string
-              acl:
-                type: string
-              arn:
-                type: string
-              bucket:
-                type: string
-              bucketDomainName:
-                type: string
-              bucketPrefix:
-                type: string
-              bucketRegionalDomainName:
-                type: string
-              corsRule:
-                items:
-                  properties:
-                    allowedHeaders:
-                      items:
-                        type: string
-                      type: array
-                    allowedMethods:
-                      items:
-                        type: string
-                      type: array
-                    allowedOrigins:
-                      items:
-                        type: string
-                      type: array
-                    exposeHeaders:
-                      items:
-                        type: string
-                      type: array
-                    maxAgeSeconds:
-                      format: int64
-                      type: integer
-                  required:
-                  - allowedMethods
-                  - allowedOrigins
-                  type: object
-                type: array
-              forceDestroy:
-                type: boolean
-              grant:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    permissions:
-                      items:
-                        type: string
-                      type: array
-                    type:
-                      type: string
-                    uri:
-                      type: string
-                  required:
-                  - permissions
-                  - type
-                  type: object
-                type: array
-              hostedZoneID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accelerationStatus:
@@ -720,11 +654,6 @@ spec:
                     type: object
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   replicationConfiguration:
@@ -818,11 +747,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   versioning:
                     properties:
                       enabled:
@@ -845,236 +773,312 @@ spec:
                     type: string
                   websiteEndpoint:
                     type: string
-                required:
-                - providerRef
                 type: object
-              lifecycleRule:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    abortIncompleteMultipartUploadDays:
-                      format: int64
-                      type: integer
-                    enabled:
-                      type: boolean
-                    expiration:
-                      properties:
-                        date:
-                          type: string
-                        days:
-                          format: int64
-                          type: integer
-                        expiredObjectDeleteMarker:
-                          type: boolean
-                      type: object
-                    noncurrentVersionExpiration:
-                      properties:
-                        days:
-                          format: int64
-                          type: integer
-                      type: object
-                    noncurrentVersionTransition:
-                      items:
-                        properties:
-                          days:
-                            format: int64
-                            type: integer
-                          storageClass:
-                            type: string
-                        required:
-                        - storageClass
-                        type: object
-                      type: array
-                    prefix:
-                      type: string
-                    tags:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    transition:
-                      items:
-                        properties:
-                          date:
-                            type: string
-                          days:
-                            format: int64
-                            type: integer
-                          storageClass:
-                            type: string
-                        required:
-                        - storageClass
-                        type: object
-                      type: array
-                  required:
-                  - enabled
-                  type: object
-                type: array
-              logging:
-                items:
-                  properties:
-                    targetBucket:
-                      type: string
-                    targetPrefix:
-                      type: string
-                  required:
-                  - targetBucket
-                  type: object
-                type: array
-              objectLockConfiguration:
-                properties:
-                  objectLockEnabled:
-                    type: string
-                  rule:
-                    properties:
-                      defaultRetention:
-                        properties:
-                          days:
-                            format: int64
-                            type: integer
-                          mode:
-                            type: string
-                          years:
-                            format: int64
-                            type: integer
-                        required:
-                        - mode
-                        type: object
-                    required:
-                    - defaultRetention
-                    type: object
-                required:
-                - objectLockEnabled
-                type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              replicationConfiguration:
+              resource:
                 properties:
-                  role:
+                  accelerationStatus:
                     type: string
-                  rules:
+                  acl:
+                    type: string
+                  arn:
+                    type: string
+                  bucket:
+                    type: string
+                  bucketDomainName:
+                    type: string
+                  bucketPrefix:
+                    type: string
+                  bucketRegionalDomainName:
+                    type: string
+                  corsRule:
+                    items:
+                      properties:
+                        allowedHeaders:
+                          items:
+                            type: string
+                          type: array
+                        allowedMethods:
+                          items:
+                            type: string
+                          type: array
+                        allowedOrigins:
+                          items:
+                            type: string
+                          type: array
+                        exposeHeaders:
+                          items:
+                            type: string
+                          type: array
+                        maxAgeSeconds:
+                          format: int64
+                          type: integer
+                      required:
+                      - allowedMethods
+                      - allowedOrigins
+                      type: object
+                    type: array
+                  forceDestroy:
+                    type: boolean
+                  grant:
                     items:
                       properties:
                         ID:
                           type: string
-                        destination:
-                          properties:
-                            accessControlTranslation:
-                              properties:
-                                owner:
-                                  type: string
-                              required:
-                              - owner
-                              type: object
-                            accountID:
-                              type: string
-                            bucket:
-                              type: string
-                            replicaKmsKeyID:
-                              type: string
-                            storageClass:
-                              type: string
-                          required:
-                          - bucket
-                          type: object
-                        filter:
-                          properties:
-                            prefix:
-                              type: string
-                            tags:
-                              additionalProperties:
-                                type: string
-                              type: object
-                          type: object
-                        prefix:
+                        permissions:
+                          items:
+                            type: string
+                          type: array
+                        type:
                           type: string
-                        priority:
-                          format: int64
-                          type: integer
-                        sourceSelectionCriteria:
-                          properties:
-                            sseKmsEncryptedObjects:
-                              properties:
-                                enabled:
-                                  type: boolean
-                              required:
-                              - enabled
-                              type: object
-                          type: object
-                        status:
+                        uri:
                           type: string
                       required:
-                      - destination
-                      - status
+                      - permissions
+                      - type
                       type: object
                     type: array
-                required:
-                - role
-                - rules
-                type: object
-              requestPayer:
-                type: string
-              serverSideEncryptionConfiguration:
-                properties:
-                  rule:
+                  hostedZoneID:
+                    type: string
+                  id:
+                    type: string
+                  lifecycleRule:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        abortIncompleteMultipartUploadDays:
+                          format: int64
+                          type: integer
+                        enabled:
+                          type: boolean
+                        expiration:
+                          properties:
+                            date:
+                              type: string
+                            days:
+                              format: int64
+                              type: integer
+                            expiredObjectDeleteMarker:
+                              type: boolean
+                          type: object
+                        noncurrentVersionExpiration:
+                          properties:
+                            days:
+                              format: int64
+                              type: integer
+                          type: object
+                        noncurrentVersionTransition:
+                          items:
+                            properties:
+                              days:
+                                format: int64
+                                type: integer
+                              storageClass:
+                                type: string
+                            required:
+                            - storageClass
+                            type: object
+                          type: array
+                        prefix:
+                          type: string
+                        tags:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        transition:
+                          items:
+                            properties:
+                              date:
+                                type: string
+                              days:
+                                format: int64
+                                type: integer
+                              storageClass:
+                                type: string
+                            required:
+                            - storageClass
+                            type: object
+                          type: array
+                      required:
+                      - enabled
+                      type: object
+                    type: array
+                  logging:
+                    items:
+                      properties:
+                        targetBucket:
+                          type: string
+                        targetPrefix:
+                          type: string
+                      required:
+                      - targetBucket
+                      type: object
+                    type: array
+                  objectLockConfiguration:
                     properties:
-                      applyServerSideEncryptionByDefault:
+                      objectLockEnabled:
+                        type: string
+                      rule:
                         properties:
-                          kmsMasterKeyID:
-                            type: string
-                          sseAlgorithm:
-                            type: string
+                          defaultRetention:
+                            properties:
+                              days:
+                                format: int64
+                                type: integer
+                              mode:
+                                type: string
+                              years:
+                                format: int64
+                                type: integer
+                            required:
+                            - mode
+                            type: object
                         required:
-                        - sseAlgorithm
+                        - defaultRetention
                         type: object
-                      bucketKeyEnabled:
-                        type: boolean
                     required:
-                    - applyServerSideEncryptionByDefault
+                    - objectLockEnabled
                     type: object
-                required:
-                - rule
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                  policy:
+                    type: string
+                  region:
+                    type: string
+                  replicationConfiguration:
+                    properties:
+                      role:
+                        type: string
+                      rules:
+                        items:
+                          properties:
+                            ID:
+                              type: string
+                            destination:
+                              properties:
+                                accessControlTranslation:
+                                  properties:
+                                    owner:
+                                      type: string
+                                  required:
+                                  - owner
+                                  type: object
+                                accountID:
+                                  type: string
+                                bucket:
+                                  type: string
+                                replicaKmsKeyID:
+                                  type: string
+                                storageClass:
+                                  type: string
+                              required:
+                              - bucket
+                              type: object
+                            filter:
+                              properties:
+                                prefix:
+                                  type: string
+                                tags:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            prefix:
+                              type: string
+                            priority:
+                              format: int64
+                              type: integer
+                            sourceSelectionCriteria:
+                              properties:
+                                sseKmsEncryptedObjects:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  required:
+                                  - enabled
+                                  type: object
+                              type: object
+                            status:
+                              type: string
+                          required:
+                          - destination
+                          - status
+                          type: object
+                        type: array
+                    required:
+                    - role
+                    - rules
+                    type: object
+                  requestPayer:
+                    type: string
+                  serverSideEncryptionConfiguration:
+                    properties:
+                      rule:
+                        properties:
+                          applyServerSideEncryptionByDefault:
+                            properties:
+                              kmsMasterKeyID:
+                                type: string
+                              sseAlgorithm:
+                                type: string
+                            required:
+                            - sseAlgorithm
+                            type: object
+                          bucketKeyEnabled:
+                            type: boolean
+                        required:
+                        - applyServerSideEncryptionByDefault
+                        type: object
+                    required:
+                    - rule
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  versioning:
+                    properties:
+                      enabled:
+                        type: boolean
+                      mfaDelete:
+                        type: boolean
+                    type: object
+                  website:
+                    properties:
+                      errorDocument:
+                        type: string
+                      indexDocument:
+                        type: string
+                      redirectAllRequestsTo:
+                        type: string
+                      routingRules:
+                        type: string
+                    type: object
+                  websiteDomain:
+                    type: string
+                  websiteEndpoint:
+                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              versioning:
-                properties:
-                  enabled:
-                    type: boolean
-                  mfaDelete:
-                    type: boolean
-                type: object
-              website:
-                properties:
-                  errorDocument:
-                    type: string
-                  indexDocument:
-                    type: string
-                  redirectAllRequestsTo:
-                    type: string
-                  routingRules:
-                    type: string
-                type: object
-              websiteDomain:
-                type: string
-              websiteEndpoint:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1121,7 +1125,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: bucketanalyticsconfigurations.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -1148,19 +1153,6 @@ spec:
             type: object
           spec:
             properties:
-              bucket:
-                type: string
-              filter:
-                properties:
-                  prefix:
-                    type: string
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bucket:
@@ -1178,11 +1170,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   storageClassAnalysis:
                     properties:
                       dataExport:
@@ -1213,62 +1200,79 @@ spec:
                     required:
                     - dataExport
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - bucket
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              storageClassAnalysis:
+              resource:
                 properties:
-                  dataExport:
+                  bucket:
+                    type: string
+                  filter:
                     properties:
-                      destination:
-                        properties:
-                          s3BucketDestination:
-                            properties:
-                              bucketAccountID:
-                                type: string
-                              bucketArn:
-                                type: string
-                              format:
-                                type: string
-                              prefix:
-                                type: string
-                            required:
-                            - bucketArn
-                            type: object
-                        required:
-                        - s3BucketDestination
-                        type: object
-                      outputSchemaVersion:
+                      prefix:
                         type: string
+                      tags:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  storageClassAnalysis:
+                    properties:
+                      dataExport:
+                        properties:
+                          destination:
+                            properties:
+                              s3BucketDestination:
+                                properties:
+                                  bucketAccountID:
+                                    type: string
+                                  bucketArn:
+                                    type: string
+                                  format:
+                                    type: string
+                                  prefix:
+                                    type: string
+                                required:
+                                - bucketArn
+                                type: object
+                            required:
+                            - s3BucketDestination
+                            type: object
+                          outputSchemaVersion:
+                            type: string
+                        required:
+                        - destination
+                        type: object
                     required:
-                    - destination
+                    - dataExport
                     type: object
                 required:
-                - dataExport
+                - bucket
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1315,7 +1319,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: bucketinventories.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -1342,50 +1347,6 @@ spec:
             type: object
           spec:
             properties:
-              bucket:
-                type: string
-              destination:
-                properties:
-                  bucket:
-                    properties:
-                      accountID:
-                        type: string
-                      bucketArn:
-                        type: string
-                      encryption:
-                        properties:
-                          sseKms:
-                            properties:
-                              keyID:
-                                type: string
-                            required:
-                            - keyID
-                            type: object
-                          sseS3:
-                            type: object
-                        type: object
-                      format:
-                        type: string
-                      prefix:
-                        type: string
-                    required:
-                    - bucketArn
-                    - format
-                    type: object
-                required:
-                - bucket
-                type: object
-              enabled:
-                type: boolean
-              filter:
-                properties:
-                  prefix:
-                    type: string
-                type: object
-              id:
-                type: string
-              includedObjectVersions:
-                type: string
               kubeformOutput:
                 properties:
                   bucket:
@@ -1438,11 +1399,6 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   schedule:
                     properties:
                       frequency:
@@ -1450,49 +1406,97 @@ spec:
                     required:
                     - frequency
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - bucket
                 - destination
                 - includedObjectVersions
                 - name
-                - providerRef
                 - schedule
                 type: object
-              name:
-                type: string
-              optionalFields:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              schedule:
+              resource:
                 properties:
-                  frequency:
+                  bucket:
                     type: string
+                  destination:
+                    properties:
+                      bucket:
+                        properties:
+                          accountID:
+                            type: string
+                          bucketArn:
+                            type: string
+                          encryption:
+                            properties:
+                              sseKms:
+                                properties:
+                                  keyID:
+                                    type: string
+                                required:
+                                - keyID
+                                type: object
+                              sseS3:
+                                type: object
+                            type: object
+                          format:
+                            type: string
+                          prefix:
+                            type: string
+                        required:
+                        - bucketArn
+                        - format
+                        type: object
+                    required:
+                    - bucket
+                    type: object
+                  enabled:
+                    type: boolean
+                  filter:
+                    properties:
+                      prefix:
+                        type: string
+                    type: object
+                  id:
+                    type: string
+                  includedObjectVersions:
+                    type: string
+                  name:
+                    type: string
+                  optionalFields:
+                    items:
+                      type: string
+                    type: array
+                  schedule:
+                    properties:
+                      frequency:
+                        type: string
+                    required:
+                    - frequency
+                    type: object
                 required:
-                - frequency
+                - bucket
+                - destination
+                - includedObjectVersions
+                - name
+                - schedule
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
-            - destination
-            - includedObjectVersions
-            - name
             - providerRef
-            - schedule
+            - resource
             type: object
           status:
             properties:
@@ -1539,7 +1543,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: bucketmetrics.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -1566,19 +1571,6 @@ spec:
             type: object
           spec:
             properties:
-              bucket:
-                type: string
-              filter:
-                properties:
-                  prefix:
-                    type: string
-                  tags:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bucket:
@@ -1596,37 +1588,49 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - bucket
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  bucket:
+                    type: string
+                  filter:
+                    properties:
+                      prefix:
+                        type: string
+                      tags:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  id:
+                    type: string
+                  name:
+                    type: string
+                required:
+                - bucket
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1673,7 +1677,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: bucketnotifications.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -1700,10 +1705,6 @@ spec:
             type: object
           spec:
             properties:
-              bucket:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bucket:
@@ -1729,11 +1730,6 @@ spec:
                       - events
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   queue:
                     items:
                       properties:
@@ -1754,11 +1750,6 @@ spec:
                       - queueArn
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   topic:
                     items:
                       properties:
@@ -1781,80 +1772,93 @@ spec:
                     type: array
                 required:
                 - bucket
-                - providerRef
                 type: object
-              lambdaFunction:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    events:
-                      items:
-                        type: string
-                      type: array
-                    filterPrefix:
-                      type: string
-                    filterSuffix:
-                      type: string
-                    lambdaFunctionArn:
-                      type: string
-                  required:
-                  - events
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              queue:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    events:
-                      items:
-                        type: string
-                      type: array
-                    filterPrefix:
-                      type: string
-                    filterSuffix:
-                      type: string
-                    queueArn:
-                      type: string
-                  required:
-                  - events
-                  - queueArn
-                  type: object
-                type: array
+              resource:
+                properties:
+                  bucket:
+                    type: string
+                  id:
+                    type: string
+                  lambdaFunction:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        events:
+                          items:
+                            type: string
+                          type: array
+                        filterPrefix:
+                          type: string
+                        filterSuffix:
+                          type: string
+                        lambdaFunctionArn:
+                          type: string
+                      required:
+                      - events
+                      type: object
+                    type: array
+                  queue:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        events:
+                          items:
+                            type: string
+                          type: array
+                        filterPrefix:
+                          type: string
+                        filterSuffix:
+                          type: string
+                        queueArn:
+                          type: string
+                      required:
+                      - events
+                      - queueArn
+                      type: object
+                    type: array
+                  topic:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        events:
+                          items:
+                            type: string
+                          type: array
+                        filterPrefix:
+                          type: string
+                        filterSuffix:
+                          type: string
+                        topicArn:
+                          type: string
+                      required:
+                      - events
+                      - topicArn
+                      type: object
+                    type: array
+                required:
+                - bucket
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              topic:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    events:
-                      items:
-                        type: string
-                      type: array
-                    filterPrefix:
-                      type: string
-                    filterSuffix:
-                      type: string
-                    topicArn:
-                      type: string
-                  required:
-                  - events
-                  - topicArn
-                  type: object
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1901,7 +1905,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: bucketobjects.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -1928,36 +1933,6 @@ spec:
             type: object
           spec:
             properties:
-              acl:
-                type: string
-              bucket:
-                type: string
-              bucketKeyEnabled:
-                type: boolean
-              cacheControl:
-                type: string
-              content:
-                type: string
-              contentBase64:
-                type: string
-              contentDisposition:
-                type: string
-              contentEncoding:
-                type: string
-              contentLanguage:
-                type: string
-              contentType:
-                type: string
-              etag:
-                type: string
-              forceDestroy:
-                type: boolean
-              id:
-                type: string
-              key:
-                type: string
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   acl:
@@ -2000,11 +1975,6 @@ spec:
                     type: string
                   objectLockRetainUntilDate:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serverSideEncryption:
                     type: string
                   source:
@@ -2015,11 +1985,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   versionID:
                     type: string
                   websiteRedirect:
@@ -2027,46 +1996,89 @@ spec:
                 required:
                 - bucket
                 - key
-                - providerRef
                 type: object
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              objectLockLegalHoldStatus:
-                type: string
-              objectLockMode:
-                type: string
-              objectLockRetainUntilDate:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serverSideEncryption:
-                type: string
-              source:
-                type: string
-              storageClass:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  acl:
+                    type: string
+                  bucket:
+                    type: string
+                  bucketKeyEnabled:
+                    type: boolean
+                  cacheControl:
+                    type: string
+                  content:
+                    type: string
+                  contentBase64:
+                    type: string
+                  contentDisposition:
+                    type: string
+                  contentEncoding:
+                    type: string
+                  contentLanguage:
+                    type: string
+                  contentType:
+                    type: string
+                  etag:
+                    type: string
+                  forceDestroy:
+                    type: boolean
+                  id:
+                    type: string
+                  key:
+                    type: string
+                  kmsKeyID:
+                    type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  objectLockLegalHoldStatus:
+                    type: string
+                  objectLockMode:
+                    type: string
+                  objectLockRetainUntilDate:
+                    type: string
+                  serverSideEncryption:
+                    type: string
+                  source:
+                    type: string
+                  storageClass:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  versionID:
+                    type: string
+                  websiteRedirect:
+                    type: string
+                required:
+                - bucket
+                - key
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              versionID:
-                type: string
-              websiteRedirect:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - bucket
-            - key
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2113,7 +2125,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: bucketownershipcontrols.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -2140,21 +2153,12 @@ spec:
             type: object
           spec:
             properties:
-              bucket:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bucket:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rule:
                     properties:
                       objectOwnership:
@@ -2162,14 +2166,8 @@ spec:
                     required:
                     - objectOwnership
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - bucket
-                - providerRef
                 - rule
                 type: object
               providerRef:
@@ -2177,22 +2175,36 @@ spec:
                   name:
                     type: string
                 type: object
-              rule:
+              resource:
                 properties:
-                  objectOwnership:
+                  bucket:
                     type: string
+                  id:
+                    type: string
+                  rule:
+                    properties:
+                      objectOwnership:
+                        type: string
+                    required:
+                    - objectOwnership
+                    type: object
                 required:
-                - objectOwnership
+                - bucket
+                - rule
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
             - providerRef
-            - rule
+            - resource
             type: object
           status:
             properties:
@@ -2239,7 +2251,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: bucketpolicies.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -2266,10 +2279,6 @@ spec:
             type: object
           spec:
             properties:
-              bucket:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bucket:
@@ -2278,37 +2287,40 @@ spec:
                     type: string
                   policy:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - bucket
                 - policy
-                - providerRef
                 type: object
-              policy:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  bucket:
+                    type: string
+                  id:
+                    type: string
+                  policy:
+                    type: string
+                required:
+                - bucket
+                - policy
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
-            - policy
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2355,7 +2367,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: bucketpublicaccessblocks.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -2382,16 +2395,6 @@ spec:
             type: object
           spec:
             properties:
-              blockPublicAcls:
-                type: boolean
-              blockPublicPolicy:
-                type: boolean
-              bucket:
-                type: string
-              id:
-                type: string
-              ignorePublicAcls:
-                type: boolean
               kubeformOutput:
                 properties:
                   blockPublicAcls:
@@ -2404,37 +2407,46 @@ spec:
                     type: string
                   ignorePublicAcls:
                     type: boolean
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restrictPublicBuckets:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - bucket
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restrictPublicBuckets:
-                type: boolean
+              resource:
+                properties:
+                  blockPublicAcls:
+                    type: boolean
+                  blockPublicPolicy:
+                    type: boolean
+                  bucket:
+                    type: string
+                  id:
+                    type: string
+                  ignorePublicAcls:
+                    type: boolean
+                  restrictPublicBuckets:
+                    type: boolean
+                required:
+                - bucket
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - bucket
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -2481,7 +2493,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: objectcopies.s3.aws.kubeform.com
 spec:
   group: s3.aws.kubeform.com
@@ -2508,70 +2521,6 @@ spec:
             type: object
           spec:
             properties:
-              acl:
-                type: string
-              bucket:
-                type: string
-              bucketKeyEnabled:
-                type: boolean
-              cacheControl:
-                type: string
-              contentDisposition:
-                type: string
-              contentEncoding:
-                type: string
-              contentLanguage:
-                type: string
-              contentType:
-                type: string
-              copyIfMatch:
-                type: string
-              copyIfModifiedSince:
-                type: string
-              copyIfNoneMatch:
-                type: string
-              copyIfUnmodifiedSince:
-                type: string
-              customerAlgorithm:
-                type: string
-              customerKeyMd5:
-                type: string
-              etag:
-                type: string
-              expectedBucketOwner:
-                type: string
-              expectedSourceBucketOwner:
-                type: string
-              expiration:
-                type: string
-              expires:
-                type: string
-              forceDestroy:
-                type: boolean
-              grant:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    email:
-                      type: string
-                    permissions:
-                      items:
-                        type: string
-                      type: array
-                    type:
-                      type: string
-                    uri:
-                      type: string
-                  required:
-                  - permissions
-                  - type
-                  type: object
-                type: array
-              id:
-                type: string
-              key:
-                type: string
               kubeformOutput:
                 properties:
                   acl:
@@ -2652,20 +2601,10 @@ spec:
                     type: string
                   objectLockRetainUntilDate:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requestCharged:
                     type: boolean
                   requestPayer:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serverSideEncryption:
                     type: string
                   source:
@@ -2684,11 +2623,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   versionID:
                     type: string
                   websiteRedirect:
@@ -2696,69 +2634,146 @@ spec:
                 required:
                 - bucket
                 - key
-                - providerRef
                 - source
                 type: object
-              lastModified:
-                type: string
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              metadataDirective:
-                type: string
-              objectLockLegalHoldStatus:
-                type: string
-              objectLockMode:
-                type: string
-              objectLockRetainUntilDate:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requestCharged:
-                type: boolean
-              requestPayer:
-                type: string
+              resource:
+                properties:
+                  acl:
+                    type: string
+                  bucket:
+                    type: string
+                  bucketKeyEnabled:
+                    type: boolean
+                  cacheControl:
+                    type: string
+                  contentDisposition:
+                    type: string
+                  contentEncoding:
+                    type: string
+                  contentLanguage:
+                    type: string
+                  contentType:
+                    type: string
+                  copyIfMatch:
+                    type: string
+                  copyIfModifiedSince:
+                    type: string
+                  copyIfNoneMatch:
+                    type: string
+                  copyIfUnmodifiedSince:
+                    type: string
+                  customerAlgorithm:
+                    type: string
+                  customerKeyMd5:
+                    type: string
+                  etag:
+                    type: string
+                  expectedBucketOwner:
+                    type: string
+                  expectedSourceBucketOwner:
+                    type: string
+                  expiration:
+                    type: string
+                  expires:
+                    type: string
+                  forceDestroy:
+                    type: boolean
+                  grant:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        email:
+                          type: string
+                        permissions:
+                          items:
+                            type: string
+                          type: array
+                        type:
+                          type: string
+                        uri:
+                          type: string
+                      required:
+                      - permissions
+                      - type
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  key:
+                    type: string
+                  lastModified:
+                    type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  metadataDirective:
+                    type: string
+                  objectLockLegalHoldStatus:
+                    type: string
+                  objectLockMode:
+                    type: string
+                  objectLockRetainUntilDate:
+                    type: string
+                  requestCharged:
+                    type: boolean
+                  requestPayer:
+                    type: string
+                  serverSideEncryption:
+                    type: string
+                  source:
+                    type: string
+                  sourceCustomerAlgorithm:
+                    type: string
+                  sourceCustomerKeyMd5:
+                    type: string
+                  sourceVersionID:
+                    type: string
+                  storageClass:
+                    type: string
+                  taggingDirective:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  versionID:
+                    type: string
+                  websiteRedirect:
+                    type: string
+                required:
+                - bucket
+                - key
+                - source
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              serverSideEncryption:
-                type: string
-              source:
-                type: string
-              sourceCustomerAlgorithm:
-                type: string
-              sourceCustomerKeyMd5:
-                type: string
-              sourceVersionID:
-                type: string
-              storageClass:
-                type: string
-              taggingDirective:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              versionID:
-                type: string
-              websiteRedirect:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - bucket
-            - key
             - providerRef
-            - source
+            - resource
             type: object
           status:
             properties:

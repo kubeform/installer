@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: domains.sagemaker.aws.kubeform.com
 spec:
   group: sagemaker.aws.kubeform.com
@@ -30,87 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              appNetworkAccessType:
-                type: string
-              arn:
-                type: string
-              authMode:
-                type: string
-              defaultUserSettings:
-                properties:
-                  executionRole:
-                    type: string
-                  jupyterServerAppSettings:
-                    properties:
-                      defaultResourceSpec:
-                        properties:
-                          instanceType:
-                            type: string
-                          sagemakerImageArn:
-                            type: string
-                        type: object
-                    type: object
-                  kernelGatewayAppSettings:
-                    properties:
-                      customImage:
-                        items:
-                          properties:
-                            appImageConfigName:
-                              type: string
-                            imageName:
-                              type: string
-                            imageVersionNumber:
-                              format: int64
-                              type: integer
-                          required:
-                          - appImageConfigName
-                          - imageName
-                          type: object
-                        maxItems: 30
-                        type: array
-                      defaultResourceSpec:
-                        properties:
-                          instanceType:
-                            type: string
-                          sagemakerImageArn:
-                            type: string
-                        type: object
-                    type: object
-                  securityGroups:
-                    items:
-                      type: string
-                    maxItems: 5
-                    type: array
-                  sharingSettings:
-                    properties:
-                      notebookOutputOption:
-                        type: string
-                      s3KmsKeyID:
-                        type: string
-                      s3OutputPath:
-                        type: string
-                    type: object
-                  tensorBoardAppSettings:
-                    properties:
-                      defaultResourceSpec:
-                        properties:
-                          instanceType:
-                            type: string
-                          sagemakerImageArn:
-                            type: string
-                        type: object
-                    type: object
-                required:
-                - executionRole
-                type: object
-              domainName:
-                type: string
-              homeEfsFileSystemID:
-                type: string
-              id:
-                type: string
-              kmsKeyID:
-                type: string
               kubeformOutput:
                 properties:
                   appNetworkAccessType:
@@ -194,11 +114,6 @@ spec:
                     type: string
                   kmsKeyID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   singleSignOnManagedApplicationInstanceID:
                     type: string
                   subnetIDS:
@@ -210,11 +125,10 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
                   url:
                     type: string
                   vpcID:
@@ -223,7 +137,6 @@ spec:
                 - authMode
                 - defaultUserSettings
                 - domainName
-                - providerRef
                 - subnetIDS
                 - vpcID
                 type: object
@@ -232,33 +145,128 @@ spec:
                   name:
                     type: string
                 type: object
-              singleSignOnManagedApplicationInstanceID:
-                type: string
-              subnetIDS:
-                items:
-                  type: string
-                maxItems: 16
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  appNetworkAccessType:
+                    type: string
+                  arn:
+                    type: string
+                  authMode:
+                    type: string
+                  defaultUserSettings:
+                    properties:
+                      executionRole:
+                        type: string
+                      jupyterServerAppSettings:
+                        properties:
+                          defaultResourceSpec:
+                            properties:
+                              instanceType:
+                                type: string
+                              sagemakerImageArn:
+                                type: string
+                            type: object
+                        type: object
+                      kernelGatewayAppSettings:
+                        properties:
+                          customImage:
+                            items:
+                              properties:
+                                appImageConfigName:
+                                  type: string
+                                imageName:
+                                  type: string
+                                imageVersionNumber:
+                                  format: int64
+                                  type: integer
+                              required:
+                              - appImageConfigName
+                              - imageName
+                              type: object
+                            maxItems: 30
+                            type: array
+                          defaultResourceSpec:
+                            properties:
+                              instanceType:
+                                type: string
+                              sagemakerImageArn:
+                                type: string
+                            type: object
+                        type: object
+                      securityGroups:
+                        items:
+                          type: string
+                        maxItems: 5
+                        type: array
+                      sharingSettings:
+                        properties:
+                          notebookOutputOption:
+                            type: string
+                          s3KmsKeyID:
+                            type: string
+                          s3OutputPath:
+                            type: string
+                        type: object
+                      tensorBoardAppSettings:
+                        properties:
+                          defaultResourceSpec:
+                            properties:
+                              instanceType:
+                                type: string
+                              sagemakerImageArn:
+                                type: string
+                            type: object
+                        type: object
+                    required:
+                    - executionRole
+                    type: object
+                  domainName:
+                    type: string
+                  homeEfsFileSystemID:
+                    type: string
+                  id:
+                    type: string
+                  kmsKeyID:
+                    type: string
+                  singleSignOnManagedApplicationInstanceID:
+                    type: string
+                  subnetIDS:
+                    items:
+                      type: string
+                    maxItems: 16
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tagsAll:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  url:
+                    type: string
+                  vpcID:
+                    type: string
+                required:
+                - authMode
+                - defaultUserSettings
+                - domainName
+                - subnetIDS
+                - vpcID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              url:
-                type: string
-              vpcID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - authMode
-            - defaultUserSettings
-            - domainName
             - providerRef
-            - subnetIDS
-            - vpcID
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: permissions.opsworks.aws.kubeform.com
 spec:
   group: opsworks.aws.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              allowSSH:
-                type: boolean
-              allowSudo:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   allowSSH:
@@ -46,43 +41,48 @@ spec:
                     type: string
                   level:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   stackID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   userArn:
                     type: string
                 required:
-                - providerRef
                 - userArn
                 type: object
-              level:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              stackID:
-                type: string
+              resource:
+                properties:
+                  allowSSH:
+                    type: boolean
+                  allowSudo:
+                    type: boolean
+                  id:
+                    type: string
+                  level:
+                    type: string
+                  stackID:
+                    type: string
+                  userArn:
+                    type: string
+                required:
+                - userArn
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              userArn:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
-            - userArn
+            - resource
             type: object
           status:
             properties:
