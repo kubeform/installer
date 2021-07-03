@@ -205,7 +205,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
 
 ```console
-$ helm install kubeform-provider-aws appscode/kubeform-provider-aws -n kubeform --set global.registry=kubeform
+$ helm install kubeform-provider-aws appscode/kubeform-provider-aws -n kubeform --set kubeform-provider.provider.name=aws
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while
