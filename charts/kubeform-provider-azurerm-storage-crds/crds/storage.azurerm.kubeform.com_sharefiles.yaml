@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: sharefiles.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              contentDisposition:
-                type: string
-              contentEncoding:
-                type: string
-              contentMd5:
-                type: string
-              contentType:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   contentDisposition:
@@ -60,19 +51,9 @@ spec:
                     type: string
                   path:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   source:
                     type: string
                   storageShareID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -94,53 +75,72 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - storageShareID
                 type: object
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              path:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              source:
-                type: string
-              storageShareID:
-                type: string
+              resource:
+                properties:
+                  contentDisposition:
+                    type: string
+                  contentEncoding:
+                    type: string
+                  contentMd5:
+                    type: string
+                  contentType:
+                    type: string
+                  id:
+                    type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  path:
+                    type: string
+                  source:
+                    type: string
+                  storageShareID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - storageShareID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - storageShareID
+            - resource
             type: object
           status:
             properties:

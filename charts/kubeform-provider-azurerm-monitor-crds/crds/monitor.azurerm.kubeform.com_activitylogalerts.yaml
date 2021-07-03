@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: activitylogalerts.monitor.azurerm.kubeform.com
 spec:
   group: monitor.azurerm.kubeform.com
@@ -30,73 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              action:
-                items:
-                  properties:
-                    actionGroupID:
-                      type: string
-                    webhookProperties:
-                      additionalProperties:
-                        type: string
-                      type: object
-                  required:
-                  - actionGroupID
-                  type: object
-                type: array
-              criteria:
-                properties:
-                  caller:
-                    type: string
-                  category:
-                    type: string
-                  level:
-                    type: string
-                  operationName:
-                    type: string
-                  recommendationCategory:
-                    type: string
-                  recommendationImpact:
-                    type: string
-                  recommendationType:
-                    type: string
-                  resourceGroup:
-                    type: string
-                  resourceID:
-                    type: string
-                  resourceProvider:
-                    type: string
-                  resourceType:
-                    type: string
-                  serviceHealth:
-                    items:
-                      properties:
-                        events:
-                          items:
-                            type: string
-                          type: array
-                        locations:
-                          items:
-                            type: string
-                          type: array
-                        services:
-                          items:
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  status:
-                    type: string
-                  subStatus:
-                    type: string
-                required:
-                - category
-                type: object
-              description:
-                type: string
-              enabled:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   action:
@@ -168,11 +102,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   scopes:
@@ -184,11 +113,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -210,57 +134,133 @@ spec:
                 required:
                 - criteria
                 - name
-                - providerRef
                 - resourceGroupName
                 - scopes
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              scopes:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  action:
+                    items:
+                      properties:
+                        actionGroupID:
+                          type: string
+                        webhookProperties:
+                          additionalProperties:
+                            type: string
+                          type: object
+                      required:
+                      - actionGroupID
+                      type: object
+                    type: array
+                  criteria:
+                    properties:
+                      caller:
+                        type: string
+                      category:
+                        type: string
+                      level:
+                        type: string
+                      operationName:
+                        type: string
+                      recommendationCategory:
+                        type: string
+                      recommendationImpact:
+                        type: string
+                      recommendationType:
+                        type: string
+                      resourceGroup:
+                        type: string
+                      resourceID:
+                        type: string
+                      resourceProvider:
+                        type: string
+                      resourceType:
+                        type: string
+                      serviceHealth:
+                        items:
+                          properties:
+                            events:
+                              items:
+                                type: string
+                              type: array
+                            locations:
+                              items:
+                                type: string
+                              type: array
+                            services:
+                              items:
+                                type: string
+                              type: array
+                          type: object
+                        type: array
+                      status:
+                        type: string
+                      subStatus:
+                        type: string
+                    required:
+                    - category
+                    type: object
+                  description:
+                    type: string
+                  enabled:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  scopes:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - criteria
+                - name
+                - resourceGroupName
+                - scopes
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - criteria
-            - name
             - providerRef
-            - resourceGroupName
-            - scopes
+            - resource
             type: object
           status:
             properties:

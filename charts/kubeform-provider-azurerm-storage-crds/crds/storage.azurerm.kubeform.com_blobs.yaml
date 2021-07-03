@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: blobs.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accessTier:
-                type: string
-              contentMd5:
-                type: string
-              contentType:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   accessTier:
@@ -57,11 +50,6 @@ spec:
                   parallelism:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   size:
                     format: int64
                     type: integer
@@ -74,11 +62,6 @@ spec:
                   storageAccountName:
                     type: string
                   storageContainerName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -104,71 +87,88 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 - storageAccountName
                 - storageContainerName
                 - type
                 type: object
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              parallelism:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              size:
-                format: int64
-                type: integer
-              source:
-                type: string
-              sourceContent:
-                type: string
-              sourceURI:
-                type: string
-              storageAccountName:
-                type: string
-              storageContainerName:
-                type: string
+              resource:
+                properties:
+                  accessTier:
+                    type: string
+                  contentMd5:
+                    type: string
+                  contentType:
+                    type: string
+                  id:
+                    type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  parallelism:
+                    format: int64
+                    type: integer
+                  size:
+                    format: int64
+                    type: integer
+                  source:
+                    type: string
+                  sourceContent:
+                    type: string
+                  sourceURI:
+                    type: string
+                  storageAccountName:
+                    type: string
+                  storageContainerName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                  url:
+                    type: string
+                required:
+                - name
+                - storageAccountName
+                - storageContainerName
+                - type
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
-                type: string
-              url:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - storageAccountName
-            - storageContainerName
-            - type
+            - resource
             type: object
           status:
             properties:

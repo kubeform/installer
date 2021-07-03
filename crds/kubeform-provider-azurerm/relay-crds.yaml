@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: hybridconnections.relay.azurerm.kubeform.com
 spec:
   group: relay.azurerm.kubeform.com
@@ -188,29 +189,17 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   relayNamespaceName:
                     type: string
                   requiresClientAuthorization:
                     type: boolean
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -234,53 +223,64 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 - relayNamespaceName
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              relayNamespaceName:
-                type: string
-              requiresClientAuthorization:
-                type: boolean
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  relayNamespaceName:
+                    type: string
+                  requiresClientAuthorization:
+                    type: boolean
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  userMetadata:
+                    type: string
+                required:
+                - name
+                - relayNamespaceName
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              userMetadata:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - relayNamespaceName
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -327,7 +327,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: namespace_s.relay.azurerm.kubeform.com
 spec:
   group: relay.azurerm.kubeform.com
@@ -354,8 +355,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -366,29 +365,14 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   skuName:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -410,63 +394,74 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - skuName
                 type: object
-              location:
-                type: string
-              metricID:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  metricID:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  skuName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - name
+                - resourceGroupName
+                - skuName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              skuName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - skuName
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: routetableassociations.subnet.azurerm.kubeform.com
 spec:
   group: subnet.azurerm.kubeform.com
@@ -30,25 +31,13 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   routeTableID:
                     type: string
                   subnetID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -69,7 +58,6 @@ spec:
                         type: integer
                     type: object
                 required:
-                - providerRef
                 - routeTableID
                 - subnetID
                 type: object
@@ -78,37 +66,49 @@ spec:
                   name:
                     type: string
                 type: object
-              routeTableID:
-                type: string
-              subnetID:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  routeTableID:
+                    type: string
+                  subnetID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - routeTableID
+                - subnetID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - routeTableID
-            - subnetID
+            - resource
             type: object
           status:
             properties:

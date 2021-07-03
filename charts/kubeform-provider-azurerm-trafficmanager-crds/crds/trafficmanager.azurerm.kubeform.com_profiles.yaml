@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: profiles.trafficmanager.azurerm.kubeform.com
 spec:
   group: trafficmanager.azurerm.kubeform.com
@@ -30,21 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              dnsConfig:
-                properties:
-                  relativeName:
-                    type: string
-                  ttl:
-                    format: int64
-                    type: integer
-                required:
-                - relativeName
-                - ttl
-                type: object
-              fqdn:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dnsConfig:
@@ -107,22 +93,12 @@ spec:
                     type: string
                   profileStatus:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -149,100 +125,124 @@ spec:
                 - dnsConfig
                 - monitorConfig
                 - name
-                - providerRef
                 - resourceGroupName
                 - trafficRoutingMethod
                 type: object
-              maxReturn:
-                format: int64
-                type: integer
-              monitorConfig:
-                properties:
-                  customHeader:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - name
-                      - value
-                      type: object
-                    type: array
-                  expectedStatusCodeRanges:
-                    items:
-                      type: string
-                    type: array
-                  intervalInSeconds:
-                    format: int64
-                    type: integer
-                  path:
-                    type: string
-                  port:
-                    format: int64
-                    type: integer
-                  protocol:
-                    type: string
-                  timeoutInSeconds:
-                    format: int64
-                    type: integer
-                  toleratedNumberOfFailures:
-                    format: int64
-                    type: integer
-                required:
-                - port
-                - protocol
-                type: object
-              name:
-                type: string
-              profileStatus:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  dnsConfig:
+                    properties:
+                      relativeName:
+                        type: string
+                      ttl:
+                        format: int64
+                        type: integer
+                    required:
+                    - relativeName
+                    - ttl
+                    type: object
+                  fqdn:
+                    type: string
+                  id:
+                    type: string
+                  maxReturn:
+                    format: int64
+                    type: integer
+                  monitorConfig:
+                    properties:
+                      customHeader:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - name
+                          - value
+                          type: object
+                        type: array
+                      expectedStatusCodeRanges:
+                        items:
+                          type: string
+                        type: array
+                      intervalInSeconds:
+                        format: int64
+                        type: integer
+                      path:
+                        type: string
+                      port:
+                        format: int64
+                        type: integer
+                      protocol:
+                        type: string
+                      timeoutInSeconds:
+                        format: int64
+                        type: integer
+                      toleratedNumberOfFailures:
+                        format: int64
+                        type: integer
+                    required:
+                    - port
+                    - protocol
+                    type: object
+                  name:
+                    type: string
+                  profileStatus:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  trafficRoutingMethod:
+                    type: string
+                  trafficViewEnabled:
+                    type: boolean
+                required:
+                - dnsConfig
+                - monitorConfig
+                - name
+                - resourceGroupName
+                - trafficRoutingMethod
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              trafficRoutingMethod:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              trafficViewEnabled:
-                type: boolean
             required:
-            - dnsConfig
-            - monitorConfig
-            - name
             - providerRef
-            - resourceGroupName
-            - trafficRoutingMethod
+            - resource
             type: object
           status:
             properties:

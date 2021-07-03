@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: tositevpngateways.point.azurerm.kubeform.com
 spec:
   group: point.azurerm.kubeform.com
@@ -188,49 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              connectionConfiguration:
-                properties:
-                  name:
-                    type: string
-                  route:
-                    properties:
-                      associatedRouteTableID:
-                        type: string
-                      propagatedRouteTable:
-                        properties:
-                          ids:
-                            items:
-                              type: string
-                            type: array
-                          labels:
-                            items:
-                              type: string
-                            type: array
-                        required:
-                        - ids
-                        type: object
-                    required:
-                    - associatedRouteTableID
-                    type: object
-                  vpnClientAddressPool:
-                    properties:
-                      addressPrefixes:
-                        items:
-                          type: string
-                        type: array
-                    required:
-                    - addressPrefixes
-                    type: object
-                required:
-                - name
-                - vpnClientAddressPool
-                type: object
-              dnsServers:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   connectionConfiguration:
@@ -280,11 +238,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   scaleUnit:
@@ -294,11 +247,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -325,66 +273,118 @@ spec:
                 - connectionConfiguration
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - scaleUnit
                 - virtualHubID
                 - vpnServerConfigurationID
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              scaleUnit:
-                format: int64
-                type: integer
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  connectionConfiguration:
+                    properties:
+                      name:
+                        type: string
+                      route:
+                        properties:
+                          associatedRouteTableID:
+                            type: string
+                          propagatedRouteTable:
+                            properties:
+                              ids:
+                                items:
+                                  type: string
+                                type: array
+                              labels:
+                                items:
+                                  type: string
+                                type: array
+                            required:
+                            - ids
+                            type: object
+                        required:
+                        - associatedRouteTableID
+                        type: object
+                      vpnClientAddressPool:
+                        properties:
+                          addressPrefixes:
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - addressPrefixes
+                        type: object
+                    required:
+                    - name
+                    - vpnClientAddressPool
+                    type: object
+                  dnsServers:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  scaleUnit:
+                    format: int64
+                    type: integer
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualHubID:
+                    type: string
+                  vpnServerConfigurationID:
+                    type: string
+                required:
+                - connectionConfiguration
+                - location
+                - name
+                - resourceGroupName
+                - scaleUnit
+                - virtualHubID
+                - vpnServerConfigurationID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualHubID:
-                type: string
-              vpnServerConfigurationID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - connectionConfiguration
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - scaleUnit
-            - virtualHubID
-            - vpnServerConfigurationID
+            - resource
             type: object
           status:
             properties:

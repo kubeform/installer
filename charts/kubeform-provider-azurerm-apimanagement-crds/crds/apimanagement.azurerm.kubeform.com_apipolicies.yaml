@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: apipolicies.apimanagement.azurerm.kubeform.com
 spec:
   group: apimanagement.azurerm.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiManagementName:
-                type: string
-              apiName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiManagementName:
@@ -44,17 +39,7 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -81,7 +66,6 @@ spec:
                 required:
                 - apiManagementName
                 - apiName
-                - providerRef
                 - resourceGroupName
                 type: object
               providerRef:
@@ -89,40 +73,56 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  apiManagementName:
+                    type: string
+                  apiName:
+                    type: string
+                  id:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  xmlContent:
+                    type: string
+                  xmlLink:
+                    type: string
+                required:
+                - apiManagementName
+                - apiName
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              xmlContent:
-                type: string
-              xmlLink:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - apiManagementName
-            - apiName
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

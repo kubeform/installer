@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: attacheddatabaseconfigurations.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -30,20 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              attachedDatabaseNames:
-                items:
-                  type: string
-                type: array
-              clusterName:
-                type: string
-              clusterResourceID:
-                type: string
-              databaseName:
-                type: string
-              defaultPrincipalModificationKind:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   attachedDatabaseNames:
@@ -64,17 +51,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -100,51 +77,74 @@ spec:
                 - databaseName
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  attachedDatabaseNames:
+                    items:
+                      type: string
+                    type: array
+                  clusterName:
+                    type: string
+                  clusterResourceID:
+                    type: string
+                  databaseName:
+                    type: string
+                  defaultPrincipalModificationKind:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - clusterResourceID
+                - databaseName
+                - location
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - clusterResourceID
-            - databaseName
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -191,7 +191,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusters.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -218,35 +219,6 @@ spec:
             type: object
           spec:
             properties:
-              dataIngestionURI:
-                type: string
-              doubleEncryptionEnabled:
-                type: boolean
-              enableDiskEncryption:
-                type: boolean
-              enablePurge:
-                type: boolean
-              enableStreamingIngest:
-                type: boolean
-              engine:
-                type: string
-              id:
-                type: string
-              identity:
-                properties:
-                  identityIDS:
-                    items:
-                      type: string
-                    type: array
-                  principalID:
-                    type: string
-                  tenantID:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
               kubeformOutput:
                 properties:
                   dataIngestionURI:
@@ -298,11 +270,6 @@ spec:
                     - maximumInstances
                     - minimumInstances
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   sku:
@@ -319,11 +286,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -368,103 +330,141 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - sku
-                type: object
-              languageExtensions:
-                items:
-                  type: string
-                type: array
-              location:
-                type: string
-              name:
-                type: string
-              optimizedAutoScale:
-                properties:
-                  maximumInstances:
-                    format: int64
-                    type: integer
-                  minimumInstances:
-                    format: int64
-                    type: integer
-                required:
-                - maximumInstances
-                - minimumInstances
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              sku:
+              resource:
                 properties:
-                  capacity:
-                    format: int64
-                    type: integer
+                  dataIngestionURI:
+                    type: string
+                  doubleEncryptionEnabled:
+                    type: boolean
+                  enableDiskEncryption:
+                    type: boolean
+                  enablePurge:
+                    type: boolean
+                  enableStreamingIngest:
+                    type: boolean
+                  engine:
+                    type: string
+                  id:
+                    type: string
+                  identity:
+                    properties:
+                      identityIDS:
+                        items:
+                          type: string
+                        type: array
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  languageExtensions:
+                    items:
+                      type: string
+                    type: array
+                  location:
+                    type: string
                   name:
                     type: string
+                  optimizedAutoScale:
+                    properties:
+                      maximumInstances:
+                        format: int64
+                        type: integer
+                      minimumInstances:
+                        format: int64
+                        type: integer
+                    required:
+                    - maximumInstances
+                    - minimumInstances
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  sku:
+                    properties:
+                      capacity:
+                        format: int64
+                        type: integer
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  trustedExternalTenants:
+                    items:
+                      type: string
+                    type: array
+                  uri:
+                    type: string
+                  virtualNetworkConfiguration:
+                    properties:
+                      dataManagementPublicIPID:
+                        type: string
+                      enginePublicIPID:
+                        type: string
+                      subnetID:
+                        type: string
+                    required:
+                    - dataManagementPublicIPID
+                    - enginePublicIPID
+                    - subnetID
+                    type: object
+                  zones:
+                    items:
+                      type: string
+                    type: array
                 required:
+                - location
                 - name
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
+                - resourceGroupName
+                - sku
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              trustedExternalTenants:
-                items:
-                  type: string
-                type: array
-              uri:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              virtualNetworkConfiguration:
-                properties:
-                  dataManagementPublicIPID:
-                    type: string
-                  enginePublicIPID:
-                    type: string
-                  subnetID:
-                    type: string
-                required:
-                - dataManagementPublicIPID
-                - enginePublicIPID
-                - subnetID
-                type: object
-              zones:
-                items:
-                  type: string
-                type: array
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - sku
+            - resource
             type: object
           status:
             properties:
@@ -511,7 +511,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clustercustomermanagedkeys.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -538,16 +539,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterID:
-                type: string
-              id:
-                type: string
-              keyName:
-                type: string
-              keyVaultID:
-                type: string
-              keyVersion:
-                type: string
               kubeformOutput:
                 properties:
                   clusterID:
@@ -559,16 +550,6 @@ spec:
                   keyVaultID:
                     type: string
                   keyVersion:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -588,47 +569,70 @@ spec:
                         format: int64
                         type: integer
                     type: object
+                  userIdentity:
+                    type: string
                 required:
                 - clusterID
                 - keyName
                 - keyVaultID
                 - keyVersion
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
+              resource:
+                properties:
+                  clusterID:
+                    type: string
+                  id:
+                    type: string
+                  keyName:
+                    type: string
+                  keyVaultID:
+                    type: string
+                  keyVersion:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  userIdentity:
+                    type: string
+                required:
+                - clusterID
+                - keyName
+                - keyVaultID
+                - keyVersion
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterID
-            - keyName
-            - keyVaultID
-            - keyVersion
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -675,7 +679,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusterprincipalassignments.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -702,10 +707,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterName:
@@ -720,11 +721,6 @@ spec:
                     type: string
                   principalType:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   role:
@@ -732,11 +728,6 @@ spec:
                   tenantID:
                     type: string
                   tenantName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -761,64 +752,77 @@ spec:
                 - name
                 - principalID
                 - principalType
-                - providerRef
                 - resourceGroupName
                 - role
                 - tenantID
                 type: object
-              name:
-                type: string
-              principalID:
-                type: string
-              principalName:
-                type: string
-              principalType:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              role:
-                type: string
-              tenantID:
-                type: string
-              tenantName:
-                type: string
+              resource:
+                properties:
+                  clusterName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  principalID:
+                    type: string
+                  principalName:
+                    type: string
+                  principalType:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  role:
+                    type: string
+                  tenantID:
+                    type: string
+                  tenantName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - name
+                - principalID
+                - principalType
+                - resourceGroupName
+                - role
+                - tenantID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - name
-            - principalID
-            - principalType
             - providerRef
-            - resourceGroupName
-            - role
-            - tenantID
+            - resource
             type: object
           status:
             properties:
@@ -865,7 +869,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: databases.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -892,12 +897,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterName:
-                type: string
-              hotCachePeriod:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterName:
@@ -910,22 +909,12 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   size:
                     format: double
                     type: number
                   softDeletePeriod:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -949,54 +938,69 @@ spec:
                 - clusterName
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              size:
-                format: double
-                type: number
-              softDeletePeriod:
-                type: string
+              resource:
+                properties:
+                  clusterName:
+                    type: string
+                  hotCachePeriod:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  size:
+                    format: double
+                    type: number
+                  softDeletePeriod:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - location
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1043,7 +1047,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: databaseprincipals.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -1070,20 +1075,6 @@ spec:
             type: object
           spec:
             properties:
-              appID:
-                type: string
-              clientID:
-                type: string
-              clusterName:
-                type: string
-              databaseName:
-                type: string
-              email:
-                type: string
-              fullyQualifiedName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   appID:
@@ -1104,19 +1095,9 @@ spec:
                     type: string
                   objectID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   role:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1143,58 +1124,81 @@ spec:
                 - clusterName
                 - databaseName
                 - objectID
-                - providerRef
                 - resourceGroupName
                 - role
                 - type
                 type: object
-              name:
-                type: string
-              objectID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              role:
-                type: string
+              resource:
+                properties:
+                  appID:
+                    type: string
+                  clientID:
+                    type: string
+                  clusterName:
+                    type: string
+                  databaseName:
+                    type: string
+                  email:
+                    type: string
+                  fullyQualifiedName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  objectID:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  role:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                required:
+                - clientID
+                - clusterName
+                - databaseName
+                - objectID
+                - resourceGroupName
+                - role
+                - type
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - clientID
-            - clusterName
-            - databaseName
-            - objectID
             - providerRef
-            - resourceGroupName
-            - role
-            - type
+            - resource
             type: object
           status:
             properties:
@@ -1241,7 +1245,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: databaseprincipalassignments.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -1268,12 +1273,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterName:
-                type: string
-              databaseName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterName:
@@ -1290,11 +1289,6 @@ spec:
                     type: string
                   principalType:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   role:
@@ -1302,11 +1296,6 @@ spec:
                   tenantID:
                     type: string
                   tenantName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1332,65 +1321,80 @@ spec:
                 - name
                 - principalID
                 - principalType
-                - providerRef
                 - resourceGroupName
                 - role
                 - tenantID
                 type: object
-              name:
-                type: string
-              principalID:
-                type: string
-              principalName:
-                type: string
-              principalType:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              role:
-                type: string
-              tenantID:
-                type: string
-              tenantName:
-                type: string
+              resource:
+                properties:
+                  clusterName:
+                    type: string
+                  databaseName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  principalID:
+                    type: string
+                  principalName:
+                    type: string
+                  principalType:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  role:
+                    type: string
+                  tenantID:
+                    type: string
+                  tenantName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - databaseName
+                - name
+                - principalID
+                - principalType
+                - resourceGroupName
+                - role
+                - tenantID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - databaseName
-            - name
-            - principalID
-            - principalType
             - providerRef
-            - resourceGroupName
-            - role
-            - tenantID
+            - resource
             type: object
           status:
             properties:
@@ -1437,7 +1441,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: eventgriddataconnections.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -1464,20 +1469,6 @@ spec:
             type: object
           spec:
             properties:
-              blobStorageEventType:
-                type: string
-              clusterName:
-                type: string
-              dataFormat:
-                type: string
-              databaseName:
-                type: string
-              eventhubConsumerGroupName:
-                type: string
-              eventhubID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   blobStorageEventType:
@@ -1500,11 +1491,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   skipFirstRecord:
@@ -1512,11 +1498,6 @@ spec:
                   storageAccountID:
                     type: string
                   tableName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1543,62 +1524,85 @@ spec:
                 - eventhubID
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - storageAccountID
                 type: object
-              location:
-                type: string
-              mappingRuleName:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              skipFirstRecord:
-                type: boolean
-              storageAccountID:
-                type: string
-              tableName:
-                type: string
+              resource:
+                properties:
+                  blobStorageEventType:
+                    type: string
+                  clusterName:
+                    type: string
+                  dataFormat:
+                    type: string
+                  databaseName:
+                    type: string
+                  eventhubConsumerGroupName:
+                    type: string
+                  eventhubID:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  mappingRuleName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  skipFirstRecord:
+                    type: boolean
+                  storageAccountID:
+                    type: string
+                  tableName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - databaseName
+                - eventhubConsumerGroupName
+                - eventhubID
+                - location
+                - name
+                - resourceGroupName
+                - storageAccountID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - databaseName
-            - eventhubConsumerGroupName
-            - eventhubID
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - storageAccountID
+            - resource
             type: object
           status:
             properties:
@@ -1645,7 +1649,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: eventhubdataconnections.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -1672,24 +1677,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterName:
-                type: string
-              compression:
-                type: string
-              consumerGroup:
-                type: string
-              dataFormat:
-                type: string
-              databaseName:
-                type: string
-              eventSystemProperties:
-                items:
-                  type: string
-                type: array
-              eventhubID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterName:
@@ -1716,19 +1703,9 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   tableName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1755,56 +1732,83 @@ spec:
                 - eventhubID
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              mappingRuleName:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              tableName:
-                type: string
+              resource:
+                properties:
+                  clusterName:
+                    type: string
+                  compression:
+                    type: string
+                  consumerGroup:
+                    type: string
+                  dataFormat:
+                    type: string
+                  databaseName:
+                    type: string
+                  eventSystemProperties:
+                    items:
+                      type: string
+                    type: array
+                  eventhubID:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  mappingRuleName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  tableName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - consumerGroup
+                - databaseName
+                - eventhubID
+                - location
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - consumerGroup
-            - databaseName
-            - eventhubID
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1851,7 +1855,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: iothubdataconnections.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -1878,25 +1883,13 @@ spec:
             type: object
           spec:
             properties:
-              clusterName:
-                type: string
-              consumerGroup:
-                type: string
-              databaseName:
-                type: string
-              eventSystemProperties:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
-              iothubID:
-                type: string
               kubeformOutput:
                 properties:
                   clusterName:
                     type: string
                   consumerGroup:
+                    type: string
+                  dataFormat:
                     type: string
                   databaseName:
                     type: string
@@ -1910,21 +1903,15 @@ spec:
                     type: string
                   location:
                     type: string
+                  mappingRuleName:
+                    type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   sharedAccessPolicyName:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  tableName:
                     type: string
                   timeouts:
                     properties:
@@ -1951,56 +1938,85 @@ spec:
                 - iothubID
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - sharedAccessPolicyName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              sharedAccessPolicyName:
-                type: string
+              resource:
+                properties:
+                  clusterName:
+                    type: string
+                  consumerGroup:
+                    type: string
+                  dataFormat:
+                    type: string
+                  databaseName:
+                    type: string
+                  eventSystemProperties:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  iothubID:
+                    type: string
+                  location:
+                    type: string
+                  mappingRuleName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  sharedAccessPolicyName:
+                    type: string
+                  tableName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - consumerGroup
+                - databaseName
+                - iothubID
+                - location
+                - name
+                - resourceGroupName
+                - sharedAccessPolicyName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - consumerGroup
-            - databaseName
-            - iothubID
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - sharedAccessPolicyName
+            - resource
             type: object
           status:
             properties:

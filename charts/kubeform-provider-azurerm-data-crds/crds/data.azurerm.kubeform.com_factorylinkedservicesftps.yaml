@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: factorylinkedservicesftps.data.azurerm.kubeform.com
 spec:
   group: data.azurerm.kubeform.com
@@ -30,26 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              additionalProperties:
-                additionalProperties:
-                  type: string
-                type: object
-              annotations:
-                items:
-                  type: string
-                type: array
-              authenticationType:
-                type: string
-              dataFactoryName:
-                type: string
-              description:
-                type: string
-              host:
-                type: string
-              id:
-                type: string
-              integrationRuntimeName:
-                type: string
               kubeformOutput:
                 properties:
                   additionalProperties:
@@ -68,6 +49,8 @@ spec:
                     type: string
                   host:
                     type: string
+                  hostKeyFingerprint:
+                    type: string
                   id:
                     type: string
                   integrationRuntimeName:
@@ -81,23 +64,10 @@ spec:
                   port:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
+                  skipHostKeyValidation:
+                    type: boolean
                   timeouts:
                     properties:
                       create:
@@ -124,26 +94,80 @@ spec:
                 - host
                 - name
                 - port
-                - providerRef
                 - resourceGroupName
                 - username
                 type: object
-              name:
-                type: string
-              parameters:
-                additionalProperties:
-                  type: string
-                type: object
-              port:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  additionalProperties:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  annotations:
+                    items:
+                      type: string
+                    type: array
+                  authenticationType:
+                    type: string
+                  dataFactoryName:
+                    type: string
+                  description:
+                    type: string
+                  host:
+                    type: string
+                  hostKeyFingerprint:
+                    type: string
+                  id:
+                    type: string
+                  integrationRuntimeName:
+                    type: string
+                  name:
+                    type: string
+                  parameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  port:
+                    format: int64
+                    type: integer
+                  resourceGroupName:
+                    type: string
+                  skipHostKeyValidation:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  username:
+                    type: string
+                required:
+                - authenticationType
+                - dataFactoryName
+                - host
+                - name
+                - port
+                - resourceGroupName
+                - username
+                type: object
               secretRef:
                 properties:
                   name:
@@ -154,35 +178,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              username:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - authenticationType
-            - dataFactoryName
-            - host
-            - name
-            - port
             - providerRef
-            - resourceGroupName
-            - username
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: subnets.subnet.azurerm.kubeform.com
 spec:
   group: subnet.azurerm.kubeform.com
@@ -30,40 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              addressPrefix:
-                type: string
-              addressPrefixes:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              delegation:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    serviceDelegation:
-                      properties:
-                        actions:
-                          items:
-                            type: string
-                          type: array
-                        name:
-                          type: string
-                      required:
-                      - name
-                      type: object
-                  required:
-                  - name
-                  - serviceDelegation
-                  type: object
-                type: array
-              enforcePrivateLinkEndpointNetworkPolicies:
-                type: boolean
-              enforcePrivateLinkServiceNetworkPolicies:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   addressPrefix:
@@ -102,11 +69,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   serviceEndpointPolicyIDS:
@@ -118,11 +80,6 @@ spec:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -145,58 +102,101 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 - resourceGroupName
                 - virtualNetworkName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              serviceEndpointPolicyIDS:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              serviceEndpoints:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  addressPrefix:
+                    type: string
+                  addressPrefixes:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  delegation:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        serviceDelegation:
+                          properties:
+                            actions:
+                              items:
+                                type: string
+                              type: array
+                            name:
+                              type: string
+                          required:
+                          - name
+                          type: object
+                      required:
+                      - name
+                      - serviceDelegation
+                      type: object
+                    type: array
+                  enforcePrivateLinkEndpointNetworkPolicies:
+                    type: boolean
+                  enforcePrivateLinkServiceNetworkPolicies:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serviceEndpointPolicyIDS:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  serviceEndpoints:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualNetworkName:
+                    type: string
+                required:
+                - name
+                - resourceGroupName
+                - virtualNetworkName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualNetworkName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - resourceGroupName
-            - virtualNetworkName
+            - resource
             type: object
           status:
             properties:

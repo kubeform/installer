@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accounts.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
@@ -30,131 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              accessTier:
-                type: string
-              accountKind:
-                type: string
-              accountReplicationType:
-                type: string
-              accountTier:
-                type: string
-              allowBlobPublicAccess:
-                type: boolean
-              azureFilesAuthentication:
-                properties:
-                  activeDirectory:
-                    properties:
-                      domainGuid:
-                        type: string
-                      domainName:
-                        type: string
-                      domainSid:
-                        type: string
-                      forestName:
-                        type: string
-                      netbiosDomainName:
-                        type: string
-                      storageSid:
-                        type: string
-                    required:
-                    - domainGuid
-                    - domainName
-                    - domainSid
-                    - forestName
-                    - netbiosDomainName
-                    - storageSid
-                    type: object
-                  directoryType:
-                    type: string
-                required:
-                - directoryType
-                type: object
-              blobProperties:
-                properties:
-                  changeFeedEnabled:
-                    type: boolean
-                  containerDeleteRetentionPolicy:
-                    properties:
-                      days:
-                        format: int64
-                        type: integer
-                    type: object
-                  corsRule:
-                    items:
-                      properties:
-                        allowedHeaders:
-                          items:
-                            type: string
-                          maxItems: 64
-                          minItems: 1
-                          type: array
-                        allowedMethods:
-                          items:
-                            type: string
-                          maxItems: 64
-                          type: array
-                        allowedOrigins:
-                          items:
-                            type: string
-                          maxItems: 64
-                          type: array
-                        exposedHeaders:
-                          items:
-                            type: string
-                          maxItems: 64
-                          minItems: 1
-                          type: array
-                        maxAgeInSeconds:
-                          format: int64
-                          type: integer
-                      required:
-                      - allowedHeaders
-                      - allowedMethods
-                      - allowedOrigins
-                      - exposedHeaders
-                      - maxAgeInSeconds
-                      type: object
-                    maxItems: 5
-                    type: array
-                  defaultServiceVersion:
-                    type: string
-                  deleteRetentionPolicy:
-                    properties:
-                      days:
-                        format: int64
-                        type: integer
-                    type: object
-                  lastAccessTimeEnabled:
-                    type: boolean
-                  versioningEnabled:
-                    type: boolean
-                type: object
-              customDomain:
-                properties:
-                  name:
-                    type: string
-                  useSubdomain:
-                    type: boolean
-                required:
-                - name
-                type: object
-              enableHTTPSTrafficOnly:
-                type: boolean
-              id:
-                type: string
-              identity:
-                properties:
-                  principalID:
-                    type: string
-                  tenantID:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
-              isHnsEnabled:
-                type: boolean
               kubeformOutput:
                 properties:
                   accessTier:
@@ -271,6 +147,11 @@ spec:
                     type: string
                   identity:
                     properties:
+                      identityIDS:
+                        items:
+                          type: string
+                        minItems: 1
+                        type: array
                       principalID:
                         type: string
                       tenantID:
@@ -286,7 +167,7 @@ spec:
                     type: boolean
                   location:
                     type: string
-                  minTLSVersion:
+                  minTlsVersion:
                     type: string
                   name:
                     type: string
@@ -348,11 +229,6 @@ spec:
                     type: string
                   primaryWebHost:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   queueProperties:
                     properties:
                       corsRule:
@@ -479,10 +355,70 @@ spec:
                     type: string
                   secondaryWebHost:
                     type: string
-                  secretRef:
+                  shareProperties:
                     properties:
-                      name:
-                        type: string
+                      corsRule:
+                        items:
+                          properties:
+                            allowedHeaders:
+                              items:
+                                type: string
+                              maxItems: 64
+                              minItems: 1
+                              type: array
+                            allowedMethods:
+                              items:
+                                type: string
+                              maxItems: 64
+                              type: array
+                            allowedOrigins:
+                              items:
+                                type: string
+                              maxItems: 64
+                              type: array
+                            exposedHeaders:
+                              items:
+                                type: string
+                              maxItems: 64
+                              minItems: 1
+                              type: array
+                            maxAgeInSeconds:
+                              format: int64
+                              type: integer
+                          required:
+                          - allowedHeaders
+                          - allowedMethods
+                          - allowedOrigins
+                          - exposedHeaders
+                          - maxAgeInSeconds
+                          type: object
+                        maxItems: 5
+                        type: array
+                      retentionPolicy:
+                        properties:
+                          days:
+                            format: int64
+                            type: integer
+                        type: object
+                      smb:
+                        properties:
+                          authenticationTypes:
+                            items:
+                              type: string
+                            type: array
+                          channelEncryptionType:
+                            items:
+                              type: string
+                            type: array
+                          kerberosTicketEncryptionType:
+                            items:
+                              type: string
+                            type: array
+                          versions:
+                            items:
+                              type: string
+                            type: array
+                        type: object
                     type: object
                   staticWebsite:
                     properties:
@@ -495,11 +431,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -523,252 +454,456 @@ spec:
                 - accountTier
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              largeFileShareEnabled:
-                type: boolean
-              location:
-                type: string
-              minTLSVersion:
-                type: string
-              name:
-                type: string
-              networkRules:
-                properties:
-                  bypass:
-                    items:
-                      type: string
-                    type: array
-                  defaultAction:
-                    type: string
-                  ipRules:
-                    items:
-                      type: string
-                    type: array
-                  privateLinkAccess:
-                    items:
-                      properties:
-                        endpointResourceID:
-                          type: string
-                        endpointTenantID:
-                          type: string
-                      required:
-                      - endpointResourceID
-                      type: object
-                    type: array
-                  virtualNetworkSubnetIDS:
-                    items:
-                      type: string
-                    type: array
-                required:
-                - defaultAction
-                type: object
-              nfsv3Enabled:
-                type: boolean
-              primaryBlobEndpoint:
-                type: string
-              primaryBlobHost:
-                type: string
-              primaryDfsEndpoint:
-                type: string
-              primaryDfsHost:
-                type: string
-              primaryFileEndpoint:
-                type: string
-              primaryFileHost:
-                type: string
-              primaryLocation:
-                type: string
-              primaryQueueEndpoint:
-                type: string
-              primaryQueueHost:
-                type: string
-              primaryTableEndpoint:
-                type: string
-              primaryTableHost:
-                type: string
-              primaryWebEndpoint:
-                type: string
-              primaryWebHost:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              queueProperties:
+              resource:
                 properties:
-                  corsRule:
-                    items:
-                      properties:
-                        allowedHeaders:
-                          items:
-                            type: string
-                          maxItems: 64
-                          minItems: 1
-                          type: array
-                        allowedMethods:
-                          items:
-                            type: string
-                          maxItems: 64
-                          type: array
-                        allowedOrigins:
-                          items:
-                            type: string
-                          maxItems: 64
-                          type: array
-                        exposedHeaders:
-                          items:
-                            type: string
-                          maxItems: 64
-                          minItems: 1
-                          type: array
-                        maxAgeInSeconds:
-                          format: int64
-                          type: integer
-                      required:
-                      - allowedHeaders
-                      - allowedMethods
-                      - allowedOrigins
-                      - exposedHeaders
-                      - maxAgeInSeconds
-                      type: object
-                    maxItems: 5
-                    type: array
-                  hourMetrics:
-                    properties:
-                      enabled:
-                        type: boolean
-                      includeApis:
-                        type: boolean
-                      retentionPolicyDays:
-                        format: int64
-                        type: integer
-                      version:
-                        type: string
-                    required:
-                    - enabled
-                    - version
-                    type: object
-                  logging:
-                    properties:
-                      delete:
-                        type: boolean
-                      read:
-                        type: boolean
-                      retentionPolicyDays:
-                        format: int64
-                        type: integer
-                      version:
-                        type: string
-                      write:
-                        type: boolean
-                    required:
-                    - delete
-                    - read
-                    - version
-                    - write
-                    type: object
-                  minuteMetrics:
-                    properties:
-                      enabled:
-                        type: boolean
-                      includeApis:
-                        type: boolean
-                      retentionPolicyDays:
-                        format: int64
-                        type: integer
-                      version:
-                        type: string
-                    required:
-                    - enabled
-                    - version
-                    type: object
-                type: object
-              resourceGroupName:
-                type: string
-              routing:
-                properties:
-                  choice:
+                  accessTier:
                     type: string
-                  publishInternetEndpoints:
+                  accountKind:
+                    type: string
+                  accountReplicationType:
+                    type: string
+                  accountTier:
+                    type: string
+                  allowBlobPublicAccess:
                     type: boolean
-                  publishMicrosoftEndpoints:
+                  azureFilesAuthentication:
+                    properties:
+                      activeDirectory:
+                        properties:
+                          domainGuid:
+                            type: string
+                          domainName:
+                            type: string
+                          domainSid:
+                            type: string
+                          forestName:
+                            type: string
+                          netbiosDomainName:
+                            type: string
+                          storageSid:
+                            type: string
+                        required:
+                        - domainGuid
+                        - domainName
+                        - domainSid
+                        - forestName
+                        - netbiosDomainName
+                        - storageSid
+                        type: object
+                      directoryType:
+                        type: string
+                    required:
+                    - directoryType
+                    type: object
+                  blobProperties:
+                    properties:
+                      changeFeedEnabled:
+                        type: boolean
+                      containerDeleteRetentionPolicy:
+                        properties:
+                          days:
+                            format: int64
+                            type: integer
+                        type: object
+                      corsRule:
+                        items:
+                          properties:
+                            allowedHeaders:
+                              items:
+                                type: string
+                              maxItems: 64
+                              minItems: 1
+                              type: array
+                            allowedMethods:
+                              items:
+                                type: string
+                              maxItems: 64
+                              type: array
+                            allowedOrigins:
+                              items:
+                                type: string
+                              maxItems: 64
+                              type: array
+                            exposedHeaders:
+                              items:
+                                type: string
+                              maxItems: 64
+                              minItems: 1
+                              type: array
+                            maxAgeInSeconds:
+                              format: int64
+                              type: integer
+                          required:
+                          - allowedHeaders
+                          - allowedMethods
+                          - allowedOrigins
+                          - exposedHeaders
+                          - maxAgeInSeconds
+                          type: object
+                        maxItems: 5
+                        type: array
+                      defaultServiceVersion:
+                        type: string
+                      deleteRetentionPolicy:
+                        properties:
+                          days:
+                            format: int64
+                            type: integer
+                        type: object
+                      lastAccessTimeEnabled:
+                        type: boolean
+                      versioningEnabled:
+                        type: boolean
+                    type: object
+                  customDomain:
+                    properties:
+                      name:
+                        type: string
+                      useSubdomain:
+                        type: boolean
+                    required:
+                    - name
+                    type: object
+                  enableHTTPSTrafficOnly:
                     type: boolean
+                  id:
+                    type: string
+                  identity:
+                    properties:
+                      identityIDS:
+                        items:
+                          type: string
+                        minItems: 1
+                        type: array
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  isHnsEnabled:
+                    type: boolean
+                  largeFileShareEnabled:
+                    type: boolean
+                  location:
+                    type: string
+                  minTlsVersion:
+                    type: string
+                  name:
+                    type: string
+                  networkRules:
+                    properties:
+                      bypass:
+                        items:
+                          type: string
+                        type: array
+                      defaultAction:
+                        type: string
+                      ipRules:
+                        items:
+                          type: string
+                        type: array
+                      privateLinkAccess:
+                        items:
+                          properties:
+                            endpointResourceID:
+                              type: string
+                            endpointTenantID:
+                              type: string
+                          required:
+                          - endpointResourceID
+                          type: object
+                        type: array
+                      virtualNetworkSubnetIDS:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - defaultAction
+                    type: object
+                  nfsv3Enabled:
+                    type: boolean
+                  primaryBlobEndpoint:
+                    type: string
+                  primaryBlobHost:
+                    type: string
+                  primaryDfsEndpoint:
+                    type: string
+                  primaryDfsHost:
+                    type: string
+                  primaryFileEndpoint:
+                    type: string
+                  primaryFileHost:
+                    type: string
+                  primaryLocation:
+                    type: string
+                  primaryQueueEndpoint:
+                    type: string
+                  primaryQueueHost:
+                    type: string
+                  primaryTableEndpoint:
+                    type: string
+                  primaryTableHost:
+                    type: string
+                  primaryWebEndpoint:
+                    type: string
+                  primaryWebHost:
+                    type: string
+                  queueProperties:
+                    properties:
+                      corsRule:
+                        items:
+                          properties:
+                            allowedHeaders:
+                              items:
+                                type: string
+                              maxItems: 64
+                              minItems: 1
+                              type: array
+                            allowedMethods:
+                              items:
+                                type: string
+                              maxItems: 64
+                              type: array
+                            allowedOrigins:
+                              items:
+                                type: string
+                              maxItems: 64
+                              type: array
+                            exposedHeaders:
+                              items:
+                                type: string
+                              maxItems: 64
+                              minItems: 1
+                              type: array
+                            maxAgeInSeconds:
+                              format: int64
+                              type: integer
+                          required:
+                          - allowedHeaders
+                          - allowedMethods
+                          - allowedOrigins
+                          - exposedHeaders
+                          - maxAgeInSeconds
+                          type: object
+                        maxItems: 5
+                        type: array
+                      hourMetrics:
+                        properties:
+                          enabled:
+                            type: boolean
+                          includeApis:
+                            type: boolean
+                          retentionPolicyDays:
+                            format: int64
+                            type: integer
+                          version:
+                            type: string
+                        required:
+                        - enabled
+                        - version
+                        type: object
+                      logging:
+                        properties:
+                          delete:
+                            type: boolean
+                          read:
+                            type: boolean
+                          retentionPolicyDays:
+                            format: int64
+                            type: integer
+                          version:
+                            type: string
+                          write:
+                            type: boolean
+                        required:
+                        - delete
+                        - read
+                        - version
+                        - write
+                        type: object
+                      minuteMetrics:
+                        properties:
+                          enabled:
+                            type: boolean
+                          includeApis:
+                            type: boolean
+                          retentionPolicyDays:
+                            format: int64
+                            type: integer
+                          version:
+                            type: string
+                        required:
+                        - enabled
+                        - version
+                        type: object
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  routing:
+                    properties:
+                      choice:
+                        type: string
+                      publishInternetEndpoints:
+                        type: boolean
+                      publishMicrosoftEndpoints:
+                        type: boolean
+                    type: object
+                  secondaryBlobEndpoint:
+                    type: string
+                  secondaryBlobHost:
+                    type: string
+                  secondaryDfsEndpoint:
+                    type: string
+                  secondaryDfsHost:
+                    type: string
+                  secondaryFileEndpoint:
+                    type: string
+                  secondaryFileHost:
+                    type: string
+                  secondaryLocation:
+                    type: string
+                  secondaryQueueEndpoint:
+                    type: string
+                  secondaryQueueHost:
+                    type: string
+                  secondaryTableEndpoint:
+                    type: string
+                  secondaryTableHost:
+                    type: string
+                  secondaryWebEndpoint:
+                    type: string
+                  secondaryWebHost:
+                    type: string
+                  shareProperties:
+                    properties:
+                      corsRule:
+                        items:
+                          properties:
+                            allowedHeaders:
+                              items:
+                                type: string
+                              maxItems: 64
+                              minItems: 1
+                              type: array
+                            allowedMethods:
+                              items:
+                                type: string
+                              maxItems: 64
+                              type: array
+                            allowedOrigins:
+                              items:
+                                type: string
+                              maxItems: 64
+                              type: array
+                            exposedHeaders:
+                              items:
+                                type: string
+                              maxItems: 64
+                              minItems: 1
+                              type: array
+                            maxAgeInSeconds:
+                              format: int64
+                              type: integer
+                          required:
+                          - allowedHeaders
+                          - allowedMethods
+                          - allowedOrigins
+                          - exposedHeaders
+                          - maxAgeInSeconds
+                          type: object
+                        maxItems: 5
+                        type: array
+                      retentionPolicy:
+                        properties:
+                          days:
+                            format: int64
+                            type: integer
+                        type: object
+                      smb:
+                        properties:
+                          authenticationTypes:
+                            items:
+                              type: string
+                            type: array
+                          channelEncryptionType:
+                            items:
+                              type: string
+                            type: array
+                          kerberosTicketEncryptionType:
+                            items:
+                              type: string
+                            type: array
+                          versions:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                    type: object
+                  staticWebsite:
+                    properties:
+                      error404Document:
+                        type: string
+                      indexDocument:
+                        type: string
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - accountReplicationType
+                - accountTier
+                - location
+                - name
+                - resourceGroupName
                 type: object
-              secondaryBlobEndpoint:
-                type: string
-              secondaryBlobHost:
-                type: string
-              secondaryDfsEndpoint:
-                type: string
-              secondaryDfsHost:
-                type: string
-              secondaryFileEndpoint:
-                type: string
-              secondaryFileHost:
-                type: string
-              secondaryLocation:
-                type: string
-              secondaryQueueEndpoint:
-                type: string
-              secondaryQueueHost:
-                type: string
-              secondaryTableEndpoint:
-                type: string
-              secondaryTableHost:
-                type: string
-              secondaryWebEndpoint:
-                type: string
-              secondaryWebHost:
-                type: string
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              staticWebsite:
-                properties:
-                  error404Document:
-                    type: string
-                  indexDocument:
-                    type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - accountReplicationType
-            - accountTier
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

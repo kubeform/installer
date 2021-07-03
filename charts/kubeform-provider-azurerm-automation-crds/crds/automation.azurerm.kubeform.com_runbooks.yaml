@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: runbooks.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -30,31 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              content:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              jobSchedule:
-                items:
-                  properties:
-                    jobScheduleID:
-                      type: string
-                    parameters:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    runOn:
-                      type: string
-                    scheduleName:
-                      type: string
-                  required:
-                  - scheduleName
-                  type: object
-                type: array
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -90,11 +66,6 @@ spec:
                     type: boolean
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publishContentLink:
                     properties:
                       hash:
@@ -122,11 +93,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -151,82 +117,116 @@ spec:
                 - logProgress
                 - logVerbose
                 - name
-                - providerRef
                 - resourceGroupName
                 - runbookType
                 type: object
-              location:
-                type: string
-              logProgress:
-                type: boolean
-              logVerbose:
-                type: boolean
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publishContentLink:
+              resource:
                 properties:
-                  hash:
+                  automationAccountName:
+                    type: string
+                  content:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  jobSchedule:
+                    items:
+                      properties:
+                        jobScheduleID:
+                          type: string
+                        parameters:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        runOn:
+                          type: string
+                        scheduleName:
+                          type: string
+                      required:
+                      - scheduleName
+                      type: object
+                    type: array
+                  location:
+                    type: string
+                  logProgress:
+                    type: boolean
+                  logVerbose:
+                    type: boolean
+                  name:
+                    type: string
+                  publishContentLink:
                     properties:
-                      algorithm:
+                      hash:
+                        properties:
+                          algorithm:
+                            type: string
+                          value:
+                            type: string
+                        required:
+                        - algorithm
+                        - value
+                        type: object
+                      uri:
                         type: string
-                      value:
+                      version:
                         type: string
                     required:
-                    - algorithm
-                    - value
+                    - uri
                     type: object
-                  uri:
+                  resourceGroupName:
                     type: string
-                  version:
+                  runbookType:
                     type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - uri
-                type: object
-              resourceGroupName:
-                type: string
-              runbookType:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+                - automationAccountName
+                - location
+                - logProgress
+                - logVerbose
+                - name
+                - resourceGroupName
+                - runbookType
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - location
-            - logProgress
-            - logVerbose
-            - name
             - providerRef
-            - resourceGroupName
-            - runbookType
+            - resource
             type: object
           status:
             properties:

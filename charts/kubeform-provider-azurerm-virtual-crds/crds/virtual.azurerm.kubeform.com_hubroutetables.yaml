@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: hubroutetables.virtual.azurerm.kubeform.com
 spec:
   group: virtual.azurerm.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -42,11 +41,6 @@ spec:
                     type: array
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   route:
                     items:
                       properties:
@@ -69,11 +63,6 @@ spec:
                       - nextHop
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -96,71 +85,82 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 - virtualHubID
                 type: object
-              labels:
-                items:
-                  type: string
-                type: array
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              route:
-                items:
-                  properties:
-                    destinations:
-                      items:
-                        type: string
-                      type: array
-                    destinationsType:
+              resource:
+                properties:
+                  id:
+                    type: string
+                  labels:
+                    items:
                       type: string
-                    name:
-                      type: string
-                    nextHop:
-                      type: string
-                    nextHopType:
-                      type: string
-                  required:
-                  - destinations
-                  - destinationsType
-                  - name
-                  - nextHop
-                  type: object
-                type: array
+                    type: array
+                  name:
+                    type: string
+                  route:
+                    items:
+                      properties:
+                        destinations:
+                          items:
+                            type: string
+                          type: array
+                        destinationsType:
+                          type: string
+                        name:
+                          type: string
+                        nextHop:
+                          type: string
+                        nextHopType:
+                          type: string
+                      required:
+                      - destinations
+                      - destinationsType
+                      - name
+                      - nextHop
+                      type: object
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualHubID:
+                    type: string
+                required:
+                - name
+                - virtualHubID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualHubID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - virtualHubID
+            - resource
             type: object
           status:
             properties:

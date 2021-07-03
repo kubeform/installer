@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accounts.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              dscPrimaryAccessKey:
-                type: string
-              dscSecondaryAccessKey:
-                type: string
-              dscServerEndpoint:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   dscPrimaryAccessKey:
@@ -52,11 +45,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   skuName:
@@ -65,11 +53,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -91,56 +74,73 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - skuName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              skuName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  dscPrimaryAccessKey:
+                    type: string
+                  dscSecondaryAccessKey:
+                    type: string
+                  dscServerEndpoint:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  skuName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - name
+                - resourceGroupName
+                - skuName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - skuName
+            - resource
             type: object
           status:
             properties:
@@ -187,7 +187,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: certificates.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -214,14 +215,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              description:
-                type: string
-              exportable:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -234,22 +227,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   thumbprint:
                     type: string
@@ -274,18 +252,52 @@ spec:
                 required:
                 - automationAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  description:
+                    type: string
+                  exportable:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  thumbprint:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - automationAccountName
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -296,31 +308,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              thumbprint:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - automationAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -367,7 +362,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: connections.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -394,12 +390,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -410,17 +400,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -449,56 +429,71 @@ spec:
                 required:
                 - automationAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 - type
                 - values
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                  values:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - automationAccountName
+                - name
+                - resourceGroupName
+                - type
+                - values
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              values:
-                additionalProperties:
-                  type: string
-                type: object
             required:
-            - automationAccountName
-            - name
             - providerRef
-            - resourceGroupName
-            - type
-            - values
+            - resource
             type: object
           status:
             properties:
@@ -545,7 +540,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: connectioncertificates.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -572,14 +568,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              automationCertificateName:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -592,19 +580,9 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   subscriptionID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -628,51 +606,68 @@ spec:
                 - automationAccountName
                 - automationCertificateName
                 - name
-                - providerRef
                 - resourceGroupName
                 - subscriptionID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              subscriptionID:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  automationCertificateName:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  subscriptionID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - automationAccountName
+                - automationCertificateName
+                - name
+                - resourceGroupName
+                - subscriptionID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - automationCertificateName
-            - name
             - providerRef
-            - resourceGroupName
-            - subscriptionID
+            - resource
             type: object
           status:
             properties:
@@ -719,7 +714,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: connectionclassiccertificates.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -746,14 +742,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              certificateAssetName:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -766,21 +754,11 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   subscriptionID:
                     type: string
                   subscriptionName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -804,55 +782,72 @@ spec:
                 - automationAccountName
                 - certificateAssetName
                 - name
-                - providerRef
                 - resourceGroupName
                 - subscriptionID
                 - subscriptionName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              subscriptionID:
-                type: string
-              subscriptionName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  certificateAssetName:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  subscriptionID:
+                    type: string
+                  subscriptionName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - automationAccountName
+                - certificateAssetName
+                - name
+                - resourceGroupName
+                - subscriptionID
+                - subscriptionName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - certificateAssetName
-            - name
             - providerRef
-            - resourceGroupName
-            - subscriptionID
-            - subscriptionName
+            - resource
             type: object
           status:
             properties:
@@ -899,7 +894,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: connectionserviceprincipals.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -926,16 +922,6 @@ spec:
             type: object
           spec:
             properties:
-              applicationID:
-                type: string
-              automationAccountName:
-                type: string
-              certificateThumbprint:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   applicationID:
@@ -950,21 +936,11 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   subscriptionID:
                     type: string
                   tenantID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -989,56 +965,75 @@ spec:
                 - automationAccountName
                 - certificateThumbprint
                 - name
-                - providerRef
                 - resourceGroupName
                 - subscriptionID
                 - tenantID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              subscriptionID:
-                type: string
-              tenantID:
-                type: string
+              resource:
+                properties:
+                  applicationID:
+                    type: string
+                  automationAccountName:
+                    type: string
+                  certificateThumbprint:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  subscriptionID:
+                    type: string
+                  tenantID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - applicationID
+                - automationAccountName
+                - certificateThumbprint
+                - name
+                - resourceGroupName
+                - subscriptionID
+                - tenantID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - applicationID
-            - automationAccountName
-            - certificateThumbprint
-            - name
             - providerRef
-            - resourceGroupName
-            - subscriptionID
-            - tenantID
+            - resource
             type: object
           status:
             properties:
@@ -1085,7 +1080,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: credentials.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -1112,12 +1108,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -1128,22 +1118,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1168,19 +1143,52 @@ spec:
                 required:
                 - automationAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 - username
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  username:
+                    type: string
+                required:
+                - automationAccountName
+                - name
+                - resourceGroupName
+                - username
+                type: object
               secretRef:
                 properties:
                   name:
@@ -1191,32 +1199,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              username:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - automationAccountName
-            - name
             - providerRef
-            - resourceGroupName
-            - username
+            - resource
             type: object
           status:
             properties:
@@ -1263,7 +1253,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dscconfigurations.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -1290,14 +1281,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              contentEmbedded:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -1314,11 +1297,6 @@ spec:
                     type: boolean
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   state:
@@ -1327,11 +1305,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1355,58 +1328,75 @@ spec:
                 - contentEmbedded
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              logVerbose:
-                type: boolean
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              state:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  contentEmbedded:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  logVerbose:
+                    type: boolean
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  state:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - automationAccountName
+                - contentEmbedded
+                - location
+                - name
+                - resourceGroupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - contentEmbedded
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1453,7 +1443,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dscnodeconfigurations.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -1480,14 +1471,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              configurationName:
-                type: string
-              contentEmbedded:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -1500,17 +1483,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1534,47 +1507,64 @@ spec:
                 - automationAccountName
                 - contentEmbedded
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  configurationName:
+                    type: string
+                  contentEmbedded:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - automationAccountName
+                - contentEmbedded
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - contentEmbedded
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1621,7 +1611,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: jobschedules.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -1648,12 +1639,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              id:
-                type: string
-              jobScheduleID:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -1666,11 +1651,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   runOn:
@@ -1678,11 +1658,6 @@ spec:
                   runbookName:
                     type: string
                   scheduleName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1704,57 +1679,72 @@ spec:
                     type: object
                 required:
                 - automationAccountName
-                - providerRef
                 - resourceGroupName
                 - runbookName
                 - scheduleName
-                type: object
-              parameters:
-                additionalProperties:
-                  type: string
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              runOn:
-                type: string
-              runbookName:
-                type: string
-              scheduleName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  id:
+                    type: string
+                  jobScheduleID:
+                    type: string
+                  parameters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  runOn:
+                    type: string
+                  runbookName:
+                    type: string
+                  scheduleName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - automationAccountName
+                - resourceGroupName
+                - runbookName
+                - scheduleName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
             - providerRef
-            - resourceGroupName
-            - runbookName
-            - scheduleName
+            - resource
             type: object
           status:
             properties:
@@ -1801,7 +1791,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: modules.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -1828,10 +1819,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -1857,17 +1844,7 @@ spec:
                     type: object
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1891,64 +1868,77 @@ spec:
                 - automationAccountName
                 - moduleLink
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              moduleLink:
-                properties:
-                  hash:
-                    properties:
-                      algorithm:
-                        type: string
-                      value:
-                        type: string
-                    required:
-                    - algorithm
-                    - value
-                    type: object
-                  uri:
-                    type: string
-                required:
-                - uri
-                type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  id:
+                    type: string
+                  moduleLink:
+                    properties:
+                      hash:
+                        properties:
+                          algorithm:
+                            type: string
+                          value:
+                            type: string
+                        required:
+                        - algorithm
+                        - value
+                        type: object
+                      uri:
+                        type: string
+                    required:
+                    - uri
+                    type: object
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - automationAccountName
+                - moduleLink
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - moduleLink
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1995,7 +1985,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: runbooks.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -2022,31 +2013,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              content:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
-              jobSchedule:
-                items:
-                  properties:
-                    jobScheduleID:
-                      type: string
-                    parameters:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    runOn:
-                      type: string
-                    scheduleName:
-                      type: string
-                  required:
-                  - scheduleName
-                  type: object
-                type: array
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -2082,11 +2048,6 @@ spec:
                     type: boolean
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publishContentLink:
                     properties:
                       hash:
@@ -2114,11 +2075,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -2143,82 +2099,116 @@ spec:
                 - logProgress
                 - logVerbose
                 - name
-                - providerRef
                 - resourceGroupName
                 - runbookType
                 type: object
-              location:
-                type: string
-              logProgress:
-                type: boolean
-              logVerbose:
-                type: boolean
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publishContentLink:
+              resource:
                 properties:
-                  hash:
+                  automationAccountName:
+                    type: string
+                  content:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  jobSchedule:
+                    items:
+                      properties:
+                        jobScheduleID:
+                          type: string
+                        parameters:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        runOn:
+                          type: string
+                        scheduleName:
+                          type: string
+                      required:
+                      - scheduleName
+                      type: object
+                    type: array
+                  location:
+                    type: string
+                  logProgress:
+                    type: boolean
+                  logVerbose:
+                    type: boolean
+                  name:
+                    type: string
+                  publishContentLink:
                     properties:
-                      algorithm:
+                      hash:
+                        properties:
+                          algorithm:
+                            type: string
+                          value:
+                            type: string
+                        required:
+                        - algorithm
+                        - value
+                        type: object
+                      uri:
                         type: string
-                      value:
+                      version:
                         type: string
                     required:
-                    - algorithm
-                    - value
+                    - uri
                     type: object
-                  uri:
+                  resourceGroupName:
                     type: string
-                  version:
+                  runbookType:
                     type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - uri
-                type: object
-              resourceGroupName:
-                type: string
-              runbookType:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+                - automationAccountName
+                - location
+                - logProgress
+                - logVerbose
+                - name
+                - resourceGroupName
+                - runbookType
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - location
-            - logProgress
-            - logVerbose
-            - name
             - providerRef
-            - resourceGroupName
-            - runbookType
+            - resource
             type: object
           status:
             properties:
@@ -2265,7 +2255,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: schedules.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -2292,19 +2283,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              description:
-                type: string
-              expiryTime:
-                type: string
-              frequency:
-                type: string
-              id:
-                type: string
-              interval:
-                format: int64
-                type: integer
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -2340,19 +2318,9 @@ spec:
                     type: array
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   startTime:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2382,73 +2350,95 @@ spec:
                 - automationAccountName
                 - frequency
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              monthDays:
-                items:
-                  format: int64
-                  type: integer
-                type: array
-              monthlyOccurrence:
-                items:
-                  properties:
-                    day:
-                      type: string
-                    occurrence:
-                      format: int64
-                      type: integer
-                  required:
-                  - day
-                  - occurrence
-                  type: object
-                type: array
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              startTime:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  description:
+                    type: string
+                  expiryTime:
+                    type: string
+                  frequency:
+                    type: string
+                  id:
+                    type: string
+                  interval:
+                    format: int64
+                    type: integer
+                  monthDays:
+                    items:
+                      format: int64
+                      type: integer
+                    type: array
+                  monthlyOccurrence:
+                    items:
+                      properties:
+                        day:
+                          type: string
+                        occurrence:
+                          format: int64
+                          type: integer
+                      required:
+                      - day
+                      - occurrence
+                      type: object
+                    type: array
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  startTime:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  timezone:
+                    type: string
+                  weekDays:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - automationAccountName
+                - frequency
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              timezone:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              weekDays:
-                items:
-                  type: string
-                type: array
             required:
-            - automationAccountName
-            - frequency
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -2495,7 +2485,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: variablebools.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -2522,14 +2513,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              description:
-                type: string
-              encrypted:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -2542,17 +2525,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2577,48 +2550,65 @@ spec:
                 required:
                 - automationAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  description:
+                    type: string
+                  encrypted:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  value:
+                    type: boolean
+                required:
+                - automationAccountName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              value:
-                type: boolean
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -2665,7 +2655,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: variabledatetimes.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -2692,14 +2683,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              description:
-                type: string
-              encrypted:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -2712,17 +2695,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2747,48 +2720,65 @@ spec:
                 required:
                 - automationAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  description:
+                    type: string
+                  encrypted:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  value:
+                    type: string
+                required:
+                - automationAccountName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              value:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - automationAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -2835,7 +2825,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: variableints.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -2862,14 +2853,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              description:
-                type: string
-              encrypted:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -2882,17 +2865,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2918,49 +2891,66 @@ spec:
                 required:
                 - automationAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  description:
+                    type: string
+                  encrypted:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  value:
+                    format: int64
+                    type: integer
+                required:
+                - automationAccountName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              value:
-                format: int64
-                type: integer
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - automationAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -3007,7 +2997,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: variablestrings.automation.azurerm.kubeform.com
 spec:
   group: automation.azurerm.kubeform.com
@@ -3034,14 +3025,6 @@ spec:
             type: object
           spec:
             properties:
-              automationAccountName:
-                type: string
-              description:
-                type: string
-              encrypted:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   automationAccountName:
@@ -3054,17 +3037,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -3089,48 +3062,65 @@ spec:
                 required:
                 - automationAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  automationAccountName:
+                    type: string
+                  description:
+                    type: string
+                  encrypted:
+                    type: boolean
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  value:
+                    type: string
+                required:
+                - automationAccountName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              value:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - automationAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

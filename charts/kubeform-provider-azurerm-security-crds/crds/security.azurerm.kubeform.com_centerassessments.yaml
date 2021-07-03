@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: centerassessments.security.azurerm.kubeform.com
 spec:
   group: security.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              additionalData:
-                additionalProperties:
-                  type: string
-                type: object
-              assessmentPolicyID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   additionalData:
@@ -48,11 +41,6 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   status:
                     properties:
                       cause:
@@ -65,11 +53,6 @@ spec:
                     - code
                     type: object
                   targetResourceID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -91,7 +74,6 @@ spec:
                     type: object
                 required:
                 - assessmentPolicyID
-                - providerRef
                 - status
                 - targetResourceID
                 type: object
@@ -100,47 +82,65 @@ spec:
                   name:
                     type: string
                 type: object
-              status:
+              resource:
                 properties:
-                  cause:
+                  additionalData:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  assessmentPolicyID:
                     type: string
-                  code:
+                  id:
                     type: string
-                  description:
+                  status:
+                    properties:
+                      cause:
+                        type: string
+                      code:
+                        type: string
+                      description:
+                        type: string
+                    required:
+                    - code
+                    type: object
+                  targetResourceID:
                     type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - code
+                - assessmentPolicyID
+                - status
+                - targetResourceID
                 type: object
-              targetResourceID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - assessmentPolicyID
             - providerRef
-            - status
-            - targetResourceID
+            - resource
             type: object
           status:
             properties:

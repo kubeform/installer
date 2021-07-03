@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: actionhttps.logicapp.azurerm.kubeform.com
 spec:
   group: logicapp.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              body:
-                type: string
-              headers:
-                additionalProperties:
-                  type: string
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   body:
@@ -54,11 +47,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   runAfter:
                     items:
                       properties:
@@ -72,11 +60,6 @@ spec:
                       type: object
                     minItems: 1
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -101,64 +84,81 @@ spec:
                 - logicAppID
                 - method
                 - name
-                - providerRef
                 - uri
                 type: object
-              logicAppID:
-                type: string
-              method:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              runAfter:
-                items:
-                  properties:
-                    actionName:
+              resource:
+                properties:
+                  body:
+                    type: string
+                  headers:
+                    additionalProperties:
                       type: string
-                    actionResult:
-                      type: string
-                  required:
-                  - actionName
-                  - actionResult
-                  type: object
-                minItems: 1
-                type: array
+                    type: object
+                  id:
+                    type: string
+                  logicAppID:
+                    type: string
+                  method:
+                    type: string
+                  name:
+                    type: string
+                  runAfter:
+                    items:
+                      properties:
+                        actionName:
+                          type: string
+                        actionResult:
+                          type: string
+                      required:
+                      - actionName
+                      - actionResult
+                      type: object
+                    minItems: 1
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  uri:
+                    type: string
+                required:
+                - logicAppID
+                - method
+                - name
+                - uri
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              uri:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - logicAppID
-            - method
-            - name
             - providerRef
-            - uri
+            - resource
             type: object
           status:
             properties:

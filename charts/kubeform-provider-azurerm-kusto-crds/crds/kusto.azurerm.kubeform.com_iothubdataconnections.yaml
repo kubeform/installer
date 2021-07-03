@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: iothubdataconnections.kusto.azurerm.kubeform.com
 spec:
   group: kusto.azurerm.kubeform.com
@@ -30,25 +31,13 @@ spec:
             type: object
           spec:
             properties:
-              clusterName:
-                type: string
-              consumerGroup:
-                type: string
-              databaseName:
-                type: string
-              eventSystemProperties:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
-              iothubID:
-                type: string
               kubeformOutput:
                 properties:
                   clusterName:
                     type: string
                   consumerGroup:
+                    type: string
+                  dataFormat:
                     type: string
                   databaseName:
                     type: string
@@ -62,21 +51,15 @@ spec:
                     type: string
                   location:
                     type: string
+                  mappingRuleName:
+                    type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   sharedAccessPolicyName:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  tableName:
                     type: string
                   timeouts:
                     properties:
@@ -103,56 +86,85 @@ spec:
                 - iothubID
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - sharedAccessPolicyName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              sharedAccessPolicyName:
-                type: string
+              resource:
+                properties:
+                  clusterName:
+                    type: string
+                  consumerGroup:
+                    type: string
+                  dataFormat:
+                    type: string
+                  databaseName:
+                    type: string
+                  eventSystemProperties:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  iothubID:
+                    type: string
+                  location:
+                    type: string
+                  mappingRuleName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  sharedAccessPolicyName:
+                    type: string
+                  tableName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - clusterName
+                - consumerGroup
+                - databaseName
+                - iothubID
+                - location
+                - name
+                - resourceGroupName
+                - sharedAccessPolicyName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - clusterName
-            - consumerGroup
-            - databaseName
-            - iothubID
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - sharedAccessPolicyName
+            - resource
             type: object
           status:
             properties:

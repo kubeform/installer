@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: managementpolicies.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
@@ -30,17 +31,10 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rule:
                     items:
                       properties:
@@ -121,10 +115,115 @@ spec:
                     type: array
                   storageAccountID:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - storageAccountID
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  id:
+                    type: string
+                  rule:
+                    items:
+                      properties:
+                        actions:
+                          properties:
+                            baseBlob:
+                              properties:
+                                deleteAfterDaysSinceModificationGreaterThan:
+                                  format: int64
+                                  type: integer
+                                tierToArchiveAfterDaysSinceModificationGreaterThan:
+                                  format: int64
+                                  type: integer
+                                tierToCoolAfterDaysSinceModificationGreaterThan:
+                                  format: int64
+                                  type: integer
+                              type: object
+                            snapshot:
+                              properties:
+                                changeTierToArchiveAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                                changeTierToCoolAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                                deleteAfterDaysSinceCreationGreaterThan:
+                                  format: int64
+                                  type: integer
+                              type: object
+                            version:
+                              properties:
+                                changeTierToArchiveAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                                changeTierToCoolAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                                deleteAfterDaysSinceCreation:
+                                  format: int64
+                                  type: integer
+                              type: object
+                          type: object
+                        enabled:
+                          type: boolean
+                        filters:
+                          properties:
+                            blobTypes:
+                              items:
+                                type: string
+                              type: array
+                            matchBlobIndexTag:
+                              items:
+                                properties:
+                                  name:
+                                    type: string
+                                  operation:
+                                    type: string
+                                  value:
+                                    type: string
+                                required:
+                                - name
+                                - value
+                                type: object
+                              type: array
+                            prefixMatch:
+                              items:
+                                type: string
+                              type: array
+                          type: object
+                        name:
+                          type: string
+                      required:
+                      - actions
+                      - enabled
+                      - name
+                      type: object
+                    minItems: 1
+                    type: array
+                  storageAccountID:
                     type: string
                   timeouts:
                     properties:
@@ -145,120 +244,21 @@ spec:
                         type: integer
                     type: object
                 required:
-                - providerRef
                 - storageAccountID
                 type: object
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              rule:
-                items:
-                  properties:
-                    actions:
-                      properties:
-                        baseBlob:
-                          properties:
-                            deleteAfterDaysSinceModificationGreaterThan:
-                              format: int64
-                              type: integer
-                            tierToArchiveAfterDaysSinceModificationGreaterThan:
-                              format: int64
-                              type: integer
-                            tierToCoolAfterDaysSinceModificationGreaterThan:
-                              format: int64
-                              type: integer
-                          type: object
-                        snapshot:
-                          properties:
-                            changeTierToArchiveAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                            changeTierToCoolAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                            deleteAfterDaysSinceCreationGreaterThan:
-                              format: int64
-                              type: integer
-                          type: object
-                        version:
-                          properties:
-                            changeTierToArchiveAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                            changeTierToCoolAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                            deleteAfterDaysSinceCreation:
-                              format: int64
-                              type: integer
-                          type: object
-                      type: object
-                    enabled:
-                      type: boolean
-                    filters:
-                      properties:
-                        blobTypes:
-                          items:
-                            type: string
-                          type: array
-                        matchBlobIndexTag:
-                          items:
-                            properties:
-                              name:
-                                type: string
-                              operation:
-                                type: string
-                              value:
-                                type: string
-                            required:
-                            - name
-                            - value
-                            type: object
-                          type: array
-                        prefixMatch:
-                          items:
-                            type: string
-                          type: array
-                      type: object
-                    name:
-                      type: string
-                  required:
-                  - actions
-                  - enabled
-                  - name
-                  type: object
-                minItems: 1
-                type: array
-              storageAccountID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
-            - storageAccountID
+            - resource
             type: object
           status:
             properties:

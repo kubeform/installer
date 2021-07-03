@@ -125,6 +125,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 | crds.packet            | If true, installs the kubeform-provider-azurerm-packet-crds chart            | `false`                                                       |
 | crds.point             | If true, installs the kubeform-provider-azurerm-point-crds chart             | `false`                                                       |
 | crds.policy            | If true, installs the kubeform-provider-azurerm-policy-crds chart            | `false`                                                       |
+| crds.portal            | If true, installs the kubeform-provider-azurerm-portal-crds chart            | `false`                                                       |
 | crds.postgresql        | If true, installs the kubeform-provider-azurerm-postgresql-crds chart        | `false`                                                       |
 | crds.powerbi           | If true, installs the kubeform-provider-azurerm-powerbi-crds chart           | `false`                                                       |
 | crds.private           | If true, installs the kubeform-provider-azurerm-private-crds chart           | `false`                                                       |

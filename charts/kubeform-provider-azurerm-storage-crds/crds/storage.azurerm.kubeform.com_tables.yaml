@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: tables.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
@@ -30,32 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              acl:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    accessPolicy:
-                      items:
-                        properties:
-                          expiry:
-                            type: string
-                          permissions:
-                            type: string
-                          start:
-                            type: string
-                        required:
-                        - expiry
-                        - permissions
-                        - start
-                        type: object
-                      type: array
-                  required:
-                  - ID
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   acl:
@@ -86,17 +61,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   storageAccountName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -118,45 +83,80 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - storageAccountName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              storageAccountName:
-                type: string
+              resource:
+                properties:
+                  acl:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        accessPolicy:
+                          items:
+                            properties:
+                              expiry:
+                                type: string
+                              permissions:
+                                type: string
+                              start:
+                                type: string
+                            required:
+                            - expiry
+                            - permissions
+                            - start
+                            type: object
+                          type: array
+                      required:
+                      - ID
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  storageAccountName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - storageAccountName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - storageAccountName
+            - resource
             type: object
           status:
             properties:

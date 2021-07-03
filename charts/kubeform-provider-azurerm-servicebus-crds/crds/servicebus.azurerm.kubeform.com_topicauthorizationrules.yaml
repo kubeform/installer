@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: topicauthorizationrules.servicebus.azurerm.kubeform.com
 spec:
   group: servicebus.azurerm.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -44,25 +43,10 @@ spec:
                     type: string
                   namespaceName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   send:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -86,63 +70,74 @@ spec:
                 required:
                 - name
                 - namespaceName
-                - providerRef
                 - resourceGroupName
                 - topicName
                 type: object
-              listen:
-                type: boolean
-              manage:
-                type: boolean
-              name:
-                type: string
-              namespaceName:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  listen:
+                    type: boolean
+                  manage:
+                    type: boolean
+                  name:
+                    type: string
+                  namespaceName:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  send:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  topicName:
+                    type: string
+                required:
+                - name
+                - namespaceName
+                - resourceGroupName
+                - topicName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              send:
-                type: boolean
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              topicName:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
-            - namespaceName
             - providerRef
-            - resourceGroupName
-            - topicName
+            - resource
             type: object
           status:
             properties:

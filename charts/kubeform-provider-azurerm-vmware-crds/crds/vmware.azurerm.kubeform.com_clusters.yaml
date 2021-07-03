@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusters.vmware.azurerm.kubeform.com
 spec:
   group: vmware.azurerm.kubeform.com
@@ -30,18 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterNodeCount:
-                format: int64
-                type: integer
-              clusterNumber:
-                format: int64
-                type: integer
-              hosts:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterNodeCount:
@@ -58,17 +47,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   skuName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -93,50 +72,71 @@ spec:
                 required:
                 - clusterNodeCount
                 - name
-                - providerRef
                 - skuName
                 - vmwareCloudID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              skuName:
-                type: string
+              resource:
+                properties:
+                  clusterNodeCount:
+                    format: int64
+                    type: integer
+                  clusterNumber:
+                    format: int64
+                    type: integer
+                  hosts:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  skuName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vmwareCloudID:
+                    type: string
+                required:
+                - clusterNodeCount
+                - name
+                - skuName
+                - vmwareCloudID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vmwareCloudID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - clusterNodeCount
-            - name
             - providerRef
-            - skuName
-            - vmwareCloudID
+            - resource
             type: object
           status:
             properties:

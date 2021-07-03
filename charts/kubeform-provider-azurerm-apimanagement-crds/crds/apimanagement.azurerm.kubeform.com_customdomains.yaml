@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: customdomains.apimanagement.azurerm.kubeform.com
 spec:
   group: apimanagement.azurerm.kubeform.com
@@ -30,23 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiManagementID:
-                type: string
-              developerPortal:
-                items:
-                  properties:
-                    hostName:
-                      type: string
-                    keyVaultID:
-                      type: string
-                    negotiateClientCertificate:
-                      type: boolean
-                  required:
-                  - hostName
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiManagementID:
@@ -92,15 +76,10 @@ spec:
                       - hostName
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   proxy:
                     items:
                       properties:
-                        defaultSSLBinding:
+                        defaultSslBinding:
                           type: boolean
                         hostName:
                           type: string
@@ -125,16 +104,6 @@ spec:
                       - hostName
                       type: object
                     type: array
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -155,67 +124,106 @@ spec:
                     type: object
                 required:
                 - apiManagementID
-                - providerRef
                 type: object
-              management:
-                items:
-                  properties:
-                    hostName:
-                      type: string
-                    keyVaultID:
-                      type: string
-                    negotiateClientCertificate:
-                      type: boolean
-                  required:
-                  - hostName
-                  type: object
-                type: array
-              portal:
-                items:
-                  properties:
-                    hostName:
-                      type: string
-                    keyVaultID:
-                      type: string
-                    negotiateClientCertificate:
-                      type: boolean
-                  required:
-                  - hostName
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              proxy:
-                items:
-                  properties:
-                    defaultSSLBinding:
-                      type: boolean
-                    hostName:
-                      type: string
-                    keyVaultID:
-                      type: string
-                    negotiateClientCertificate:
-                      type: boolean
-                  required:
-                  - hostName
-                  type: object
-                type: array
-              scm:
-                items:
-                  properties:
-                    hostName:
-                      type: string
-                    keyVaultID:
-                      type: string
-                    negotiateClientCertificate:
-                      type: boolean
-                  required:
-                  - hostName
-                  type: object
-                type: array
+              resource:
+                properties:
+                  apiManagementID:
+                    type: string
+                  developerPortal:
+                    items:
+                      properties:
+                        hostName:
+                          type: string
+                        keyVaultID:
+                          type: string
+                        negotiateClientCertificate:
+                          type: boolean
+                      required:
+                      - hostName
+                      type: object
+                    type: array
+                  id:
+                    type: string
+                  management:
+                    items:
+                      properties:
+                        hostName:
+                          type: string
+                        keyVaultID:
+                          type: string
+                        negotiateClientCertificate:
+                          type: boolean
+                      required:
+                      - hostName
+                      type: object
+                    type: array
+                  portal:
+                    items:
+                      properties:
+                        hostName:
+                          type: string
+                        keyVaultID:
+                          type: string
+                        negotiateClientCertificate:
+                          type: boolean
+                      required:
+                      - hostName
+                      type: object
+                    type: array
+                  proxy:
+                    items:
+                      properties:
+                        defaultSslBinding:
+                          type: boolean
+                        hostName:
+                          type: string
+                        keyVaultID:
+                          type: string
+                        negotiateClientCertificate:
+                          type: boolean
+                      required:
+                      - hostName
+                      type: object
+                    type: array
+                  scm:
+                    items:
+                      properties:
+                        hostName:
+                          type: string
+                        keyVaultID:
+                          type: string
+                        negotiateClientCertificate:
+                          type: boolean
+                      required:
+                      - hostName
+                      type: object
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - apiManagementID
+                type: object
               secretRef:
                 properties:
                   name:
@@ -226,27 +234,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - apiManagementID
             - providerRef
+            - resource
             type: object
           status:
             properties:

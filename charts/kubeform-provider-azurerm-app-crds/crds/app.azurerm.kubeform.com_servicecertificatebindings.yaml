@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: servicecertificatebindings.app.azurerm.kubeform.com
 spec:
   group: app.azurerm.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              appServiceName:
-                type: string
-              certificateID:
-                type: string
-              hostname:
-                type: string
-              hostnameBindingID:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   appServiceName:
@@ -52,17 +43,7 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sslState:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   thumbprint:
                     type: string
@@ -87,7 +68,6 @@ spec:
                 required:
                 - certificateID
                 - hostnameBindingID
-                - providerRef
                 - sslState
                 type: object
               providerRef:
@@ -95,38 +75,58 @@ spec:
                   name:
                     type: string
                 type: object
-              sslState:
-                type: string
+              resource:
+                properties:
+                  appServiceName:
+                    type: string
+                  certificateID:
+                    type: string
+                  hostname:
+                    type: string
+                  hostnameBindingID:
+                    type: string
+                  id:
+                    type: string
+                  sslState:
+                    type: string
+                  thumbprint:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - certificateID
+                - hostnameBindingID
+                - sslState
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              thumbprint:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - certificateID
-            - hostnameBindingID
             - providerRef
-            - sslState
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: assignments.blueprint.azurerm.kubeform.com
 spec:
   group: blueprint.azurerm.kubeform.com
@@ -30,31 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              blueprintName:
-                type: string
-              description:
-                type: string
-              displayName:
-                type: string
-              id:
-                type: string
-              identity:
-                properties:
-                  identityIDS:
-                    items:
-                      type: string
-                    minItems: 1
-                    type: array
-                  principalID:
-                    type: string
-                  tenantID:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - identityIDS
-                - type
-                type: object
               kubeformOutput:
                 properties:
                   blueprintName:
@@ -95,19 +71,9 @@ spec:
                     type: string
                   parameterValues:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroups:
                     type: string
                   targetSubscriptionID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -134,65 +100,99 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - targetSubscriptionID
                 - versionID
                 type: object
-              location:
-                type: string
-              lockExcludePrincipals:
-                items:
-                  type: string
-                maxItems: 5
-                type: array
-              lockMode:
-                type: string
-              name:
-                type: string
-              parameterValues:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroups:
-                type: string
-              targetSubscriptionID:
-                type: string
+              resource:
+                properties:
+                  blueprintName:
+                    type: string
+                  description:
+                    type: string
+                  displayName:
+                    type: string
+                  id:
+                    type: string
+                  identity:
+                    properties:
+                      identityIDS:
+                        items:
+                          type: string
+                        minItems: 1
+                        type: array
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - identityIDS
+                    - type
+                    type: object
+                  location:
+                    type: string
+                  lockExcludePrincipals:
+                    items:
+                      type: string
+                    maxItems: 5
+                    type: array
+                  lockMode:
+                    type: string
+                  name:
+                    type: string
+                  parameterValues:
+                    type: string
+                  resourceGroups:
+                    type: string
+                  targetSubscriptionID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                  versionID:
+                    type: string
+                required:
+                - location
+                - name
+                - targetSubscriptionID
+                - versionID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
-                type: string
-              versionID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - location
-            - name
             - providerRef
-            - targetSubscriptionID
-            - versionID
+            - resource
             type: object
           status:
             properties:

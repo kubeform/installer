@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: captures.packet.azurerm.kubeform.com
 spec:
   group: packet.azurerm.kubeform.com
@@ -30,25 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              filter:
-                items:
-                  properties:
-                    localIPAddress:
-                      type: string
-                    localPort:
-                      type: string
-                    protocol:
-                      type: string
-                    remoteIPAddress:
-                      type: string
-                    remotePort:
-                      type: string
-                  required:
-                  - protocol
-                  type: object
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   filter:
@@ -83,11 +65,6 @@ spec:
                     type: string
                   networkWatcherName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   storageLocation:
@@ -100,11 +77,6 @@ spec:
                         type: string
                     type: object
                   targetResourceID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -127,72 +99,100 @@ spec:
                 required:
                 - name
                 - networkWatcherName
-                - providerRef
                 - resourceGroupName
                 - storageLocation
                 - targetResourceID
                 type: object
-              maximumBytesPerPacket:
-                format: int64
-                type: integer
-              maximumBytesPerSession:
-                format: int64
-                type: integer
-              maximumCaptureDuration:
-                format: int64
-                type: integer
-              name:
-                type: string
-              networkWatcherName:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              storageLocation:
+              resource:
                 properties:
-                  filePath:
+                  filter:
+                    items:
+                      properties:
+                        localIPAddress:
+                          type: string
+                        localPort:
+                          type: string
+                        protocol:
+                          type: string
+                        remoteIPAddress:
+                          type: string
+                        remotePort:
+                          type: string
+                      required:
+                      - protocol
+                      type: object
+                    type: array
+                  id:
                     type: string
-                  storageAccountID:
+                  maximumBytesPerPacket:
+                    format: int64
+                    type: integer
+                  maximumBytesPerSession:
+                    format: int64
+                    type: integer
+                  maximumCaptureDuration:
+                    format: int64
+                    type: integer
+                  name:
                     type: string
-                  storagePath:
+                  networkWatcherName:
                     type: string
+                  resourceGroupName:
+                    type: string
+                  storageLocation:
+                    properties:
+                      filePath:
+                        type: string
+                      storageAccountID:
+                        type: string
+                      storagePath:
+                        type: string
+                    type: object
+                  targetResourceID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - networkWatcherName
+                - resourceGroupName
+                - storageLocation
+                - targetResourceID
                 type: object
-              targetResourceID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
-            - networkWatcherName
             - providerRef
-            - resourceGroupName
-            - storageLocation
-            - targetResourceID
+            - resource
             type: object
           status:
             properties:

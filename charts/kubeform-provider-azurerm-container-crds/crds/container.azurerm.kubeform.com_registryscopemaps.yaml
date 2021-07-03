@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: registryscopemaps.container.azurerm.kubeform.com
 spec:
   group: container.azurerm.kubeform.com
@@ -30,17 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              actions:
-                items:
-                  type: string
-                minItems: 1
-                type: array
-              containerRegistryName:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   actions:
@@ -56,17 +46,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -90,47 +70,67 @@ spec:
                 - actions
                 - containerRegistryName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  actions:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                  containerRegistryName:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - actions
+                - containerRegistryName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - actions
-            - containerRegistryName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

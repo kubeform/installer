@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: transforms.media.azurerm.kubeform.com
 spec:
   group: media.azurerm.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   description:
@@ -80,17 +77,7 @@ spec:
                       type: object
                     minItems: 1
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -113,84 +100,97 @@ spec:
                 required:
                 - mediaServicesAccountName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              mediaServicesAccountName:
-                type: string
-              name:
-                type: string
-              output:
-                items:
-                  properties:
-                    audioAnalyzerPreset:
-                      properties:
-                        audioAnalysisMode:
-                          type: string
-                        audioLanguage:
-                          type: string
-                      type: object
-                    builtinPreset:
-                      properties:
-                        presetName:
-                          type: string
-                      type: object
-                    faceDetectorPreset:
-                      properties:
-                        analysisResolution:
-                          type: string
-                      type: object
-                    onErrorAction:
-                      type: string
-                    relativePriority:
-                      type: string
-                    videoAnalyzerPreset:
-                      properties:
-                        audioAnalysisMode:
-                          type: string
-                        audioLanguage:
-                          type: string
-                        insightsType:
-                          type: string
-                      type: object
-                  type: object
-                minItems: 1
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  mediaServicesAccountName:
+                    type: string
+                  name:
+                    type: string
+                  output:
+                    items:
+                      properties:
+                        audioAnalyzerPreset:
+                          properties:
+                            audioAnalysisMode:
+                              type: string
+                            audioLanguage:
+                              type: string
+                          type: object
+                        builtinPreset:
+                          properties:
+                            presetName:
+                              type: string
+                          type: object
+                        faceDetectorPreset:
+                          properties:
+                            analysisResolution:
+                              type: string
+                          type: object
+                        onErrorAction:
+                          type: string
+                        relativePriority:
+                          type: string
+                        videoAnalyzerPreset:
+                          properties:
+                            audioAnalysisMode:
+                              type: string
+                            audioLanguage:
+                              type: string
+                            insightsType:
+                              type: string
+                          type: object
+                      type: object
+                    minItems: 1
+                    type: array
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - mediaServicesAccountName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - mediaServicesAccountName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: accountnetworkrules.storage.azurerm.kubeform.com
 spec:
   group: storage.azurerm.kubeform.com
@@ -30,18 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              bypass:
-                items:
-                  type: string
-                type: array
-              defaultAction:
-                type: string
-              id:
-                type: string
-              ipRules:
-                items:
-                  type: string
-                type: array
               kubeformOutput:
                 properties:
                   bypass:
@@ -67,19 +56,9 @@ spec:
                       - endpointResourceID
                       type: object
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   storageAccountName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -105,62 +84,83 @@ spec:
                     type: array
                 required:
                 - defaultAction
-                - providerRef
                 - resourceGroupName
                 - storageAccountName
                 type: object
-              privateLinkAccess:
-                items:
-                  properties:
-                    endpointResourceID:
-                      type: string
-                    endpointTenantID:
-                      type: string
-                  required:
-                  - endpointResourceID
-                  type: object
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              storageAccountName:
-                type: string
+              resource:
+                properties:
+                  bypass:
+                    items:
+                      type: string
+                    type: array
+                  defaultAction:
+                    type: string
+                  id:
+                    type: string
+                  ipRules:
+                    items:
+                      type: string
+                    type: array
+                  privateLinkAccess:
+                    items:
+                      properties:
+                        endpointResourceID:
+                          type: string
+                        endpointTenantID:
+                          type: string
+                      required:
+                      - endpointResourceID
+                      type: object
+                    type: array
+                  resourceGroupName:
+                    type: string
+                  storageAccountName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualNetworkSubnetIDS:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - defaultAction
+                - resourceGroupName
+                - storageAccountName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualNetworkSubnetIDS:
-                items:
-                  type: string
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - defaultAction
             - providerRef
-            - resourceGroupName
-            - storageAccountName
+            - resource
             type: object
           status:
             properties:

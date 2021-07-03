@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: factoryintegrationruntimeselfhosteds.data.azurerm.kubeform.com
 spec:
   group: data.azurerm.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              authKey1:
-                type: string
-              authKey2:
-                type: string
-              dataFactoryName:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   authKey1:
@@ -54,11 +45,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   rbacAuthorization:
                     items:
                       properties:
@@ -69,11 +55,6 @@ spec:
                       type: object
                     type: array
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -96,55 +77,74 @@ spec:
                 required:
                 - dataFactoryName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              rbacAuthorization:
-                items:
-                  properties:
-                    resourceID:
-                      type: string
-                  required:
-                  - resourceID
-                  type: object
-                type: array
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  authKey1:
+                    type: string
+                  authKey2:
+                    type: string
+                  dataFactoryName:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  rbacAuthorization:
+                    items:
+                      properties:
+                        resourceID:
+                          type: string
+                      required:
+                      - resourceID
+                      type: object
+                    type: array
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - dataFactoryName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - dataFactoryName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

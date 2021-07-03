@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudactivedeployments.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -188,27 +189,13 @@ spec:
             type: object
           spec:
             properties:
-              deploymentName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   deploymentName:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   springCloudAppID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -230,7 +217,6 @@ spec:
                     type: object
                 required:
                 - deploymentName
-                - providerRef
                 - springCloudAppID
                 type: object
               providerRef:
@@ -238,35 +224,49 @@ spec:
                   name:
                     type: string
                 type: object
-              springCloudAppID:
-                type: string
+              resource:
+                properties:
+                  deploymentName:
+                    type: string
+                  id:
+                    type: string
+                  springCloudAppID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - deploymentName
+                - springCloudAppID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - deploymentName
             - providerRef
-            - springCloudAppID
+            - resource
             type: object
           status:
             properties:
@@ -313,7 +313,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudapps.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -340,23 +341,6 @@ spec:
             type: object
           spec:
             properties:
-              fqdn:
-                type: string
-              httpsOnly:
-                type: boolean
-              id:
-                type: string
-              identity:
-                properties:
-                  principalID:
-                    type: string
-                  tenantID:
-                    type: string
-                  type:
-                    type: string
-                type: object
-              isPublic:
-                type: boolean
               kubeformOutput:
                 properties:
                   fqdn:
@@ -388,19 +372,9 @@ spec:
                     required:
                     - sizeInGb
                     type: object
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   serviceName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -426,63 +400,89 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 - resourceGroupName
                 - serviceName
-                type: object
-              name:
-                type: string
-              persistentDisk:
-                properties:
-                  mountPath:
-                    type: string
-                  sizeInGb:
-                    format: int64
-                    type: integer
-                required:
-                - sizeInGb
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              serviceName:
-                type: string
+              resource:
+                properties:
+                  fqdn:
+                    type: string
+                  httpsOnly:
+                    type: boolean
+                  id:
+                    type: string
+                  identity:
+                    properties:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                  isPublic:
+                    type: boolean
+                  name:
+                    type: string
+                  persistentDisk:
+                    properties:
+                      mountPath:
+                        type: string
+                      sizeInGb:
+                        format: int64
+                        type: integer
+                    required:
+                    - sizeInGb
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  serviceName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  tlsEnabled:
+                    type: boolean
+                  url:
+                    type: string
+                required:
+                - name
+                - resourceGroupName
+                - serviceName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              tlsEnabled:
-                type: boolean
-              url:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - resourceGroupName
-            - serviceName
+            - resource
             type: object
           status:
             properties:
@@ -529,7 +529,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudappcosmosdbassociations.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -556,24 +557,6 @@ spec:
             type: object
           spec:
             properties:
-              apiType:
-                type: string
-              cosmosdbAccessKey:
-                type: string
-              cosmosdbAccountID:
-                type: string
-              cosmosdbCassandraKeyspaceName:
-                type: string
-              cosmosdbGremlinDatabaseName:
-                type: string
-              cosmosdbGremlinGraphName:
-                type: string
-              cosmosdbMongoDatabaseName:
-                type: string
-              cosmosdbSQLDatabaseName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiType:
@@ -596,17 +579,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   springCloudAppID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -631,48 +604,75 @@ spec:
                 - cosmosdbAccessKey
                 - cosmosdbAccountID
                 - name
-                - providerRef
                 - springCloudAppID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              springCloudAppID:
-                type: string
+              resource:
+                properties:
+                  apiType:
+                    type: string
+                  cosmosdbAccessKey:
+                    type: string
+                  cosmosdbAccountID:
+                    type: string
+                  cosmosdbCassandraKeyspaceName:
+                    type: string
+                  cosmosdbGremlinDatabaseName:
+                    type: string
+                  cosmosdbGremlinGraphName:
+                    type: string
+                  cosmosdbMongoDatabaseName:
+                    type: string
+                  cosmosdbSQLDatabaseName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  springCloudAppID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - apiType
+                - cosmosdbAccessKey
+                - cosmosdbAccountID
+                - name
+                - springCloudAppID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - apiType
-            - cosmosdbAccessKey
-            - cosmosdbAccountID
-            - name
             - providerRef
-            - springCloudAppID
+            - resource
             type: object
           status:
             properties:
@@ -719,7 +719,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudappmysqlassociations.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -746,10 +747,6 @@ spec:
             type: object
           spec:
             properties:
-              databaseName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   databaseName:
@@ -760,22 +757,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   springCloudAppID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -801,58 +783,71 @@ spec:
                 - databaseName
                 - mysqlServerID
                 - name
-                - providerRef
                 - springCloudAppID
                 - username
                 type: object
-              mysqlServerID:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  databaseName:
+                    type: string
+                  id:
+                    type: string
+                  mysqlServerID:
+                    type: string
+                  name:
+                    type: string
+                  springCloudAppID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  username:
+                    type: string
+                required:
+                - databaseName
+                - mysqlServerID
+                - name
+                - springCloudAppID
+                - username
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              springCloudAppID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              username:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - databaseName
-            - mysqlServerID
-            - name
             - providerRef
-            - springCloudAppID
-            - username
+            - resource
             type: object
           status:
             properties:
@@ -899,7 +894,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudappredisassociations.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -926,19 +922,12 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   redisAccessKey:
                     type: string
                   redisCacheID:
@@ -947,11 +936,6 @@ spec:
                     type: string
                   sslEnabled:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -972,55 +956,66 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - redisAccessKey
                 - redisCacheID
                 - springCloudAppID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              redisAccessKey:
-                type: string
-              redisCacheID:
-                type: string
-              springCloudAppID:
-                type: string
-              sslEnabled:
-                type: boolean
+              resource:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  redisAccessKey:
+                    type: string
+                  redisCacheID:
+                    type: string
+                  springCloudAppID:
+                    type: string
+                  sslEnabled:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - redisAccessKey
+                - redisCacheID
+                - springCloudAppID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - redisAccessKey
-            - redisCacheID
-            - springCloudAppID
+            - resource
             type: object
           status:
             properties:
@@ -1067,7 +1062,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudcertificates.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -1094,10 +1090,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              keyVaultCertificateID:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -1106,19 +1098,9 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   serviceName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   thumbprint:
                     type: string
@@ -1143,52 +1125,65 @@ spec:
                 required:
                 - keyVaultCertificateID
                 - name
-                - providerRef
                 - resourceGroupName
                 - serviceName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              serviceName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  keyVaultCertificateID:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serviceName:
+                    type: string
+                  thumbprint:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - keyVaultCertificateID
+                - name
+                - resourceGroupName
+                - serviceName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              thumbprint:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - keyVaultCertificateID
-            - name
             - providerRef
-            - resourceGroupName
-            - serviceName
+            - resource
             type: object
           status:
             properties:
@@ -1235,7 +1230,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudcustomdomains.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -1262,10 +1258,6 @@ spec:
             type: object
           spec:
             properties:
-              certificateName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   certificateName:
@@ -1274,17 +1266,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   springCloudAppID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   thumbprint:
                     type: string
@@ -1308,47 +1290,60 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - springCloudAppID
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              springCloudAppID:
-                type: string
+              resource:
+                properties:
+                  certificateName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  springCloudAppID:
+                    type: string
+                  thumbprint:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - springCloudAppID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              thumbprint:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
             required:
-            - name
             - providerRef
-            - springCloudAppID
+            - resource
             type: object
           status:
             properties:
@@ -1395,7 +1390,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudjavadeployments.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -1422,20 +1418,6 @@ spec:
             type: object
           spec:
             properties:
-              cpu:
-                format: int64
-                type: integer
-              environmentVariables:
-                additionalProperties:
-                  type: string
-                type: object
-              id:
-                type: string
-              instanceCount:
-                format: int64
-                type: integer
-              jvmOptions:
-                type: string
               kubeformOutput:
                 properties:
                   cpu:
@@ -1457,19 +1439,9 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   runtimeVersion:
                     type: string
                   springCloudAppID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1491,50 +1463,73 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - springCloudAppID
                 type: object
-              memoryInGb:
-                format: int64
-                type: integer
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              runtimeVersion:
-                type: string
-              springCloudAppID:
-                type: string
+              resource:
+                properties:
+                  cpu:
+                    format: int64
+                    type: integer
+                  environmentVariables:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  id:
+                    type: string
+                  instanceCount:
+                    format: int64
+                    type: integer
+                  jvmOptions:
+                    type: string
+                  memoryInGb:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  runtimeVersion:
+                    type: string
+                  springCloudAppID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - springCloudAppID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - springCloudAppID
+            - resource
             type: object
           status:
             properties:
@@ -1581,7 +1576,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cloudservices.spring.azurerm.kubeform.com
 spec:
   group: spring.azurerm.kubeform.com
@@ -1608,71 +1604,6 @@ spec:
             type: object
           spec:
             properties:
-              configServerGitSetting:
-                properties:
-                  httpBasicAuth:
-                    properties:
-                      username:
-                        type: string
-                    required:
-                    - username
-                    type: object
-                  label:
-                    type: string
-                  repository:
-                    items:
-                      properties:
-                        httpBasicAuth:
-                          properties:
-                            username:
-                              type: string
-                          required:
-                          - username
-                          type: object
-                        label:
-                          type: string
-                        name:
-                          type: string
-                        pattern:
-                          items:
-                            type: string
-                          type: array
-                        searchPaths:
-                          items:
-                            type: string
-                          type: array
-                        sshAuth:
-                          properties:
-                            hostKeyAlgorithm:
-                              type: string
-                            strictHostKeyCheckingEnabled:
-                              type: boolean
-                          type: object
-                        uri:
-                          type: string
-                      required:
-                      - name
-                      - uri
-                      type: object
-                    type: array
-                  searchPaths:
-                    items:
-                      type: string
-                    type: array
-                  sshAuth:
-                    properties:
-                      hostKeyAlgorithm:
-                        type: string
-                      strictHostKeyCheckingEnabled:
-                        type: boolean
-                    type: object
-                  uri:
-                    type: string
-                required:
-                - uri
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   configServerGitSetting:
@@ -1768,11 +1699,6 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   requiredNetworkTrafficRules:
                     items:
                       properties:
@@ -1795,22 +1721,12 @@ spec:
                     type: array
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   skuName:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1842,113 +1758,187 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              network:
-                properties:
-                  appNetworkResourceGroup:
-                    type: string
-                  appSubnetID:
-                    type: string
-                  cidrRanges:
-                    items:
-                      type: string
-                    minItems: 3
-                    type: array
-                  serviceRuntimeNetworkResourceGroup:
-                    type: string
-                  serviceRuntimeSubnetID:
-                    type: string
-                required:
-                - appSubnetID
-                - cidrRanges
-                - serviceRuntimeSubnetID
-                type: object
-              outboundPublicIPAddresses:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              requiredNetworkTrafficRules:
-                items:
-                  properties:
-                    direction:
-                      type: string
-                    fqdns:
-                      items:
+              resource:
+                properties:
+                  configServerGitSetting:
+                    properties:
+                      httpBasicAuth:
+                        properties:
+                          username:
+                            type: string
+                        required:
+                        - username
+                        type: object
+                      label:
                         type: string
-                      type: array
-                    ipAddresses:
-                      items:
+                      repository:
+                        items:
+                          properties:
+                            httpBasicAuth:
+                              properties:
+                                username:
+                                  type: string
+                              required:
+                              - username
+                              type: object
+                            label:
+                              type: string
+                            name:
+                              type: string
+                            pattern:
+                              items:
+                                type: string
+                              type: array
+                            searchPaths:
+                              items:
+                                type: string
+                              type: array
+                            sshAuth:
+                              properties:
+                                hostKeyAlgorithm:
+                                  type: string
+                                strictHostKeyCheckingEnabled:
+                                  type: boolean
+                              type: object
+                            uri:
+                              type: string
+                          required:
+                          - name
+                          - uri
+                          type: object
+                        type: array
+                      searchPaths:
+                        items:
+                          type: string
+                        type: array
+                      sshAuth:
+                        properties:
+                          hostKeyAlgorithm:
+                            type: string
+                          strictHostKeyCheckingEnabled:
+                            type: boolean
+                        type: object
+                      uri:
                         type: string
-                      type: array
-                    port:
-                      format: int64
-                      type: integer
-                    protocol:
+                    required:
+                    - uri
+                    type: object
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  network:
+                    properties:
+                      appNetworkResourceGroup:
+                        type: string
+                      appSubnetID:
+                        type: string
+                      cidrRanges:
+                        items:
+                          type: string
+                        minItems: 3
+                        type: array
+                      serviceRuntimeNetworkResourceGroup:
+                        type: string
+                      serviceRuntimeSubnetID:
+                        type: string
+                    required:
+                    - appSubnetID
+                    - cidrRanges
+                    - serviceRuntimeSubnetID
+                    type: object
+                  outboundPublicIPAddresses:
+                    items:
                       type: string
-                  type: object
-                type: array
-              resourceGroupName:
-                type: string
+                    type: array
+                  requiredNetworkTrafficRules:
+                    items:
+                      properties:
+                        direction:
+                          type: string
+                        fqdns:
+                          items:
+                            type: string
+                          type: array
+                        ipAddresses:
+                          items:
+                            type: string
+                          type: array
+                        port:
+                          format: int64
+                          type: integer
+                        protocol:
+                          type: string
+                      type: object
+                    type: array
+                  resourceGroupName:
+                    type: string
+                  skuName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  trace:
+                    properties:
+                      instrumentationKey:
+                        type: string
+                      sampleRate:
+                        format: double
+                        type: number
+                    required:
+                    - instrumentationKey
+                    type: object
+                required:
+                - location
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              skuName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              trace:
-                properties:
-                  instrumentationKey:
-                    type: string
-                  sampleRate:
-                    format: double
-                    type: number
-                required:
-                - instrumentationKey
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: workspaces.loganalytics.azurerm.kubeform.com
 spec:
   group: loganalytics.azurerm.kubeform.com
@@ -30,15 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              dailyQuotaGb:
-                format: double
-                type: number
-              id:
-                type: string
-              internetIngestionEnabled:
-                type: boolean
-              internetQueryEnabled:
-                type: boolean
               kubeformOutput:
                 properties:
                   dailyQuotaGb:
@@ -56,11 +48,6 @@ spec:
                     type: string
                   portalURL:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   reservationCapcityInGbPerDay:
                     format: int64
                     type: integer
@@ -69,22 +56,12 @@ spec:
                   retentionInDays:
                     format: int64
                     type: integer
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sku:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -108,69 +85,87 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              portalURL:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              reservationCapcityInGbPerDay:
-                format: int64
-                type: integer
-              resourceGroupName:
-                type: string
-              retentionInDays:
-                format: int64
-                type: integer
+              resource:
+                properties:
+                  dailyQuotaGb:
+                    format: double
+                    type: number
+                  id:
+                    type: string
+                  internetIngestionEnabled:
+                    type: boolean
+                  internetQueryEnabled:
+                    type: boolean
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  portalURL:
+                    type: string
+                  reservationCapcityInGbPerDay:
+                    format: int64
+                    type: integer
+                  resourceGroupName:
+                    type: string
+                  retentionInDays:
+                    format: int64
+                    type: integer
+                  sku:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  workspaceID:
+                    type: string
+                required:
+                - location
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              sku:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              workspaceID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

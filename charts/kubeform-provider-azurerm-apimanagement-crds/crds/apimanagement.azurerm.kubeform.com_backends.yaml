@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: backends.apimanagement.azurerm.kubeform.com
 spec:
   group: apimanagement.azurerm.kubeform.com
@@ -30,34 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              apiManagementName:
-                type: string
-              credentials:
-                properties:
-                  authorization:
-                    properties:
-                      parameter:
-                        type: string
-                      scheme:
-                        type: string
-                    type: object
-                  certificate:
-                    items:
-                      type: string
-                    type: array
-                  header:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  query:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   apiManagementName:
@@ -92,11 +65,6 @@ spec:
                     type: string
                   protocol:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   proxy:
                     properties:
                       url:
@@ -111,13 +79,10 @@ spec:
                     type: string
                   resourceID:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceFabricCluster:
                     properties:
+                      clientCertificateID:
+                        type: string
                       clientCertificateThumbprint:
                         type: string
                       managementEndpoints:
@@ -144,15 +109,9 @@ spec:
                           type: object
                         type: array
                     required:
-                    - clientCertificateThumbprint
                     - managementEndpoints
                     - maxPartitionResolutionRetries
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -186,111 +145,149 @@ spec:
                 - apiManagementName
                 - name
                 - protocol
-                - providerRef
                 - resourceGroupName
                 - url
                 type: object
-              name:
-                type: string
-              protocol:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              proxy:
+              resource:
                 properties:
+                  apiManagementName:
+                    type: string
+                  credentials:
+                    properties:
+                      authorization:
+                        properties:
+                          parameter:
+                            type: string
+                          scheme:
+                            type: string
+                        type: object
+                      certificate:
+                        items:
+                          type: string
+                        type: array
+                      header:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      query:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  protocol:
+                    type: string
+                  proxy:
+                    properties:
+                      url:
+                        type: string
+                      username:
+                        type: string
+                    required:
+                    - url
+                    - username
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  resourceID:
+                    type: string
+                  serviceFabricCluster:
+                    properties:
+                      clientCertificateID:
+                        type: string
+                      clientCertificateThumbprint:
+                        type: string
+                      managementEndpoints:
+                        items:
+                          type: string
+                        type: array
+                      maxPartitionResolutionRetries:
+                        format: int64
+                        type: integer
+                      serverCertificateThumbprints:
+                        items:
+                          type: string
+                        type: array
+                      serverX509Name:
+                        items:
+                          properties:
+                            issuerCertificateThumbprint:
+                              type: string
+                            name:
+                              type: string
+                          required:
+                          - issuerCertificateThumbprint
+                          - name
+                          type: object
+                        type: array
+                    required:
+                    - managementEndpoints
+                    - maxPartitionResolutionRetries
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  title:
+                    type: string
+                  tls:
+                    properties:
+                      validateCertificateChain:
+                        type: boolean
+                      validateCertificateName:
+                        type: boolean
+                    type: object
                   url:
                     type: string
-                  username:
-                    type: string
                 required:
+                - apiManagementName
+                - name
+                - protocol
+                - resourceGroupName
                 - url
-                - username
                 type: object
-              resourceGroupName:
-                type: string
-              resourceID:
-                type: string
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              serviceFabricCluster:
-                properties:
-                  clientCertificateThumbprint:
-                    type: string
-                  managementEndpoints:
-                    items:
-                      type: string
-                    type: array
-                  maxPartitionResolutionRetries:
-                    format: int64
-                    type: integer
-                  serverCertificateThumbprints:
-                    items:
-                      type: string
-                    type: array
-                  serverX509Name:
-                    items:
-                      properties:
-                        issuerCertificateThumbprint:
-                          type: string
-                        name:
-                          type: string
-                      required:
-                      - issuerCertificateThumbprint
-                      - name
-                      type: object
-                    type: array
-                required:
-                - clientCertificateThumbprint
-                - managementEndpoints
-                - maxPartitionResolutionRetries
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              title:
-                type: string
-              tls:
-                properties:
-                  validateCertificateChain:
-                    type: boolean
-                  validateCertificateName:
-                    type: boolean
-                type: object
-              url:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - apiManagementName
-            - name
-            - protocol
             - providerRef
-            - resourceGroupName
-            - url
+            - resource
             type: object
           status:
             properties:

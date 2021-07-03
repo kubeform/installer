@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: sharedimages.sharedimage.azurerm.kubeform.com
 spec:
   group: sharedimage.azurerm.kubeform.com
@@ -30,29 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              description:
-                type: string
-              eula:
-                type: string
-              galleryName:
-                type: string
-              hyperVGeneration:
-                type: string
-              id:
-                type: string
-              identifier:
-                properties:
-                  offer:
-                    type: string
-                  publisher:
-                    type: string
-                  sku:
-                    type: string
-                required:
-                - offer
-                - publisher
-                - sku
-                type: object
               kubeformOutput:
                 properties:
                   description:
@@ -86,11 +64,6 @@ spec:
                     type: string
                   privacyStatementURI:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   purchasePlan:
                     properties:
                       name:
@@ -112,11 +85,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -141,74 +109,106 @@ spec:
                 - location
                 - name
                 - osType
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              osType:
-                type: string
-              privacyStatementURI:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              purchasePlan:
+              resource:
                 properties:
+                  description:
+                    type: string
+                  eula:
+                    type: string
+                  galleryName:
+                    type: string
+                  hyperVGeneration:
+                    type: string
+                  id:
+                    type: string
+                  identifier:
+                    properties:
+                      offer:
+                        type: string
+                      publisher:
+                        type: string
+                      sku:
+                        type: string
+                    required:
+                    - offer
+                    - publisher
+                    - sku
+                    type: object
+                  location:
+                    type: string
                   name:
                     type: string
-                  product:
+                  osType:
                     type: string
-                  publisher:
+                  privacyStatementURI:
                     type: string
+                  purchasePlan:
+                    properties:
+                      name:
+                        type: string
+                      product:
+                        type: string
+                      publisher:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  releaseNoteURI:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  specialized:
+                    type: boolean
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
+                - galleryName
+                - identifier
+                - location
                 - name
-                type: object
-              releaseNoteURI:
-                type: string
-              resourceGroupName:
-                type: string
-              specialized:
-                type: boolean
-              tags:
-                additionalProperties:
-                  type: string
+                - osType
+                - resourceGroupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - galleryName
-            - identifier
-            - location
-            - name
-            - osType
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

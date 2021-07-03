@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: servicecustomhostnamebindings.app.azurerm.kubeform.com
 spec:
   group: app.azurerm.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              appServiceName:
-                type: string
-              hostname:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   appServiceName:
@@ -44,19 +39,9 @@ spec:
                     type: string
                   id:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   sslState:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   thumbprint:
                     type: string
@@ -83,7 +68,6 @@ spec:
                 required:
                 - appServiceName
                 - hostname
-                - providerRef
                 - resourceGroupName
                 type: object
               providerRef:
@@ -91,42 +75,58 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              sslState:
-                type: string
+              resource:
+                properties:
+                  appServiceName:
+                    type: string
+                  hostname:
+                    type: string
+                  id:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  sslState:
+                    type: string
+                  thumbprint:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualIP:
+                    type: string
+                required:
+                - appServiceName
+                - hostname
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              thumbprint:
-                type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualIP:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - appServiceName
-            - hostname
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

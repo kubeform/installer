@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: insights.application.azurerm.kubeform.com
 spec:
   group: application.azurerm.kubeform.com
@@ -30,19 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              appID:
-                type: string
-              applicationType:
-                type: string
-              dailyDataCapInGb:
-                format: double
-                type: number
-              dailyDataCapNotificationsDisabled:
-                type: boolean
-              disableIPMasking:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   appID:
@@ -62,11 +50,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   retentionInDays:
@@ -75,20 +58,10 @@ spec:
                   samplingPercentage:
                     format: double
                     type: number
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -111,64 +84,86 @@ spec:
                 - applicationType
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              retentionInDays:
-                format: int64
-                type: integer
-              samplingPercentage:
-                format: double
-                type: number
+              resource:
+                properties:
+                  appID:
+                    type: string
+                  applicationType:
+                    type: string
+                  dailyDataCapInGb:
+                    format: double
+                    type: number
+                  dailyDataCapNotificationsDisabled:
+                    type: boolean
+                  disableIPMasking:
+                    type: boolean
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  retentionInDays:
+                    format: int64
+                    type: integer
+                  samplingPercentage:
+                    format: double
+                    type: number
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - applicationType
+                - location
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - applicationType
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

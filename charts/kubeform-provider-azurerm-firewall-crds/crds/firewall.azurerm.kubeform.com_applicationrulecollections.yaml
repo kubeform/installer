@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: applicationrulecollections.firewall.azurerm.kubeform.com
 spec:
   group: firewall.azurerm.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              action:
-                type: string
-              azureFirewallName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   action:
@@ -49,11 +44,6 @@ spec:
                   priority:
                     format: int64
                     type: integer
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   rule:
@@ -97,11 +87,6 @@ spec:
                       type: object
                     minItems: 1
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -125,94 +110,109 @@ spec:
                 - azureFirewallName
                 - name
                 - priority
-                - providerRef
                 - resourceGroupName
                 - rule
                 type: object
-              name:
-                type: string
-              priority:
-                format: int64
-                type: integer
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              rule:
-                items:
-                  properties:
-                    description:
-                      type: string
-                    fqdnTags:
-                      items:
-                        type: string
-                      type: array
-                    name:
-                      type: string
-                    protocol:
-                      items:
-                        properties:
-                          port:
-                            format: int64
-                            type: integer
-                          type:
+              resource:
+                properties:
+                  action:
+                    type: string
+                  azureFirewallName:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  priority:
+                    format: int64
+                    type: integer
+                  resourceGroupName:
+                    type: string
+                  rule:
+                    items:
+                      properties:
+                        description:
+                          type: string
+                        fqdnTags:
+                          items:
                             type: string
-                        required:
-                        - type
-                        type: object
-                      minItems: 1
-                      type: array
-                    sourceAddresses:
-                      items:
-                        type: string
-                      type: array
-                    sourceIPGroups:
-                      items:
-                        type: string
-                      type: array
-                    targetFqdns:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - name
-                  type: object
-                minItems: 1
-                type: array
+                          type: array
+                        name:
+                          type: string
+                        protocol:
+                          items:
+                            properties:
+                              port:
+                                format: int64
+                                type: integer
+                              type:
+                                type: string
+                            required:
+                            - type
+                            type: object
+                          minItems: 1
+                          type: array
+                        sourceAddresses:
+                          items:
+                            type: string
+                          type: array
+                        sourceIPGroups:
+                          items:
+                            type: string
+                          type: array
+                        targetFqdns:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - name
+                      type: object
+                    minItems: 1
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - action
+                - azureFirewallName
+                - name
+                - priority
+                - resourceGroupName
+                - rule
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - action
-            - azureFirewallName
-            - name
-            - priority
             - providerRef
-            - resourceGroupName
-            - rule
+            - resource
             type: object
           status:
             properties:

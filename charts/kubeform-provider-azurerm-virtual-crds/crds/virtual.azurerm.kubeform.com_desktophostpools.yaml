@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: desktophostpools.virtual.azurerm.kubeform.com
 spec:
   group: virtual.azurerm.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              customRdpProperties:
-                type: string
-              description:
-                type: string
-              friendlyName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   customRdpProperties:
@@ -61,11 +54,6 @@ spec:
                     type: string
                   preferredAppGroupType:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registrationInfo:
                     properties:
                       expirationDate:
@@ -77,20 +65,12 @@ spec:
                     type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
+                  startVmOnConnect:
+                    type: boolean
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -117,82 +97,101 @@ spec:
                 - loadBalancerType
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - type
                 type: object
-              loadBalancerType:
-                type: string
-              location:
-                type: string
-              maximumSessionsAllowed:
-                format: int64
-                type: integer
-              name:
-                type: string
-              personalDesktopAssignmentType:
-                type: string
-              preferredAppGroupType:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              registrationInfo:
+              resource:
                 properties:
-                  expirationDate:
+                  customRdpProperties:
                     type: string
-                  resetToken:
+                  description:
+                    type: string
+                  friendlyName:
+                    type: string
+                  id:
+                    type: string
+                  loadBalancerType:
+                    type: string
+                  location:
+                    type: string
+                  maximumSessionsAllowed:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  personalDesktopAssignmentType:
+                    type: string
+                  preferredAppGroupType:
+                    type: string
+                  registrationInfo:
+                    properties:
+                      expirationDate:
+                        type: string
+                      resetToken:
+                        type: boolean
+                    required:
+                    - expirationDate
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  startVmOnConnect:
+                    type: boolean
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                  validateEnvironment:
                     type: boolean
                 required:
-                - expirationDate
+                - loadBalancerType
+                - location
+                - name
+                - resourceGroupName
+                - type
                 type: object
-              resourceGroupName:
-                type: string
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              validateEnvironment:
-                type: boolean
             required:
-            - loadBalancerType
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - type
+            - resource
             type: object
           status:
             properties:

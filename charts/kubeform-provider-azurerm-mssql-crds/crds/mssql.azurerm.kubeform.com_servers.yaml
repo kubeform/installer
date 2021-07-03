@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: servers.mssql.azurerm.kubeform.com
 spec:
   group: mssql.azurerm.kubeform.com
@@ -30,49 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              administratorLogin:
-                type: string
-              azureadAdministrator:
-                properties:
-                  loginUsername:
-                    type: string
-                  objectID:
-                    type: string
-                  tenantID:
-                    type: string
-                required:
-                - loginUsername
-                - objectID
-                type: object
-              connectionPolicy:
-                type: string
-              extendedAuditingPolicy:
-                properties:
-                  logMonitoringEnabled:
-                    type: boolean
-                  retentionInDays:
-                    format: int64
-                    type: integer
-                  storageAccountAccessKeyIsSecondary:
-                    type: boolean
-                  storageEndpoint:
-                    type: string
-                type: object
-              fullyQualifiedDomainName:
-                type: string
-              id:
-                type: string
-              identity:
-                properties:
-                  principalID:
-                    type: string
-                  tenantID:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                type: object
               kubeformOutput:
                 properties:
                   administratorLogin:
@@ -120,15 +78,10 @@ spec:
                     type: object
                   location:
                     type: string
-                  minimumTLSVersion:
+                  minimumTlsVersion:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicNetworkAccessEnabled:
                     type: boolean
                   resourceGroupName:
@@ -137,20 +90,10 @@ spec:
                     items:
                       type: string
                     type: array
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -175,70 +118,122 @@ spec:
                 - administratorLogin
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - version
                 type: object
-              location:
-                type: string
-              minimumTLSVersion:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicNetworkAccessEnabled:
-                type: boolean
-              resourceGroupName:
-                type: string
-              restorableDroppedDatabaseIDS:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  administratorLogin:
+                    type: string
+                  azureadAdministrator:
+                    properties:
+                      loginUsername:
+                        type: string
+                      objectID:
+                        type: string
+                      tenantID:
+                        type: string
+                    required:
+                    - loginUsername
+                    - objectID
+                    type: object
+                  connectionPolicy:
+                    type: string
+                  extendedAuditingPolicy:
+                    properties:
+                      logMonitoringEnabled:
+                        type: boolean
+                      retentionInDays:
+                        format: int64
+                        type: integer
+                      storageAccountAccessKeyIsSecondary:
+                        type: boolean
+                      storageEndpoint:
+                        type: string
+                    type: object
+                  fullyQualifiedDomainName:
+                    type: string
+                  id:
+                    type: string
+                  identity:
+                    properties:
+                      principalID:
+                        type: string
+                      tenantID:
+                        type: string
+                      type:
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  location:
+                    type: string
+                  minimumTlsVersion:
+                    type: string
+                  name:
+                    type: string
+                  publicNetworkAccessEnabled:
+                    type: boolean
+                  resourceGroupName:
+                    type: string
+                  restorableDroppedDatabaseIDS:
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  version:
+                    type: string
+                required:
+                - administratorLogin
+                - location
+                - name
+                - resourceGroupName
+                - version
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              version:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - administratorLogin
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - version
+            - resource
             type: object
           status:
             properties:

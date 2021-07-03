@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: eventhubs.eventhub.azurerm.kubeform.com
 spec:
   group: eventhub.azurerm.kubeform.com
@@ -30,43 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              captureDescription:
-                properties:
-                  destination:
-                    properties:
-                      archiveNameFormat:
-                        type: string
-                      blobContainerName:
-                        type: string
-                      name:
-                        type: string
-                      storageAccountID:
-                        type: string
-                    required:
-                    - archiveNameFormat
-                    - blobContainerName
-                    - name
-                    - storageAccountID
-                    type: object
-                  enabled:
-                    type: boolean
-                  encoding:
-                    type: string
-                  intervalInSeconds:
-                    format: int64
-                    type: integer
-                  sizeLimitInBytes:
-                    format: int64
-                    type: integer
-                  skipEmptyArchives:
-                    type: boolean
-                required:
-                - destination
-                - enabled
-                - encoding
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   captureDescription:
@@ -120,17 +84,9 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  status:
                     type: string
                   timeouts:
                     properties:
@@ -155,60 +111,108 @@ spec:
                 - name
                 - namespaceName
                 - partitionCount
-                - providerRef
                 - resourceGroupName
                 type: object
-              messageRetention:
-                format: int64
-                type: integer
-              name:
-                type: string
-              namespaceName:
-                type: string
-              partitionCount:
-                format: int64
-                type: integer
-              partitionIDS:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  captureDescription:
+                    properties:
+                      destination:
+                        properties:
+                          archiveNameFormat:
+                            type: string
+                          blobContainerName:
+                            type: string
+                          name:
+                            type: string
+                          storageAccountID:
+                            type: string
+                        required:
+                        - archiveNameFormat
+                        - blobContainerName
+                        - name
+                        - storageAccountID
+                        type: object
+                      enabled:
+                        type: boolean
+                      encoding:
+                        type: string
+                      intervalInSeconds:
+                        format: int64
+                        type: integer
+                      sizeLimitInBytes:
+                        format: int64
+                        type: integer
+                      skipEmptyArchives:
+                        type: boolean
+                    required:
+                    - destination
+                    - enabled
+                    - encoding
+                    type: object
+                  id:
+                    type: string
+                  messageRetention:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  namespaceName:
+                    type: string
+                  partitionCount:
+                    format: int64
+                    type: integer
+                  partitionIDS:
+                    items:
+                      type: string
+                    type: array
+                  resourceGroupName:
+                    type: string
+                  status:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - messageRetention
+                - name
+                - namespaceName
+                - partitionCount
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - messageRetention
-            - name
-            - namespaceName
-            - partitionCount
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

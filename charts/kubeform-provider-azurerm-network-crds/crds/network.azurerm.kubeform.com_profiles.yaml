@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: profiles.network.azurerm.kubeform.com
 spec:
   group: network.azurerm.kubeform.com
@@ -30,32 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              containerNetworkInterface:
-                properties:
-                  ipConfiguration:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        subnetID:
-                          type: string
-                      required:
-                      - name
-                      - subnetID
-                      type: object
-                    type: array
-                  name:
-                    type: string
-                required:
-                - ipConfiguration
-                - name
-                type: object
-              containerNetworkInterfaceIDS:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   containerNetworkInterface:
@@ -88,22 +63,12 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -126,53 +91,88 @@ spec:
                 - containerNetworkInterface
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  containerNetworkInterface:
+                    properties:
+                      ipConfiguration:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            subnetID:
+                              type: string
+                          required:
+                          - name
+                          - subnetID
+                          type: object
+                        type: array
+                      name:
+                        type: string
+                    required:
+                    - ipConfiguration
+                    - name
+                    type: object
+                  containerNetworkInterfaceIDS:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - containerNetworkInterface
+                - location
+                - name
+                - resourceGroupName
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - containerNetworkInterface
-            - location
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

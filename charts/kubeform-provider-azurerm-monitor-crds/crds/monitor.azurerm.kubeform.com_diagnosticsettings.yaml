@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: diagnosticsettings.monitor.azurerm.kubeform.com
 spec:
   group: monitor.azurerm.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              eventhubAuthorizationRuleID:
-                type: string
-              eventhubName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   eventhubAuthorizationRuleID:
@@ -92,19 +87,9 @@ spec:
                     type: array
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   storageAccountID:
                     type: string
                   targetResourceID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -126,93 +111,108 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - targetResourceID
                 type: object
-              log:
-                items:
-                  properties:
-                    category:
-                      type: string
-                    enabled:
-                      type: boolean
-                    retentionPolicy:
-                      properties:
-                        days:
-                          format: int64
-                          type: integer
-                        enabled:
-                          type: boolean
-                      required:
-                      - enabled
-                      type: object
-                  required:
-                  - category
-                  type: object
-                type: array
-              logAnalyticsDestinationType:
-                type: string
-              logAnalyticsWorkspaceID:
-                type: string
-              metric:
-                items:
-                  properties:
-                    category:
-                      type: string
-                    enabled:
-                      type: boolean
-                    retentionPolicy:
-                      properties:
-                        days:
-                          format: int64
-                          type: integer
-                        enabled:
-                          type: boolean
-                      required:
-                      - enabled
-                      type: object
-                  required:
-                  - category
-                  type: object
-                type: array
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              storageAccountID:
-                type: string
-              targetResourceID:
-                type: string
+              resource:
+                properties:
+                  eventhubAuthorizationRuleID:
+                    type: string
+                  eventhubName:
+                    type: string
+                  id:
+                    type: string
+                  log:
+                    items:
+                      properties:
+                        category:
+                          type: string
+                        enabled:
+                          type: boolean
+                        retentionPolicy:
+                          properties:
+                            days:
+                              format: int64
+                              type: integer
+                            enabled:
+                              type: boolean
+                          required:
+                          - enabled
+                          type: object
+                      required:
+                      - category
+                      type: object
+                    type: array
+                  logAnalyticsDestinationType:
+                    type: string
+                  logAnalyticsWorkspaceID:
+                    type: string
+                  metric:
+                    items:
+                      properties:
+                        category:
+                          type: string
+                        enabled:
+                          type: boolean
+                        retentionPolicy:
+                          properties:
+                            days:
+                              format: int64
+                              type: integer
+                            enabled:
+                              type: boolean
+                          required:
+                          - enabled
+                          type: object
+                      required:
+                      - category
+                      type: object
+                    type: array
+                  name:
+                    type: string
+                  storageAccountID:
+                    type: string
+                  targetResourceID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - targetResourceID
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - targetResourceID
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: consumergroups.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              eventhubEndpointName:
-                type: string
-              id:
-                type: string
-              iothubName:
-                type: string
               kubeformOutput:
                 properties:
                   eventhubEndpointName:
@@ -46,17 +41,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -80,47 +65,62 @@ spec:
                 - eventhubEndpointName
                 - iothubName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  eventhubEndpointName:
+                    type: string
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - eventhubEndpointName
+                - iothubName
+                - name
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - eventhubEndpointName
-            - iothubName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -167,7 +167,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dps.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -194,14 +195,6 @@ spec:
             type: object
           spec:
             properties:
-              IDScope:
-                type: string
-              allocationPolicy:
-                type: string
-              deviceProvisioningHostName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   IDScope:
@@ -232,18 +225,8 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceOperationsHostName:
                     type: string
                   sku:
@@ -261,11 +244,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -287,88 +265,105 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - sku
                 type: object
-              linkedHub:
-                items:
-                  properties:
-                    allocationWeight:
-                      format: int64
-                      type: integer
-                    applyAllocationPolicy:
-                      type: boolean
-                    hostname:
-                      type: string
-                    location:
-                      type: string
-                  required:
-                  - location
-                  type: object
-                type: array
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  IDScope:
+                    type: string
+                  allocationPolicy:
+                    type: string
+                  deviceProvisioningHostName:
+                    type: string
+                  id:
+                    type: string
+                  linkedHub:
+                    items:
+                      properties:
+                        allocationWeight:
+                          format: int64
+                          type: integer
+                        applyAllocationPolicy:
+                          type: boolean
+                        hostname:
+                          type: string
+                        location:
+                          type: string
+                      required:
+                      - location
+                      type: object
+                    type: array
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  serviceOperationsHostName:
+                    type: string
+                  sku:
+                    properties:
+                      capacity:
+                        format: int64
+                        type: integer
+                      name:
+                        type: string
+                    required:
+                    - capacity
+                    - name
+                    type: object
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - name
+                - resourceGroupName
+                - sku
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              serviceOperationsHostName:
-                type: string
-              sku:
-                properties:
-                  capacity:
-                    format: int64
-                    type: integer
-                  name:
-                    type: string
-                required:
-                - capacity
-                - name
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - sku
+            - resource
             type: object
           status:
             properties:
@@ -415,7 +410,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dpscertificates.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -442,10 +438,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              iotDpsName:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -454,22 +446,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -492,18 +469,46 @@ spec:
                 required:
                 - iotDpsName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  iotDpsName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - iotDpsName
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -514,29 +519,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - iotDpsName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -583,7 +573,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: dpssharedaccesspolicies.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -610,14 +601,6 @@ spec:
             type: object
           spec:
             properties:
-              enrollmentRead:
-                type: boolean
-              enrollmentWrite:
-                type: boolean
-              id:
-                type: string
-              iothubDpsName:
-                type: string
               kubeformOutput:
                 properties:
                   enrollmentRead:
@@ -630,29 +613,14 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registrationRead:
                     type: boolean
                   registrationWrite:
                     type: boolean
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceConfig:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -674,57 +642,74 @@ spec:
                 required:
                 - iothubDpsName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              registrationRead:
-                type: boolean
-              registrationWrite:
-                type: boolean
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  enrollmentRead:
+                    type: boolean
+                  enrollmentWrite:
+                    type: boolean
+                  id:
+                    type: string
+                  iothubDpsName:
+                    type: string
+                  name:
+                    type: string
+                  registrationRead:
+                    type: boolean
+                  registrationWrite:
+                    type: boolean
+                  resourceGroupName:
+                    type: string
+                  serviceConfig:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - iothubDpsName
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serviceConfig:
-                type: boolean
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - iothubDpsName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -771,7 +756,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointeventhubs.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -798,10 +784,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              iothubName:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -810,22 +792,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -848,18 +815,46 @@ spec:
                 required:
                 - iothubName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - iothubName
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -870,29 +865,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - iothubName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -939,7 +919,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointservicebusqueues.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -966,10 +947,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              iothubName:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -978,22 +955,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1016,18 +978,46 @@ spec:
                 required:
                 - iothubName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - iothubName
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -1038,29 +1028,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - iothubName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1107,7 +1082,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointservicebustopics.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -1134,10 +1110,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              iothubName:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -1146,22 +1118,7 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1184,18 +1141,46 @@ spec:
                 required:
                 - iothubName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - iothubName
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -1206,29 +1191,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - iothubName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1275,7 +1245,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: endpointstoragecontainers.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -1302,19 +1273,6 @@ spec:
             type: object
           spec:
             properties:
-              batchFrequencyInSeconds:
-                format: int64
-                type: integer
-              containerName:
-                type: string
-              encoding:
-                type: string
-              fileNameFormat:
-                type: string
-              id:
-                type: string
-              iothubName:
-                type: string
               kubeformOutput:
                 properties:
                   batchFrequencyInSeconds:
@@ -1335,22 +1293,7 @@ spec:
                     type: integer
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1374,21 +1317,59 @@ spec:
                 - containerName
                 - iothubName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              maxChunkSizeInBytes:
-                format: int64
-                type: integer
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  batchFrequencyInSeconds:
+                    format: int64
+                    type: integer
+                  containerName:
+                    type: string
+                  encoding:
+                    type: string
+                  fileNameFormat:
+                    type: string
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  maxChunkSizeInBytes:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - containerName
+                - iothubName
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
@@ -1399,30 +1380,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - containerName
-            - iothubName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1469,7 +1434,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: enrichments.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -1496,17 +1462,6 @@ spec:
             type: object
           spec:
             properties:
-              endpointNames:
-                items:
-                  type: string
-                maxItems: 100
-                type: array
-              id:
-                type: string
-              iothubName:
-                type: string
-              key:
-                type: string
               kubeformOutput:
                 properties:
                   endpointNames:
@@ -1520,17 +1475,7 @@ spec:
                     type: string
                   key:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1556,7 +1501,6 @@ spec:
                 - endpointNames
                 - iothubName
                 - key
-                - providerRef
                 - resourceGroupName
                 - value
                 type: object
@@ -1565,40 +1509,61 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  endpointNames:
+                    items:
+                      type: string
+                    maxItems: 100
+                    type: array
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  key:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  value:
+                    type: string
+                required:
+                - endpointNames
+                - iothubName
+                - key
+                - resourceGroupName
+                - value
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              value:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - endpointNames
-            - iothubName
-            - key
             - providerRef
-            - resourceGroupName
-            - value
+            - resource
             type: object
           status:
             properties:
@@ -1645,7 +1610,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: fallbackroutes.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -1672,18 +1638,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                type: string
-              enabled:
-                type: boolean
-              endpointNames:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
-              iothubName:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -1698,17 +1652,7 @@ spec:
                     type: string
                   iothubName:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1732,7 +1676,6 @@ spec:
                 - enabled
                 - endpointNames
                 - iothubName
-                - providerRef
                 - resourceGroupName
                 type: object
               providerRef:
@@ -1740,37 +1683,59 @@ spec:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    type: string
+                  enabled:
+                    type: boolean
+                  endpointNames:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - enabled
+                - endpointNames
+                - iothubName
+                - resourceGroupName
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - enabled
-            - endpointNames
-            - iothubName
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:
@@ -1817,7 +1782,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: iothubs.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -1844,114 +1810,6 @@ spec:
             type: object
           spec:
             properties:
-              endpoint:
-                items:
-                  properties:
-                    batchFrequencyInSeconds:
-                      format: int64
-                      type: integer
-                    containerName:
-                      type: string
-                    encoding:
-                      type: string
-                    fileNameFormat:
-                      type: string
-                    maxChunkSizeInBytes:
-                      format: int64
-                      type: integer
-                    name:
-                      type: string
-                    resourceGroupName:
-                      type: string
-                    type:
-                      type: string
-                  required:
-                  - name
-                  - type
-                  type: object
-                type: array
-              enrichment:
-                items:
-                  properties:
-                    endpointNames:
-                      items:
-                        type: string
-                      type: array
-                    key:
-                      type: string
-                    value:
-                      type: string
-                  required:
-                  - endpointNames
-                  - key
-                  - value
-                  type: object
-                maxItems: 10
-                type: array
-              eventHubEventsEndpoint:
-                type: string
-              eventHubEventsPath:
-                type: string
-              eventHubOperationsEndpoint:
-                type: string
-              eventHubOperationsPath:
-                type: string
-              eventHubPartitionCount:
-                format: int64
-                type: integer
-              eventHubRetentionInDays:
-                format: int64
-                type: integer
-              fallbackRoute:
-                properties:
-                  condition:
-                    type: string
-                  enabled:
-                    type: boolean
-                  endpointNames:
-                    items:
-                      type: string
-                    type: array
-                  source:
-                    type: string
-                type: object
-              fileUpload:
-                properties:
-                  containerName:
-                    type: string
-                  defaultTtl:
-                    type: string
-                  lockDuration:
-                    type: string
-                  maxDeliveryCount:
-                    format: int64
-                    type: integer
-                  notifications:
-                    type: boolean
-                  sasTtl:
-                    type: string
-                required:
-                - containerName
-                type: object
-              hostname:
-                type: string
-              id:
-                type: string
-              ipFilterRule:
-                items:
-                  properties:
-                    action:
-                      type: string
-                    ipMask:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - action
-                  - ipMask
-                  - name
-                  type: object
-                type: array
               kubeformOutput:
                 properties:
                   endpoint:
@@ -2064,15 +1922,10 @@ spec:
                     type: array
                   location:
                     type: string
-                  minTLSVersion:
+                  minTlsVersion:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicNetworkAccessEnabled:
                     type: boolean
                   resourceGroupName:
@@ -2099,11 +1952,6 @@ spec:
                       - source
                       type: object
                     type: array
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sharedAccessPolicy:
                     items:
                       properties:
@@ -2128,11 +1976,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -2156,107 +1999,224 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - sku
                 type: object
-              location:
-                type: string
-              minTLSVersion:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicNetworkAccessEnabled:
-                type: boolean
-              resourceGroupName:
-                type: string
-              route:
-                items:
-                  properties:
-                    condition:
-                      type: string
-                    enabled:
-                      type: boolean
-                    endpointNames:
-                      items:
+              resource:
+                properties:
+                  endpoint:
+                    items:
+                      properties:
+                        batchFrequencyInSeconds:
+                          format: int64
+                          type: integer
+                        containerName:
+                          type: string
+                        encoding:
+                          type: string
+                        fileNameFormat:
+                          type: string
+                        maxChunkSizeInBytes:
+                          format: int64
+                          type: integer
+                        name:
+                          type: string
+                        resourceGroupName:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                      - name
+                      - type
+                      type: object
+                    type: array
+                  enrichment:
+                    items:
+                      properties:
+                        endpointNames:
+                          items:
+                            type: string
+                          type: array
+                        key:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - endpointNames
+                      - key
+                      - value
+                      type: object
+                    maxItems: 10
+                    type: array
+                  eventHubEventsEndpoint:
+                    type: string
+                  eventHubEventsPath:
+                    type: string
+                  eventHubOperationsEndpoint:
+                    type: string
+                  eventHubOperationsPath:
+                    type: string
+                  eventHubPartitionCount:
+                    format: int64
+                    type: integer
+                  eventHubRetentionInDays:
+                    format: int64
+                    type: integer
+                  fallbackRoute:
+                    properties:
+                      condition:
                         type: string
-                      type: array
-                    name:
+                      enabled:
+                        type: boolean
+                      endpointNames:
+                        items:
+                          type: string
+                        type: array
+                      source:
+                        type: string
+                    type: object
+                  fileUpload:
+                    properties:
+                      containerName:
+                        type: string
+                      defaultTtl:
+                        type: string
+                      lockDuration:
+                        type: string
+                      maxDeliveryCount:
+                        format: int64
+                        type: integer
+                      notifications:
+                        type: boolean
+                      sasTtl:
+                        type: string
+                    required:
+                    - containerName
+                    type: object
+                  hostname:
+                    type: string
+                  id:
+                    type: string
+                  ipFilterRule:
+                    items:
+                      properties:
+                        action:
+                          type: string
+                        ipMask:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - action
+                      - ipMask
+                      - name
+                      type: object
+                    type: array
+                  location:
+                    type: string
+                  minTlsVersion:
+                    type: string
+                  name:
+                    type: string
+                  publicNetworkAccessEnabled:
+                    type: boolean
+                  resourceGroupName:
+                    type: string
+                  route:
+                    items:
+                      properties:
+                        condition:
+                          type: string
+                        enabled:
+                          type: boolean
+                        endpointNames:
+                          items:
+                            type: string
+                          type: array
+                        name:
+                          type: string
+                        source:
+                          type: string
+                      required:
+                      - enabled
+                      - endpointNames
+                      - name
+                      - source
+                      type: object
+                    type: array
+                  sharedAccessPolicy:
+                    items:
+                      properties:
+                        keyName:
+                          type: string
+                        permissions:
+                          type: string
+                      type: object
+                    type: array
+                  sku:
+                    properties:
+                      capacity:
+                        format: int64
+                        type: integer
+                      name:
+                        type: string
+                    required:
+                    - capacity
+                    - name
+                    type: object
+                  tags:
+                    additionalProperties:
                       type: string
-                    source:
-                      type: string
-                  required:
-                  - enabled
-                  - endpointNames
-                  - name
-                  - source
-                  type: object
-                type: array
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                required:
+                - location
+                - name
+                - resourceGroupName
+                - sku
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              sharedAccessPolicy:
-                items:
-                  properties:
-                    keyName:
-                      type: string
-                    permissions:
-                      type: string
-                  type: object
-                type: array
-              sku:
-                properties:
-                  capacity:
-                    format: int64
-                    type: integer
-                  name:
-                    type: string
-                required:
-                - capacity
-                - name
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - sku
+            - resource
             type: object
           status:
             properties:
@@ -2303,7 +2263,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: routes.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -2330,18 +2291,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                type: string
-              enabled:
-                type: boolean
-              endpointNames:
-                items:
-                  type: string
-                type: array
-              id:
-                type: string
-              iothubName:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -2358,19 +2307,9 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   source:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -2395,52 +2334,73 @@ spec:
                 - endpointNames
                 - iothubName
                 - name
-                - providerRef
                 - resourceGroupName
                 - source
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              source:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    type: string
+                  enabled:
+                    type: boolean
+                  endpointNames:
+                    items:
+                      type: string
+                    type: array
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  source:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - enabled
+                - endpointNames
+                - iothubName
+                - name
+                - resourceGroupName
+                - source
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - enabled
-            - endpointNames
-            - iothubName
-            - name
             - providerRef
-            - resourceGroupName
-            - source
+            - resource
             type: object
           status:
             properties:
@@ -2487,7 +2447,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: sharedaccesspolicies.iothub.azurerm.kubeform.com
 spec:
   group: iothub.azurerm.kubeform.com
@@ -2514,12 +2475,6 @@ spec:
             type: object
           spec:
             properties:
-              deviceConnect:
-                type: boolean
-              id:
-                type: string
-              iothubName:
-                type: string
               kubeformOutput:
                 properties:
                   deviceConnect:
@@ -2530,29 +2485,14 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   registryRead:
                     type: boolean
                   registryWrite:
                     type: boolean
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serviceConnect:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -2574,57 +2514,72 @@ spec:
                 required:
                 - iothubName
                 - name
-                - providerRef
                 - resourceGroupName
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              registryRead:
-                type: boolean
-              registryWrite:
-                type: boolean
-              resourceGroupName:
-                type: string
+              resource:
+                properties:
+                  deviceConnect:
+                    type: boolean
+                  id:
+                    type: string
+                  iothubName:
+                    type: string
+                  name:
+                    type: string
+                  registryRead:
+                    type: boolean
+                  registryWrite:
+                    type: boolean
+                  resourceGroupName:
+                    type: string
+                  serviceConnect:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - iothubName
+                - name
+                - resourceGroupName
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serviceConnect:
-                type: boolean
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - iothubName
-            - name
             - providerRef
-            - resourceGroupName
+            - resource
             type: object
           status:
             properties:

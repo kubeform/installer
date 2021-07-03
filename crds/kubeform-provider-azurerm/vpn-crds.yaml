@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: gateways.vpn.azurerm.kubeform.com
 spec:
   group: vpn.azurerm.kubeform.com
@@ -188,60 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              bgpSettings:
-                properties:
-                  asn:
-                    format: int64
-                    type: integer
-                  bgpPeeringAddress:
-                    type: string
-                  instance0BGPPeeringAddress:
-                    properties:
-                      customIPS:
-                        items:
-                          type: string
-                        type: array
-                      defaultIPS:
-                        items:
-                          type: string
-                        type: array
-                      ipConfigurationID:
-                        type: string
-                      tunnelIPS:
-                        items:
-                          type: string
-                        type: array
-                    required:
-                    - customIPS
-                    type: object
-                  instance1BGPPeeringAddress:
-                    properties:
-                      customIPS:
-                        items:
-                          type: string
-                        type: array
-                      defaultIPS:
-                        items:
-                          type: string
-                        type: array
-                      ipConfigurationID:
-                        type: string
-                      tunnelIPS:
-                        items:
-                          type: string
-                        type: array
-                    required:
-                    - customIPS
-                    type: object
-                  peerWeight:
-                    format: int64
-                    type: integer
-                required:
-                - asn
-                - peerWeight
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   bgpSettings:
@@ -302,11 +249,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   scaleUnit:
@@ -316,11 +258,6 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -344,59 +281,122 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - virtualHubID
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              scaleUnit:
-                format: int64
-                type: integer
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  bgpSettings:
+                    properties:
+                      asn:
+                        format: int64
+                        type: integer
+                      bgpPeeringAddress:
+                        type: string
+                      instance0BGPPeeringAddress:
+                        properties:
+                          customIPS:
+                            items:
+                              type: string
+                            type: array
+                          defaultIPS:
+                            items:
+                              type: string
+                            type: array
+                          ipConfigurationID:
+                            type: string
+                          tunnelIPS:
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - customIPS
+                        type: object
+                      instance1BGPPeeringAddress:
+                        properties:
+                          customIPS:
+                            items:
+                              type: string
+                            type: array
+                          defaultIPS:
+                            items:
+                              type: string
+                            type: array
+                          ipConfigurationID:
+                            type: string
+                          tunnelIPS:
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - customIPS
+                        type: object
+                      peerWeight:
+                        format: int64
+                        type: integer
+                    required:
+                    - asn
+                    - peerWeight
+                    type: object
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  scaleUnit:
+                    format: int64
+                    type: integer
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualHubID:
+                    type: string
+                required:
+                - location
+                - name
+                - resourceGroupName
+                - virtualHubID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualHubID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - virtualHubID
+            - resource
             type: object
           status:
             properties:
@@ -443,7 +443,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: gatewayconnections.vpn.azurerm.kubeform.com
 spec:
   group: vpn.azurerm.kubeform.com
@@ -470,10 +471,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              internetSecurityEnabled:
-                type: boolean
               kubeformOutput:
                 properties:
                   id:
@@ -482,11 +479,6 @@ spec:
                     type: boolean
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   remoteVPNSiteID:
                     type: string
                   routing:
@@ -503,11 +495,6 @@ spec:
                       - propagatedRouteTables
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -594,129 +581,142 @@ spec:
                     type: array
                 required:
                 - name
-                - providerRef
                 - remoteVPNSiteID
                 - vpnGatewayID
                 - vpnLink
                 type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              remoteVPNSiteID:
-                type: string
-              routing:
-                items:
-                  properties:
-                    associatedRouteTable:
-                      type: string
-                    propagatedRouteTables:
-                      items:
-                        type: string
-                      type: array
-                  required:
-                  - associatedRouteTable
-                  - propagatedRouteTables
-                  type: object
-                type: array
+              resource:
+                properties:
+                  id:
+                    type: string
+                  internetSecurityEnabled:
+                    type: boolean
+                  name:
+                    type: string
+                  remoteVPNSiteID:
+                    type: string
+                  routing:
+                    items:
+                      properties:
+                        associatedRouteTable:
+                          type: string
+                        propagatedRouteTables:
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - associatedRouteTable
+                      - propagatedRouteTables
+                      type: object
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpnGatewayID:
+                    type: string
+                  vpnLink:
+                    items:
+                      properties:
+                        bandwidthMbps:
+                          format: int64
+                          type: integer
+                        bgpEnabled:
+                          type: boolean
+                        ipsecPolicy:
+                          items:
+                            properties:
+                              dhGroup:
+                                type: string
+                              encryptionAlgorithm:
+                                type: string
+                              ikeEncryptionAlgorithm:
+                                type: string
+                              ikeIntegrityAlgorithm:
+                                type: string
+                              integrityAlgorithm:
+                                type: string
+                              pfsGroup:
+                                type: string
+                              saDataSizeKb:
+                                format: int64
+                                type: integer
+                              saLifetimeSec:
+                                format: int64
+                                type: integer
+                            required:
+                            - dhGroup
+                            - encryptionAlgorithm
+                            - ikeEncryptionAlgorithm
+                            - ikeIntegrityAlgorithm
+                            - integrityAlgorithm
+                            - pfsGroup
+                            - saDataSizeKb
+                            - saLifetimeSec
+                            type: object
+                          minItems: 1
+                          type: array
+                        localAzureIPAddressEnabled:
+                          type: boolean
+                        name:
+                          type: string
+                        policyBasedTrafficSelectorEnabled:
+                          type: boolean
+                        protocol:
+                          type: string
+                        ratelimitEnabled:
+                          type: boolean
+                        routeWeight:
+                          format: int64
+                          type: integer
+                        sharedKey:
+                          type: string
+                        vpnSiteLinkID:
+                          type: string
+                      required:
+                      - name
+                      - vpnSiteLinkID
+                      type: object
+                    minItems: 1
+                    type: array
+                required:
+                - name
+                - remoteVPNSiteID
+                - vpnGatewayID
+                - vpnLink
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpnGatewayID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              vpnLink:
-                items:
-                  properties:
-                    bandwidthMbps:
-                      format: int64
-                      type: integer
-                    bgpEnabled:
-                      type: boolean
-                    ipsecPolicy:
-                      items:
-                        properties:
-                          dhGroup:
-                            type: string
-                          encryptionAlgorithm:
-                            type: string
-                          ikeEncryptionAlgorithm:
-                            type: string
-                          ikeIntegrityAlgorithm:
-                            type: string
-                          integrityAlgorithm:
-                            type: string
-                          pfsGroup:
-                            type: string
-                          saDataSizeKb:
-                            format: int64
-                            type: integer
-                          saLifetimeSec:
-                            format: int64
-                            type: integer
-                        required:
-                        - dhGroup
-                        - encryptionAlgorithm
-                        - ikeEncryptionAlgorithm
-                        - ikeIntegrityAlgorithm
-                        - integrityAlgorithm
-                        - pfsGroup
-                        - saDataSizeKb
-                        - saLifetimeSec
-                        type: object
-                      minItems: 1
-                      type: array
-                    localAzureIPAddressEnabled:
-                      type: boolean
-                    name:
-                      type: string
-                    policyBasedTrafficSelectorEnabled:
-                      type: boolean
-                    protocol:
-                      type: string
-                    ratelimitEnabled:
-                      type: boolean
-                    routeWeight:
-                      format: int64
-                      type: integer
-                    sharedKey:
-                      type: string
-                    vpnSiteLinkID:
-                      type: string
-                  required:
-                  - name
-                  - vpnSiteLinkID
-                  type: object
-                minItems: 1
-                type: array
             required:
-            - name
             - providerRef
-            - remoteVPNSiteID
-            - vpnGatewayID
-            - vpnLink
+            - resource
             type: object
           status:
             properties:
@@ -763,7 +763,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: serverconfigurations.vpn.azurerm.kubeform.com
 spec:
   group: vpn.azurerm.kubeform.com
@@ -790,78 +791,6 @@ spec:
             type: object
           spec:
             properties:
-              azureActiveDirectoryAuthentication:
-                items:
-                  properties:
-                    audience:
-                      type: string
-                    issuer:
-                      type: string
-                    tenant:
-                      type: string
-                  required:
-                  - audience
-                  - issuer
-                  - tenant
-                  type: object
-                minItems: 1
-                type: array
-              clientRevokedCertificate:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    thumbprint:
-                      type: string
-                  required:
-                  - name
-                  - thumbprint
-                  type: object
-                type: array
-              clientRootCertificate:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    publicCertData:
-                      type: string
-                  required:
-                  - name
-                  - publicCertData
-                  type: object
-                type: array
-              id:
-                type: string
-              ipsecPolicy:
-                properties:
-                  dhGroup:
-                    type: string
-                  ikeEncryption:
-                    type: string
-                  ikeIntegrity:
-                    type: string
-                  ipsecEncryption:
-                    type: string
-                  ipsecIntegrity:
-                    type: string
-                  pfsGroup:
-                    type: string
-                  saDataSizeKilobytes:
-                    format: int64
-                    type: integer
-                  saLifetimeSeconds:
-                    format: int64
-                    type: integer
-                required:
-                - dhGroup
-                - ikeEncryption
-                - ikeIntegrity
-                - ipsecEncryption
-                - ipsecIntegrity
-                - pfsGroup
-                - saDataSizeKilobytes
-                - saLifetimeSeconds
-                type: object
               kubeformOutput:
                 properties:
                   azureActiveDirectoryAuthentication:
@@ -940,11 +869,6 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   radius:
                     properties:
                       clientRootCertificate:
@@ -1021,20 +945,10 @@ spec:
                     type: object
                   resourceGroupName:
                     type: string
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1064,22 +978,33 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - vpnAuthenticationTypes
                 type: object
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              radius:
+              resource:
                 properties:
-                  clientRootCertificate:
+                  azureActiveDirectoryAuthentication:
+                    items:
+                      properties:
+                        audience:
+                          type: string
+                        issuer:
+                          type: string
+                        tenant:
+                          type: string
+                      required:
+                      - audience
+                      - issuer
+                      - tenant
+                      type: object
+                    minItems: 1
+                    type: array
+                  clientRevokedCertificate:
                     items:
                       properties:
                         name:
@@ -1091,20 +1016,7 @@ spec:
                       - thumbprint
                       type: object
                     type: array
-                  server:
-                    items:
-                      properties:
-                        address:
-                          type: string
-                        score:
-                          format: int64
-                          type: integer
-                      required:
-                      - address
-                      - score
-                      type: object
-                    type: array
-                  serverRootCertificate:
+                  clientRootCertificate:
                     items:
                       properties:
                         name:
@@ -1116,89 +1028,172 @@ spec:
                       - publicCertData
                       type: object
                     type: array
-                required:
-                - serverRootCertificate
-                type: object
-              radiusServer:
-                properties:
-                  address:
+                  id:
                     type: string
-                  clientRootCertificate:
+                  ipsecPolicy:
+                    properties:
+                      dhGroup:
+                        type: string
+                      ikeEncryption:
+                        type: string
+                      ikeIntegrity:
+                        type: string
+                      ipsecEncryption:
+                        type: string
+                      ipsecIntegrity:
+                        type: string
+                      pfsGroup:
+                        type: string
+                      saDataSizeKilobytes:
+                        format: int64
+                        type: integer
+                      saLifetimeSeconds:
+                        format: int64
+                        type: integer
+                    required:
+                    - dhGroup
+                    - ikeEncryption
+                    - ikeIntegrity
+                    - ipsecEncryption
+                    - ipsecIntegrity
+                    - pfsGroup
+                    - saDataSizeKilobytes
+                    - saLifetimeSeconds
+                    type: object
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  radius:
+                    properties:
+                      clientRootCertificate:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            thumbprint:
+                              type: string
+                          required:
+                          - name
+                          - thumbprint
+                          type: object
+                        type: array
+                      server:
+                        items:
+                          properties:
+                            address:
+                              type: string
+                            score:
+                              format: int64
+                              type: integer
+                          required:
+                          - address
+                          - score
+                          type: object
+                        type: array
+                      serverRootCertificate:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            publicCertData:
+                              type: string
+                          required:
+                          - name
+                          - publicCertData
+                          type: object
+                        type: array
+                    required:
+                    - serverRootCertificate
+                    type: object
+                  radiusServer:
+                    properties:
+                      address:
+                        type: string
+                      clientRootCertificate:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            thumbprint:
+                              type: string
+                          required:
+                          - name
+                          - thumbprint
+                          type: object
+                        type: array
+                      serverRootCertificate:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            publicCertData:
+                              type: string
+                          required:
+                          - name
+                          - publicCertData
+                          type: object
+                        type: array
+                    required:
+                    - address
+                    - serverRootCertificate
+                    type: object
+                  resourceGroupName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vpnAuthenticationTypes:
                     items:
-                      properties:
-                        name:
-                          type: string
-                        thumbprint:
-                          type: string
-                      required:
-                      - name
-                      - thumbprint
-                      type: object
+                      type: string
                     type: array
-                  serverRootCertificate:
+                  vpnProtocols:
                     items:
-                      properties:
-                        name:
-                          type: string
-                        publicCertData:
-                          type: string
-                      required:
-                      - name
-                      - publicCertData
-                      type: object
+                      type: string
                     type: array
                 required:
-                - address
-                - serverRootCertificate
+                - location
+                - name
+                - resourceGroupName
+                - vpnAuthenticationTypes
                 type: object
-              resourceGroupName:
-                type: string
               secretRef:
                 properties:
                   name:
                     type: string
-                type: object
-              tags:
-                additionalProperties:
-                  type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vpnAuthenticationTypes:
-                items:
-                  type: string
-                type: array
-              vpnProtocols:
-                items:
-                  type: string
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - vpnAuthenticationTypes
+            - resource
             type: object
           status:
             properties:
@@ -1245,7 +1240,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: azurerm.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: sites.vpn.azurerm.kubeform.com
 spec:
   group: vpn.azurerm.kubeform.com
@@ -1272,16 +1268,6 @@ spec:
             type: object
           spec:
             properties:
-              addressCidrs:
-                items:
-                  type: string
-                type: array
-              deviceModel:
-                type: string
-              deviceVendor:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   addressCidrs:
@@ -1330,22 +1316,12 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   resourceGroupName:
                     type: string
                   tags:
                     additionalProperties:
                       type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1369,88 +1345,107 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 - resourceGroupName
                 - virtualWANID
                 type: object
-              link:
-                items:
-                  properties:
-                    ID:
-                      type: string
-                    bgp:
-                      properties:
-                        asn:
-                          format: int64
-                          type: integer
-                        peeringAddress:
-                          type: string
-                      required:
-                      - asn
-                      - peeringAddress
-                      type: object
-                    fqdn:
-                      type: string
-                    ipAddress:
-                      type: string
-                    name:
-                      type: string
-                    providerName:
-                      type: string
-                    speedInMbps:
-                      format: int64
-                      type: integer
-                  required:
-                  - name
-                  type: object
-                minItems: 1
-                type: array
-              location:
-                type: string
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              resourceGroupName:
-                type: string
-              tags:
-                additionalProperties:
-                  type: string
+              resource:
+                properties:
+                  addressCidrs:
+                    items:
+                      type: string
+                    type: array
+                  deviceModel:
+                    type: string
+                  deviceVendor:
+                    type: string
+                  id:
+                    type: string
+                  link:
+                    items:
+                      properties:
+                        ID:
+                          type: string
+                        bgp:
+                          properties:
+                            asn:
+                              format: int64
+                              type: integer
+                            peeringAddress:
+                              type: string
+                          required:
+                          - asn
+                          - peeringAddress
+                          type: object
+                        fqdn:
+                          type: string
+                        ipAddress:
+                          type: string
+                        name:
+                          type: string
+                        providerName:
+                          type: string
+                        speedInMbps:
+                          format: int64
+                          type: integer
+                      required:
+                      - name
+                      type: object
+                    minItems: 1
+                    type: array
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  resourceGroupName:
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  virtualWANID:
+                    type: string
+                required:
+                - location
+                - name
+                - resourceGroupName
+                - virtualWANID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              virtualWANID:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - location
-            - name
             - providerRef
-            - resourceGroupName
-            - virtualWANID
+            - resource
             type: object
           status:
             properties:
