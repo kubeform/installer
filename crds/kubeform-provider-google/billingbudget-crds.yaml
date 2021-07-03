@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: billingbudgets.billingbudget.google.kubeform.com
 spec:
   group: billingbudget.google.kubeform.com
@@ -30,65 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              allUpdatesRule:
-                properties:
-                  disableDefaultIamRecipients:
-                    type: boolean
-                  monitoringNotificationChannels:
-                    items:
-                      type: string
-                    type: array
-                  pubsubTopic:
-                    type: string
-                  schemaVersion:
-                    type: string
-                type: object
-              amount:
-                properties:
-                  lastPeriodAmount:
-                    type: boolean
-                  specifiedAmount:
-                    properties:
-                      currencyCode:
-                        type: string
-                      nanos:
-                        format: int64
-                        type: integer
-                      units:
-                        type: string
-                    type: object
-                type: object
-              billingAccount:
-                type: string
-              budgetFilter:
-                properties:
-                  creditTypes:
-                    items:
-                      type: string
-                    type: array
-                  creditTypesTreatment:
-                    type: string
-                  labels:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  projects:
-                    items:
-                      type: string
-                    type: array
-                  services:
-                    items:
-                      type: string
-                    type: array
-                  subaccounts:
-                    items:
-                      type: string
-                    type: array
-                type: object
-              displayName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   allUpdatesRule:
@@ -152,15 +94,108 @@ spec:
                     type: string
                   name:
                     type: string
-                  providerRef:
+                  thresholdRules:
+                    items:
+                      properties:
+                        spendBasis:
+                          type: string
+                        thresholdPercent:
+                          format: double
+                          type: number
+                      required:
+                      - thresholdPercent
+                      type: object
+                    type: array
+                  timeouts:
                     properties:
-                      name:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - amount
+                - billingAccount
+                - thresholdRules
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  allUpdatesRule:
+                    properties:
+                      disableDefaultIamRecipients:
+                        type: boolean
+                      monitoringNotificationChannels:
+                        items:
+                          type: string
+                        type: array
+                      pubsubTopic:
+                        type: string
+                      schemaVersion:
                         type: string
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  amount:
+                    properties:
+                      lastPeriodAmount:
+                        type: boolean
+                      specifiedAmount:
+                        properties:
+                          currencyCode:
+                            type: string
+                          nanos:
+                            format: int64
+                            type: integer
+                          units:
+                            type: string
+                        type: object
+                    type: object
+                  billingAccount:
+                    type: string
+                  budgetFilter:
+                    properties:
+                      creditTypes:
+                        items:
+                          type: string
+                        type: array
+                      creditTypesTreatment:
+                        type: string
+                      labels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      projects:
+                        items:
+                          type: string
+                        type: array
+                      services:
+                        items:
+                          type: string
+                        type: array
+                      subaccounts:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  displayName:
+                    type: string
+                  id:
+                    type: string
+                  name:
                     type: string
                   thresholdRules:
                     items:
@@ -195,56 +230,21 @@ spec:
                 required:
                 - amount
                 - billingAccount
-                - providerRef
                 - thresholdRules
-                type: object
-              name:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              thresholdRules:
-                items:
-                  properties:
-                    spendBasis:
-                      type: string
-                    thresholdPercent:
-                      format: double
-                      type: number
-                  required:
-                  - thresholdPercent
-                  type: object
-                type: array
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - amount
-            - billingAccount
             - providerRef
-            - thresholdRules
+            - resource
             type: object
           status:
             properties:

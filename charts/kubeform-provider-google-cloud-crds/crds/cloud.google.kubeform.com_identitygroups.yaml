@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: identitygroups.cloud.google.kubeform.com
 spec:
   group: cloud.google.kubeform.com
@@ -30,23 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              createTime:
-                type: string
-              description:
-                type: string
-              displayName:
-                type: string
-              groupKey:
-                properties:
-                  ID:
-                    type: string
-                  namespace:
-                    type: string
-                required:
-                - ID
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   createTime:
@@ -66,6 +50,8 @@ spec:
                     type: object
                   id:
                     type: string
+                  initialGroupConfig:
+                    type: string
                   labels:
                     additionalProperties:
                       type: string
@@ -73,16 +59,6 @@ spec:
                   name:
                     type: string
                   parent:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -108,51 +84,79 @@ spec:
                 - groupKey
                 - labels
                 - parent
-                - providerRef
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              parent:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  createTime:
+                    type: string
+                  description:
+                    type: string
+                  displayName:
+                    type: string
+                  groupKey:
+                    properties:
+                      ID:
+                        type: string
+                      namespace:
+                        type: string
+                    required:
+                    - ID
+                    type: object
+                  id:
+                    type: string
+                  initialGroupConfig:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  parent:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  updateTime:
+                    type: string
+                required:
+                - groupKey
+                - labels
+                - parent
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              updateTime:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - groupKey
-            - labels
-            - parent
             - providerRef
+            - resource
             type: object
           status:
             properties:

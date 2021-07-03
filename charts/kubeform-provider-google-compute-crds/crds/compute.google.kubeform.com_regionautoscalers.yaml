@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: regionautoscalers.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
@@ -30,74 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              autoscalingPolicy:
-                properties:
-                  cooldownPeriod:
-                    format: int64
-                    type: integer
-                  cpuUtilization:
-                    properties:
-                      target:
-                        format: double
-                        type: number
-                    required:
-                    - target
-                    type: object
-                  loadBalancingUtilization:
-                    properties:
-                      target:
-                        format: double
-                        type: number
-                    required:
-                    - target
-                    type: object
-                  maxReplicas:
-                    format: int64
-                    type: integer
-                  metric:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        target:
-                          format: double
-                          type: number
-                        type:
-                          type: string
-                      required:
-                      - name
-                      type: object
-                    type: array
-                  minReplicas:
-                    format: int64
-                    type: integer
-                  mode:
-                    type: string
-                  scaleInControl:
-                    properties:
-                      maxScaledInReplicas:
-                        properties:
-                          fixed:
-                            format: int64
-                            type: integer
-                          percent:
-                            format: int64
-                            type: integer
-                        type: object
-                      timeWindowSec:
-                        format: int64
-                        type: integer
-                    type: object
-                required:
-                - maxReplicas
-                - minReplicas
-                type: object
-              creationTimestamp:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   autoscalingPolicy:
@@ -107,6 +40,8 @@ spec:
                         type: integer
                       cpuUtilization:
                         properties:
+                          predictiveMethod:
+                            type: string
                           target:
                             format: double
                             type: number
@@ -158,6 +93,32 @@ spec:
                             format: int64
                             type: integer
                         type: object
+                      scalingSchedules:
+                        items:
+                          properties:
+                            description:
+                              type: string
+                            disabled:
+                              type: boolean
+                            durationSec:
+                              format: int64
+                              type: integer
+                            minRequiredReplicas:
+                              format: int64
+                              type: integer
+                            name:
+                              type: string
+                            schedule:
+                              type: string
+                            timeZone:
+                              type: string
+                          required:
+                          - durationSec
+                          - minRequiredReplicas
+                          - name
+                          - schedule
+                          type: object
+                        type: array
                     required:
                     - maxReplicas
                     - minReplicas
@@ -172,21 +133,11 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   selfLink:
                     type: string
                   target:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -209,52 +160,157 @@ spec:
                 required:
                 - autoscalingPolicy
                 - name
-                - providerRef
                 - target
                 type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              selfLink:
-                type: string
-              target:
-                type: string
+              resource:
+                properties:
+                  autoscalingPolicy:
+                    properties:
+                      cooldownPeriod:
+                        format: int64
+                        type: integer
+                      cpuUtilization:
+                        properties:
+                          predictiveMethod:
+                            type: string
+                          target:
+                            format: double
+                            type: number
+                        required:
+                        - target
+                        type: object
+                      loadBalancingUtilization:
+                        properties:
+                          target:
+                            format: double
+                            type: number
+                        required:
+                        - target
+                        type: object
+                      maxReplicas:
+                        format: int64
+                        type: integer
+                      metric:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            target:
+                              format: double
+                              type: number
+                            type:
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        type: array
+                      minReplicas:
+                        format: int64
+                        type: integer
+                      mode:
+                        type: string
+                      scaleInControl:
+                        properties:
+                          maxScaledInReplicas:
+                            properties:
+                              fixed:
+                                format: int64
+                                type: integer
+                              percent:
+                                format: int64
+                                type: integer
+                            type: object
+                          timeWindowSec:
+                            format: int64
+                            type: integer
+                        type: object
+                      scalingSchedules:
+                        items:
+                          properties:
+                            description:
+                              type: string
+                            disabled:
+                              type: boolean
+                            durationSec:
+                              format: int64
+                              type: integer
+                            minRequiredReplicas:
+                              format: int64
+                              type: integer
+                            name:
+                              type: string
+                            schedule:
+                              type: string
+                            timeZone:
+                              type: string
+                          required:
+                          - durationSec
+                          - minRequiredReplicas
+                          - name
+                          - schedule
+                          type: object
+                        type: array
+                    required:
+                    - maxReplicas
+                    - minReplicas
+                    type: object
+                  creationTimestamp:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  selfLink:
+                    type: string
+                  target:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - autoscalingPolicy
+                - name
+                - target
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - autoscalingPolicy
-            - name
             - providerRef
-            - target
+            - resource
             type: object
           status:
             properties:

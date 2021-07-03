@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cryptokeys.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
-              keyRing:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -46,11 +43,6 @@ spec:
                     type: object
                   name:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   purpose:
                     type: string
                   rotationPeriod:
@@ -59,11 +51,6 @@ spec:
                     type: string
                   skipInitialVersionCreation:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -94,63 +81,76 @@ spec:
                 required:
                 - keyRing
                 - name
-                - providerRef
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              purpose:
-                type: string
-              rotationPeriod:
-                type: string
-              selfLink:
-                type: string
-              skipInitialVersionCreation:
-                type: boolean
+              resource:
+                properties:
+                  id:
+                    type: string
+                  keyRing:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  purpose:
+                    type: string
+                  rotationPeriod:
+                    type: string
+                  selfLink:
+                    type: string
+                  skipInitialVersionCreation:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  versionTemplate:
+                    properties:
+                      algorithm:
+                        type: string
+                      protectionLevel:
+                        type: string
+                    required:
+                    - algorithm
+                    type: object
+                required:
+                - keyRing
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              versionTemplate:
-                properties:
-                  algorithm:
-                    type: string
-                  protectionLevel:
-                    type: string
-                required:
-                - algorithm
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - keyRing
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -197,7 +197,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cryptokeyiambindings.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -224,24 +225,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              cryptoKeyID:
-                type: string
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -266,45 +249,62 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   role:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - cryptoKeyID
                 - members
-                - providerRef
                 - role
                 type: object
-              members:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  cryptoKeyID:
+                    type: string
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  members:
+                    items:
+                      type: string
+                    type: array
+                  role:
+                    type: string
+                required:
+                - cryptoKeyID
+                - members
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cryptoKeyID
-            - members
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -351,7 +351,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cryptokeyiammembers.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -378,24 +379,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              cryptoKeyID:
-                type: string
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -418,43 +401,60 @@ spec:
                     type: string
                   member:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   role:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - cryptoKeyID
                 - member
-                - providerRef
                 - role
                 type: object
-              member:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  cryptoKeyID:
+                    type: string
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  member:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - cryptoKeyID
+                - member
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cryptoKeyID
-            - member
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -501,7 +501,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: cryptokeyiampolicies.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -528,12 +529,6 @@ spec:
             type: object
           spec:
             properties:
-              cryptoKeyID:
-                type: string
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   cryptoKeyID:
@@ -544,37 +539,42 @@ spec:
                     type: string
                   policyData:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - cryptoKeyID
                 - policyData
-                - providerRef
                 type: object
-              policyData:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  cryptoKeyID:
+                    type: string
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  policyData:
+                    type: string
+                required:
+                - cryptoKeyID
+                - policyData
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cryptoKeyID
-            - policyData
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -621,7 +621,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: keyrings.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -648,8 +649,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -660,17 +659,7 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selfLink:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -693,48 +682,59 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selfLink:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  selfLink:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - location
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -781,7 +781,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: keyringiambindings.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -808,24 +809,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
-              keyRingID:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -850,45 +833,62 @@ spec:
                     items:
                       type: string
                     type: array
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   role:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - keyRingID
                 - members
-                - providerRef
                 - role
                 type: object
-              members:
-                items:
-                  type: string
-                type: array
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  keyRingID:
+                    type: string
+                  members:
+                    items:
+                      type: string
+                    type: array
+                  role:
+                    type: string
+                required:
+                - keyRingID
+                - members
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - keyRingID
-            - members
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -935,7 +935,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: keyringiammembers.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -962,24 +963,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
-              keyRingID:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -1002,43 +985,60 @@ spec:
                     type: string
                   member:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   role:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - keyRingID
                 - member
-                - providerRef
                 - role
                 type: object
-              member:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  keyRingID:
+                    type: string
+                  member:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - keyRingID
+                - member
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - keyRingID
-            - member
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -1085,7 +1085,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: keyringiampolicies.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -1112,12 +1113,6 @@ spec:
             type: object
           spec:
             properties:
-              etag:
-                type: string
-              id:
-                type: string
-              keyRingID:
-                type: string
               kubeformOutput:
                 properties:
                   etag:
@@ -1128,37 +1123,42 @@ spec:
                     type: string
                   policyData:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - keyRingID
                 - policyData
-                - providerRef
                 type: object
-              policyData:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  keyRingID:
+                    type: string
+                  policyData:
+                    type: string
+                required:
+                - keyRingID
+                - policyData
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - keyRingID
-            - policyData
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1205,7 +1205,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: keyringimportjobs.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -1232,25 +1233,6 @@ spec:
             type: object
           spec:
             properties:
-              attestation:
-                items:
-                  properties:
-                    content:
-                      type: string
-                    format:
-                      type: string
-                  type: object
-                type: array
-              expireTime:
-                type: string
-              id:
-                type: string
-              importJobID:
-                type: string
-              importMethod:
-                type: string
-              keyRing:
-                type: string
               kubeformOutput:
                 properties:
                   attestation:
@@ -1276,11 +1258,6 @@ spec:
                     type: string
                   protectionLevel:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicKey:
                     items:
                       properties:
@@ -1289,11 +1266,6 @@ spec:
                       type: object
                     type: array
                   state:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1318,55 +1290,83 @@ spec:
                 - importMethod
                 - keyRing
                 - protectionLevel
-                - providerRef
                 type: object
-              name:
-                type: string
-              protectionLevel:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicKey:
-                items:
-                  properties:
-                    pem:
-                      type: string
-                  type: object
-                type: array
-              state:
-                type: string
+              resource:
+                properties:
+                  attestation:
+                    items:
+                      properties:
+                        content:
+                          type: string
+                        format:
+                          type: string
+                      type: object
+                    type: array
+                  expireTime:
+                    type: string
+                  id:
+                    type: string
+                  importJobID:
+                    type: string
+                  importMethod:
+                    type: string
+                  keyRing:
+                    type: string
+                  name:
+                    type: string
+                  protectionLevel:
+                    type: string
+                  publicKey:
+                    items:
+                      properties:
+                        pem:
+                          type: string
+                      type: object
+                    type: array
+                  state:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - importJobID
+                - importMethod
+                - keyRing
+                - protectionLevel
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - importJobID
-            - importMethod
-            - keyRing
-            - protectionLevel
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1413,7 +1413,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: secretciphertexts.kms.google.kubeform.com
 spec:
   group: kms.google.kubeform.com
@@ -1440,12 +1441,6 @@ spec:
             type: object
           spec:
             properties:
-              ciphertext:
-                type: string
-              cryptoKey:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   ciphertext:
@@ -1453,21 +1448,6 @@ spec:
                   cryptoKey:
                     type: string
                   id:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1489,12 +1469,40 @@ spec:
                     type: object
                 required:
                 - cryptoKey
-                - providerRef
                 type: object
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  ciphertext:
+                    type: string
+                  cryptoKey:
+                    type: string
+                  id:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - cryptoKey
                 type: object
               secretRef:
                 properties:
@@ -1506,27 +1514,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cryptoKey
             - providerRef
+            - resource
             type: object
           status:
             properties:

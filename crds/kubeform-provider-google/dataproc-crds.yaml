@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: autoscalingpolicies.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -30,36 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              basicAlgorithm:
-                properties:
-                  cooldownPeriod:
-                    type: string
-                  yarnConfig:
-                    properties:
-                      gracefulDecommissionTimeout:
-                        type: string
-                      scaleDownFactor:
-                        format: double
-                        type: number
-                      scaleDownMinWorkerFraction:
-                        format: double
-                        type: number
-                      scaleUpFactor:
-                        format: double
-                        type: number
-                      scaleUpMinWorkerFraction:
-                        format: double
-                        type: number
-                    required:
-                    - gracefulDecommissionTimeout
-                    - scaleDownFactor
-                    - scaleUpFactor
-                    type: object
-                required:
-                - yarnConfig
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   basicAlgorithm:
@@ -100,11 +71,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   secondaryWorkerConfig:
                     properties:
                       maxInstances:
@@ -117,11 +83,6 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -156,73 +117,112 @@ spec:
                     type: object
                 required:
                 - policyID
-                - providerRef
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              policyID:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              secondaryWorkerConfig:
+              resource:
                 properties:
-                  maxInstances:
-                    format: int64
-                    type: integer
-                  minInstances:
-                    format: int64
-                    type: integer
-                  weight:
-                    format: int64
-                    type: integer
+                  basicAlgorithm:
+                    properties:
+                      cooldownPeriod:
+                        type: string
+                      yarnConfig:
+                        properties:
+                          gracefulDecommissionTimeout:
+                            type: string
+                          scaleDownFactor:
+                            format: double
+                            type: number
+                          scaleDownMinWorkerFraction:
+                            format: double
+                            type: number
+                          scaleUpFactor:
+                            format: double
+                            type: number
+                          scaleUpMinWorkerFraction:
+                            format: double
+                            type: number
+                        required:
+                        - gracefulDecommissionTimeout
+                        - scaleDownFactor
+                        - scaleUpFactor
+                        type: object
+                    required:
+                    - yarnConfig
+                    type: object
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  policyID:
+                    type: string
+                  project:
+                    type: string
+                  secondaryWorkerConfig:
+                    properties:
+                      maxInstances:
+                        format: int64
+                        type: integer
+                      minInstances:
+                        format: int64
+                        type: integer
+                      weight:
+                        format: int64
+                        type: integer
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  workerConfig:
+                    properties:
+                      maxInstances:
+                        format: int64
+                        type: integer
+                      minInstances:
+                        format: int64
+                        type: integer
+                      weight:
+                        format: int64
+                        type: integer
+                    required:
+                    - maxInstances
+                    type: object
+                required:
+                - policyID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              workerConfig:
-                properties:
-                  maxInstances:
-                    format: int64
-                    type: integer
-                  minInstances:
-                    format: int64
-                    type: integer
-                  weight:
-                    format: int64
-                    type: integer
-                required:
-                - maxInstances
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - policyID
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -269,7 +269,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusters.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -296,230 +297,6 @@ spec:
             type: object
           spec:
             properties:
-              clusterConfig:
-                properties:
-                  autoscalingConfig:
-                    properties:
-                      policyURI:
-                        type: string
-                    required:
-                    - policyURI
-                    type: object
-                  bucket:
-                    type: string
-                  encryptionConfig:
-                    properties:
-                      kmsKeyName:
-                        type: string
-                    required:
-                    - kmsKeyName
-                    type: object
-                  gceClusterConfig:
-                    properties:
-                      internalIPOnly:
-                        type: boolean
-                      metadata:
-                        additionalProperties:
-                          type: string
-                        type: object
-                      network:
-                        type: string
-                      serviceAccount:
-                        type: string
-                      serviceAccountScopes:
-                        items:
-                          type: string
-                        type: array
-                      subnetwork:
-                        type: string
-                      tags:
-                        items:
-                          type: string
-                        type: array
-                      zone:
-                        type: string
-                    type: object
-                  initializationAction:
-                    items:
-                      properties:
-                        script:
-                          type: string
-                        timeoutSec:
-                          format: int64
-                          type: integer
-                      required:
-                      - script
-                      type: object
-                    type: array
-                  masterConfig:
-                    properties:
-                      accelerators:
-                        items:
-                          properties:
-                            acceleratorCount:
-                              format: int64
-                              type: integer
-                            acceleratorType:
-                              type: string
-                          required:
-                          - acceleratorCount
-                          - acceleratorType
-                          type: object
-                        type: array
-                      diskConfig:
-                        properties:
-                          bootDiskSizeGb:
-                            format: int64
-                            type: integer
-                          bootDiskType:
-                            type: string
-                          numLocalSsds:
-                            format: int64
-                            type: integer
-                        type: object
-                      imageURI:
-                        type: string
-                      instanceNames:
-                        items:
-                          type: string
-                        type: array
-                      machineType:
-                        type: string
-                      minCPUPlatform:
-                        type: string
-                      numInstances:
-                        format: int64
-                        type: integer
-                    type: object
-                  preemptibleWorkerConfig:
-                    properties:
-                      diskConfig:
-                        properties:
-                          bootDiskSizeGb:
-                            format: int64
-                            type: integer
-                          bootDiskType:
-                            type: string
-                          numLocalSsds:
-                            format: int64
-                            type: integer
-                        type: object
-                      instanceNames:
-                        items:
-                          type: string
-                        type: array
-                      numInstances:
-                        format: int64
-                        type: integer
-                    type: object
-                  securityConfig:
-                    properties:
-                      kerberosConfig:
-                        properties:
-                          crossRealmTrustAdminServer:
-                            type: string
-                          crossRealmTrustKdc:
-                            type: string
-                          crossRealmTrustRealm:
-                            type: string
-                          crossRealmTrustSharedPasswordURI:
-                            type: string
-                          enableKerberos:
-                            type: boolean
-                          kdcDbKeyURI:
-                            type: string
-                          keyPasswordURI:
-                            type: string
-                          keystorePasswordURI:
-                            type: string
-                          keystoreURI:
-                            type: string
-                          kmsKeyURI:
-                            type: string
-                          realm:
-                            type: string
-                          rootPrincipalPasswordURI:
-                            type: string
-                          tgtLifetimeHours:
-                            format: int64
-                            type: integer
-                          truststorePasswordURI:
-                            type: string
-                          truststoreURI:
-                            type: string
-                        required:
-                        - kmsKeyURI
-                        - rootPrincipalPasswordURI
-                        type: object
-                    required:
-                    - kerberosConfig
-                    type: object
-                  softwareConfig:
-                    properties:
-                      imageVersion:
-                        type: string
-                      optionalComponents:
-                        items:
-                          type: string
-                        type: array
-                      overrideProperties:
-                        additionalProperties:
-                          type: string
-                        type: object
-                      properties:
-                        additionalProperties:
-                          type: string
-                        type: object
-                    type: object
-                  stagingBucket:
-                    type: string
-                  tempBucket:
-                    type: string
-                  workerConfig:
-                    properties:
-                      accelerators:
-                        items:
-                          properties:
-                            acceleratorCount:
-                              format: int64
-                              type: integer
-                            acceleratorType:
-                              type: string
-                          required:
-                          - acceleratorCount
-                          - acceleratorType
-                          type: object
-                        type: array
-                      diskConfig:
-                        properties:
-                          bootDiskSizeGb:
-                            format: int64
-                            type: integer
-                          bootDiskType:
-                            type: string
-                          numLocalSsds:
-                            format: int64
-                            type: integer
-                        type: object
-                      imageURI:
-                        type: string
-                      instanceNames:
-                        items:
-                          type: string
-                        type: array
-                      machineType:
-                        type: string
-                      minCPUPlatform:
-                        type: string
-                      numInstances:
-                        format: int64
-                        type: integer
-                    type: object
-                type: object
-              gracefulDecommissionTimeout:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   clusterConfig:
@@ -556,6 +333,15 @@ spec:
                             items:
                               type: string
                             type: array
+                          shieldedInstanceConfig:
+                            properties:
+                              enableIntegrityMonitoring:
+                                type: boolean
+                              enableSecureBoot:
+                                type: boolean
+                              enableVtpm:
+                                type: boolean
+                            type: object
                           subnetwork:
                             type: string
                           tags:
@@ -754,17 +540,7 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -786,49 +562,291 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  clusterConfig:
+                    properties:
+                      autoscalingConfig:
+                        properties:
+                          policyURI:
+                            type: string
+                        required:
+                        - policyURI
+                        type: object
+                      bucket:
+                        type: string
+                      encryptionConfig:
+                        properties:
+                          kmsKeyName:
+                            type: string
+                        required:
+                        - kmsKeyName
+                        type: object
+                      gceClusterConfig:
+                        properties:
+                          internalIPOnly:
+                            type: boolean
+                          metadata:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          network:
+                            type: string
+                          serviceAccount:
+                            type: string
+                          serviceAccountScopes:
+                            items:
+                              type: string
+                            type: array
+                          shieldedInstanceConfig:
+                            properties:
+                              enableIntegrityMonitoring:
+                                type: boolean
+                              enableSecureBoot:
+                                type: boolean
+                              enableVtpm:
+                                type: boolean
+                            type: object
+                          subnetwork:
+                            type: string
+                          tags:
+                            items:
+                              type: string
+                            type: array
+                          zone:
+                            type: string
+                        type: object
+                      initializationAction:
+                        items:
+                          properties:
+                            script:
+                              type: string
+                            timeoutSec:
+                              format: int64
+                              type: integer
+                          required:
+                          - script
+                          type: object
+                        type: array
+                      masterConfig:
+                        properties:
+                          accelerators:
+                            items:
+                              properties:
+                                acceleratorCount:
+                                  format: int64
+                                  type: integer
+                                acceleratorType:
+                                  type: string
+                              required:
+                              - acceleratorCount
+                              - acceleratorType
+                              type: object
+                            type: array
+                          diskConfig:
+                            properties:
+                              bootDiskSizeGb:
+                                format: int64
+                                type: integer
+                              bootDiskType:
+                                type: string
+                              numLocalSsds:
+                                format: int64
+                                type: integer
+                            type: object
+                          imageURI:
+                            type: string
+                          instanceNames:
+                            items:
+                              type: string
+                            type: array
+                          machineType:
+                            type: string
+                          minCPUPlatform:
+                            type: string
+                          numInstances:
+                            format: int64
+                            type: integer
+                        type: object
+                      preemptibleWorkerConfig:
+                        properties:
+                          diskConfig:
+                            properties:
+                              bootDiskSizeGb:
+                                format: int64
+                                type: integer
+                              bootDiskType:
+                                type: string
+                              numLocalSsds:
+                                format: int64
+                                type: integer
+                            type: object
+                          instanceNames:
+                            items:
+                              type: string
+                            type: array
+                          numInstances:
+                            format: int64
+                            type: integer
+                        type: object
+                      securityConfig:
+                        properties:
+                          kerberosConfig:
+                            properties:
+                              crossRealmTrustAdminServer:
+                                type: string
+                              crossRealmTrustKdc:
+                                type: string
+                              crossRealmTrustRealm:
+                                type: string
+                              crossRealmTrustSharedPasswordURI:
+                                type: string
+                              enableKerberos:
+                                type: boolean
+                              kdcDbKeyURI:
+                                type: string
+                              keyPasswordURI:
+                                type: string
+                              keystorePasswordURI:
+                                type: string
+                              keystoreURI:
+                                type: string
+                              kmsKeyURI:
+                                type: string
+                              realm:
+                                type: string
+                              rootPrincipalPasswordURI:
+                                type: string
+                              tgtLifetimeHours:
+                                format: int64
+                                type: integer
+                              truststorePasswordURI:
+                                type: string
+                              truststoreURI:
+                                type: string
+                            required:
+                            - kmsKeyURI
+                            - rootPrincipalPasswordURI
+                            type: object
+                        required:
+                        - kerberosConfig
+                        type: object
+                      softwareConfig:
+                        properties:
+                          imageVersion:
+                            type: string
+                          optionalComponents:
+                            items:
+                              type: string
+                            type: array
+                          overrideProperties:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          properties:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        type: object
+                      stagingBucket:
+                        type: string
+                      tempBucket:
+                        type: string
+                      workerConfig:
+                        properties:
+                          accelerators:
+                            items:
+                              properties:
+                                acceleratorCount:
+                                  format: int64
+                                  type: integer
+                                acceleratorType:
+                                  type: string
+                              required:
+                              - acceleratorCount
+                              - acceleratorType
+                              type: object
+                            type: array
+                          diskConfig:
+                            properties:
+                              bootDiskSizeGb:
+                                format: int64
+                                type: integer
+                              bootDiskType:
+                                type: string
+                              numLocalSsds:
+                                format: int64
+                                type: integer
+                            type: object
+                          imageURI:
+                            type: string
+                          instanceNames:
+                            items:
+                              type: string
+                            type: array
+                          machineType:
+                            type: string
+                          minCPUPlatform:
+                            type: string
+                          numInstances:
+                            format: int64
+                            type: integer
+                        type: object
+                    type: object
+                  gracefulDecommissionTimeout:
+                    type: string
+                  id:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -875,7 +893,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusteriambindings.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -902,24 +921,6 @@ spec:
             type: object
           spec:
             properties:
-              cluster:
-                type: string
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   cluster:
@@ -946,51 +947,68 @@ spec:
                     type: array
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   role:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - cluster
                 - members
-                - providerRef
                 - role
                 type: object
-              members:
-                items:
-                  type: string
-                type: array
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              role:
-                type: string
+              resource:
+                properties:
+                  cluster:
+                    type: string
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  members:
+                    items:
+                      type: string
+                    type: array
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - cluster
+                - members
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cluster
-            - members
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -1037,7 +1055,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusteriammembers.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -1064,24 +1083,6 @@ spec:
             type: object
           spec:
             properties:
-              cluster:
-                type: string
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   cluster:
@@ -1106,49 +1107,66 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   role:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - cluster
                 - member
-                - providerRef
                 - role
                 type: object
-              member:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              role:
-                type: string
+              resource:
+                properties:
+                  cluster:
+                    type: string
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  member:
+                    type: string
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - cluster
+                - member
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cluster
-            - member
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -1195,7 +1213,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: clusteriampolicies.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -1222,12 +1241,6 @@ spec:
             type: object
           spec:
             properties:
-              cluster:
-                type: string
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   cluster:
@@ -1240,43 +1253,48 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - cluster
                 - policyData
-                - providerRef
                 type: object
-              policyData:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  cluster:
+                    type: string
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  policyData:
+                    type: string
+                  project:
+                    type: string
+                  region:
+                    type: string
+                required:
+                - cluster
+                - policyData
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - cluster
-            - policyData
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1323,7 +1341,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: jobs.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -1350,73 +1369,6 @@ spec:
             type: object
           spec:
             properties:
-              driverControlsFilesURI:
-                type: string
-              driverOutputResourceURI:
-                type: string
-              forceDelete:
-                type: boolean
-              hadoopConfig:
-                properties:
-                  archiveUris:
-                    items:
-                      type: string
-                    type: array
-                  args:
-                    items:
-                      type: string
-                    type: array
-                  fileUris:
-                    items:
-                      type: string
-                    type: array
-                  jarFileUris:
-                    items:
-                      type: string
-                    type: array
-                  loggingConfig:
-                    properties:
-                      driverLogLevels:
-                        additionalProperties:
-                          type: string
-                        type: object
-                    required:
-                    - driverLogLevels
-                    type: object
-                  mainClass:
-                    type: string
-                  mainJarFileURI:
-                    type: string
-                  properties:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
-              hiveConfig:
-                properties:
-                  continueOnFailure:
-                    type: boolean
-                  jarFileUris:
-                    items:
-                      type: string
-                    type: array
-                  properties:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  queryFileURI:
-                    type: string
-                  queryList:
-                    items:
-                      type: string
-                    type: array
-                  scriptVariables:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   driverControlsFilesURI:
@@ -1533,11 +1485,6 @@ spec:
                     type: object
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   pysparkConfig:
                     properties:
                       archiveUris:
@@ -1676,11 +1623,6 @@ spec:
                           type: string
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -1701,224 +1643,300 @@ spec:
                     type: object
                 required:
                 - placement
-                - providerRef
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              pigConfig:
-                properties:
-                  continueOnFailure:
-                    type: boolean
-                  jarFileUris:
-                    items:
-                      type: string
-                    type: array
-                  loggingConfig:
-                    properties:
-                      driverLogLevels:
-                        additionalProperties:
-                          type: string
-                        type: object
-                    required:
-                    - driverLogLevels
-                    type: object
-                  properties:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  queryFileURI:
-                    type: string
-                  queryList:
-                    items:
-                      type: string
-                    type: array
-                  scriptVariables:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
-              placement:
-                properties:
-                  clusterName:
-                    type: string
-                  clusterUUID:
-                    type: string
-                required:
-                - clusterName
-                type: object
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              pysparkConfig:
+              resource:
                 properties:
-                  archiveUris:
-                    items:
-                      type: string
-                    type: array
-                  args:
-                    items:
-                      type: string
-                    type: array
-                  fileUris:
-                    items:
-                      type: string
-                    type: array
-                  jarFileUris:
-                    items:
-                      type: string
-                    type: array
-                  loggingConfig:
+                  driverControlsFilesURI:
+                    type: string
+                  driverOutputResourceURI:
+                    type: string
+                  forceDelete:
+                    type: boolean
+                  hadoopConfig:
                     properties:
-                      driverLogLevels:
+                      archiveUris:
+                        items:
+                          type: string
+                        type: array
+                      args:
+                        items:
+                          type: string
+                        type: array
+                      fileUris:
+                        items:
+                          type: string
+                        type: array
+                      jarFileUris:
+                        items:
+                          type: string
+                        type: array
+                      loggingConfig:
+                        properties:
+                          driverLogLevels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        required:
+                        - driverLogLevels
+                        type: object
+                      mainClass:
+                        type: string
+                      mainJarFileURI:
+                        type: string
+                      properties:
                         additionalProperties:
                           type: string
                         type: object
-                    required:
-                    - driverLogLevels
                     type: object
-                  mainPythonFileURI:
+                  hiveConfig:
+                    properties:
+                      continueOnFailure:
+                        type: boolean
+                      jarFileUris:
+                        items:
+                          type: string
+                        type: array
+                      properties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      queryFileURI:
+                        type: string
+                      queryList:
+                        items:
+                          type: string
+                        type: array
+                      scriptVariables:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  id:
                     type: string
-                  properties:
+                  labels:
                     additionalProperties:
                       type: string
                     type: object
-                  pythonFileUris:
+                  pigConfig:
+                    properties:
+                      continueOnFailure:
+                        type: boolean
+                      jarFileUris:
+                        items:
+                          type: string
+                        type: array
+                      loggingConfig:
+                        properties:
+                          driverLogLevels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        required:
+                        - driverLogLevels
+                        type: object
+                      properties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      queryFileURI:
+                        type: string
+                      queryList:
+                        items:
+                          type: string
+                        type: array
+                      scriptVariables:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  placement:
+                    properties:
+                      clusterName:
+                        type: string
+                      clusterUUID:
+                        type: string
+                    required:
+                    - clusterName
+                    type: object
+                  project:
+                    type: string
+                  pysparkConfig:
+                    properties:
+                      archiveUris:
+                        items:
+                          type: string
+                        type: array
+                      args:
+                        items:
+                          type: string
+                        type: array
+                      fileUris:
+                        items:
+                          type: string
+                        type: array
+                      jarFileUris:
+                        items:
+                          type: string
+                        type: array
+                      loggingConfig:
+                        properties:
+                          driverLogLevels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        required:
+                        - driverLogLevels
+                        type: object
+                      mainPythonFileURI:
+                        type: string
+                      properties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      pythonFileUris:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                    - mainPythonFileURI
+                    type: object
+                  reference:
+                    properties:
+                      jobID:
+                        type: string
+                    type: object
+                  region:
+                    type: string
+                  scheduling:
+                    properties:
+                      maxFailuresPerHour:
+                        format: int64
+                        type: integer
+                      maxFailuresTotal:
+                        format: int64
+                        type: integer
+                    required:
+                    - maxFailuresPerHour
+                    - maxFailuresTotal
+                    type: object
+                  sparkConfig:
+                    properties:
+                      archiveUris:
+                        items:
+                          type: string
+                        type: array
+                      args:
+                        items:
+                          type: string
+                        type: array
+                      fileUris:
+                        items:
+                          type: string
+                        type: array
+                      jarFileUris:
+                        items:
+                          type: string
+                        type: array
+                      loggingConfig:
+                        properties:
+                          driverLogLevels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        required:
+                        - driverLogLevels
+                        type: object
+                      mainClass:
+                        type: string
+                      mainJarFileURI:
+                        type: string
+                      properties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  sparksqlConfig:
+                    properties:
+                      jarFileUris:
+                        items:
+                          type: string
+                        type: array
+                      loggingConfig:
+                        properties:
+                          driverLogLevels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        required:
+                        - driverLogLevels
+                        type: object
+                      properties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      queryFileURI:
+                        type: string
+                      queryList:
+                        items:
+                          type: string
+                        type: array
+                      scriptVariables:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  status:
                     items:
-                      type: string
+                      properties:
+                        details:
+                          type: string
+                        state:
+                          type: string
+                        stateStartTime:
+                          type: string
+                        substate:
+                          type: string
+                      type: object
                     type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - mainPythonFileURI
+                - placement
                 type: object
-              reference:
-                properties:
-                  jobID:
-                    type: string
-                type: object
-              region:
-                type: string
-              scheduling:
-                properties:
-                  maxFailuresPerHour:
-                    format: int64
-                    type: integer
-                  maxFailuresTotal:
-                    format: int64
-                    type: integer
-                required:
-                - maxFailuresPerHour
-                - maxFailuresTotal
-                type: object
-              sparkConfig:
-                properties:
-                  archiveUris:
-                    items:
-                      type: string
-                    type: array
-                  args:
-                    items:
-                      type: string
-                    type: array
-                  fileUris:
-                    items:
-                      type: string
-                    type: array
-                  jarFileUris:
-                    items:
-                      type: string
-                    type: array
-                  loggingConfig:
-                    properties:
-                      driverLogLevels:
-                        additionalProperties:
-                          type: string
-                        type: object
-                    required:
-                    - driverLogLevels
-                    type: object
-                  mainClass:
-                    type: string
-                  mainJarFileURI:
-                    type: string
-                  properties:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
-              sparksqlConfig:
-                properties:
-                  jarFileUris:
-                    items:
-                      type: string
-                    type: array
-                  loggingConfig:
-                    properties:
-                      driverLogLevels:
-                        additionalProperties:
-                          type: string
-                        type: object
-                    required:
-                    - driverLogLevels
-                    type: object
-                  properties:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  queryFileURI:
-                    type: string
-                  queryList:
-                    items:
-                      type: string
-                    type: array
-                  scriptVariables:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
-              status:
-                items:
-                  properties:
-                    details:
-                      type: string
-                    state:
-                      type: string
-                    stateStartTime:
-                      type: string
-                    substate:
-                      type: string
-                  type: object
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - placement
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1965,7 +1983,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: jobiambindings.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -1992,24 +2011,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
-              jobID:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -2036,51 +2037,68 @@ spec:
                     type: array
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   role:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - jobID
                 - members
-                - providerRef
                 - role
                 type: object
-              members:
-                items:
-                  type: string
-                type: array
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              role:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  jobID:
+                    type: string
+                  members:
+                    items:
+                      type: string
+                    type: array
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - jobID
+                - members
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - jobID
-            - members
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -2127,7 +2145,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: jobiammembers.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -2154,24 +2173,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
-              jobID:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -2196,49 +2197,66 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   role:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - jobID
                 - member
-                - providerRef
                 - role
                 type: object
-              member:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              role:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  jobID:
+                    type: string
+                  member:
+                    type: string
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - jobID
+                - member
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - jobID
-            - member
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -2285,7 +2303,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: jobiampolicies.dataproc.google.kubeform.com
 spec:
   group: dataproc.google.kubeform.com
@@ -2312,12 +2331,6 @@ spec:
             type: object
           spec:
             properties:
-              etag:
-                type: string
-              id:
-                type: string
-              jobID:
-                type: string
               kubeformOutput:
                 properties:
                   etag:
@@ -2330,43 +2343,1512 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - jobID
                 - policyData
-                - providerRef
                 type: object
-              policyData:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  jobID:
+                    type: string
+                  policyData:
+                    type: string
+                  project:
+                    type: string
+                  region:
+                    type: string
+                required:
+                - jobID
+                - policyData
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - jobID
-            - policyData
             - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: workflowtemplates.dataproc.google.kubeform.com
+spec:
+  group: dataproc.google.kubeform.com
+  names:
+    kind: WorkflowTemplate
+    listKind: WorkflowTemplateList
+    plural: workflowtemplates
+    singular: workflowtemplate
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  createTime:
+                    type: string
+                  id:
+                    type: string
+                  jobs:
+                    items:
+                      properties:
+                        hadoopJob:
+                          properties:
+                            archiveUris:
+                              items:
+                                type: string
+                              type: array
+                            args:
+                              items:
+                                type: string
+                              type: array
+                            fileUris:
+                              items:
+                                type: string
+                              type: array
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            mainClass:
+                              type: string
+                            mainJarFileURI:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        hiveJob:
+                          properties:
+                            continueOnFailure:
+                              type: boolean
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            queryFileURI:
+                              type: string
+                            queryList:
+                              properties:
+                                queries:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - queries
+                              type: object
+                            scriptVariables:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        labels:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        pigJob:
+                          properties:
+                            continueOnFailure:
+                              type: boolean
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            queryFileURI:
+                              type: string
+                            queryList:
+                              properties:
+                                queries:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - queries
+                              type: object
+                            scriptVariables:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        prerequisiteStepIDS:
+                          items:
+                            type: string
+                          type: array
+                        prestoJob:
+                          properties:
+                            clientTags:
+                              items:
+                                type: string
+                              type: array
+                            continueOnFailure:
+                              type: boolean
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            outputFormat:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            queryFileURI:
+                              type: string
+                            queryList:
+                              properties:
+                                queries:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - queries
+                              type: object
+                          type: object
+                        pysparkJob:
+                          properties:
+                            archiveUris:
+                              items:
+                                type: string
+                              type: array
+                            args:
+                              items:
+                                type: string
+                              type: array
+                            fileUris:
+                              items:
+                                type: string
+                              type: array
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            mainPythonFileURI:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            pythonFileUris:
+                              items:
+                                type: string
+                              type: array
+                          required:
+                          - mainPythonFileURI
+                          type: object
+                        scheduling:
+                          properties:
+                            maxFailuresPerHour:
+                              format: int64
+                              type: integer
+                            maxFailuresTotal:
+                              format: int64
+                              type: integer
+                          type: object
+                        sparkJob:
+                          properties:
+                            archiveUris:
+                              items:
+                                type: string
+                              type: array
+                            args:
+                              items:
+                                type: string
+                              type: array
+                            fileUris:
+                              items:
+                                type: string
+                              type: array
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            mainClass:
+                              type: string
+                            mainJarFileURI:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        sparkRJob:
+                          properties:
+                            archiveUris:
+                              items:
+                                type: string
+                              type: array
+                            args:
+                              items:
+                                type: string
+                              type: array
+                            fileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            mainRFileURI:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          required:
+                          - mainRFileURI
+                          type: object
+                        sparkSQLJob:
+                          properties:
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            queryFileURI:
+                              type: string
+                            queryList:
+                              properties:
+                                queries:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - queries
+                              type: object
+                            scriptVariables:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        stepID:
+                          type: string
+                      required:
+                      - stepID
+                      type: object
+                    type: array
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  parameters:
+                    items:
+                      properties:
+                        description:
+                          type: string
+                        fields:
+                          items:
+                            type: string
+                          type: array
+                        name:
+                          type: string
+                        validation:
+                          properties:
+                            regex:
+                              properties:
+                                regexes:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - regexes
+                              type: object
+                            values:
+                              properties:
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - values
+                              type: object
+                          type: object
+                      required:
+                      - fields
+                      - name
+                      type: object
+                    type: array
+                  placement:
+                    properties:
+                      clusterSelector:
+                        properties:
+                          clusterLabels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          zone:
+                            type: string
+                        required:
+                        - clusterLabels
+                        type: object
+                      managedCluster:
+                        properties:
+                          clusterName:
+                            type: string
+                          config:
+                            properties:
+                              autoscalingConfig:
+                                properties:
+                                  policy:
+                                    type: string
+                                type: object
+                              encryptionConfig:
+                                properties:
+                                  gcePdKmsKeyName:
+                                    type: string
+                                type: object
+                              endpointConfig:
+                                properties:
+                                  enableHTTPPortAccess:
+                                    type: boolean
+                                  httpPorts:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              gceClusterConfig:
+                                properties:
+                                  internalIPOnly:
+                                    type: boolean
+                                  metadata:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                  network:
+                                    type: string
+                                  nodeGroupAffinity:
+                                    properties:
+                                      nodeGroup:
+                                        type: string
+                                    required:
+                                    - nodeGroup
+                                    type: object
+                                  privateIpv6GoogleAccess:
+                                    type: string
+                                  reservationAffinity:
+                                    properties:
+                                      consumeReservationType:
+                                        type: string
+                                      key:
+                                        type: string
+                                      values:
+                                        items:
+                                          type: string
+                                        type: array
+                                    type: object
+                                  serviceAccount:
+                                    type: string
+                                  serviceAccountScopes:
+                                    items:
+                                      type: string
+                                    type: array
+                                  subnetwork:
+                                    type: string
+                                  tags:
+                                    items:
+                                      type: string
+                                    type: array
+                                  zone:
+                                    type: string
+                                type: object
+                              initializationActions:
+                                items:
+                                  properties:
+                                    executableFile:
+                                      type: string
+                                    executionTimeout:
+                                      type: string
+                                  type: object
+                                type: array
+                              lifecycleConfig:
+                                properties:
+                                  autoDeleteTime:
+                                    type: string
+                                  autoDeleteTtl:
+                                    type: string
+                                  idleDeleteTtl:
+                                    type: string
+                                  idleStartTime:
+                                    type: string
+                                type: object
+                              masterConfig:
+                                properties:
+                                  accelerators:
+                                    items:
+                                      properties:
+                                        acceleratorCount:
+                                          format: int64
+                                          type: integer
+                                        acceleratorType:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  diskConfig:
+                                    properties:
+                                      bootDiskSizeGb:
+                                        format: int64
+                                        type: integer
+                                      bootDiskType:
+                                        type: string
+                                      numLocalSsds:
+                                        format: int64
+                                        type: integer
+                                    type: object
+                                  image:
+                                    type: string
+                                  instanceNames:
+                                    items:
+                                      type: string
+                                    type: array
+                                  isPreemptible:
+                                    type: boolean
+                                  machineType:
+                                    type: string
+                                  managedGroupConfig:
+                                    items:
+                                      properties:
+                                        instanceGroupManagerName:
+                                          type: string
+                                        instanceTemplateName:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  minCPUPlatform:
+                                    type: string
+                                  numInstances:
+                                    format: int64
+                                    type: integer
+                                  preemptibility:
+                                    type: string
+                                type: object
+                              secondaryWorkerConfig:
+                                properties:
+                                  accelerators:
+                                    items:
+                                      properties:
+                                        acceleratorCount:
+                                          format: int64
+                                          type: integer
+                                        acceleratorType:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  diskConfig:
+                                    properties:
+                                      bootDiskSizeGb:
+                                        format: int64
+                                        type: integer
+                                      bootDiskType:
+                                        type: string
+                                      numLocalSsds:
+                                        format: int64
+                                        type: integer
+                                    type: object
+                                  image:
+                                    type: string
+                                  instanceNames:
+                                    items:
+                                      type: string
+                                    type: array
+                                  isPreemptible:
+                                    type: boolean
+                                  machineType:
+                                    type: string
+                                  managedGroupConfig:
+                                    items:
+                                      properties:
+                                        instanceGroupManagerName:
+                                          type: string
+                                        instanceTemplateName:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  minCPUPlatform:
+                                    type: string
+                                  numInstances:
+                                    format: int64
+                                    type: integer
+                                  preemptibility:
+                                    type: string
+                                type: object
+                              securityConfig:
+                                properties:
+                                  kerberosConfig:
+                                    properties:
+                                      crossRealmTrustAdminServer:
+                                        type: string
+                                      crossRealmTrustKdc:
+                                        type: string
+                                      crossRealmTrustRealm:
+                                        type: string
+                                      crossRealmTrustSharedPassword:
+                                        type: string
+                                      enableKerberos:
+                                        type: boolean
+                                      kdcDbKey:
+                                        type: string
+                                      keyPassword:
+                                        type: string
+                                      keystore:
+                                        type: string
+                                      keystorePassword:
+                                        type: string
+                                      kmsKey:
+                                        type: string
+                                      realm:
+                                        type: string
+                                      rootPrincipalPassword:
+                                        type: string
+                                      tgtLifetimeHours:
+                                        format: int64
+                                        type: integer
+                                      truststore:
+                                        type: string
+                                      truststorePassword:
+                                        type: string
+                                    type: object
+                                type: object
+                              softwareConfig:
+                                properties:
+                                  imageVersion:
+                                    type: string
+                                  properties:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              stagingBucket:
+                                type: string
+                              tempBucket:
+                                type: string
+                              workerConfig:
+                                properties:
+                                  accelerators:
+                                    items:
+                                      properties:
+                                        acceleratorCount:
+                                          format: int64
+                                          type: integer
+                                        acceleratorType:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  diskConfig:
+                                    properties:
+                                      bootDiskSizeGb:
+                                        format: int64
+                                        type: integer
+                                      bootDiskType:
+                                        type: string
+                                      numLocalSsds:
+                                        format: int64
+                                        type: integer
+                                    type: object
+                                  image:
+                                    type: string
+                                  instanceNames:
+                                    items:
+                                      type: string
+                                    type: array
+                                  isPreemptible:
+                                    type: boolean
+                                  machineType:
+                                    type: string
+                                  managedGroupConfig:
+                                    items:
+                                      properties:
+                                        instanceGroupManagerName:
+                                          type: string
+                                        instanceTemplateName:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  minCPUPlatform:
+                                    type: string
+                                  numInstances:
+                                    format: int64
+                                    type: integer
+                                  preemptibility:
+                                    type: string
+                                type: object
+                            type: object
+                          labels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        required:
+                        - clusterName
+                        - config
+                        type: object
+                    type: object
+                  project:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  updateTime:
+                    type: string
+                  version:
+                    format: int64
+                    type: integer
+                required:
+                - jobs
+                - location
+                - name
+                - placement
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  createTime:
+                    type: string
+                  id:
+                    type: string
+                  jobs:
+                    items:
+                      properties:
+                        hadoopJob:
+                          properties:
+                            archiveUris:
+                              items:
+                                type: string
+                              type: array
+                            args:
+                              items:
+                                type: string
+                              type: array
+                            fileUris:
+                              items:
+                                type: string
+                              type: array
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            mainClass:
+                              type: string
+                            mainJarFileURI:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        hiveJob:
+                          properties:
+                            continueOnFailure:
+                              type: boolean
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            queryFileURI:
+                              type: string
+                            queryList:
+                              properties:
+                                queries:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - queries
+                              type: object
+                            scriptVariables:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        labels:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        pigJob:
+                          properties:
+                            continueOnFailure:
+                              type: boolean
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            queryFileURI:
+                              type: string
+                            queryList:
+                              properties:
+                                queries:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - queries
+                              type: object
+                            scriptVariables:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        prerequisiteStepIDS:
+                          items:
+                            type: string
+                          type: array
+                        prestoJob:
+                          properties:
+                            clientTags:
+                              items:
+                                type: string
+                              type: array
+                            continueOnFailure:
+                              type: boolean
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            outputFormat:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            queryFileURI:
+                              type: string
+                            queryList:
+                              properties:
+                                queries:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - queries
+                              type: object
+                          type: object
+                        pysparkJob:
+                          properties:
+                            archiveUris:
+                              items:
+                                type: string
+                              type: array
+                            args:
+                              items:
+                                type: string
+                              type: array
+                            fileUris:
+                              items:
+                                type: string
+                              type: array
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            mainPythonFileURI:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            pythonFileUris:
+                              items:
+                                type: string
+                              type: array
+                          required:
+                          - mainPythonFileURI
+                          type: object
+                        scheduling:
+                          properties:
+                            maxFailuresPerHour:
+                              format: int64
+                              type: integer
+                            maxFailuresTotal:
+                              format: int64
+                              type: integer
+                          type: object
+                        sparkJob:
+                          properties:
+                            archiveUris:
+                              items:
+                                type: string
+                              type: array
+                            args:
+                              items:
+                                type: string
+                              type: array
+                            fileUris:
+                              items:
+                                type: string
+                              type: array
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            mainClass:
+                              type: string
+                            mainJarFileURI:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        sparkRJob:
+                          properties:
+                            archiveUris:
+                              items:
+                                type: string
+                              type: array
+                            args:
+                              items:
+                                type: string
+                              type: array
+                            fileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            mainRFileURI:
+                              type: string
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          required:
+                          - mainRFileURI
+                          type: object
+                        sparkSQLJob:
+                          properties:
+                            jarFileUris:
+                              items:
+                                type: string
+                              type: array
+                            loggingConfig:
+                              properties:
+                                driverLogLevels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                            properties:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            queryFileURI:
+                              type: string
+                            queryList:
+                              properties:
+                                queries:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - queries
+                              type: object
+                            scriptVariables:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        stepID:
+                          type: string
+                      required:
+                      - stepID
+                      type: object
+                    type: array
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  parameters:
+                    items:
+                      properties:
+                        description:
+                          type: string
+                        fields:
+                          items:
+                            type: string
+                          type: array
+                        name:
+                          type: string
+                        validation:
+                          properties:
+                            regex:
+                              properties:
+                                regexes:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - regexes
+                              type: object
+                            values:
+                              properties:
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - values
+                              type: object
+                          type: object
+                      required:
+                      - fields
+                      - name
+                      type: object
+                    type: array
+                  placement:
+                    properties:
+                      clusterSelector:
+                        properties:
+                          clusterLabels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          zone:
+                            type: string
+                        required:
+                        - clusterLabels
+                        type: object
+                      managedCluster:
+                        properties:
+                          clusterName:
+                            type: string
+                          config:
+                            properties:
+                              autoscalingConfig:
+                                properties:
+                                  policy:
+                                    type: string
+                                type: object
+                              encryptionConfig:
+                                properties:
+                                  gcePdKmsKeyName:
+                                    type: string
+                                type: object
+                              endpointConfig:
+                                properties:
+                                  enableHTTPPortAccess:
+                                    type: boolean
+                                  httpPorts:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              gceClusterConfig:
+                                properties:
+                                  internalIPOnly:
+                                    type: boolean
+                                  metadata:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                  network:
+                                    type: string
+                                  nodeGroupAffinity:
+                                    properties:
+                                      nodeGroup:
+                                        type: string
+                                    required:
+                                    - nodeGroup
+                                    type: object
+                                  privateIpv6GoogleAccess:
+                                    type: string
+                                  reservationAffinity:
+                                    properties:
+                                      consumeReservationType:
+                                        type: string
+                                      key:
+                                        type: string
+                                      values:
+                                        items:
+                                          type: string
+                                        type: array
+                                    type: object
+                                  serviceAccount:
+                                    type: string
+                                  serviceAccountScopes:
+                                    items:
+                                      type: string
+                                    type: array
+                                  subnetwork:
+                                    type: string
+                                  tags:
+                                    items:
+                                      type: string
+                                    type: array
+                                  zone:
+                                    type: string
+                                type: object
+                              initializationActions:
+                                items:
+                                  properties:
+                                    executableFile:
+                                      type: string
+                                    executionTimeout:
+                                      type: string
+                                  type: object
+                                type: array
+                              lifecycleConfig:
+                                properties:
+                                  autoDeleteTime:
+                                    type: string
+                                  autoDeleteTtl:
+                                    type: string
+                                  idleDeleteTtl:
+                                    type: string
+                                  idleStartTime:
+                                    type: string
+                                type: object
+                              masterConfig:
+                                properties:
+                                  accelerators:
+                                    items:
+                                      properties:
+                                        acceleratorCount:
+                                          format: int64
+                                          type: integer
+                                        acceleratorType:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  diskConfig:
+                                    properties:
+                                      bootDiskSizeGb:
+                                        format: int64
+                                        type: integer
+                                      bootDiskType:
+                                        type: string
+                                      numLocalSsds:
+                                        format: int64
+                                        type: integer
+                                    type: object
+                                  image:
+                                    type: string
+                                  instanceNames:
+                                    items:
+                                      type: string
+                                    type: array
+                                  isPreemptible:
+                                    type: boolean
+                                  machineType:
+                                    type: string
+                                  managedGroupConfig:
+                                    items:
+                                      properties:
+                                        instanceGroupManagerName:
+                                          type: string
+                                        instanceTemplateName:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  minCPUPlatform:
+                                    type: string
+                                  numInstances:
+                                    format: int64
+                                    type: integer
+                                  preemptibility:
+                                    type: string
+                                type: object
+                              secondaryWorkerConfig:
+                                properties:
+                                  accelerators:
+                                    items:
+                                      properties:
+                                        acceleratorCount:
+                                          format: int64
+                                          type: integer
+                                        acceleratorType:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  diskConfig:
+                                    properties:
+                                      bootDiskSizeGb:
+                                        format: int64
+                                        type: integer
+                                      bootDiskType:
+                                        type: string
+                                      numLocalSsds:
+                                        format: int64
+                                        type: integer
+                                    type: object
+                                  image:
+                                    type: string
+                                  instanceNames:
+                                    items:
+                                      type: string
+                                    type: array
+                                  isPreemptible:
+                                    type: boolean
+                                  machineType:
+                                    type: string
+                                  managedGroupConfig:
+                                    items:
+                                      properties:
+                                        instanceGroupManagerName:
+                                          type: string
+                                        instanceTemplateName:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  minCPUPlatform:
+                                    type: string
+                                  numInstances:
+                                    format: int64
+                                    type: integer
+                                  preemptibility:
+                                    type: string
+                                type: object
+                              securityConfig:
+                                properties:
+                                  kerberosConfig:
+                                    properties:
+                                      crossRealmTrustAdminServer:
+                                        type: string
+                                      crossRealmTrustKdc:
+                                        type: string
+                                      crossRealmTrustRealm:
+                                        type: string
+                                      crossRealmTrustSharedPassword:
+                                        type: string
+                                      enableKerberos:
+                                        type: boolean
+                                      kdcDbKey:
+                                        type: string
+                                      keyPassword:
+                                        type: string
+                                      keystore:
+                                        type: string
+                                      keystorePassword:
+                                        type: string
+                                      kmsKey:
+                                        type: string
+                                      realm:
+                                        type: string
+                                      rootPrincipalPassword:
+                                        type: string
+                                      tgtLifetimeHours:
+                                        format: int64
+                                        type: integer
+                                      truststore:
+                                        type: string
+                                      truststorePassword:
+                                        type: string
+                                    type: object
+                                type: object
+                              softwareConfig:
+                                properties:
+                                  imageVersion:
+                                    type: string
+                                  properties:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              stagingBucket:
+                                type: string
+                              tempBucket:
+                                type: string
+                              workerConfig:
+                                properties:
+                                  accelerators:
+                                    items:
+                                      properties:
+                                        acceleratorCount:
+                                          format: int64
+                                          type: integer
+                                        acceleratorType:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  diskConfig:
+                                    properties:
+                                      bootDiskSizeGb:
+                                        format: int64
+                                        type: integer
+                                      bootDiskType:
+                                        type: string
+                                      numLocalSsds:
+                                        format: int64
+                                        type: integer
+                                    type: object
+                                  image:
+                                    type: string
+                                  instanceNames:
+                                    items:
+                                      type: string
+                                    type: array
+                                  isPreemptible:
+                                    type: boolean
+                                  machineType:
+                                    type: string
+                                  managedGroupConfig:
+                                    items:
+                                      properties:
+                                        instanceGroupManagerName:
+                                          type: string
+                                        instanceTemplateName:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  minCPUPlatform:
+                                    type: string
+                                  numInstances:
+                                    format: int64
+                                    type: integer
+                                  preemptibility:
+                                    type: string
+                                type: object
+                            type: object
+                          labels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        required:
+                        - clusterName
+                        - config
+                        type: object
+                    type: object
+                  project:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  updateTime:
+                    type: string
+                  version:
+                    format: int64
+                    type: integer
+                required:
+                - jobs
+                - location
+                - name
+                - placement
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
             type: object
           status:
             properties:

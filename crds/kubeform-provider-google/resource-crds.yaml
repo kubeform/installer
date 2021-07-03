@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: managerliens.resource.google.kubeform.com
 spec:
   group: resource.google.kubeform.com
@@ -188,10 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              createTime:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   createTime:
@@ -204,22 +201,12 @@ spec:
                     type: string
                   parent:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   reason:
                     type: string
                   restrictions:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -241,56 +228,69 @@ spec:
                 required:
                 - origin
                 - parent
-                - providerRef
                 - reason
                 - restrictions
                 type: object
-              name:
-                type: string
-              origin:
-                type: string
-              parent:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              reason:
-                type: string
-              restrictions:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  createTime:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  origin:
+                    type: string
+                  parent:
+                    type: string
+                  reason:
+                    type: string
+                  restrictions:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - origin
+                - parent
+                - reason
+                - restrictions
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - origin
-            - parent
             - providerRef
-            - reason
-            - restrictions
+            - resource
             type: object
           status:
             properties:

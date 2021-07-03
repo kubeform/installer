@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: databases.spanner.google.kubeform.com
 spec:
   group: spanner.google.kubeform.com
@@ -30,16 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              ddl:
-                items:
-                  type: string
-                type: array
-              deletionProtection:
-                type: boolean
-              id:
-                type: string
-              instance:
-                type: string
               kubeformOutput:
                 properties:
                   ddl:
@@ -48,6 +39,13 @@ spec:
                     type: array
                   deletionProtection:
                     type: boolean
+                  encryptionConfig:
+                    properties:
+                      kmsKeyName:
+                        type: string
+                    required:
+                    - kmsKeyName
+                    type: object
                   id:
                     type: string
                   instance:
@@ -56,17 +54,7 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   state:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -89,46 +77,72 @@ spec:
                 required:
                 - instance
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              state:
-                type: string
+              resource:
+                properties:
+                  ddl:
+                    items:
+                      type: string
+                    type: array
+                  deletionProtection:
+                    type: boolean
+                  encryptionConfig:
+                    properties:
+                      kmsKeyName:
+                        type: string
+                    required:
+                    - kmsKeyName
+                    type: object
+                  id:
+                    type: string
+                  instance:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  state:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - instance
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - instance
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

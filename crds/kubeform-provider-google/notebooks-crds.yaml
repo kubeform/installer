@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: environments.notebooks.google.kubeform.com
 spec:
   group: notebooks.google.kubeform.com
@@ -188,23 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              containerImage:
-                properties:
-                  repository:
-                    type: string
-                  tag:
-                    type: string
-                required:
-                - repository
-                type: object
-              createTime:
-                type: string
-              description:
-                type: string
-              displayName:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   containerImage:
@@ -231,16 +215,6 @@ spec:
                   postStartupScript:
                     type: string
                   project:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -274,59 +248,85 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 type: object
-              location:
-                type: string
-              name:
-                type: string
-              postStartupScript:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  containerImage:
+                    properties:
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    required:
+                    - repository
+                    type: object
+                  createTime:
+                    type: string
+                  description:
+                    type: string
+                  displayName:
+                    type: string
+                  id:
+                    type: string
+                  location:
+                    type: string
+                  name:
+                    type: string
+                  postStartupScript:
+                    type: string
+                  project:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  vmImage:
+                    properties:
+                      imageFamily:
+                        type: string
+                      imageName:
+                        type: string
+                      project:
+                        type: string
+                    required:
+                    - project
+                    type: object
+                required:
+                - location
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              vmImage:
-                properties:
-                  imageFamily:
-                    type: string
-                  imageName:
-                    type: string
-                  project:
-                    type: string
-                required:
-                - project
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -373,7 +373,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instances.notebooks.google.kubeform.com
 spec:
   group: notebooks.google.kubeform.com
@@ -400,52 +401,6 @@ spec:
             type: object
           spec:
             properties:
-              acceleratorConfig:
-                properties:
-                  coreCount:
-                    format: int64
-                    type: integer
-                  type:
-                    type: string
-                required:
-                - coreCount
-                - type
-                type: object
-              bootDiskSizeGb:
-                format: int64
-                type: integer
-              bootDiskType:
-                type: string
-              containerImage:
-                properties:
-                  repository:
-                    type: string
-                  tag:
-                    type: string
-                required:
-                - repository
-                type: object
-              createTime:
-                type: string
-              customGpuDriverPath:
-                type: string
-              dataDiskSizeGb:
-                format: int64
-                type: integer
-              dataDiskType:
-                type: string
-              diskEncryption:
-                type: string
-              id:
-                type: string
-              installGpuDriver:
-                type: boolean
-              instanceOwners:
-                items:
-                  type: string
-                type: array
-              kmsKey:
-                type: string
               kubeformOutput:
                 properties:
                   acceleratorConfig:
@@ -520,11 +475,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   proxyURI:
                     type: string
                   serviceAccount:
@@ -550,11 +500,6 @@ spec:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -590,105 +535,160 @@ spec:
                 - location
                 - machineType
                 - name
-                - providerRef
                 type: object
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              location:
-                type: string
-              machineType:
-                type: string
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              name:
-                type: string
-              network:
-                type: string
-              noProxyAccess:
-                type: boolean
-              noPublicIP:
-                type: boolean
-              noRemoveDataDisk:
-                type: boolean
-              postStartupScript:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              proxyURI:
-                type: string
-              serviceAccount:
-                type: string
-              serviceAccountScopes:
-                items:
-                  type: string
-                type: array
-              shieldedInstanceConfig:
+              resource:
                 properties:
-                  enableIntegrityMonitoring:
+                  acceleratorConfig:
+                    properties:
+                      coreCount:
+                        format: int64
+                        type: integer
+                      type:
+                        type: string
+                    required:
+                    - coreCount
+                    - type
+                    type: object
+                  bootDiskSizeGb:
+                    format: int64
+                    type: integer
+                  bootDiskType:
+                    type: string
+                  containerImage:
+                    properties:
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    required:
+                    - repository
+                    type: object
+                  createTime:
+                    type: string
+                  customGpuDriverPath:
+                    type: string
+                  dataDiskSizeGb:
+                    format: int64
+                    type: integer
+                  dataDiskType:
+                    type: string
+                  diskEncryption:
+                    type: string
+                  id:
+                    type: string
+                  installGpuDriver:
                     type: boolean
-                  enableSecureBoot:
+                  instanceOwners:
+                    items:
+                      type: string
+                    type: array
+                  kmsKey:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  location:
+                    type: string
+                  machineType:
+                    type: string
+                  metadata:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  name:
+                    type: string
+                  network:
+                    type: string
+                  noProxyAccess:
                     type: boolean
-                  enableVtpm:
+                  noPublicIP:
                     type: boolean
+                  noRemoveDataDisk:
+                    type: boolean
+                  postStartupScript:
+                    type: string
+                  project:
+                    type: string
+                  proxyURI:
+                    type: string
+                  serviceAccount:
+                    type: string
+                  serviceAccountScopes:
+                    items:
+                      type: string
+                    type: array
+                  shieldedInstanceConfig:
+                    properties:
+                      enableIntegrityMonitoring:
+                        type: boolean
+                      enableSecureBoot:
+                        type: boolean
+                      enableVtpm:
+                        type: boolean
+                    type: object
+                  state:
+                    type: string
+                  subnet:
+                    type: string
+                  tags:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  updateTime:
+                    type: string
+                  vmImage:
+                    properties:
+                      imageFamily:
+                        type: string
+                      imageName:
+                        type: string
+                      project:
+                        type: string
+                    required:
+                    - project
+                    type: object
+                required:
+                - location
+                - machineType
+                - name
                 type: object
-              state:
-                type: string
-              subnet:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              updateTime:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              vmImage:
-                properties:
-                  imageFamily:
-                    type: string
-                  imageName:
-                    type: string
-                  project:
-                    type: string
-                required:
-                - project
-                type: object
             required:
-            - location
-            - machineType
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -735,7 +735,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instanceiambindings.notebooks.google.kubeform.com
 spec:
   group: notebooks.google.kubeform.com
@@ -762,24 +763,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
-              instanceName:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -808,49 +791,66 @@ spec:
                     type: array
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   role:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - instanceName
                 - members
-                - providerRef
                 - role
                 type: object
-              location:
-                type: string
-              members:
-                items:
-                  type: string
-                type: array
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  instanceName:
+                    type: string
+                  location:
+                    type: string
+                  members:
+                    items:
+                      type: string
+                    type: array
+                  project:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - instanceName
+                - members
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - instanceName
-            - members
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -897,7 +897,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instanceiammembers.notebooks.google.kubeform.com
 spec:
   group: notebooks.google.kubeform.com
@@ -924,24 +925,6 @@ spec:
             type: object
           spec:
             properties:
-              condition:
-                properties:
-                  description:
-                    type: string
-                  expression:
-                    type: string
-                  title:
-                    type: string
-                required:
-                - expression
-                - title
-                type: object
-              etag:
-                type: string
-              id:
-                type: string
-              instanceName:
-                type: string
               kubeformOutput:
                 properties:
                   condition:
@@ -968,47 +951,64 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   role:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                 required:
                 - instanceName
                 - member
-                - providerRef
                 - role
                 type: object
-              location:
-                type: string
-              member:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              role:
-                type: string
+              resource:
+                properties:
+                  condition:
+                    properties:
+                      description:
+                        type: string
+                      expression:
+                        type: string
+                      title:
+                        type: string
+                    required:
+                    - expression
+                    - title
+                    type: object
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  instanceName:
+                    type: string
+                  location:
+                    type: string
+                  member:
+                    type: string
+                  project:
+                    type: string
+                  role:
+                    type: string
+                required:
+                - instanceName
+                - member
+                - role
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - instanceName
-            - member
             - providerRef
-            - role
+            - resource
             type: object
           status:
             properties:
@@ -1055,7 +1055,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: instanceiampolicies.notebooks.google.kubeform.com
 spec:
   group: notebooks.google.kubeform.com
@@ -1082,12 +1083,6 @@ spec:
             type: object
           spec:
             properties:
-              etag:
-                type: string
-              id:
-                type: string
-              instanceName:
-                type: string
               kubeformOutput:
                 properties:
                   etag:
@@ -1102,41 +1097,46 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                 required:
                 - instanceName
                 - policyData
-                - providerRef
                 type: object
-              location:
-                type: string
-              policyData:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  instanceName:
+                    type: string
+                  location:
+                    type: string
+                  policyData:
+                    type: string
+                  project:
+                    type: string
+                required:
+                - instanceName
+                - policyData
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - instanceName
-            - policyData
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1183,7 +1183,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: locations.notebooks.google.kubeform.com
 spec:
   group: notebooks.google.kubeform.com
@@ -1210,8 +1211,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -1220,17 +1219,7 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selfLink:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1250,45 +1239,54 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                required:
-                - providerRef
                 type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selfLink:
-                type: string
+              resource:
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  selfLink:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

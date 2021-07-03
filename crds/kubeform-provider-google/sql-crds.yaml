@@ -161,7 +161,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: databases.sql.google.kubeform.com
 spec:
   group: sql.google.kubeform.com
@@ -188,14 +189,6 @@ spec:
             type: object
           spec:
             properties:
-              charset:
-                type: string
-              collation:
-                type: string
-              id:
-                type: string
-              instance:
-                type: string
               kubeformOutput:
                 properties:
                   charset:
@@ -210,17 +203,7 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selfLink:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -243,46 +226,63 @@ spec:
                 required:
                 - instance
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selfLink:
-                type: string
+              resource:
+                properties:
+                  charset:
+                    type: string
+                  collation:
+                    type: string
+                  id:
+                    type: string
+                  instance:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  selfLink:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - instance
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - instance
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -329,7 +329,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: databaseinstances.sql.google.kubeform.com
 spec:
   group: sql.google.kubeform.com
@@ -356,37 +357,6 @@ spec:
             type: object
           spec:
             properties:
-              clone:
-                properties:
-                  pointInTime:
-                    type: string
-                  sourceInstanceName:
-                    type: string
-                required:
-                - pointInTime
-                - sourceInstanceName
-                type: object
-              connectionName:
-                type: string
-              databaseVersion:
-                type: string
-              deletionProtection:
-                type: boolean
-              firstIPAddress:
-                type: string
-              id:
-                type: string
-              ipAddress:
-                items:
-                  properties:
-                    ipAddress:
-                      type: string
-                    timeToRetire:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type: array
               kubeformOutput:
                 properties:
                   clone:
@@ -396,7 +366,6 @@ spec:
                       sourceInstanceName:
                         type: string
                     required:
-                    - pointInTime
                     - sourceInstanceName
                     type: object
                   connectionName:
@@ -428,11 +397,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   publicIPAddress:
                     type: string
                   region:
@@ -473,11 +437,6 @@ spec:
                         type: string
                     required:
                     - backupRunID
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
                     type: object
                   selfLink:
                     type: string
@@ -550,6 +509,9 @@ spec:
                         type: array
                       diskAutoresize:
                         type: boolean
+                      diskAutoresizeLimit:
+                        format: int64
+                        type: integer
                       diskSize:
                         format: int64
                         type: integer
@@ -586,7 +548,7 @@ spec:
                             type: boolean
                           privateNetwork:
                             type: string
-                          requireSSL:
+                          requireSsl:
                             type: boolean
                         type: object
                       locationPreference:
@@ -623,11 +585,6 @@ spec:
                     required:
                     - tier
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -646,237 +603,277 @@ spec:
                         format: int64
                         type: integer
                     type: object
-                required:
-                - providerRef
                 type: object
-              masterInstanceName:
-                type: string
-              name:
-                type: string
-              privateIPAddress:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              publicIPAddress:
-                type: string
-              region:
-                type: string
-              replicaConfiguration:
+              resource:
                 properties:
-                  caCertificate:
+                  clone:
+                    properties:
+                      pointInTime:
+                        type: string
+                      sourceInstanceName:
+                        type: string
+                    required:
+                    - sourceInstanceName
+                    type: object
+                  connectionName:
                     type: string
-                  clientCertificate:
+                  databaseVersion:
                     type: string
-                  clientKey:
-                    type: string
-                  connectRetryInterval:
-                    format: int64
-                    type: integer
-                  dumpFilePath:
-                    type: string
-                  failoverTarget:
+                  deletionProtection:
                     type: boolean
-                  masterHeartbeatPeriod:
-                    format: int64
-                    type: integer
-                  sslCipher:
+                  firstIPAddress:
                     type: string
-                  username:
+                  id:
                     type: string
-                  verifyServerCertificate:
-                    type: boolean
-                type: object
-              restoreBackupContext:
-                properties:
-                  backupRunID:
-                    format: int64
-                    type: integer
-                  instanceID:
+                  ipAddress:
+                    items:
+                      properties:
+                        ipAddress:
+                          type: string
+                        timeToRetire:
+                          type: string
+                        type:
+                          type: string
+                      type: object
+                    type: array
+                  masterInstanceName:
+                    type: string
+                  name:
+                    type: string
+                  privateIPAddress:
                     type: string
                   project:
                     type: string
-                required:
-                - backupRunID
+                  publicIPAddress:
+                    type: string
+                  region:
+                    type: string
+                  replicaConfiguration:
+                    properties:
+                      caCertificate:
+                        type: string
+                      clientCertificate:
+                        type: string
+                      clientKey:
+                        type: string
+                      connectRetryInterval:
+                        format: int64
+                        type: integer
+                      dumpFilePath:
+                        type: string
+                      failoverTarget:
+                        type: boolean
+                      masterHeartbeatPeriod:
+                        format: int64
+                        type: integer
+                      sslCipher:
+                        type: string
+                      username:
+                        type: string
+                      verifyServerCertificate:
+                        type: boolean
+                    type: object
+                  restoreBackupContext:
+                    properties:
+                      backupRunID:
+                        format: int64
+                        type: integer
+                      instanceID:
+                        type: string
+                      project:
+                        type: string
+                    required:
+                    - backupRunID
+                    type: object
+                  selfLink:
+                    type: string
+                  serverCaCert:
+                    items:
+                      properties:
+                        cert:
+                          type: string
+                        commonName:
+                          type: string
+                        createTime:
+                          type: string
+                        expirationTime:
+                          type: string
+                        sha1Fingerprint:
+                          type: string
+                      type: object
+                    type: array
+                  serviceAccountEmailAddress:
+                    type: string
+                  settings:
+                    properties:
+                      activationPolicy:
+                        type: string
+                      authorizedGaeApplications:
+                        items:
+                          type: string
+                        type: array
+                      availabilityType:
+                        type: string
+                      backupConfiguration:
+                        properties:
+                          backupRetentionSettings:
+                            properties:
+                              retainedBackups:
+                                format: int64
+                                type: integer
+                              retentionUnit:
+                                type: string
+                            required:
+                            - retainedBackups
+                            type: object
+                          binaryLogEnabled:
+                            type: boolean
+                          enabled:
+                            type: boolean
+                          location:
+                            type: string
+                          pointInTimeRecoveryEnabled:
+                            type: boolean
+                          startTime:
+                            type: string
+                          transactionLogRetentionDays:
+                            format: int64
+                            type: integer
+                        type: object
+                      crashSafeReplication:
+                        type: boolean
+                      databaseFlags:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - name
+                          - value
+                          type: object
+                        type: array
+                      diskAutoresize:
+                        type: boolean
+                      diskAutoresizeLimit:
+                        format: int64
+                        type: integer
+                      diskSize:
+                        format: int64
+                        type: integer
+                      diskType:
+                        type: string
+                      insightsConfig:
+                        properties:
+                          queryInsightsEnabled:
+                            type: boolean
+                          queryStringLength:
+                            format: int64
+                            type: integer
+                          recordApplicationTags:
+                            type: boolean
+                          recordClientAddress:
+                            type: boolean
+                        type: object
+                      ipConfiguration:
+                        properties:
+                          authorizedNetworks:
+                            items:
+                              properties:
+                                expirationTime:
+                                  type: string
+                                name:
+                                  type: string
+                                value:
+                                  type: string
+                              required:
+                              - value
+                              type: object
+                            type: array
+                          ipv4Enabled:
+                            type: boolean
+                          privateNetwork:
+                            type: string
+                          requireSsl:
+                            type: boolean
+                        type: object
+                      locationPreference:
+                        properties:
+                          followGaeApplication:
+                            type: string
+                          zone:
+                            type: string
+                        type: object
+                      maintenanceWindow:
+                        properties:
+                          day:
+                            format: int64
+                            type: integer
+                          hour:
+                            format: int64
+                            type: integer
+                          updateTrack:
+                            type: string
+                        type: object
+                      pricingPlan:
+                        type: string
+                      replicationType:
+                        type: string
+                      tier:
+                        type: string
+                      userLabels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      version:
+                        format: int64
+                        type: integer
+                    required:
+                    - tier
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selfLink:
-                type: string
-              serverCaCert:
-                items:
-                  properties:
-                    cert:
-                      type: string
-                    commonName:
-                      type: string
-                    createTime:
-                      type: string
-                    expirationTime:
-                      type: string
-                    sha1Fingerprint:
-                      type: string
-                  type: object
-                type: array
-              serviceAccountEmailAddress:
-                type: string
-              settings:
-                properties:
-                  activationPolicy:
-                    type: string
-                  authorizedGaeApplications:
-                    items:
-                      type: string
-                    type: array
-                  availabilityType:
-                    type: string
-                  backupConfiguration:
-                    properties:
-                      backupRetentionSettings:
-                        properties:
-                          retainedBackups:
-                            format: int64
-                            type: integer
-                          retentionUnit:
-                            type: string
-                        required:
-                        - retainedBackups
-                        type: object
-                      binaryLogEnabled:
-                        type: boolean
-                      enabled:
-                        type: boolean
-                      location:
-                        type: string
-                      pointInTimeRecoveryEnabled:
-                        type: boolean
-                      startTime:
-                        type: string
-                      transactionLogRetentionDays:
-                        format: int64
-                        type: integer
-                    type: object
-                  crashSafeReplication:
-                    type: boolean
-                  databaseFlags:
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        value:
-                          type: string
-                      required:
-                      - name
-                      - value
-                      type: object
-                    type: array
-                  diskAutoresize:
-                    type: boolean
-                  diskSize:
-                    format: int64
-                    type: integer
-                  diskType:
-                    type: string
-                  insightsConfig:
-                    properties:
-                      queryInsightsEnabled:
-                        type: boolean
-                      queryStringLength:
-                        format: int64
-                        type: integer
-                      recordApplicationTags:
-                        type: boolean
-                      recordClientAddress:
-                        type: boolean
-                    type: object
-                  ipConfiguration:
-                    properties:
-                      authorizedNetworks:
-                        items:
-                          properties:
-                            expirationTime:
-                              type: string
-                            name:
-                              type: string
-                            value:
-                              type: string
-                          required:
-                          - value
-                          type: object
-                        type: array
-                      ipv4Enabled:
-                        type: boolean
-                      privateNetwork:
-                        type: string
-                      requireSSL:
-                        type: boolean
-                    type: object
-                  locationPreference:
-                    properties:
-                      followGaeApplication:
-                        type: string
-                      zone:
-                        type: string
-                    type: object
-                  maintenanceWindow:
-                    properties:
-                      day:
-                        format: int64
-                        type: integer
-                      hour:
-                        format: int64
-                        type: integer
-                      updateTrack:
-                        type: string
-                    type: object
-                  pricingPlan:
-                    type: string
-                  replicationType:
-                    type: string
-                  tier:
-                    type: string
-                  userLabels:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  version:
-                    format: int64
-                    type: integer
-                required:
-                - tier
-                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -923,7 +920,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: sourcerepresentationinstances.sql.google.kubeform.com
 spec:
   group: sql.google.kubeform.com
@@ -950,12 +948,6 @@ spec:
             type: object
           spec:
             properties:
-              databaseVersion:
-                type: string
-              host:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   databaseVersion:
@@ -971,17 +963,7 @@ spec:
                     type: integer
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1005,50 +987,65 @@ spec:
                 - databaseVersion
                 - host
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              port:
-                format: int64
-                type: integer
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
+              resource:
+                properties:
+                  databaseVersion:
+                    type: string
+                  host:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  port:
+                    format: int64
+                    type: integer
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - databaseVersion
+                - host
+                - name
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - databaseVersion
-            - host
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1095,7 +1092,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: sslcerts.sql.google.kubeform.com
 spec:
   group: sql.google.kubeform.com
@@ -1122,20 +1120,6 @@ spec:
             type: object
           spec:
             properties:
-              cert:
-                type: string
-              certSerialNumber:
-                type: string
-              commonName:
-                type: string
-              createTime:
-                type: string
-              expirationTime:
-                type: string
-              id:
-                type: string
-              instance:
-                type: string
               kubeformOutput:
                 properties:
                   cert:
@@ -1154,24 +1138,9 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   serverCaCert:
                     type: string
                   sha1Fingerprint:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1194,51 +1163,74 @@ spec:
                 required:
                 - commonName
                 - instance
-                - providerRef
                 type: object
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  cert:
+                    type: string
+                  certSerialNumber:
+                    type: string
+                  commonName:
+                    type: string
+                  createTime:
+                    type: string
+                  expirationTime:
+                    type: string
+                  id:
+                    type: string
+                  instance:
+                    type: string
+                  project:
+                    type: string
+                  serverCaCert:
+                    type: string
+                  sha1Fingerprint:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - commonName
+                - instance
                 type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              serverCaCert:
-                type: string
-              sha1Fingerprint:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - commonName
-            - instance
             - providerRef
+            - resource
             type: object
           status:
             properties:
@@ -1285,7 +1277,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: users.sql.google.kubeform.com
 spec:
   group: sql.google.kubeform.com
@@ -1312,14 +1305,6 @@ spec:
             type: object
           spec:
             properties:
-              deletionPolicy:
-                type: string
-              host:
-                type: string
-              id:
-                type: string
-              instance:
-                type: string
               kubeformOutput:
                 properties:
                   deletionPolicy:
@@ -1333,21 +1318,6 @@ spec:
                   name:
                     type: string
                   project:
-                    type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -1372,16 +1342,49 @@ spec:
                 required:
                 - instance
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
+                type: object
+              resource:
+                properties:
+                  deletionPolicy:
+                    type: string
+                  host:
+                    type: string
+                  id:
+                    type: string
+                  instance:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                required:
+                - instance
+                - name
                 type: object
               secretRef:
                 properties:
@@ -1393,30 +1396,14 @@ spec:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - instance
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

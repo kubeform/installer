@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: resourcepolicies.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
@@ -30,21 +31,10 @@ spec:
             type: object
           spec:
             properties:
-              groupPlacementPolicy:
-                properties:
-                  availabilityDomainCount:
-                    format: int64
-                    type: integer
-                  collocation:
-                    type: string
-                  vmCount:
-                    format: int64
-                    type: integer
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
+                  description:
+                    type: string
                   groupPlacementPolicy:
                     properties:
                       availabilityDomainCount:
@@ -58,15 +48,35 @@ spec:
                     type: object
                   id:
                     type: string
+                  instanceSchedulePolicy:
+                    properties:
+                      expirationTime:
+                        type: string
+                      startTime:
+                        type: string
+                      timeZone:
+                        type: string
+                      vmStartSchedule:
+                        properties:
+                          schedule:
+                            type: string
+                        required:
+                        - schedule
+                        type: object
+                      vmStopSchedule:
+                        properties:
+                          schedule:
+                            type: string
+                        required:
+                        - schedule
+                        type: object
+                    required:
+                    - timeZone
+                    type: object
                   name:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   selfLink:
@@ -143,11 +153,6 @@ spec:
                     required:
                     - schedule
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -168,119 +173,168 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              selfLink:
-                type: string
-              snapshotSchedulePolicy:
+              resource:
                 properties:
-                  retentionPolicy:
+                  description:
+                    type: string
+                  groupPlacementPolicy:
                     properties:
-                      maxRetentionDays:
+                      availabilityDomainCount:
                         format: int64
                         type: integer
-                      onSourceDiskDelete:
+                      collocation:
                         type: string
+                      vmCount:
+                        format: int64
+                        type: integer
+                    type: object
+                  id:
+                    type: string
+                  instanceSchedulePolicy:
+                    properties:
+                      expirationTime:
+                        type: string
+                      startTime:
+                        type: string
+                      timeZone:
+                        type: string
+                      vmStartSchedule:
+                        properties:
+                          schedule:
+                            type: string
+                        required:
+                        - schedule
+                        type: object
+                      vmStopSchedule:
+                        properties:
+                          schedule:
+                            type: string
+                        required:
+                        - schedule
+                        type: object
                     required:
-                    - maxRetentionDays
+                    - timeZone
                     type: object
-                  schedule:
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  selfLink:
+                    type: string
+                  snapshotSchedulePolicy:
                     properties:
-                      dailySchedule:
+                      retentionPolicy:
                         properties:
-                          daysInCycle:
+                          maxRetentionDays:
                             format: int64
                             type: integer
-                          startTime:
+                          onSourceDiskDelete:
                             type: string
                         required:
-                        - daysInCycle
-                        - startTime
+                        - maxRetentionDays
                         type: object
-                      hourlySchedule:
+                      schedule:
                         properties:
-                          hoursInCycle:
-                            format: int64
-                            type: integer
-                          startTime:
-                            type: string
-                        required:
-                        - hoursInCycle
-                        - startTime
+                          dailySchedule:
+                            properties:
+                              daysInCycle:
+                                format: int64
+                                type: integer
+                              startTime:
+                                type: string
+                            required:
+                            - daysInCycle
+                            - startTime
+                            type: object
+                          hourlySchedule:
+                            properties:
+                              hoursInCycle:
+                                format: int64
+                                type: integer
+                              startTime:
+                                type: string
+                            required:
+                            - hoursInCycle
+                            - startTime
+                            type: object
+                          weeklySchedule:
+                            properties:
+                              dayOfWeeks:
+                                items:
+                                  properties:
+                                    day:
+                                      type: string
+                                    startTime:
+                                      type: string
+                                  required:
+                                  - day
+                                  - startTime
+                                  type: object
+                                maxItems: 7
+                                minItems: 1
+                                type: array
+                            required:
+                            - dayOfWeeks
+                            type: object
                         type: object
-                      weeklySchedule:
+                      snapshotProperties:
                         properties:
-                          dayOfWeeks:
+                          guestFlush:
+                            type: boolean
+                          labels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          storageLocations:
                             items:
-                              properties:
-                                day:
-                                  type: string
-                                startTime:
-                                  type: string
-                              required:
-                              - day
-                              - startTime
-                              type: object
-                            maxItems: 7
-                            minItems: 1
+                              type: string
                             type: array
-                        required:
-                        - dayOfWeeks
                         type: object
+                    required:
+                    - schedule
                     type: object
-                  snapshotProperties:
+                  timeouts:
                     properties:
-                      guestFlush:
-                        type: boolean
-                      labels:
-                        additionalProperties:
-                          type: string
-                        type: object
-                      storageLocations:
-                        items:
-                          type: string
-                        type: array
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
                     type: object
                 required:
-                - schedule
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

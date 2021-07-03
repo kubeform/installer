@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: policies.organization.google.kubeform.com
 spec:
   group: organization.google.kubeform.com
@@ -30,19 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              booleanPolicy:
-                properties:
-                  enforced:
-                    type: boolean
-                required:
-                - enforced
-                type: object
-              constraint:
-                type: string
-              etag:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   booleanPolicy:
@@ -85,11 +73,6 @@ spec:
                     type: object
                   orgID:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   restorePolicy:
                     properties:
                       default:
@@ -97,11 +80,6 @@ spec:
                     required:
                     - default
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -128,79 +106,101 @@ spec:
                 required:
                 - constraint
                 - orgID
-                - providerRef
                 type: object
-              listPolicy:
-                properties:
-                  allow:
-                    properties:
-                      all:
-                        type: boolean
-                      values:
-                        items:
-                          type: string
-                        type: array
-                    type: object
-                  deny:
-                    properties:
-                      all:
-                        type: boolean
-                      values:
-                        items:
-                          type: string
-                        type: array
-                    type: object
-                  inheritFromParent:
-                    type: boolean
-                  suggestedValue:
-                    type: string
-                type: object
-              orgID:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              restorePolicy:
+              resource:
                 properties:
-                  default:
-                    type: boolean
+                  booleanPolicy:
+                    properties:
+                      enforced:
+                        type: boolean
+                    required:
+                    - enforced
+                    type: object
+                  constraint:
+                    type: string
+                  etag:
+                    type: string
+                  id:
+                    type: string
+                  listPolicy:
+                    properties:
+                      allow:
+                        properties:
+                          all:
+                            type: boolean
+                          values:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      deny:
+                        properties:
+                          all:
+                            type: boolean
+                          values:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      inheritFromParent:
+                        type: boolean
+                      suggestedValue:
+                        type: string
+                    type: object
+                  orgID:
+                    type: string
+                  restorePolicy:
+                    properties:
+                      default:
+                        type: boolean
+                    required:
+                    - default
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  updateTime:
+                    type: string
+                  version:
+                    format: int64
+                    type: integer
                 required:
-                - default
+                - constraint
+                - orgID
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              updateTime:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              version:
-                format: int64
-                type: integer
             required:
-            - constraint
-            - orgID
             - providerRef
+            - resource
             type: object
           status:
             properties:

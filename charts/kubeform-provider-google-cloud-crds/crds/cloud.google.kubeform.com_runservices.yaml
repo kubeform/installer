@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: runservices.cloud.google.kubeform.com
 spec:
   group: cloud.google.kubeform.com
@@ -30,10 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              autogenerateRevisionName:
-                type: boolean
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   autogenerateRevisionName:
@@ -68,11 +65,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   status:
                     items:
                       properties:
@@ -224,11 +216,6 @@ spec:
                             type: integer
                         type: object
                     type: object
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -264,70 +251,20 @@ spec:
                 required:
                 - location
                 - name
-                - providerRef
                 type: object
-              location:
-                type: string
-              metadata:
-                properties:
-                  annotations:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  generation:
-                    format: int64
-                    type: integer
-                  labels:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  namespace:
-                    type: string
-                  resourceVersion:
-                    type: string
-                  selfLink:
-                    type: string
-                  uid:
-                    type: string
-                type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              status:
-                items:
-                  properties:
-                    conditions:
-                      items:
-                        properties:
-                          message:
-                            type: string
-                          reason:
-                            type: string
-                          status:
-                            type: string
-                          type:
-                            type: string
-                        type: object
-                      type: array
-                    latestCreatedRevisionName:
-                      type: string
-                    latestReadyRevisionName:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    url:
-                      type: string
-                  type: object
-                type: array
-              template:
+              resource:
                 properties:
+                  autogenerateRevisionName:
+                    type: boolean
+                  id:
+                    type: string
+                  location:
+                    type: string
                   metadata:
                     properties:
                       annotations:
@@ -341,8 +278,6 @@ spec:
                         additionalProperties:
                           type: string
                         type: object
-                      name:
-                        type: string
                       namespace:
                         type: string
                       resourceVersion:
@@ -352,145 +287,210 @@ spec:
                       uid:
                         type: string
                     type: object
-                  spec:
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  status:
+                    items:
+                      properties:
+                        conditions:
+                          items:
+                            properties:
+                              message:
+                                type: string
+                              reason:
+                                type: string
+                              status:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                        latestCreatedRevisionName:
+                          type: string
+                        latestReadyRevisionName:
+                          type: string
+                        observedGeneration:
+                          format: int64
+                          type: integer
+                        url:
+                          type: string
+                      type: object
+                    type: array
+                  template:
                     properties:
-                      containerConcurrency:
+                      metadata:
+                        properties:
+                          annotations:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          generation:
+                            format: int64
+                            type: integer
+                          labels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          name:
+                            type: string
+                          namespace:
+                            type: string
+                          resourceVersion:
+                            type: string
+                          selfLink:
+                            type: string
+                          uid:
+                            type: string
+                        type: object
+                      spec:
+                        properties:
+                          containerConcurrency:
+                            format: int64
+                            type: integer
+                          containers:
+                            items:
+                              properties:
+                                args:
+                                  items:
+                                    type: string
+                                  type: array
+                                command:
+                                  items:
+                                    type: string
+                                  type: array
+                                env:
+                                  items:
+                                    properties:
+                                      name:
+                                        type: string
+                                      value:
+                                        type: string
+                                    type: object
+                                  type: array
+                                envFrom:
+                                  items:
+                                    properties:
+                                      configMapRef:
+                                        properties:
+                                          localObjectReference:
+                                            properties:
+                                              name:
+                                                type: string
+                                            required:
+                                            - name
+                                            type: object
+                                          optional:
+                                            type: boolean
+                                        type: object
+                                      prefix:
+                                        type: string
+                                      secretRef:
+                                        properties:
+                                          localObjectReference:
+                                            properties:
+                                              name:
+                                                type: string
+                                            required:
+                                            - name
+                                            type: object
+                                          optional:
+                                            type: boolean
+                                        type: object
+                                    type: object
+                                  type: array
+                                image:
+                                  type: string
+                                ports:
+                                  items:
+                                    properties:
+                                      containerPort:
+                                        format: int64
+                                        type: integer
+                                      name:
+                                        type: string
+                                      protocol:
+                                        type: string
+                                    required:
+                                    - containerPort
+                                    type: object
+                                  type: array
+                                resources:
+                                  properties:
+                                    limits:
+                                      additionalProperties:
+                                        type: string
+                                      type: object
+                                    requests:
+                                      additionalProperties:
+                                        type: string
+                                      type: object
+                                  type: object
+                                workingDir:
+                                  type: string
+                              required:
+                              - image
+                              type: object
+                            type: array
+                          serviceAccountName:
+                            type: string
+                          servingState:
+                            type: string
+                          timeoutSeconds:
+                            format: int64
+                            type: integer
+                        type: object
+                    type: object
+                  timeouts:
+                    properties:
+                      create:
                         format: int64
                         type: integer
-                      containers:
-                        items:
-                          properties:
-                            args:
-                              items:
-                                type: string
-                              type: array
-                            command:
-                              items:
-                                type: string
-                              type: array
-                            env:
-                              items:
-                                properties:
-                                  name:
-                                    type: string
-                                  value:
-                                    type: string
-                                type: object
-                              type: array
-                            envFrom:
-                              items:
-                                properties:
-                                  configMapRef:
-                                    properties:
-                                      localObjectReference:
-                                        properties:
-                                          name:
-                                            type: string
-                                        required:
-                                        - name
-                                        type: object
-                                      optional:
-                                        type: boolean
-                                    type: object
-                                  prefix:
-                                    type: string
-                                  secretRef:
-                                    properties:
-                                      localObjectReference:
-                                        properties:
-                                          name:
-                                            type: string
-                                        required:
-                                        - name
-                                        type: object
-                                      optional:
-                                        type: boolean
-                                    type: object
-                                type: object
-                              type: array
-                            image:
-                              type: string
-                            ports:
-                              items:
-                                properties:
-                                  containerPort:
-                                    format: int64
-                                    type: integer
-                                  name:
-                                    type: string
-                                  protocol:
-                                    type: string
-                                required:
-                                - containerPort
-                                type: object
-                              type: array
-                            resources:
-                              properties:
-                                limits:
-                                  additionalProperties:
-                                    type: string
-                                  type: object
-                                requests:
-                                  additionalProperties:
-                                    type: string
-                                  type: object
-                              type: object
-                            workingDir:
-                              type: string
-                          required:
-                          - image
-                          type: object
-                        type: array
-                      serviceAccountName:
-                        type: string
-                      servingState:
-                        type: string
-                      timeoutSeconds:
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
                         format: int64
                         type: integer
                     type: object
+                  traffic:
+                    items:
+                      properties:
+                        latestRevision:
+                          type: boolean
+                        percent:
+                          format: int64
+                          type: integer
+                        revisionName:
+                          type: string
+                      required:
+                      - percent
+                      type: object
+                    type: array
+                required:
+                - location
+                - name
                 type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              traffic:
-                items:
-                  properties:
-                    latestRevision:
-                      type: boolean
-                    percent:
-                      format: int64
-                      type: integer
-                    revisionName:
-                      type: string
-                  required:
-                  - percent
-                  type: object
-                type: array
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - name
             - providerRef
+            - resource
             type: object
           status:
             properties:

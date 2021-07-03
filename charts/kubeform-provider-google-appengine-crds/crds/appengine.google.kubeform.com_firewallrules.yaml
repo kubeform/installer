@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: firewallrules.appengine.google.kubeform.com
 spec:
   group: appengine.google.kubeform.com
@@ -30,12 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              action:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   action:
@@ -49,17 +44,7 @@ spec:
                     type: integer
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   sourceRange:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -81,48 +66,63 @@ spec:
                     type: object
                 required:
                 - action
-                - providerRef
                 - sourceRange
                 type: object
-              priority:
-                format: int64
-                type: integer
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              sourceRange:
-                type: string
+              resource:
+                properties:
+                  action:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  priority:
+                    format: int64
+                    type: integer
+                  project:
+                    type: string
+                  sourceRange:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - action
+                - sourceRange
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - action
             - providerRef
-            - sourceRange
+            - resource
             type: object
           status:
             properties:

@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: rundomainmappings.cloud.google.kubeform.com
 spec:
   group: cloud.google.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -66,11 +65,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   spec:
                     properties:
                       certificateMode:
@@ -116,11 +110,6 @@ spec:
                           type: array
                       type: object
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -143,118 +132,129 @@ spec:
                 - location
                 - metadata
                 - name
-                - providerRef
                 - spec
                 type: object
-              location:
-                type: string
-              metadata:
-                properties:
-                  annotations:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  generation:
-                    format: int64
-                    type: integer
-                  labels:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  namespace:
-                    type: string
-                  resourceVersion:
-                    type: string
-                  selfLink:
-                    type: string
-                  uid:
-                    type: string
-                required:
-                - namespace
-                type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              spec:
+              resource:
                 properties:
-                  certificateMode:
+                  id:
                     type: string
-                  forceOverride:
-                    type: boolean
-                  routeName:
+                  location:
                     type: string
+                  metadata:
+                    properties:
+                      annotations:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      generation:
+                        format: int64
+                        type: integer
+                      labels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      namespace:
+                        type: string
+                      resourceVersion:
+                        type: string
+                      selfLink:
+                        type: string
+                      uid:
+                        type: string
+                    required:
+                    - namespace
+                    type: object
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  spec:
+                    properties:
+                      certificateMode:
+                        type: string
+                      forceOverride:
+                        type: boolean
+                      routeName:
+                        type: string
+                    required:
+                    - routeName
+                    type: object
+                  status:
+                    items:
+                      properties:
+                        conditions:
+                          items:
+                            properties:
+                              message:
+                                type: string
+                              reason:
+                                type: string
+                              status:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                        mappedRouteName:
+                          type: string
+                        observedGeneration:
+                          format: int64
+                          type: integer
+                        resourceRecords:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              rrdata:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                      type: object
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
                 required:
-                - routeName
+                - location
+                - metadata
+                - name
+                - spec
                 type: object
-              status:
-                items:
-                  properties:
-                    conditions:
-                      items:
-                        properties:
-                          message:
-                            type: string
-                          reason:
-                            type: string
-                          status:
-                            type: string
-                          type:
-                            type: string
-                        type: object
-                      type: array
-                    mappedRouteName:
-                      type: string
-                    observedGeneration:
-                      format: int64
-                      type: integer
-                    resourceRecords:
-                      items:
-                        properties:
-                          name:
-                            type: string
-                          rrdata:
-                            type: string
-                          type:
-                            type: string
-                        type: object
-                      type: array
-                  type: object
-                type: array
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - location
-            - metadata
-            - name
             - providerRef
-            - spec
+            - resource
             type: object
           status:
             properties:

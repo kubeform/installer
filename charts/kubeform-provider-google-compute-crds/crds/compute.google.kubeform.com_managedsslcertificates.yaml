@@ -3,13 +3,14 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: managedsslcertificates.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
   names:
-    kind: ManagedSSLCertificate
-    listKind: ManagedSSLCertificateList
+    kind: ManagedSslCertificate
+    listKind: ManagedSslCertificateList
     plural: managedsslcertificates
     singular: managedsslcertificate
   scope: Namespaced
@@ -30,17 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              certificateID:
-                format: int64
-                type: integer
-              creationTimestamp:
-                type: string
-              description:
-                type: string
-              expireTime:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   certificateID:
@@ -68,22 +58,12 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selfLink:
                     type: string
                   subjectAlternativeNames:
                     items:
                       type: string
                     type: array
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -104,61 +84,79 @@ spec:
                     type: object
                   type:
                     type: string
-                required:
-                - providerRef
                 type: object
-              managed:
-                properties:
-                  domains:
-                    items:
-                      type: string
-                    maxItems: 100
-                    type: array
-                required:
-                - domains
-                type: object
-              name:
-                type: string
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selfLink:
-                type: string
-              subjectAlternativeNames:
-                items:
-                  type: string
-                type: array
+              resource:
+                properties:
+                  certificateID:
+                    format: int64
+                    type: integer
+                  creationTimestamp:
+                    type: string
+                  description:
+                    type: string
+                  expireTime:
+                    type: string
+                  id:
+                    type: string
+                  managed:
+                    properties:
+                      domains:
+                        items:
+                          type: string
+                        maxItems: 100
+                        type: array
+                    required:
+                    - domains
+                    type: object
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  selfLink:
+                    type: string
+                  subjectAlternativeNames:
+                    items:
+                      type: string
+                    type: array
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
             - providerRef
+            - resource
             type: object
           status:
             properties:

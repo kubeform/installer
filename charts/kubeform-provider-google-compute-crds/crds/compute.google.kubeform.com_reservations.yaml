@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: reservations.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
@@ -30,14 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              commitment:
-                type: string
-              creationTimestamp:
-                type: string
-              description:
-                type: string
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   commitment:
@@ -52,11 +45,6 @@ spec:
                     type: string
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selfLink:
                     type: string
                   specificReservation:
@@ -109,10 +97,101 @@ spec:
                     type: boolean
                   status:
                     type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  zone:
+                    type: string
+                required:
+                - name
+                - specificReservation
+                - zone
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  commitment:
+                    type: string
+                  creationTimestamp:
+                    type: string
+                  description:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  project:
+                    type: string
+                  selfLink:
+                    type: string
+                  specificReservation:
+                    properties:
+                      count:
+                        format: int64
+                        type: integer
+                      inUseCount:
+                        format: int64
+                        type: integer
+                      instanceProperties:
+                        properties:
+                          guestAccelerators:
+                            items:
+                              properties:
+                                acceleratorCount:
+                                  format: int64
+                                  type: integer
+                                acceleratorType:
+                                  type: string
+                              required:
+                              - acceleratorCount
+                              - acceleratorType
+                              type: object
+                            type: array
+                          localSsds:
+                            items:
+                              properties:
+                                diskSizeGb:
+                                  format: int64
+                                  type: integer
+                                interface:
+                                  type: string
+                              required:
+                              - diskSizeGb
+                              type: object
+                            type: array
+                          machineType:
+                            type: string
+                          minCPUPlatform:
+                            type: string
+                        required:
+                        - machineType
+                        type: object
+                    required:
+                    - count
+                    - instanceProperties
+                    type: object
+                  specificReservationRequired:
+                    type: boolean
+                  status:
                     type: string
                   timeouts:
                     properties:
@@ -136,101 +215,22 @@ spec:
                     type: string
                 required:
                 - name
-                - providerRef
                 - specificReservation
                 - zone
                 type: object
-              name:
-                type: string
-              project:
-                type: string
-              providerRef:
-                properties:
-                  name:
-                    type: string
-                type: object
-              selfLink:
-                type: string
-              specificReservation:
-                properties:
-                  count:
-                    format: int64
-                    type: integer
-                  inUseCount:
-                    format: int64
-                    type: integer
-                  instanceProperties:
-                    properties:
-                      guestAccelerators:
-                        items:
-                          properties:
-                            acceleratorCount:
-                              format: int64
-                              type: integer
-                            acceleratorType:
-                              type: string
-                          required:
-                          - acceleratorCount
-                          - acceleratorType
-                          type: object
-                        type: array
-                      localSsds:
-                        items:
-                          properties:
-                            diskSizeGb:
-                              format: int64
-                              type: integer
-                            interface:
-                              type: string
-                          required:
-                          - diskSizeGb
-                          type: object
-                        type: array
-                      machineType:
-                        type: string
-                      minCPUPlatform:
-                        type: string
-                    required:
-                    - machineType
-                    type: object
-                required:
-                - count
-                - instanceProperties
-                type: object
-              specificReservationRequired:
-                type: boolean
-              status:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              zone:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
             required:
-            - name
             - providerRef
-            - specificReservation
-            - zone
+            - resource
             type: object
           status:
             properties:

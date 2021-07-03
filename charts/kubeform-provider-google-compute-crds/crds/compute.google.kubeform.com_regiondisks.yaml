@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: regiondisks.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
@@ -30,17 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              creationTimestamp:
-                type: string
-              description:
-                type: string
-              diskEncryptionKey:
-                properties:
-                  sha256:
-                    type: string
-                type: object
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   creationTimestamp:
@@ -71,11 +61,6 @@ spec:
                     type: integer
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   replicaZones:
@@ -84,11 +69,6 @@ spec:
                     maxItems: 2
                     minItems: 2
                     type: array
-                  secretRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   selfLink:
                     type: string
                   size:
@@ -104,11 +84,6 @@ spec:
                         type: string
                     type: object
                   sourceSnapshotID:
-                    type: string
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
                     type: string
                   timeouts:
                     properties:
@@ -136,93 +111,113 @@ spec:
                     type: array
                 required:
                 - name
-                - providerRef
                 - replicaZones
                 type: object
-              labelFingerprint:
-                type: string
-              labels:
-                additionalProperties:
-                  type: string
-                type: object
-              lastAttachTimestamp:
-                type: string
-              lastDetachTimestamp:
-                type: string
-              name:
-                type: string
-              physicalBlockSizeBytes:
-                format: int64
-                type: integer
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              replicaZones:
-                items:
-                  type: string
-                maxItems: 2
-                minItems: 2
-                type: array
+              resource:
+                properties:
+                  creationTimestamp:
+                    type: string
+                  description:
+                    type: string
+                  diskEncryptionKey:
+                    properties:
+                      sha256:
+                        type: string
+                    type: object
+                  id:
+                    type: string
+                  labelFingerprint:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  lastAttachTimestamp:
+                    type: string
+                  lastDetachTimestamp:
+                    type: string
+                  name:
+                    type: string
+                  physicalBlockSizeBytes:
+                    format: int64
+                    type: integer
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  replicaZones:
+                    items:
+                      type: string
+                    maxItems: 2
+                    minItems: 2
+                    type: array
+                  selfLink:
+                    type: string
+                  size:
+                    format: int64
+                    type: integer
+                  snapshot:
+                    type: string
+                  sourceSnapshotEncryptionKey:
+                    properties:
+                      rawKey:
+                        type: string
+                      sha256:
+                        type: string
+                    type: object
+                  sourceSnapshotID:
+                    type: string
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                  type:
+                    type: string
+                  users:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - name
+                - replicaZones
+                type: object
               secretRef:
                 properties:
                   name:
                     type: string
                 type: object
-              selfLink:
-                type: string
-              size:
-                format: int64
-                type: integer
-              snapshot:
-                type: string
-              sourceSnapshotEncryptionKey:
-                properties:
-                  rawKey:
-                    type: string
-                  sha256:
-                    type: string
-                type: object
-              sourceSnapshotID:
-                type: string
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
-              type:
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
                 type: string
-              users:
-                items:
-                  type: string
-                type: array
             required:
-            - name
             - providerRef
-            - replicaZones
+            - resource
             type: object
           status:
             properties:

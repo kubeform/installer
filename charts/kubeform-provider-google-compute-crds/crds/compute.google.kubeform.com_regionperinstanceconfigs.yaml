@@ -3,7 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/name: google.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
   name: regionperinstanceconfigs.compute.google.kubeform.com
 spec:
   group: compute.google.kubeform.com
@@ -30,8 +31,6 @@ spec:
             type: object
           spec:
             properties:
-              id:
-                type: string
               kubeformOutput:
                 properties:
                   id:
@@ -67,22 +66,12 @@ spec:
                     type: object
                   project:
                     type: string
-                  providerRef:
-                    properties:
-                      name:
-                        type: string
-                    type: object
                   region:
                     type: string
                   regionInstanceGroupManager:
                     type: string
                   removeInstanceStateOnDestroy:
                     type: boolean
-                  terminationPolicy:
-                    enum:
-                    - Delete
-                    - DoNotTerminate
-                    type: string
                   timeouts:
                     properties:
                       create:
@@ -103,78 +92,89 @@ spec:
                     type: object
                 required:
                 - name
-                - providerRef
                 - regionInstanceGroupManager
                 type: object
-              minimalAction:
-                type: string
-              mostDisruptiveAllowedAction:
-                type: string
-              name:
-                type: string
-              preservedState:
-                properties:
-                  disk:
-                    items:
-                      properties:
-                        deleteRule:
-                          type: string
-                        deviceName:
-                          type: string
-                        mode:
-                          type: string
-                        source:
-                          type: string
-                      required:
-                      - deviceName
-                      - source
-                      type: object
-                    type: array
-                  metadata:
-                    additionalProperties:
-                      type: string
-                    type: object
-                type: object
-              project:
-                type: string
               providerRef:
                 properties:
                   name:
                     type: string
                 type: object
-              region:
-                type: string
-              regionInstanceGroupManager:
-                type: string
-              removeInstanceStateOnDestroy:
-                type: boolean
+              resource:
+                properties:
+                  id:
+                    type: string
+                  minimalAction:
+                    type: string
+                  mostDisruptiveAllowedAction:
+                    type: string
+                  name:
+                    type: string
+                  preservedState:
+                    properties:
+                      disk:
+                        items:
+                          properties:
+                            deleteRule:
+                              type: string
+                            deviceName:
+                              type: string
+                            mode:
+                              type: string
+                            source:
+                              type: string
+                          required:
+                          - deviceName
+                          - source
+                          type: object
+                        type: array
+                      metadata:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  project:
+                    type: string
+                  region:
+                    type: string
+                  regionInstanceGroupManager:
+                    type: string
+                  removeInstanceStateOnDestroy:
+                    type: boolean
+                  timeouts:
+                    properties:
+                      create:
+                        format: int64
+                        type: integer
+                      default:
+                        format: int64
+                        type: integer
+                      delete:
+                        format: int64
+                        type: integer
+                      read:
+                        format: int64
+                        type: integer
+                      update:
+                        format: int64
+                        type: integer
+                    type: object
+                required:
+                - name
+                - regionInstanceGroupManager
+                type: object
               terminationPolicy:
                 enum:
                 - Delete
                 - DoNotTerminate
                 type: string
-              timeouts:
-                properties:
-                  create:
-                    format: int64
-                    type: integer
-                  default:
-                    format: int64
-                    type: integer
-                  delete:
-                    format: int64
-                    type: integer
-                  read:
-                    format: int64
-                    type: integer
-                  update:
-                    format: int64
-                    type: integer
-                type: object
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
             required:
-            - name
             - providerRef
-            - regionInstanceGroupManager
+            - resource
             type: object
           status:
             properties:
