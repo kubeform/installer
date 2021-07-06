@@ -46,7 +46,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 
 |              Parameter               |                                      Description                                       |                          Default                          |
 |--------------------------------------|----------------------------------------------------------------------------------------|-----------------------------------------------------------|
-| kubeform-provider                    | Pass values to kubeform-provider chart                                                 | `{"operator":{"tag":"v0.3.0"},"provider":{"name":"aws"}}` |
+| kubeform-provider                    | Pass values to kubeform-provider chart                                                 | `{"operator":{"tag":"v0.1.0"},"provider":{"name":"aws"}}` |
 | crds.accessanalyzer                  | If true, installs the kubeform-provider-aws-accessanalyzer-crds chart                  | `false`                                                   |
 | crds.acm                             | If true, installs the kubeform-provider-aws-acm-crds chart                             | `false`                                                   |
 | crds.acmpca                          | If true, installs the kubeform-provider-aws-acmpca-crds chart                          | `false`                                                   |

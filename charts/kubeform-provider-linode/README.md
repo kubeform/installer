@@ -46,7 +46,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 
 |     Parameter     |                              Description                               |                           Default                            |
 |-------------------|------------------------------------------------------------------------|--------------------------------------------------------------|
-| kubeform-provider | Pass values to kubeform-provider chart                                 | `{"operator":{"tag":"v0.3.0"},"provider":{"name":"linode"}}` |
+| kubeform-provider | Pass values to kubeform-provider chart                                 | `{"operator":{"tag":"v0.1.0"},"provider":{"name":"linode"}}` |
 | crds.domain       | If true, installs the kubeform-provider-linode-domain-crds chart       | `false`                                                      |
 | crds.firewall     | If true, installs the kubeform-provider-linode-firewall-crds chart     | `false`                                                      |
 | crds.image        | If true, installs the kubeform-provider-linode-image-crds chart        | `false`                                                      |

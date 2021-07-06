@@ -46,7 +46,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 
 |          Parameter          |                                   Description                                    |                           Default                            |
 |-----------------------------|----------------------------------------------------------------------------------|--------------------------------------------------------------|
-| kubeform-provider           | Pass values to kubeform-provider chart                                           | `{"operator":{"tag":"v0.3.0"},"provider":{"name":"google"}}` |
+| kubeform-provider           | Pass values to kubeform-provider chart                                           | `{"operator":{"tag":"v0.1.0"},"provider":{"name":"google"}}` |
 | crds.accesscontext          | If true, installs the kubeform-provider-google-accesscontext-crds chart          | `false`                                                      |
 | crds.active                 | If true, installs the kubeform-provider-google-active-crds chart                 | `false`                                                      |
 | crds.apigee                 | If true, installs the kubeform-provider-google-apigee-crds chart                 | `false`                                                      |
