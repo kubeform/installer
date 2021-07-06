@@ -521,7 +521,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		}
 
 		// crds
-		target := filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g), "crds")
+		target := filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g), "templates", "crds")
 		err = os.MkdirAll(target, 0755)
 		if err != nil {
 			return err
@@ -664,6 +664,10 @@ func processLocation(location string, store map[schema.GroupKind]map[string]*uns
 func extractCRD(store map[schema.GroupKind]map[string]*unstructured.Unstructured) func(obj *unstructured.Unstructured) error {
 	return func(obj *unstructured.Unstructured) error {
 		removeDescription(obj.UnstructuredContent())
+
+		obj.SetAnnotations(map[string]string{
+			"helm.sh/resource-policy": "keep",
+		})
 
 		var def Definition
 

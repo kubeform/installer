@@ -1,0 +1,266 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: aws.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: budgets.budgets.aws.kubeform.com
+spec:
+  group: budgets.aws.kubeform.com
+  names:
+    kind: Budget
+    listKind: BudgetList
+    plural: budgets
+    singular: budget
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  accountID:
+                    type: string
+                  arn:
+                    type: string
+                  budgetType:
+                    type: string
+                  costFilters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  costTypes:
+                    properties:
+                      includeCredit:
+                        type: boolean
+                      includeDiscount:
+                        type: boolean
+                      includeOtherSubscription:
+                        type: boolean
+                      includeRecurring:
+                        type: boolean
+                      includeRefund:
+                        type: boolean
+                      includeSubscription:
+                        type: boolean
+                      includeSupport:
+                        type: boolean
+                      includeTax:
+                        type: boolean
+                      includeUpfront:
+                        type: boolean
+                      useAmortized:
+                        type: boolean
+                      useBlended:
+                        type: boolean
+                    type: object
+                  id:
+                    type: string
+                  limitAmount:
+                    type: string
+                  limitUnit:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  notification:
+                    items:
+                      properties:
+                        comparisonOperator:
+                          type: string
+                        notificationType:
+                          type: string
+                        subscriberEmailAddresses:
+                          items:
+                            type: string
+                          type: array
+                        subscriberSnsTopicArns:
+                          items:
+                            type: string
+                          type: array
+                        threshold:
+                          format: double
+                          type: number
+                        thresholdType:
+                          type: string
+                      required:
+                      - comparisonOperator
+                      - notificationType
+                      - threshold
+                      - thresholdType
+                      type: object
+                    type: array
+                  timePeriodEnd:
+                    type: string
+                  timePeriodStart:
+                    type: string
+                  timeUnit:
+                    type: string
+                required:
+                - budgetType
+                - limitAmount
+                - limitUnit
+                - timePeriodStart
+                - timeUnit
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  accountID:
+                    type: string
+                  arn:
+                    type: string
+                  budgetType:
+                    type: string
+                  costFilters:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  costTypes:
+                    properties:
+                      includeCredit:
+                        type: boolean
+                      includeDiscount:
+                        type: boolean
+                      includeOtherSubscription:
+                        type: boolean
+                      includeRecurring:
+                        type: boolean
+                      includeRefund:
+                        type: boolean
+                      includeSubscription:
+                        type: boolean
+                      includeSupport:
+                        type: boolean
+                      includeTax:
+                        type: boolean
+                      includeUpfront:
+                        type: boolean
+                      useAmortized:
+                        type: boolean
+                      useBlended:
+                        type: boolean
+                    type: object
+                  id:
+                    type: string
+                  limitAmount:
+                    type: string
+                  limitUnit:
+                    type: string
+                  name:
+                    type: string
+                  namePrefix:
+                    type: string
+                  notification:
+                    items:
+                      properties:
+                        comparisonOperator:
+                          type: string
+                        notificationType:
+                          type: string
+                        subscriberEmailAddresses:
+                          items:
+                            type: string
+                          type: array
+                        subscriberSnsTopicArns:
+                          items:
+                            type: string
+                          type: array
+                        threshold:
+                          format: double
+                          type: number
+                        thresholdType:
+                          type: string
+                      required:
+                      - comparisonOperator
+                      - notificationType
+                      - threshold
+                      - thresholdType
+                      type: object
+                    type: array
+                  timePeriodEnd:
+                    type: string
+                  timePeriodStart:
+                    type: string
+                  timeUnit:
+                    type: string
+                required:
+                - budgetType
+                - limitAmount
+                - limitUnit
+                - timePeriodStart
+                - timeUnit
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
