@@ -46,7 +46,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 
 |       Parameter        |                                 Description                                  |                            Default                            |
 |------------------------|------------------------------------------------------------------------------|---------------------------------------------------------------|
-| kubeform-provider      | Pass values to kubeform-provider chart                                       | `{"operator":{"tag":"v0.3.0"},"provider":{"name":"azurerm"}}` |
+| kubeform-provider      | Pass values to kubeform-provider chart                                       | `{"operator":{"tag":"v0.1.0"},"provider":{"name":"azurerm"}}` |
 | crds.advanced          | If true, installs the kubeform-provider-azurerm-advanced-crds chart          | `false`                                                       |
 | crds.analysis          | If true, installs the kubeform-provider-azurerm-analysis-crds chart          | `false`                                                       |
 | crds.apimanagement     | If true, installs the kubeform-provider-azurerm-apimanagement-crds chart     | `false`                                                       |

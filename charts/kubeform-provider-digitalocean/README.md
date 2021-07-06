@@ -46,7 +46,7 @@ The following table lists the configurable parameters of the `kubeform-provider-
 
 |       Parameter        |                                    Description                                    |                              Default                               |
 |------------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------|
-| kubeform-provider      | Pass values to kubeform-provider chart                                            | `{"operator":{"tag":"v0.3.0"},"provider":{"name":"digitalocean"}}` |
+| kubeform-provider      | Pass values to kubeform-provider chart                                            | `{"operator":{"tag":"v0.1.0"},"provider":{"name":"digitalocean"}}` |
 | crds.app               | If true, installs the kubeform-provider-digitalocean-app-crds chart               | `false`                                                            |
 | crds.cdn               | If true, installs the kubeform-provider-digitalocean-cdn-crds chart               | `false`                                                            |
 | crds.certificate       | If true, installs the kubeform-provider-digitalocean-certificate-crds chart       | `false`                                                            |
