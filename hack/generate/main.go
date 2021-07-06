@@ -74,9 +74,10 @@ type CRD struct {
 var providerList ProviderList
 
 type ProviderData struct {
-	Provider string
-	Groups   []string
-	GIDs     []string
+	Provider    string
+	Groups      []string
+	GIDs        []string
+	OperatorTag string
 }
 
 type ProviderGroupData struct {
@@ -339,12 +340,38 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 			}
 			return ioutil.WriteFile(target, data, 0644)
 		default:
+			operatorTag := "v0.1.0" //default tag
+			if rel == "values.yaml" {
+				if _, e2 := os.Stat(target); !os.IsNotExist(e2) {
+					// keep original kubeform-provider.operator.tag
+
+					var existing map[string]interface{}
+					data, err := ioutil.ReadFile(target)
+					if err != nil {
+						return err
+					}
+					err = yaml.Unmarshal(data, &existing)
+					if err != nil {
+						return err
+					}
+
+					tag, exists, err := unstructured.NestedString(existing, "kubeform-provider", "operator", "tag")
+					if err != nil {
+						return err
+					}
+					if exists {
+						operatorTag = tag
+					}
+				}
+			}
+
 			tpl := template.Must(template.New("").Funcs(sprig.TxtFuncMap()).ParseFiles(path))
 			buf.Reset()
 			err = tpl.ExecuteTemplate(&buf, filepath.Base(path), ProviderData{
-				Provider: p,
-				Groups:   groups.List(),
-				GIDs:     gids.List(),
+				Provider:    p,
+				Groups:      groups.List(),
+				GIDs:        gids.List(),
+				OperatorTag: operatorTag,
 			})
 			if err != nil {
 				return err
