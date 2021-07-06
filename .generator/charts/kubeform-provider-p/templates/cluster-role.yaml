@@ -1,9 +1,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kubeform-provider.fullname" . }}
+  name: {{ "{{ template \"kubeform-provider.fullname\" . }}" }}
   labels:
-    {{- include "kubeform-provider.labels" . | nindent 4 }}
+    {{ "{{- include \"kubeform-provider.labels\" . | nindent 4 }}" }}
 rules:
 - apiGroups:
   - apiextensions.k8s.io
@@ -11,7 +11,9 @@ rules:
   - customresourcedefinitions
   verbs: ["*"]
 - apiGroups:
-  - object.{{ .Values.provider.name }}.kubeform.com # TODO: how to handle multiple groups? i.e. XYZ.provider.kubeform.com
+  {{- range .Groups }}
+  - {{ . }}
+  {{- end }}
   resources:
   - "*"
   verbs: ["*"]
@@ -48,11 +50,8 @@ rules:
   - roles
   - rolebindings
   verbs: ["get", "create", "delete", "patch"]
-{{- if .Values.webhook.enableValidatingWebhook }}
 - apiGroups:
     - admissionregistration.k8s.io
   resources:
-    - mutatingwebhookconfigurations
     - validatingwebhookconfigurations
   verbs: ["create", "delete", "update", "get", "list", "watch", "patch"]
-{{- end }}
