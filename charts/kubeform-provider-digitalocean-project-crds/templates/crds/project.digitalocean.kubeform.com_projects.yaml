@@ -1,0 +1,152 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: digitalocean.kubeform.com
+    app.kubernetes.io/part-of: kubeform.com
+  name: projects.project.digitalocean.kubeform.com
+spec:
+  group: project.digitalocean.kubeform.com
+  names:
+    kind: Project
+    listKind: ProjectList
+    plural: projects
+    singular: project
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              kubeformOutput:
+                properties:
+                  createdAt:
+                    type: string
+                  description:
+                    type: string
+                  environment:
+                    type: string
+                  id:
+                    type: string
+                  isDefault:
+                    type: boolean
+                  name:
+                    type: string
+                  ownerID:
+                    format: int64
+                    type: integer
+                  ownerUUID:
+                    type: string
+                  purpose:
+                    type: string
+                  resources:
+                    items:
+                      type: string
+                    type: array
+                  updatedAt:
+                    type: string
+                required:
+                - name
+                type: object
+              providerRef:
+                properties:
+                  name:
+                    type: string
+                type: object
+              resource:
+                properties:
+                  createdAt:
+                    type: string
+                  description:
+                    type: string
+                  environment:
+                    type: string
+                  id:
+                    type: string
+                  isDefault:
+                    type: boolean
+                  name:
+                    type: string
+                  ownerID:
+                    format: int64
+                    type: integer
+                  ownerUUID:
+                    type: string
+                  purpose:
+                    type: string
+                  resources:
+                    items:
+                      type: string
+                    type: array
+                  updatedAt:
+                    type: string
+                required:
+                - name
+                type: object
+              terminationPolicy:
+                enum:
+                - Delete
+                - DoNotTerminate
+                type: string
+              updatePolicy:
+                enum:
+                - Destroy
+                - DoNotDestroy
+                type: string
+            required:
+            - providerRef
+            - resource
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              phase:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
