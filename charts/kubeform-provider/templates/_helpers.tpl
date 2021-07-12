@@ -101,5 +101,5 @@ imagePullSecrets:
 Returns the webhook service name
 */}}
 {{- define "webhook.serviceName" -}}
-{{- include "kubeform-provider.fullname" . }}-webhook-service
+{{- include "kubeform-provider.fullname" . }}-webhook-server
 {{- end }}
