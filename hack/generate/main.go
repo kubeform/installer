@@ -119,7 +119,7 @@ func main() {
 	flag.Parse()
 
 	for _, location := range extraInput {
-		err := processLocation(location, extrastore)
+		err := processLocation(location, extrastore, true)
 		if err != nil {
 			panic(err)
 		}
@@ -177,7 +177,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 	crdstore = map[schema.GroupKind]map[string]*unstructured.Unstructured{} // reset crd store
 
 	location := filepath.Join(inputDir, fmt.Sprintf("provider-%s-api", p), "crds")
-	err := processLocation(location, crdstore)
+	err := processLocation(location, crdstore, false)
 	if err != nil {
 		return err
 	}
@@ -427,8 +427,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 
 		// remove crds folder so that we can cleanly recreate it.
 		_ = os.RemoveAll(filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g), "crds"))
-
-		outputCRDs := make([]CRD, 0, len(crdstore)+len(extrastore))
+		_ = os.RemoveAll(filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g), "templates"))
 
 		root = filepath.Join(inputDir, "installer", ".generator", "charts", "kubeform-provider-p-g-crds")
 		err = filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
@@ -521,6 +520,9 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 		}
 
 		// crds
+		outputCRDs := make([]CRD, 0, len(crdstore)+len(extrastore))
+
+		// provider crds
 		target := filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g), "templates", "crds")
 		err = os.MkdirAll(target, 0755)
 		if err != nil {
@@ -543,6 +545,13 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 				GK:  gk,
 				Def: data,
 			})
+		}
+
+		// extra crds (like metricsconfig)
+		target = filepath.Join(inputDir, "installer", "charts", fmt.Sprintf("kubeform-provider-%s-%s-crds", p, g), "crds")
+		err = os.MkdirAll(target, 0755)
+		if err != nil {
+			return err
 		}
 		for gk := range extrastore {
 			data, filename, err := WriteCRD(extrastore, target, gk, crdVersion)
@@ -626,7 +635,7 @@ func processProvider(inputDir string, p, gid, crdVersion string) error {
 	return nil
 }
 
-func processLocation(location string, store map[schema.GroupKind]map[string]*unstructured.Unstructured) error {
+func processLocation(location string, store map[schema.GroupKind]map[string]*unstructured.Unstructured, extra bool) error {
 	u, err := url.Parse(location)
 	if err != nil {
 		return err
@@ -643,7 +652,7 @@ func processLocation(location string, store map[schema.GroupKind]map[string]*uns
 		if err != nil {
 			return err
 		}
-		return parser.ProcessResources(buf.Bytes(), extractCRD(store))
+		return parser.ProcessResources(buf.Bytes(), extractCRD(store, extra))
 	}
 
 	fi, err := os.Stat(location)
@@ -651,23 +660,25 @@ func processLocation(location string, store map[schema.GroupKind]map[string]*uns
 		return err
 	}
 	if fi.IsDir() {
-		return parser.ProcessDir(location, extractCRD(store))
+		return parser.ProcessDir(location, extractCRD(store, extra))
 	} else {
 		data, err := ioutil.ReadFile(location)
 		if err != nil {
 			return err
 		}
-		return parser.ProcessResources(data, extractCRD(store))
+		return parser.ProcessResources(data, extractCRD(store, extra))
 	}
 }
 
-func extractCRD(store map[schema.GroupKind]map[string]*unstructured.Unstructured) func(obj *unstructured.Unstructured) error {
+func extractCRD(store map[schema.GroupKind]map[string]*unstructured.Unstructured, extra bool) func(obj *unstructured.Unstructured) error {
 	return func(obj *unstructured.Unstructured) error {
 		removeDescription(obj.UnstructuredContent())
 
-		obj.SetAnnotations(map[string]string{
-			"helm.sh/resource-policy": "keep",
-		})
+		if !extra {
+			obj.SetAnnotations(map[string]string{
+				"helm.sh/resource-policy": "keep",
+			})
+		}
 
 		var def Definition
 
